@@ -1,22 +1,26 @@
 import { ReadAllFiles } from './geral/ReadAllFiles';
-import { ObjectOrganizerByFileId } from './geral/ObjectOrganizerByFileId';
-import path from 'path';
+import { MountDirectoryTree } from '../../utils/MountDirectoryTree';
+import { GetContentFilesInDirectories } from '../../utils/GetContentFilesInDirectories';
+
+import { IDirectoryTree, IFileContentTree } from '../../interfaces/IDirectory';
 
 export class App {
-  private path: string;
-  private readAllFiles: ReadAllFiles;
-  private objectOrganizerByFileId: ObjectOrganizerByFileId;
+  private appPath: string;
+
+  public appDirectoryTree: IDirectoryTree;
+
+  private appFileContentTree: IFileContentTree;
 
   constructor(path: string) {
-    this.path = path;
-    this.readAllFiles = new ReadAllFiles(path);
+    this.appPath = path;
   }
 
   async build() {
-    const data = await this.readAllFiles.babel(
-      path.resolve(this.path, 'app.jsx'),
+    this.appDirectoryTree = await MountDirectoryTree.execute(this.appPath);
+    this.appFileContentTree = await GetContentFilesInDirectories.execute(
+      this.appDirectoryTree,
     );
-    this.objectOrganizerByFileId = new ObjectOrganizerByFileId(data.result);
-    const filesHtml = await this.objectOrganizerByFileId.execute();
+    const data = await ReadAllFiles.execute(this.appFileContentTree);
+    console.log(data);
   }
 }
