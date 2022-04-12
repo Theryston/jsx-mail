@@ -28,6 +28,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
+    "nodemon": "^2.0.15",
     "semantic-release": "^19.0.2",
     "ts-jest": "^27.1.4",
     "ts-node": "^10.7.0",
@@ -36,12 +37,13 @@
   "scripts": {
     "test": "jest",
     "release": "yarn semantic-release",
-    "example": "node example/index.js",
+    "dev:script": "nodemon --watch \"src/\" --exec \"yarn build && cd ./examples/script && node index.js\" -e ts,js",
     "build": "tsc"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "dependencies": {}
 }
