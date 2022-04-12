@@ -14,14 +14,19 @@
     "README.md"
   ],
   "devDependencies": {
+    "@commitlint/cli": "^16.2.3",
+    "@commitlint/config-conventional": "^16.2.1",
     "@semantic-release/github": "^8.0.4",
     "@semantic-release/npm": "^9.0.1",
     "@semantic-release/release-notes-generator": "^10.0.3",
     "@types/jest": "^27.4.1",
     "@types/node": "^17.0.23",
     "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "3.3.0",
     "eslint": "7.32.0",
     "eslint-config-airbnb-base": "^15.0.0",
+    "husky": "^7.0.4",
     "jest": "^27.5.1",
     "semantic-release": "^19.0.2",
     "ts-jest": "^27.1.4",
@@ -33,5 +38,10 @@
     "release": "yarn semantic-release",
     "example": "node example/index.js",
     "build": "tsc"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
