@@ -41,7 +41,15 @@ function renderStyledComponentElement(
 ): JSDOM {
   const children = args.length ? [].concat(...args) : null;
   const dom = new JSDOM();
-  const styleString = nodeName.componentStyle.rules[0];
+  let styleString = '';
+
+  for (const rule of nodeName.componentStyle.rules) {
+    if (typeof rule === 'string') {
+      styleString += rule;
+    } else {
+      styleString += rule(attributes);
+    }
+  }
 
   const element = dom.window.document.createElement(nodeName.target);
 

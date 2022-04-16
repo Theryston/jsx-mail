@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const Header = () => {
   return (
-    <Container className="header" style="border: none;">
+    <Container num={54} className="header" style="border: none;">
       <Title>Header text here</Title>
       <p>Ok</p>
     </Container>
@@ -10,6 +10,7 @@ export const Header = () => {
 };
 
 const Container = styled.div`
+  font-size: ${props => props.num}px;
   background-color: blue;
   color: red;
 `;
