@@ -39,7 +39,7 @@
   "scripts": {
     "test": "jest",
     "release": "yarn semantic-release",
-    "dev:script": "nodemon --watch \"src/\" --exec \"yarn build && cd ./examples/script && node index.js\" -e ts,js",
+    "dev": "nodemon --watch \"src/\" --exec \"yarn build && cd ./examples/script && node index.js\" -e ts,js",
     "build": "tsc"
   },
   "config": {
@@ -52,6 +52,7 @@
     "@babel/plugin-syntax-jsx": "^7.16.7",
     "@babel/plugin-transform-react-display-name": "^7.16.7",
     "@babel/plugin-transform-react-jsx": "^7.17.3",
+    "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7"
   }
 }

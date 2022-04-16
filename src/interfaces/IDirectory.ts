@@ -14,3 +14,14 @@ export interface IFileContentTree {
   folderPath: string;
   files: IFileContent[];
 }
+
+export interface IJSXMailContent {
+  filePath: string;
+  fileJSXMail: string;
+}
+
+export interface IJSXMailContentTree {
+  folders: IJSXMailContentTree[];
+  files: IJSXMailContent[];
+  folderPath: string;
+}
