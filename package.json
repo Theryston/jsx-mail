@@ -53,6 +53,14 @@
     "@babel/plugin-transform-react-display-name": "^7.16.7",
     "@babel/plugin-transform-react-jsx": "^7.17.3",
     "@babel/preset-env": "^7.16.11",
-    "@babel/preset-react": "^7.16.7"
+    "@babel/preset-react": "^7.16.7",
+    "@types/jsdom": "^16.2.14",
+    "babel-core": "^6.26.3",
+    "babel-plugin-css-in-js": "^1.5.1",
+    "babel-plugin-css-modules-transform": "^1.6.2",
+    "babel-plugin-react-css-modules": "^5.2.6",
+    "babel-plugin-styled-components": "^2.0.7",
+    "jsdom": "^19.0.0",
+    "react": "^18.0.0"
   }
 }

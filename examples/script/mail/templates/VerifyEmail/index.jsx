@@ -1,5 +1,6 @@
-import { Container } from './styles';
-import { Header } from '../../components/Header';
+import styled from 'styled-components';
+
+const { Header } = require('../../components/Header');
 
 export const VerifyEmail = () => {
   return (
@@ -9,3 +10,7 @@ export const VerifyEmail = () => {
     </Container>
   );
 };
+
+const Container = styled.div`
+  background-color: blue;
+`;

@@ -17,13 +17,14 @@ export class BuildFileJSXToJS {
     };
 
     for (const file of fileContentTree.files) {
-      const fileJSXMail = await this.build(
-        file.fileContent,
+      const fileJSXMail = await this.compile(file.fileContent);
+      const fileJSXWithImports = await this.compile_import(
+        fileJSXMail,
         fileContentTree.folderPath,
       );
       jsxMailTree.files.push({
         filePath: file.filePath,
-        fileJSXMail,
+        fileJSXMail: fileJSXWithImports,
       });
     }
 
@@ -35,21 +36,71 @@ export class BuildFileJSXToJS {
     return jsxMailTree;
   }
 
-  private static async build(
-    fileContent: string,
-    folderPath: string,
-  ): Promise<string> {
+  private static async compile(fileContent: string): Promise<string> {
     const fileContentBuilded = await transformSync(
-      `/** @jsx this.render */\n${fileContent}`,
+      `/** @jsx render */\n${fileContent}`,
       {
         presets: ['@babel/preset-react', '@babel/preset-env'],
         plugins: [
           '@babel/plugin-syntax-jsx',
           '@babel/plugin-transform-react-display-name',
           '@babel/plugin-transform-react-jsx',
+          [
+            'babel-plugin-styled-components',
+            {
+              fileName: false,
+            },
+          ],
         ],
       },
     );
     return fileContentBuilded.code;
+  }
+
+  private static async compile_import(
+    fileContent: string,
+    directoryPath: string,
+  ): Promise<string> {
+    const lines = fileContent.split('\n').map(line => line.trim());
+
+    const linesWithAbsolutePathInRequires = lines.map(lineContent => {
+      if (!lineContent.includes('require')) {
+        return lineContent;
+      }
+
+      let requirePath = lineContent.substring(
+        lineContent.indexOf('require') + 8,
+        lineContent.length - 1,
+      );
+
+      requirePath = requirePath.replace(/['"]/, '');
+      requirePath = requirePath.replace(
+        requirePath.substring(requirePath.indexOf('"'), requirePath.length),
+        '',
+      );
+
+      if (!requirePath.startsWith('/') && !requirePath.startsWith('.')) {
+        return lineContent;
+      }
+
+      // if (requirePath.endsWith('.css')) {
+      //   throw new Error('css file not supported');
+      // }
+
+      let requireVariableName = lineContent
+        .substring(0, lineContent.indexOf('='))
+        .split(' ')[1];
+
+      requireVariableName = requireVariableName.trim();
+
+      const absolutePath = path
+        .normalize(path.resolve(directoryPath, ...requirePath.split('/')))
+        .replace(/\\/g, '/');
+
+      // return `//@JSXMAIL_IMPORT_${requireVariableName} = require('${absolutePath}');`;
+      return `const ${requireVariableName} = require('${absolutePath}');`;
+    });
+
+    return linesWithAbsolutePathInRequires.join('\n');
   }
 }
