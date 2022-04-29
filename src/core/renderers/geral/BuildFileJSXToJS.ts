@@ -7,7 +7,7 @@ import {
 } from '../../../interfaces/IDirectory';
 
 export class BuildFileJSXToJS {
-  static async execute(
+  async execute(
     fileContentTree: IFileContentTree,
   ): Promise<IJSXMailContentTree> {
     const jsxMailTree: IJSXMailContentTree = {
@@ -36,7 +36,7 @@ export class BuildFileJSXToJS {
     return jsxMailTree;
   }
 
-  private static async compile(fileContent: string): Promise<string> {
+  private async compile(fileContent: string): Promise<string> {
     const fileContentBuilded = await transformSync(
       `/** @jsx render */\n${fileContent}`,
       {
@@ -57,7 +57,8 @@ export class BuildFileJSXToJS {
     return fileContentBuilded.code;
   }
 
-  private static async compile_import(
+  // TODO: use a same method for do the comment in WriteFileContentInOutputPath.ts:11
+  private async compile_import(
     fileContent: string,
     directoryPath: string,
   ): Promise<string> {

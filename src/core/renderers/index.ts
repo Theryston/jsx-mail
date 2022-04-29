@@ -1,13 +1,22 @@
 import { BuildFileJSXToJS } from './geral/BuildFileJSXToJS';
 import { MountDirectoryTree } from '../../utils/MountDirectoryTree';
 import { GetContentFilesInDirectories } from '../../utils/GetContentFilesInDirectories';
+import { WriteFileContentInOutputPath } from './geral/WriteFileContentInOutputPath';
 
 import { IDirectoryTree, IFileContentTree } from '../../interfaces/IDirectory';
 import { JSDOM } from 'jsdom';
+import path from 'path';
+import fs from 'fs';
+import rmdir from 'rmdir';
+import { promisify } from 'util';
+
+const deleteFolderSync = promisify(rmdir);
 
 const specialAttributes = {
   className: 'class',
 };
+
+const DEFAULT_OUTPUT_PATH = path.resolve('dist-email-jsx');
 
 function transformSpecialAttributes(attributes: { [key: string]: string }) {
   const newAttributes = { ...attributes };
@@ -107,6 +116,9 @@ function renderDefaultElement(
 }
 
 export class App {
+  private buildFileJSXToJS = new BuildFileJSXToJS();
+  private writeFileContentInOutputPath = new WriteFileContentInOutputPath();
+
   private appPath: string;
 
   public appDirectoryTree: IDirectoryTree;
@@ -122,10 +134,17 @@ export class App {
     this.appFileContentTree = await GetContentFilesInDirectories.execute(
       this.appDirectoryTree,
     );
-    const data = await BuildFileJSXToJS.execute(this.appFileContentTree);
-    const fileTestContent = data.folders[0].folders[0].files[0].fileJSXMail;
-    const result = eval(fileTestContent);
-    const dom = result() as JSDOM;
-    console.log(dom.serialize());
+    const fileBuilded = await this.buildFileJSXToJS.execute(
+      this.appFileContentTree,
+    );
+    // TODO: the comment in WriteFileContentInOutputPath.ts:11
+    const filePaths = await this.writeFileContentInOutputPath.execute(
+      fileBuilded,
+    );
+    console.log(filePaths);
+    // const fileTestContent = data.folders[0].folders[0].files[0].fileJSXMail;
+    // const result = eval(fileTestContent);
+    // const dom = result() as JSDOM;
+    // console.log(dom.serialize());
   }
 }
