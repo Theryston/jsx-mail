@@ -7,7 +7,7 @@
   "repository": "https://github.com/Theryston/JSXMail.git",
   "author": "Theryston <funktodo2@gmail.com>",
   "license": "MIT",
-  "private": true,
+  "private": false,
   "files": [
     "dist/",
     "package.json",
@@ -39,7 +39,6 @@
   "scripts": {
     "test": "jest",
     "release": "yarn semantic-release",
-    "dev": "nodemon --watch \"src/\" --exec \"yarn build && cd ./examples/script && node index.js\" -e ts,js",
     "build": "tsc"
   },
   "config": {
