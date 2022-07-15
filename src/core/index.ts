@@ -11,7 +11,7 @@ export class Core {
   }
 
   public async render(templateName: string, variables?: any) {
-    const render = new Render(this.inputPath);
+    const render = new Render(this.outputPath);
     const htmlCode = await render.run(templateName, variables);
     return htmlCode;
   }
