@@ -1,17 +1,22 @@
-import { App } from '.';
+import { Core } from '.';
 
 describe('App imports', () => {
   it('should app be defined', () => {
-    expect(App).toBeDefined();
+    expect(Core).toBeDefined();
   });
 
   it('should app be a class', () => {
-    let app = new App('', '');
-    expect(app instanceof App).toBeTruthy();
+    let core = new Core('', '');
+    expect(core instanceof Core).toBeTruthy();
   });
 
   it('should build be defined', () => {
-    let app = new App('', '');
-    expect(app.build).toBeDefined();
+    let core = new Core('', '');
+    expect(core.build).toBeDefined();
+  });
+
+  it('should render be defined', () => {
+    let core = new Core('', '');
+    expect(core.render).toBeDefined();
   });
 });
