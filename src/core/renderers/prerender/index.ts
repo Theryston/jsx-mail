@@ -1,10 +1,14 @@
 import { IPrerender } from '../../interfaces/IPrerender';
-import { transform } from './transform';
+import { Transform } from './Transform';
 
 export class Prerender implements IPrerender {
-  constructor(private inputPath: string, private outputPath: string) {}
+  transform: Transform;
+
+  constructor(private inputPath: string, private outputPath: string) {
+    this.transform = new Transform();
+  }
 
   async run() {
-    await transform(this.inputPath, this.outputPath);
+    await this.transform.run(this.inputPath, this.outputPath);
   }
 }
