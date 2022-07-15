@@ -45,11 +45,12 @@
   "scripts": {
     "test": "jest",
     "release": "yarn semantic-release",
-    "build": "tsc"
+    "build": "tsc",
+    "commit": "cz"
   },
   "config": {
     "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+      "path": "cz-conventional-changelog"
     }
   }
 }
