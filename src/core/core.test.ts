@@ -10,8 +10,8 @@ describe('App imports', () => {
     expect(app instanceof App).toBeTruthy();
   });
 
-  it('should prerender be defined', () => {
+  it('should build be defined', () => {
     let app = new App('', '');
-    expect(app.prerender).toBeDefined();
+    expect(app.build).toBeDefined();
   });
 });

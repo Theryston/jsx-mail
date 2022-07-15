@@ -1,11 +1,11 @@
-import { Prerender } from './renderers/prerender';
+import { Build } from './renderers/build';
 
 export class App {
   constructor(private inputPath: string, private outputPath: string) {}
 
-  public async prerender() {
-    const prerender = new Prerender(this.inputPath, this.outputPath);
+  public async build() {
+    const build = new Build(this.inputPath, this.outputPath);
 
-    await prerender.run();
+    await build.run();
   }
 }

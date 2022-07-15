@@ -10,7 +10,7 @@ let render: IRender;
 
 describe('render', () => {
   beforeEach(async () => {
-    await execPromise('cp -r mocks/pre-rendered-app mocks/test-render');
+    await execPromise('cp -r mocks/built-app mocks/test-render');
     render = new Render(
       path.join(__dirname, '..', '..', '..', '..', '/mocks/test-render'),
     );

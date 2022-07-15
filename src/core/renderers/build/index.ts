@@ -1,7 +1,7 @@
-import { IPrerender } from '../../interfaces/IPrerender';
+import { IBuild } from '../../interfaces/IBuild';
 import { Transform } from './Transform';
 
-export class Prerender implements IPrerender {
+export class Build implements IBuild {
   transform: Transform;
 
   constructor(private inputPath: string, private outputPath: string) {
