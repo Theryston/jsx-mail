@@ -1,20 +1,10 @@
-import { IFileSystem } from './interfaces/IFileSystem';
 import { Prerender } from './renderers/prerender';
-import { FileSystem } from './implementations/FileSystem';
 
 export class App {
-  fileSystem: IFileSystem;
-
-  constructor(private inputPath: string, private outputPath: string) {
-    this.fileSystem = new FileSystem();
-  }
+  constructor(private inputPath: string, private outputPath: string) {}
 
   public async prerender() {
-    const prerender = new Prerender(
-      this.inputPath,
-      this.outputPath,
-      this.fileSystem,
-    );
+    const prerender = new Prerender(this.inputPath, this.outputPath);
 
     await prerender.run();
   }

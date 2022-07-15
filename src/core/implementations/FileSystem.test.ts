@@ -8,14 +8,7 @@ describe('FileSystem', () => {
     fileSystem = new FileSystem();
   });
 
-  it('should return a directory tree', async () => {
-    const directoryTree = await fileSystem.getDirectoryTree(
-      path.resolve(__dirname),
-    );
-    expect(directoryTree).toBeDefined();
-    expect(directoryTree.length).toBeGreaterThan(0);
-    expect(
-      directoryTree.find(f => f.absolutePath.includes('FileSystem.ts')),
-    ).toBeDefined();
+  it('should be defined', () => {
+    expect(fileSystem).toBeDefined();
   });
 });

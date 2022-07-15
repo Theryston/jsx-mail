@@ -1,48 +1,22 @@
-import { Prerender } from '.';
-import { IFileSystem } from '../../interfaces/IFileSystem';
 import { IPrerender } from '../../interfaces/IPrerender';
+import { Prerender } from '.';
+import { exec } from 'child_process';
 
 let prerender: IPrerender;
 
-const fileSystemMock: IFileSystem = {
-  getDirectoryTree: async (path: string) => {
-    return [
-      {
-        absolutePath: '',
-        type: 'directory',
-        children: [
-          {
-            absolutePath: '',
-            type: 'directory',
-            children: [],
-          },
-        ],
-      },
-    ];
-  },
-};
+jest.setTimeout(300000);
 
-describe('Prerender', () => {
+describe('prerender', () => {
   beforeEach(() => {
-    prerender = new Prerender('', '', fileSystemMock);
+    exec('cp -r mocks/app/* mocks/test-prerender');
+    prerender = new Prerender(
+      'mocks/test-prerender',
+      'mocks/test-prerender/dist',
+    );
   });
 
-  it('should be defined', () => {
-    expect(prerender).toBeDefined();
-  });
-});
-
-describe('Prerender.run', () => {
-  beforeEach(() => {
-    prerender = new Prerender('', '', fileSystemMock);
-  });
-
-  it('should return a directory tree of js files', async () => {
-    const prerenderTree = await prerender.run();
-    expect(prerenderTree).toBeDefined();
-    expect(prerenderTree.length).toBeGreaterThan(0);
-    expect(
-      prerenderTree.find(f => f.absolutePath.includes('.js')),
-    ).toBeDefined();
+  it('should build files to dist', async () => {
+    await prerender.run();
+    expect(true).toBe(true);
   });
 });

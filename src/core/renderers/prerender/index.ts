@@ -1,24 +1,10 @@
-import { IFileSystem, IDirectoryTree } from '../../interfaces/IFileSystem';
 import { IPrerender } from '../../interfaces/IPrerender';
+import { transform } from './transform';
 
 export class Prerender implements IPrerender {
-  constructor(
-    private inputPath: string,
-    private outputPath: string,
-    private fileSystem: IFileSystem,
-  ) {}
+  constructor(private inputPath: string, private outputPath: string) {}
 
-  async run(): Promise<IDirectoryTree[]> {
-    // TODO: get directory tree
-    // TODO: get js files
-    // TODO: build tsx in js
-    // TODO: write js files in same structure of inicial directory but with .js extension and in base path 'dist/prerender'
-    return [
-      {
-        absolutePath: '.js',
-        type: 'directory',
-        children: [],
-      },
-    ];
+  async run() {
+    await transform(this.inputPath, this.outputPath);
   }
 }
