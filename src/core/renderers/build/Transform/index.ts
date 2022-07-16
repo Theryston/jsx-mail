@@ -4,7 +4,15 @@ export class Transform {
   async run(sourcePath: string, outputDir: string) {
     await babel({
       babelOptions: {
-        presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        presets: [
+          '@babel/preset-typescript',
+          [
+            '@babel/preset-react',
+            {
+              runtime: 'classic',
+            },
+          ],
+        ],
         plugins: [
           '@babel/plugin-transform-modules-commonjs',
           [
