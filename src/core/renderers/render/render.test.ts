@@ -20,7 +20,7 @@ describe('render', () => {
     await execPromise('rm -rf mocks/test-render');
   });
 
-  it('should return file', async () => {
+  it('should return html with hello world', async () => {
     const htmlText = await render.run('Welcome', {
       prefix: 'Hello, world!',
     });

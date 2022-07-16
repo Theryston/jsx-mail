@@ -38,10 +38,10 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "husky": "^8.0.1",
     "jest": "^27.5.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "semantic-release": "^19.0.2",
-    "styled-components": "^5.3.5",
+    "styled-components": "5.0.0",
     "ts-jest": "^27.1.4",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3"
@@ -61,6 +61,7 @@
   "dependencies": {
     "arg": "^5.0.2",
     "esm": "^3.2.25",
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "react-is": "16.8"
   }
 }
