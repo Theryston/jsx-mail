@@ -6,5 +6,5 @@ export interface IMailAppConfig {
 }
 
 export interface IMailAppProps {
-  [key: string]: string | number | boolean | IMailAppProps;
+  [key: string]: string | number | boolean | IMailAppProps | IMailAppProps[];
 }
