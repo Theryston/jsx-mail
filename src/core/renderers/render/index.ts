@@ -2,6 +2,7 @@ import { IRender } from '../../interfaces/IRender';
 import path from 'path';
 import fs from 'fs';
 import { ReactRender } from './ReactRender';
+import { IMailAppConfig } from '../../../interfaces/IMailApp';
 
 export class Render implements IRender {
   constructor(private inputPath: string) {}
@@ -15,13 +16,15 @@ export class Render implements IRender {
 
     const indexFile = await import(indexFilePath);
 
-    const templateReactElement = indexFile[templateName];
+    const mailAppConfig: IMailAppConfig = indexFile.default();
 
-    if (!templateReactElement) {
+    const template = mailAppConfig[templateName];
+
+    if (!template) {
       throw new Error('Template not found: ' + templateName);
     }
 
-    const reactRender = new ReactRender(templateReactElement, variables);
+    const reactRender = new ReactRender(template.componentFunction, variables);
 
     const { htmlCode, styleTag } = await reactRender.run();
 

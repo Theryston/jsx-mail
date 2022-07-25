@@ -27,6 +27,5 @@ describe('build', () => {
   it('should build files to dist', async () => {
     await build.run();
     expect(fs.existsSync('mocks/test-build/dist/index.js')).toBe(true);
-    expect(true).toBeTruthy();
   });
 });

@@ -1,4 +1,19 @@
 import React from 'react';
 
-export * from './templates/Welcome';
-export * from './templates/ResetPassword';
+import { Welcome } from './templates/Welcome';
+import { ResetPassword } from './templates/ResetPassword';
+
+export default function App() {
+  return {
+    Welcome: {
+      componentFunction: Welcome,
+      props: {
+        prefix: 'string',
+      },
+    },
+    ResetPassword: {
+      componentFunction: ResetPassword,
+      props: {},
+    },
+  };
+}
