@@ -3,29 +3,23 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = App;
 
 var _Welcome = require("./templates/Welcome");
 
-Object.keys(_Welcome).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _Welcome[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _Welcome[key];
-    }
-  });
-});
-
 var _ResetPassword = require("./templates/ResetPassword");
 
-Object.keys(_ResetPassword).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _ResetPassword[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _ResetPassword[key];
+function App() {
+  return {
+    Welcome: {
+      componentFunction: _Welcome.Welcome,
+      props: {
+        prefix: 'string'
+      }
+    },
+    ResetPassword: {
+      componentFunction: _ResetPassword.ResetPassword,
+      props: {}
     }
-  });
-});
+  };
+}
