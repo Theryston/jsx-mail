@@ -1,4 +1,4 @@
-import { IRender } from '../../interfaces/IRender';
+import { IRender } from './IRender';
 import path from 'path';
 import fs from 'fs';
 import { ReactRender } from './ReactRender';

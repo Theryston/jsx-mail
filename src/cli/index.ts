@@ -27,7 +27,7 @@ export function cli(args: string[]) {
 
       const mailPath = config.mailPath.replace('./', `${process.cwd()}/`);
 
-      const core = new Core(mailPath, `${mailPath}/dist`);
+      const core = new Core(mailPath, `dist`);
 
       await core.build();
     },

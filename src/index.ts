@@ -9,7 +9,7 @@ export async function render(templateName: string, variables: any) {
 
   const mailPath = config.mailPath.replace('./', `${process.cwd()}/`);
 
-  const core = new Core(mailPath, `${mailPath}/dist`);
+  const core = new Core(mailPath, `dist`);
 
   return await core.render(templateName, variables);
 }
