@@ -4,7 +4,7 @@ import { Core } from '../core';
 const app = express();
 
 export async function server(path: string, port: number) {
-  const core = new Core(path, `${path}/dist`);
+  const core = new Core(path, `dist`);
   await core.build();
 
   app.get('/:templateName', async (req, res) => {
