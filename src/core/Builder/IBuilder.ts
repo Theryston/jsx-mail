@@ -1,3 +1,3 @@
-export interface IBuild {
+export interface IBuilder {
   directory(sourcePath: string, outputDir: string): Promise<void>;
 }

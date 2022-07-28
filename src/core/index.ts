@@ -1,4 +1,4 @@
-import { Build } from './renderers/build';
+import { Builder } from './Builder';
 import { Render } from './renderers/render';
 import { FileSystem } from './implementations/FileSystem';
 import { JsxTransform } from './implementations/JsxTransform';
@@ -10,9 +10,9 @@ export class Core {
   public async build() {
     const fileSystem = new FileSystem();
     const jsxTransform = new JsxTransform(fileSystem);
-    const build = new Build(jsxTransform);
+    const builder = new Builder(jsxTransform);
 
-    await build.directory(this.inputPath, this.outputDirname);
+    await builder.directory(this.inputPath, this.outputDirname);
   }
 
   public async render(templateName: string, variables?: any) {
