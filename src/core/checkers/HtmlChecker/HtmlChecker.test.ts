@@ -2,12 +2,12 @@ import path from 'path';
 import { HtmlChecker } from '.';
 import { IFileSystem } from '../../implementations/FileSystem/IFileSystem';
 import { IJsxTransform } from '../../implementations/JsxTransform/IJsxTransform';
-import { IReactJsonRender } from '../../implementations/ReactJsonRender/IReactJsonRender';
+import { IComponentJsonRender } from '../../implementations/ComponentJsonRender/IComponentJsonRender';
 import { IHtmlChecker } from './IHtmlChecker';
 
 let jsxTransform: IJsxTransform;
 let fileSystem: IFileSystem;
-let reactJsonRender: IReactJsonRender;
+let componentJsonRender: IComponentJsonRender;
 let htmlChecker: IHtmlChecker;
 
 describe('HtmlChecker', () => {
@@ -38,7 +38,7 @@ describe('HtmlChecker', () => {
         });
       }),
     };
-    reactJsonRender = {
+    componentJsonRender = {
       fromComponent: jest.fn(async (_componentFunction, _props) => {
         return {
           type: 'div',
@@ -63,7 +63,11 @@ describe('HtmlChecker', () => {
         };
       }),
     };
-    htmlChecker = new HtmlChecker(jsxTransform, fileSystem, reactJsonRender);
+    htmlChecker = new HtmlChecker(
+      jsxTransform,
+      fileSystem,
+      componentJsonRender,
+    );
   });
 
   describe('htmlChecker.directory', () => {
@@ -79,9 +83,9 @@ describe('HtmlChecker', () => {
       );
     });
 
-    it('should call reactJsonRender.fromComponent with correct params', async () => {
+    it('should call componentJsonRender.fromComponent with correct params', async () => {
       await htmlChecker.directory('src');
-      expect(reactJsonRender.fromComponent).toHaveBeenCalledWith(
+      expect(componentJsonRender.fromComponent).toHaveBeenCalledWith(
         'test-func',
         'test-props',
       );
@@ -95,9 +99,9 @@ describe('HtmlChecker', () => {
     });
   });
 
-  describe('htmlChecker.reactJson', () => {
+  describe('htmlChecker.componentJson', () => {
     it('should get a not allowed tag', async () => {
-      const result = await htmlChecker.reactJson({
+      const result = await htmlChecker.componentJson({
         type: 'tag-not-allowed',
         props: {},
         children: [],
@@ -107,7 +111,7 @@ describe('HtmlChecker', () => {
     });
 
     it('should allow correct tags', async () => {
-      const result = await htmlChecker.reactJson({
+      const result = await htmlChecker.componentJson({
         type: 'div',
         props: {},
         children: [],
@@ -116,7 +120,7 @@ describe('HtmlChecker', () => {
     });
 
     it('should get a not allowed attribute', async () => {
-      const result = await htmlChecker.reactJson({
+      const result = await htmlChecker.componentJson({
         type: 'div',
         props: {
           'data-test': 'test',
@@ -126,6 +130,17 @@ describe('HtmlChecker', () => {
       expect(result.hasUnexpected).toBe(true);
       expect(result.unexpectedTags[0].tagName).toEqual('div');
       expect(result.unexpectedTags[0].unexpectedProps[0]).toEqual('data-test');
+    });
+
+    it('should allow correct attributes', async () => {
+      const result = await htmlChecker.componentJson({
+        type: 'div',
+        props: {
+          style: 'background-color: red;',
+        },
+        children: [],
+      });
+      expect(result.hasUnexpected).toBe(false);
     });
   });
 });

@@ -73,9 +73,6 @@ describe('JsxTransform', () => {
       expect(fileSystem.getAllDirectoryTree).toHaveBeenCalledWith('', {
         justFilenameInFilePath: true,
       });
-      expect(fileSystem.getAllDirectoryTree).toHaveBeenCalledWith('main.ts', {
-        justFilenameInFilePath: true,
-      });
     });
 
     it('should call exists with the correct path', async () => {

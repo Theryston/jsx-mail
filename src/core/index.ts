@@ -3,7 +3,7 @@ import { Render } from './renderers/render';
 import { FileSystem } from './implementations/FileSystem';
 import { JsxTransform } from './implementations/JsxTransform';
 import { HtmlChecker } from './checkers/HtmlChecker';
-import { ReactJsonRender } from './implementations/ReactJsonRender';
+import { ComponentJsonRender } from './implementations/ComponentJsonRender';
 import path from 'path';
 
 export class Core {
@@ -12,15 +12,17 @@ export class Core {
   public async build() {
     const fileSystem = new FileSystem();
     const jsxTransform = new JsxTransform(fileSystem);
-    const reactJsonRender = new ReactJsonRender();
+    const componentJsonRender = new ComponentJsonRender();
     const htmlChecker = new HtmlChecker(
       jsxTransform,
       fileSystem,
-      reactJsonRender,
+      componentJsonRender,
     );
     const builder = new Builder(htmlChecker, jsxTransform);
 
-    await builder.directory(this.inputPath, this.outputDirname);
+    const result = await builder.directory(this.inputPath, this.outputDirname);
+
+    return result;
   }
 
   public async render(templateName: string, variables?: any) {

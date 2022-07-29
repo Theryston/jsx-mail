@@ -4,16 +4,16 @@ import { IFileSystem } from '../../implementations/FileSystem/IFileSystem';
 import { IMailAppConfig } from '../../../interfaces/IMailApp';
 import path from 'path';
 import {
-  IReactJson,
-  IReactJsonRender,
-} from '../../implementations/ReactJsonRender/IReactJsonRender';
+  IComponentJson,
+  IComponentJsonRender,
+} from '../../implementations/ComponentJsonRender/IComponentJsonRender';
 import { htmlSecurityList } from './htmlSecurityList';
 
 export class HtmlChecker implements IHtmlChecker {
   constructor(
     private jsxTransform: IJsxTransform,
     private fileSystem: IFileSystem,
-    private reactJsonRender: IReactJsonRender,
+    private componentJsonRender: IComponentJsonRender,
   ) {}
 
   async directory(sourcePath: string): Promise<IHtmlCheckerResult> {
@@ -38,55 +38,61 @@ export class HtmlChecker implements IHtmlChecker {
     const mailApp: IMailAppConfig = indexCode.default();
     for (let templateName of Object.keys(mailApp)) {
       const template = mailApp[templateName];
-      const result = await this.reactJsonRender.fromComponent(
+      const result = await this.componentJsonRender.fromComponent(
         template.componentFunction,
         template.props,
       );
-      response = await this.reactJson(result);
+      response = await this.componentJson(result);
     }
     await this.fileSystem.rm(path.join(sourcePath, 'html-check'));
     return response;
   }
 
-  async reactJson(reactJson: IReactJson): Promise<IHtmlCheckerResult> {
+  async componentJson(
+    componentJson: IComponentJson,
+  ): Promise<IHtmlCheckerResult> {
     const response: IHtmlCheckerResult = {
       hasUnexpected: false,
       unexpectedTags: [],
     };
 
-    if (!reactJson.type) {
+    if (!componentJson) {
+      return response;
+    }
+
+    if (!componentJson.type) {
       return response;
     }
 
     const tag = Object.keys(htmlSecurityList).find(
-      tag => tag === reactJson.type,
+      tag => tag === componentJson.type,
     );
 
     if (!tag) {
       response.hasUnexpected = true;
       response.unexpectedTags.push({
-        tagName: reactJson.type,
+        tagName: componentJson.type,
         unexpectedProps: [],
       });
       return response;
     }
 
-    for (let prop of Object.keys(reactJson.props)) {
+    for (let prop of Object.keys(componentJson.props)) {
       const propName = htmlSecurityList[tag].find(
         propName => propName === prop,
       );
       if (!propName) {
         response.hasUnexpected = true;
         response.unexpectedTags.push({
-          tagName: reactJson.type,
+          tagName: componentJson.type,
           unexpectedProps: [prop],
         });
         return response;
       }
     }
 
-    for (let child of reactJson.children) {
-      const childResult = await this.reactJson(child);
+    for (let child of componentJson.children) {
+      const childResult = await this.componentJson(child);
       if (childResult.hasUnexpected) {
         response.hasUnexpected = true;
         response.unexpectedTags.push(...childResult.unexpectedTags);

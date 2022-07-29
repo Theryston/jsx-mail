@@ -11,7 +11,7 @@ let htmlChecker: IHtmlChecker = {
       unexpectedTags: [],
     });
   }),
-  reactJson: jest.fn(),
+  componentJson: jest.fn(),
 };
 let jsxTransform: IJsxTransform = {
   directory: jest.fn(),

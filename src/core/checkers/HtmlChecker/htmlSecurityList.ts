@@ -23,6 +23,7 @@ export const htmlSecurityList: { [key: string]: string[] } = {
     'usemap',
     'vspace',
     'width',
+    'alt',
   ],
   label: ['class', 'id', 'style'],
   li: ['class', 'dir', 'id', 'style', 'type'],

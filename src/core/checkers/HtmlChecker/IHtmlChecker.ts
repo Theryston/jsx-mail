@@ -1,8 +1,8 @@
-import { IReactJson } from '../../implementations/ReactJsonRender/IReactJsonRender';
+import { IComponentJson } from '../../implementations/ComponentJsonRender/IComponentJsonRender';
 
 export interface IHtmlChecker {
   directory(sourcePath: string): Promise<IHtmlCheckerResult>;
-  reactJson(reactJson: IReactJson): Promise<IHtmlCheckerResult>;
+  componentJson(componentJson: IComponentJson): Promise<IHtmlCheckerResult>;
 }
 
 export interface IHtmlCheckerResult {

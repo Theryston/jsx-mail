@@ -27,7 +27,9 @@ export class JsxTransform implements IJsxTransform {
     for (const entity of entities) {
       if (entity.type === 'directory') {
         for (const child of entity.children) {
-          await this.directory(child.path, outputDir);
+          if (child.type === 'directory') {
+            await this.directory(child.path, outputDir);
+          }
         }
       } else {
         await this.file(
