@@ -60,4 +60,8 @@ export class FileSystem implements IFileSystem {
   async rm(inputPath: string): Promise<void> {
     await fs.promises.rm(inputPath, { recursive: true, force: true });
   }
+
+  async importFile(inputPath: string): Promise<any> {
+    return await import(inputPath);
+  }
 }

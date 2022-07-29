@@ -7,6 +7,7 @@ export interface IFileSystem {
   readUtf8File(path: string): Promise<string>;
   exists(path: string): Promise<boolean>;
   rm(path: string): Promise<void>;
+  importFile(path: string): Promise<any>;
 }
 
 export interface IFileSystemOptions {

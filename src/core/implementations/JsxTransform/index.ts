@@ -8,7 +8,11 @@ export class JsxTransform implements IJsxTransform {
 
   constructor(private readonly fileSystem: IFileSystem) {}
 
-  async directory(sourcePath: string, outputDir: string): Promise<void> {
+  async directory(
+    sourcePath: string,
+    outputDir: string,
+    options?: IJsxTransformOptions,
+  ): Promise<void> {
     if (!this.firstAbsoluteSourcePath) {
       this.firstAbsoluteSourcePath = path.resolve(sourcePath);
     }
@@ -29,14 +33,19 @@ export class JsxTransform implements IJsxTransform {
         await this.file(
           path.join(sourcePath, entity.path),
           path.join(this.firstAbsoluteSourcePath, outputDir),
+          options,
         );
       }
     }
   }
 
-  async file(inputPath: string, outputDir: string): Promise<void> {
+  async file(
+    inputPath: string,
+    outputDir: string,
+    options?: IJsxTransformOptions,
+  ): Promise<void> {
     const code = await this.fileSystem.readUtf8File(inputPath);
-    const transformedCode = await this.code(code);
+    const transformedCode = await this.code(code, options);
     const pathFromFirstPath = inputPath.replace(
       this.firstAbsoluteSourcePath,
       '',

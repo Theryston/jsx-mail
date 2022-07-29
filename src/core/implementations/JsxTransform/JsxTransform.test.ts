@@ -20,6 +20,7 @@ export function testComponent() {
 describe('JsxTransform', () => {
   beforeEach(() => {
     fileSystem = {
+      importFile: jest.fn(),
       rm: jest.fn(),
       exists: jest.fn(() => Promise.resolve(true)),
       getAllDirectoryTree: jest.fn(
