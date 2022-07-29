@@ -5,7 +5,9 @@ Object {
   "children": Array [
     "testing",
     Object {
-      "children": "Test Hello World!",
+      "children": Array [
+        "Test Hello World!",
+      ],
       "props": Object {},
       "type": "h1",
     },

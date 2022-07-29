@@ -85,7 +85,6 @@ export class HtmlChecker implements IHtmlChecker {
       }
     }
 
-    // make recursive call for children
     for (let child of reactJson.children) {
       const childResult = await this.reactJson(child);
       if (childResult.hasUnexpected) {

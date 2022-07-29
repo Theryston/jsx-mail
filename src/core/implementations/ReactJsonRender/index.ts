@@ -18,7 +18,7 @@ export class ReactJsonRender implements IReactJsonRender {
         response.children.push(await this.handleChild(child));
       }
     } else {
-      response.children = await this.handleChild(result.props['children']);
+      response.children = [await this.handleChild(result.props['children'])];
     }
 
     response.props = { ...result.props };
@@ -34,8 +34,18 @@ export class ReactJsonRender implements IReactJsonRender {
   async handleChild(child: any) {
     if (!child['$$typeof']) {
       return child;
+    } else if (typeof child.type !== 'function') {
+      const props = { ...child.props };
+      delete props.children;
+      const result = {
+        type: child.type as string,
+        children: [child.props.children],
+        props,
+      };
+      return result;
     } else {
-      return await this.fromComponent(child.type as any, child.props);
+      const result = await this.fromComponent(child.type as any, child.props);
+      return result;
     }
   }
 }
