@@ -20,6 +20,7 @@ export function testComponent() {
 describe('JsxTransform', () => {
   beforeEach(() => {
     fileSystem = {
+      importFile: jest.fn(),
       rm: jest.fn(),
       exists: jest.fn(() => Promise.resolve(true)),
       getAllDirectoryTree: jest.fn(
@@ -70,9 +71,6 @@ describe('JsxTransform', () => {
       const jsxTransform = new JsxTransform(fileSystem);
       await jsxTransform.directory('', '');
       expect(fileSystem.getAllDirectoryTree).toHaveBeenCalledWith('', {
-        justFilenameInFilePath: true,
-      });
-      expect(fileSystem.getAllDirectoryTree).toHaveBeenCalledWith('main.ts', {
         justFilenameInFilePath: true,
       });
     });
