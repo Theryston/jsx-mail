@@ -8,6 +8,15 @@
   "author": "Theryston <funktodo2@gmail.com>",
   "license": "MIT",
   "private": false,
+  "keywords": [
+    "library",
+    "backend",
+    "jsx",
+    "email",
+    "email template",
+    "javascipt",
+    "jsx-mail"
+  ],
   "bin": {
     "jsxm": "bin/run"
   },
