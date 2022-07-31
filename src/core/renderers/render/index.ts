@@ -1,4 +1,4 @@
-import { IRender } from '../../interfaces/IRender';
+import { IRender } from './IRender';
 import path from 'path';
 import fs from 'fs';
 import { ReactRender } from './ReactRender';
@@ -11,7 +11,7 @@ export class Render implements IRender {
     const indexFilePath = path.join(this.inputPath, 'index.js');
 
     if (!fs.existsSync(indexFilePath)) {
-      throw new Error('Index file not found');
+      throw new Error('Index file not found, run "jsxm build"');
     }
 
     const indexFile = await import(indexFilePath);

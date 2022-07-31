@@ -1,4 +1,4 @@
-import { IRender } from '../../interfaces/IRender';
+import { IRender } from './IRender';
 import { Render } from '.';
 import { exec } from 'child_process';
 import { promisify } from 'util';
