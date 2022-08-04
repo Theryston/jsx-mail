@@ -60,37 +60,39 @@ export class CssChecker implements ICssChecker {
       return response;
     }
 
-    if (!componentJson.styles) {
-      return response;
-    }
-
-    for (let styleItem of componentJson.styles) {
-      const styleItemName = styleItem.key;
-      const styleItemValue = styleItem.value;
-      const styleItemSecurity = cssSecurityList[styleItemName];
-      if (!styleItemSecurity) {
-        response.hasUnexpected = true;
-        response.unexpectedAttributes.push({
-          attributeName: styleItemName,
-          unexpectedValues: [],
-        });
-      } else if (
-        styleItemSecurity[0] !== '*' &&
-        styleItemSecurity.indexOf(styleItemValue) === -1
-      ) {
-        response.hasUnexpected = true;
-        response.unexpectedAttributes.push({
-          attributeName: styleItemName,
-          unexpectedValues: [styleItemValue],
-        });
+    if (componentJson.styles) {
+      for (let styleItem of componentJson.styles) {
+        const styleItemName = styleItem.key;
+        const styleItemValue = styleItem.value;
+        const styleItemSecurity = cssSecurityList[styleItemName];
+        if (!styleItemSecurity) {
+          response.hasUnexpected = true;
+          response.unexpectedAttributes.push({
+            attributeName: styleItemName,
+            unexpectedValues: [],
+          });
+        } else if (
+          styleItemSecurity[0] !== '*' &&
+          styleItemSecurity.indexOf(styleItemValue) === -1
+        ) {
+          response.hasUnexpected = true;
+          response.unexpectedAttributes.push({
+            attributeName: styleItemName,
+            unexpectedValues: [styleItemValue],
+          });
+        }
       }
     }
 
-    for (let child of componentJson.children) {
-      const childResult = await this.componentJson(child);
-      if (childResult.hasUnexpected) {
-        response.hasUnexpected = true;
-        response.unexpectedAttributes.push(...childResult.unexpectedAttributes);
+    if (componentJson.children) {
+      for (let child of componentJson.children) {
+        const childResult = await this.componentJson(child);
+        if (childResult.hasUnexpected) {
+          response.hasUnexpected = true;
+          response.unexpectedAttributes.push(
+            ...childResult.unexpectedAttributes,
+          );
+        }
       }
     }
 

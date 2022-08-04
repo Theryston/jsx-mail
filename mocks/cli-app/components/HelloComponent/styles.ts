@@ -6,9 +6,6 @@ export const Container = styled.div<{
   width: 100%;
   background-color: ${props => props.bg || 'red'};
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
 `;
 
 export const Wrapper = styled.div`

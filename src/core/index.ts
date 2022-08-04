@@ -3,6 +3,7 @@ import { Render } from './renderers/render';
 import { FileSystem } from './implementations/FileSystem';
 import { JsxTransform } from './implementations/JsxTransform';
 import { HtmlChecker } from './checkers/HtmlChecker';
+import { CssChecker } from './checkers/CssChecker';
 import { ComponentJsonRender } from './implementations/ComponentJsonRender';
 import path from 'path';
 
@@ -18,7 +19,13 @@ export class Core {
       fileSystem,
       componentJsonRender,
     );
-    const builder = new Builder(htmlChecker, jsxTransform);
+    const cssChecker = new CssChecker(
+      jsxTransform,
+      fileSystem,
+      componentJsonRender,
+    );
+
+    const builder = new Builder(htmlChecker, jsxTransform, cssChecker);
 
     const result = await builder.directory(this.inputPath, this.outputDirname);
 
