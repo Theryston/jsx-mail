@@ -1,3 +1,4 @@
+import { ICssCheckerResult } from '../checkers/CssChecker/ICssChecker';
 import { IHtmlCheckerResult } from '../checkers/HtmlChecker/IHtmlChecker';
 
 export interface IBuilder {
@@ -6,4 +7,5 @@ export interface IBuilder {
 
 export interface IBuilderResult {
   htmlCheckerResult: IHtmlCheckerResult;
+  cssCheckerResult: ICssCheckerResult;
 }

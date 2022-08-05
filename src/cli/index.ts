@@ -25,6 +25,7 @@ export const cliCommands = {
 
     const mailPath = config.mailPath.replace('./', `${process.cwd()}/`);
     const allowHtmlNotRecommended = config.allowHtmlNotRecommended || false;
+    const allowCssNotRecommended = config.allowCssNotRecommended || false;
 
     const core = new Core(mailPath, `dist`);
 
@@ -48,6 +49,32 @@ export const cliCommands = {
                       .join(' ')}`
                   : ''
               }>...</${tag.tagName}>`;
+            })
+            .join('\n'),
+        )}`;
+        log(errorMessage);
+        process.exit(1);
+      }
+    }
+
+    if (!allowCssNotRecommended) {
+      if (buildResult.cssCheckerResult.hasUnexpected) {
+        let errorMessage = ``;
+        errorMessage += `${chalk.red('CSS not recommended')}\n${chalk.yellow(
+          'You have CSS attribute/values that are not recommended by email clients.\n',
+        )}`;
+        errorMessage += `${chalk.yellow(
+          'CSS attribute/values not supported:\n\n',
+        )}${chalk.magenta(
+          buildResult.cssCheckerResult.unexpectedAttributes
+            .map(attribute => {
+              return `${attribute.attributeName}: ${
+                attribute.unexpectedValues.length > 0
+                  ? ` ${attribute.unexpectedValues
+                      .map(prop => `${prop}`)
+                      .join(' ')}`
+                  : ''
+              }...;`;
             })
             .join('\n'),
         )}`;

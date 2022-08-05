@@ -1,4 +1,5 @@
 {
   "mailPath": "./mocks/cli-app",
-  "allowHtmlNotRecommended": false
+  "allowHtmlNotRecommended": false,
+  "allowCssNotRecommended": false
 }
