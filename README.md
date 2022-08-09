@@ -29,7 +29,7 @@ export default function App() {
 ```js
 // js-side
 import { render } = from 'jsx-mail';
-const template = render('Welcome', { name: 'John' });
+const template = await render('Welcome', { name: 'John' });
 
 console.log(template) // <html>...<h1>John Welcome to jsx-mail</h1>...</html>
 ```
