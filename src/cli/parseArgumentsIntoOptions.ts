@@ -5,11 +5,20 @@ export function parseArgumentsIntoOptions(rawArgs: string[]) {
   const argv = rawArgs.slice(3);
 
   const argCommand = {
-    server: (params: Options) =>
-      arg(
+    startServer: params => {
+      return arg(
         {
-          '--port': Number,
+          '--path': String,
+          '--port': String,
         },
+        {
+          ...params,
+        },
+      );
+    },
+    serve: (params: Options) =>
+      arg(
+        {},
         {
           ...params,
         },
