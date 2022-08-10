@@ -13,8 +13,7 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
     "declaration": true
   },
-  "include": ["./src/**/*.ts", "./src/**/*.handlebars"]
+  "include": ["./src/**/*.ts"]
 }

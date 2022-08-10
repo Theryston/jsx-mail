@@ -1,24 +1,48 @@
 import { parseArgumentsIntoOptions } from './parseArgumentsIntoOptions';
-import { server } from '../server';
+import * as server from '../server';
 import { getFileConfig } from '../utils/getFileConfig';
 import { Core } from '../core';
 import chalk from 'chalk';
+import nodemon from 'nodemon';
 
 const log = console.log;
 
 export const cliCommands = {
-  server: async options => {
-    const port = options['--port'];
-
-    if (!port) {
-      throw new Error('Missing port');
-    }
-
+  startServer: async options => {
+    await server.start(options['--path'], options['--port']);
+  },
+  serve: async () => {
     const config = await getFileConfig();
 
     const mailPath = config.mailPath.replace('./', `${process.cwd()}/`);
 
-    await server(mailPath, port);
+    nodemon(
+      `--watch ${mailPath} -e tsx,ts,js,jsx --ignore ${mailPath}/dist/ --ignore ${mailPath}/css-check/ --ignore ${mailPath}/html-check/ --exec "jsxm startServer --path ${mailPath} --port ${
+        config.servePort || 8080
+      }"`,
+    );
+
+    nodemon
+      .on('start', function () {
+        console.clear();
+        console.log(
+          chalk.green(`Mail Client Started. Open in web browser:`) +
+            chalk.blue(` http://localhost:${config.servePort || 8080}`),
+        );
+      })
+      .on('quit', function () {
+        console.log(chalk.green('Mail Client Stopped'));
+        process.exit();
+      })
+      .on('restart', function (files) {
+        console.log(
+          chalk.green(
+            'Mail Client Restarting due to: ' +
+              files.join(', ') +
+              ' files changed',
+          ),
+        );
+      });
   },
   build: async () => {
     const config = await getFileConfig();

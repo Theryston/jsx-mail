@@ -3,12 +3,13 @@ import { cliCommands } from '../cli';
 import { Core } from '../core';
 import { engine } from 'express-handlebars';
 
-export async function server(path: string, port: number) {
-  const app = express();
+const app = express();
+let server: any;
 
+export async function start(path: string, port: number) {
   app.engine('handlebars', engine());
   app.set('view engine', 'handlebars');
-  app.set('views', './views');
+  app.set('views', `${__dirname}/views`);
 
   const core = new Core(path, `dist`);
   await cliCommands.build();
@@ -37,7 +38,9 @@ export async function server(path: string, port: number) {
     }
   });
 
-  app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
-  });
+  server = app.listen(port);
+}
+
+export async function stop() {
+  server.close();
 }
