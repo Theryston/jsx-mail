@@ -16,5 +16,5 @@
     "baseUrl": ".",
     "declaration": true
   },
-  "include": ["./src/*"]
+  "include": ["./src/**/*.ts", "./src/**/*.handlebars"]
 }
