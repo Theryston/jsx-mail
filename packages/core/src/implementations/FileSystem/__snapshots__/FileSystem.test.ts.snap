@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FileSystem fileSystem.getAllDirectoryTree should return all directories and files 1`] = `
+Array [
+  Object {
+    "children": Array [],
+    "path": "C:\\\\Projects\\\\jsx-mail\\\\packages\\\\core\\\\src\\\\implementations\\\\FileSystem\\\\test-fs-get-all-directory-tree/index.tsx",
+    "type": "file",
+  },
+  Object {
+    "children": Array [],
+    "path": "C:\\\\Projects\\\\jsx-mail\\\\packages\\\\core\\\\src\\\\implementations\\\\FileSystem\\\\test-fs-get-all-directory-tree/main.ts",
+    "type": "file",
+  },
+]
+`;

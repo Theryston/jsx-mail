@@ -1,0 +1,51 @@
+{
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "build": "tsdx build"
+  },
+  "dependencies": {
+    "@jsx-mail/core": "*"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "jsx-mail",
+  "author": "Theryston",
+  "module": "dist/jsx-mail.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/jsx-mail.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/jsx-mail.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^8.0.1",
+    "husky": "^8.0.1",
+    "size-limit": "^8.0.1",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.4"
+  }
+}

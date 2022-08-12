@@ -1,6 +1,0 @@
-{
-  "mailPath": "./mocks/cli-app",
-  "allowHtmlNotRecommended": false,
-  "allowCssNotRecommended": false,
-  "servePort": "8080"
-}
