@@ -5,8 +5,10 @@ export class ReactRender {
   sheet: ServerStyleSheet;
 
   constructor(
+    // eslint-disable-next-line
     private inicialCode: (props?: any) => JSX.Element,
-    private variables?: any
+    // eslint-disable-next-line
+    private variables?: any,
   ) {
     this.sheet = new ServerStyleSheet();
   }
