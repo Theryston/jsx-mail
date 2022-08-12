@@ -7,6 +7,7 @@ import { IMailAppConfig } from '../../interfaces/IMailApp';
 export class Render implements IRender {
   constructor(private inputPath: string) {}
 
+  // eslint-disable-next-line
   async run(templateName: string, variables?: any): Promise<string> {
     const indexFilePath = path.join(this.inputPath, 'index.js');
 
