@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "license": "MIT",
+  "description": "A framework to create the look of your emails. 🚀✉️",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "eslint ./src/*.ts*"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "@jsx-mail/core",
+  "author": "Theryston",
+  "module": "dist/core.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/core.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/core.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^8.0.1",
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "@types/styled-components": "^5.1.26",
+    "eslint-config-react-app": "^7.0.1",
+    "husky": "^8.0.1",
+    "react": "^18.2.0",
+    "size-limit": "^8.0.1",
+    "styled-components": "^5.3.5",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "@babel/core": "^7.18.10",
+    "@babel/plugin-transform-modules-commonjs": "^7.18.6",
+    "@babel/preset-react": "^7.18.6",
+    "@babel/preset-typescript": "^7.18.6",
+    "@types/express-handlebars": "^6.0.0",
+    "babel-plugin-styled-components": "^2.0.7",
+    "react-dom": "^18.2.0"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "use-jsxm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Theryston",
+  "license": "MIT",
+  "dependencies": {
+    "jsx-mail": "*"
+  }
+}
