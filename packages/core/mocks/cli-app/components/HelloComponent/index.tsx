@@ -1,5 +1,5 @@
-import React from "react";
-import * as S from "./styles";
+import React from 'react';
+import * as S from './styles';
 
 export function HelloComponent({ text }: { text: string }) {
   return (

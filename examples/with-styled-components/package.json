@@ -4,9 +4,5 @@
   "main": "index.js",
   "author": "Theryston",
   "license": "MIT",
-  "dependencies": {
-    "jsx-mail": "*",
-    "react": "^18.2.0",
-    "styled-components": "^5.3.5"
-  }
+  "dependencies": {}
 }

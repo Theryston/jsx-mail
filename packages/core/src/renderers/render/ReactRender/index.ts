@@ -8,7 +8,7 @@ export class ReactRender {
     // eslint-disable-next-line
     private inicialCode: (props?: any) => JSX.Element,
     // eslint-disable-next-line
-    private variables?: any,
+    private variables?: any
   ) {
     this.sheet = new ServerStyleSheet();
   }

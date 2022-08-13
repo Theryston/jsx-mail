@@ -1,11 +1,11 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Container = styled.div<{
   bg?: string;
 }>`
   height: 100vh;
   width: 100%;
-  background-color: ${(props) => props.bg || "red"};
+  background-color: ${(props) => props.bg || 'red'};
   display: flex;
 `;
 

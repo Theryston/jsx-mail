@@ -31,6 +31,7 @@ const command: GluegunCommand = {
         print.info('Mail Client Stopped')
         process.exit()
       })
+      // eslint-disable-next-line
       .on('restart', function (files: any) {
         print.info('Mail Client Restarted due to: ' + files.join(', '))
       })

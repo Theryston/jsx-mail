@@ -4,7 +4,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
 
-let execPromise = promisify(exec);
+const execPromise = promisify(exec);
 
 let render: IRender;
 

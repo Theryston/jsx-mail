@@ -1,5 +1,5 @@
 {
-  "mailPath": "./app",
+  "mailPath": "./mocks/app",
   "allowHtmlNotRecommended": false,
   "allowCssNotRecommended": false,
   "servePort": "8080"

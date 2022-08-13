@@ -3,7 +3,7 @@ const jsxMail = require('jsx-mail');
 
 jsxMail
   .render('Welcome', {
-    name: 'John Doe',
+    prefix: 'hello',
   })
   .then(result => {
     console.log(result);

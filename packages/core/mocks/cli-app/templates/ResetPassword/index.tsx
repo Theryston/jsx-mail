@@ -1,6 +1,6 @@
-import React from "react";
-import { HelloComponent } from "../../components/HelloComponent";
-import GlobalStyle from "../../globalStyle";
+import React from 'react';
+import { HelloComponent } from '../../components/HelloComponent';
+import GlobalStyle from '../../globalStyle';
 
 export function ResetPassword() {
   return (
