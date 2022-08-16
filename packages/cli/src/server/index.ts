@@ -28,6 +28,8 @@ export async function start(toolbox) {
       return res.status(400).send('Missing extension')
     }
 
+    toolbox.print.info(`Sending template: ${templateName}`)
+
     const variables = req.query
 
     try {
@@ -36,9 +38,9 @@ export async function start(toolbox) {
       res.render('template', {
         htmlCode,
       })
+    } catch (error) {
       // eslint-disable-next-line
-    } catch (error: any) {
-      res.status(500).send(error.message)
+      res.status(500).send((error as any).message)
     }
   })
 

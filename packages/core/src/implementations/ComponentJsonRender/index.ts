@@ -3,7 +3,9 @@ import { IComponentJson, IComponentJsonRender } from './IComponentJsonRender';
 
 export class ComponentJsonRender implements IComponentJsonRender {
   async fromComponent(
+    // eslint-disable-next-line
     componentFunction: (...props: any) => React.ReactElement,
+    // eslint-disable-next-line
     props: any
   ): Promise<IComponentJson> {
     let response: IComponentJson = {
@@ -15,7 +17,7 @@ export class ComponentJsonRender implements IComponentJsonRender {
     const result = await componentFunction(props);
 
     if (Array.isArray(result.props['children'])) {
-      for (let child of result.props['children']) {
+      for (const child of result.props['children']) {
         response.children.push(await this.handleChild(child));
       }
     } else {
@@ -24,6 +26,7 @@ export class ComponentJsonRender implements IComponentJsonRender {
 
     response.props = { ...result.props };
 
+    // eslint-disable-next-line
     if ((result.type as any).componentStyle) {
       const styleResult = await this.handleStyle(result);
       Object.keys(response.props).forEach((propKey) => {
@@ -32,9 +35,14 @@ export class ComponentJsonRender implements IComponentJsonRender {
         }
       });
       response.styles = styleResult.styleArr;
+      // eslint-disable-next-line
       response.type = (result.type as any).target;
     } else {
       response.type = result.type as string;
+    }
+
+    if (typeof response.type !== 'string') {
+      response = await this.fromComponent(response.type, response.props);
     }
 
     if (response.props.children) {
@@ -46,12 +54,16 @@ export class ComponentJsonRender implements IComponentJsonRender {
 
   async handleStyle(
     component: React.ReactElement<
+      // eslint-disable-next-line
       any,
+      // eslint-disable-next-line
       string | React.JSXElementConstructor<any>
     >
   ) {
     const usedProps: string[] = [];
+    // eslint-disable-next-line
     const styleString: any = (component.type as any).componentStyle.rules
+      // eslint-disable-next-line
       .map((rule: any) => {
         if (typeof rule === 'string') {
           return rule;
@@ -68,7 +80,9 @@ export class ComponentJsonRender implements IComponentJsonRender {
       .join('');
     const styleArr = styleString
       .split(';')
+      // eslint-disable-next-line
       .filter((s: any) => s.length > 0)
+      // eslint-disable-next-line
       .map((style: any) => {
         const [key, value] = style.split(':');
         return {
@@ -82,17 +96,18 @@ export class ComponentJsonRender implements IComponentJsonRender {
     };
   }
 
+  // eslint-disable-next-line
   async handleChild(child: any): Promise<any> {
     if (!child['$$typeof']) {
       return child;
     } else if (typeof child.type !== 'function') {
-      let children = [];
+      const children = [];
       const props = { ...child.props };
       delete props.children;
 
       if (child.props.children) {
         if (Array.isArray(child.props.children)) {
-          for (let c of child.props.children) {
+          for (const c of child.props.children) {
             children.push(await this.handleChild(c));
           }
         } else {
@@ -107,11 +122,13 @@ export class ComponentJsonRender implements IComponentJsonRender {
       };
 
       if (typeof result.type !== 'string') {
+        // eslint-disable-next-line
         result.type = (result.type as any).target;
       }
 
       return result;
     } else {
+      // eslint-disable-next-line
       const result = await this.fromComponent(child.type as any, child.props);
       return result;
     }
