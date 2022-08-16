@@ -8,7 +8,9 @@
   "scripts": {
     "start": "node index.js"
   },
-  "dependencies": {
-    "@jsx-mail/core": "*"
+  "dependencies": {},
+  "devDependencies": {
+    "@types/react": "^18.0.17",
+    "@types/styled-components": "^5.1.26"
   }
 }
