@@ -36,7 +36,7 @@ export class HtmlChecker implements IHtmlChecker {
     }
 
     const mailApp: IMailAppConfig = indexCode.default();
-    for (let templateName of Object.keys(mailApp)) {
+    for (const templateName of Object.keys(mailApp)) {
       const template = mailApp[templateName];
       const result = await this.componentJsonRender.fromComponent(
         template.componentFunction,
@@ -77,7 +77,7 @@ export class HtmlChecker implements IHtmlChecker {
       return response;
     }
 
-    for (let prop of Object.keys(componentJson.props)) {
+    for (const prop of Object.keys(componentJson.props)) {
       const propName = htmlSecurityList[tag].find(
         (propName) => propName === prop
       );
@@ -91,7 +91,7 @@ export class HtmlChecker implements IHtmlChecker {
       }
     }
 
-    for (let child of componentJson.children) {
+    for (const child of componentJson.children) {
       const childResult = await this.componentJson(child);
       if (childResult.hasUnexpected) {
         response.hasUnexpected = true;

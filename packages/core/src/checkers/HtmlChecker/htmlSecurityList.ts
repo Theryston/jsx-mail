@@ -24,6 +24,7 @@ export const htmlSecurityList: { [key: string]: string[] } = {
     'vspace',
     'width',
     'alt',
+    'path',
   ],
   label: ['class', 'id', 'style'],
   li: ['class', 'dir', 'id', 'style', 'type'],
