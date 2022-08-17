@@ -98,9 +98,15 @@ export class ComponentJsonRender implements IComponentJsonRender {
 
   // eslint-disable-next-line
   async handleChild(child: any): Promise<any> {
+    if (!child) {
+      return null;
+    }
+
     if (!child['$$typeof']) {
       return child;
-    } else if (typeof child.type !== 'function') {
+    }
+
+    if (typeof child.type !== 'function') {
       const children = [];
       const props = { ...child.props };
       delete props.children;
@@ -116,14 +122,33 @@ export class ComponentJsonRender implements IComponentJsonRender {
       }
 
       const result = {
+        styles: child.styles,
         type: child.type as string,
         children: children,
         props,
       };
 
-      if (typeof result.type !== 'string') {
+      if (
+        typeof result.type !== 'string' &&
+        // eslint-disable-next-line
+        typeof (result.type as any).target === 'string'
+      ) {
         // eslint-disable-next-line
         result.type = (result.type as any).target;
+      }
+
+      if (
+        typeof result.type !== 'string' &&
+        // eslint-disable-next-line
+        typeof (result.type as any).target !== 'string'
+      ) {
+        const targetResult = await this.fromComponent(
+          // eslint-disable-next-line
+          (result.type as any).target,
+          result.props
+        );
+        result.children.push(targetResult);
+        result.type = targetResult.type;
       }
 
       return result;
