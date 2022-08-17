@@ -1,0 +1,12 @@
+{
+  "name": "use-component-image",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Theryston",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^18.0.17",
+    "@types/styled-components": "^5.1.26"
+  },
+  "dependencies": {}
+}
