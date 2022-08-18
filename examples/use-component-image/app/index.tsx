@@ -32,6 +32,4 @@ export default function App() {
 
 const StyledImage = styled(Image)`
   width: 128px;
-  height: 128px;
-  object-fit: cover;
 `;

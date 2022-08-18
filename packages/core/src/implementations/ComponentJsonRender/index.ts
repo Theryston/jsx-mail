@@ -6,7 +6,8 @@ export class ComponentJsonRender implements IComponentJsonRender {
     // eslint-disable-next-line
     componentFunction: (...props: any) => React.ReactElement,
     // eslint-disable-next-line
-    props: any
+    props: any,
+    { hasAlreadyBeenExecuted }: { hasAlreadyBeenExecuted?: boolean } = {}
   ): Promise<IComponentJson> {
     let response: IComponentJson = {
       type: '',
@@ -14,7 +15,14 @@ export class ComponentJsonRender implements IComponentJsonRender {
       props: {},
     };
 
-    const result = await componentFunction(props);
+    let result;
+
+    if (!hasAlreadyBeenExecuted) {
+      result = await componentFunction(props);
+    } else {
+      // eslint-disable-next-line
+      result = componentFunction as any;
+    }
 
     if (Array.isArray(result.props['children'])) {
       for (const child of result.props['children']) {
@@ -29,7 +37,7 @@ export class ComponentJsonRender implements IComponentJsonRender {
     // eslint-disable-next-line
     if ((result.type as any).componentStyle) {
       const styleResult = await this.handleStyle(result);
-      Object.keys(response.props).forEach((propKey) => {
+      Object.keys(response.props).forEach(propKey => {
         if (styleResult.usedProps.includes(propKey)) {
           delete response.props[propKey];
         }
@@ -42,7 +50,11 @@ export class ComponentJsonRender implements IComponentJsonRender {
     }
 
     if (typeof response.type !== 'string') {
-      response = await this.fromComponent(response.type, response.props);
+      const typeResult = await this.fromComponent(
+        response.type,
+        response.props
+      );
+      response = { ...typeResult, styles: response.styles };
     }
 
     if (response.props.children) {
@@ -69,7 +81,7 @@ export class ComponentJsonRender implements IComponentJsonRender {
           return rule;
         } else {
           const propValue = rule(component.props);
-          Object.keys(component.props).forEach((propKey) => {
+          Object.keys(component.props).forEach(propKey => {
             if (component.props[propKey] === propValue) {
               usedProps.push(propKey);
             }
@@ -122,7 +134,6 @@ export class ComponentJsonRender implements IComponentJsonRender {
       }
 
       const result = {
-        styles: child.styles,
         type: child.type as string,
         children: children,
         props,
@@ -142,10 +153,19 @@ export class ComponentJsonRender implements IComponentJsonRender {
         // eslint-disable-next-line
         typeof (result.type as any).target !== 'string'
       ) {
+        const typeExecuted: any = {
+          ...result,
+        };
+
+        // if (!typeExecuted.props) {
+        //   typeExecuted.props = {};
+        // }
+
         const targetResult = await this.fromComponent(
           // eslint-disable-next-line
-          (result.type as any).target,
-          result.props
+          typeExecuted,
+          result.props,
+          { hasAlreadyBeenExecuted: true }
         );
         result.children.push(targetResult);
         result.type = targetResult.type;
