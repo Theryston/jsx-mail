@@ -2,6 +2,7 @@ export const cssSecurityList: { [key: string]: string[] } = {
   background: ['*'],
   'background-color': ['*'],
   border: ['*'],
+  margin: ['*'],
   'border-bottom': ['*'],
   'border-bottom-color': ['*'],
   'border-bottom-style': ['*'],

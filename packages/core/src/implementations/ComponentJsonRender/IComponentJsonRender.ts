@@ -5,7 +5,10 @@ export interface IComponentJsonRender {
     // eslint-disable-next-line
     componentFunction: (...props: any) => React.ReactElement,
     // eslint-disable-next-line
-    props: any
+    props: any,
+    options?: {
+      hasAlreadyBeenExecuted?: boolean;
+    }
   ): Promise<IComponentJson>;
 }
 
