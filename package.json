@@ -11,11 +11,13 @@
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "commit": "yarn git-cz"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
+    "commitizen": "^4.2.5",
     "husky": "^8.0.1",
     "prettier": "latest",
     "turbo": "latest"
@@ -30,5 +32,10 @@
     "@typescript-eslint/parser": "^5.33.0",
     "eslint": "^8.21.0"
   },
-  "packageManager": "yarn@1.22.19"
+  "packageManager": "yarn@1.22.19",
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  }
 }
