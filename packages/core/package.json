@@ -16,11 +16,6 @@
     "test": "tsdx test",
     "lint": "eslint ./src/*.ts*"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
-  },
   "prettier": {
     "printWidth": 80,
     "semi": true,
@@ -46,7 +41,6 @@
     "@types/react-dom": "^18.0.6",
     "@types/styled-components": "^5.1.26",
     "eslint-config-react-app": "^7.0.1",
-    "husky": "^8.0.1",
     "react": "^18.2.0",
     "size-limit": "^8.0.1",
     "styled-components": "^5.3.5",
