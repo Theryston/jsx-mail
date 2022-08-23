@@ -37,10 +37,13 @@
   ],
   "devDependencies": {
     "@size-limit/preset-small-lib": "^8.0.1",
+    "@types/jest": "^26.0.20",
+    "@types/node": "^12.7.11",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@types/styled-components": "^5.1.26",
     "eslint-config-react-app": "^7.0.1",
+    "jest": "^26.6.3",
     "react": "^18.2.0",
     "size-limit": "^8.0.1",
     "styled-components": "^5.3.5",

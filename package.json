@@ -3,16 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "description": "A framework to create the look of your emails. 🚀✉️",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "commit": "yarn git-cz"
+    "commit": "pnpm git-cz",
+    "preinstall": "npx only-allow pnpm"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
@@ -32,7 +30,6 @@
     "@typescript-eslint/parser": "^5.33.0",
     "eslint": "^8.21.0"
   },
-  "packageManager": "yarn@1.22.19",
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
