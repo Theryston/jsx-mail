@@ -46,10 +46,13 @@ describe('ComponentJsonRender', () => {
 
   it('should return works with styled components', async () => {
     const componentJsonRender = new ComponentJsonRender();
-    const attrs = {
-      bg: 'red',
-    };
     const componentFunction = jest.fn(({ test }) => {
+      const attrs = {
+        bg: 'red',
+      };
+
+      // eslint-disable-next-line
+      // @ts-ignore
       const Container = styledComponents.div
         .withConfig({
           displayName: 'styles__Container',

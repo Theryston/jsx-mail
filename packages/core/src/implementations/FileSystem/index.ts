@@ -58,9 +58,11 @@ export class FileSystem implements IFileSystem {
   }
 
   async rm(inputPath: string): Promise<void> {
-    await fs.promises.rm(inputPath, { recursive: true, force: true });
+    // eslint-disable-next-line
+    await (fs.promises as any).rm(inputPath, { recursive: true, force: true });
   }
 
+  // eslint-disable-next-line
   async importFile(inputPath: string): Promise<any> {
     return await import(inputPath);
   }
