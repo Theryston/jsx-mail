@@ -50,13 +50,14 @@ describe('ComponentJsonRender', () => {
       bg: 'red',
     };
     const componentFunction = jest.fn(({ test }) => {
-      // @ts-ignore
       const Container = styledComponents.div
         .withConfig({
           displayName: 'styles__Container',
         })
         .attrs(attrs)(
+        // eslint-disable-next-line
         ['width:100%;background-color:', ';'] as any,
+        // eslint-disable-next-line
         (props: any) => props.bg || 'red'
       );
 
