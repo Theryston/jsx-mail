@@ -32,9 +32,11 @@ export class Core {
     return result;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async render(templateName: string, variables?: any) {
-    const render = new Render(path.join(this.inputPath, this.outputDirname));
+  public async render(templateName: string, variables?: any, config?: any) {
+    const render = new Render(
+      path.join(this.inputPath, this.outputDirname),
+      config
+    );
     const htmlCode = await render.run(templateName, variables);
     return htmlCode;
   }

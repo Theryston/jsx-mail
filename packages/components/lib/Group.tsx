@@ -1,7 +1,8 @@
-import React from 'react';
+import * as React from 'react';
 
 export interface GroupProps extends React.HTMLAttributes<HTMLDivElement> {
   align?: 'left' | 'center' | 'right';
+  children?: React.ReactNode;
 }
 
 export function Group(props: GroupProps) {

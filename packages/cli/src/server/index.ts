@@ -4,10 +4,9 @@ import { engine } from 'express-handlebars'
 import { builder } from '../builder'
 
 const app = express()
-// eslint-disable-next-line
 let server: any
 
-export async function start(toolbox) {
+export async function start(toolbox, config) {
   const path = toolbox.parameters.argv[4]
   const port = toolbox.parameters.argv[6] || 8080
   app.engine('handlebars', engine())
@@ -33,13 +32,12 @@ export async function start(toolbox) {
     const variables = req.query
 
     try {
-      const htmlCode = await core.render(templateName, variables)
+      const htmlCode = await core.render(templateName, variables, config)
 
       res.render('template', {
         htmlCode,
       })
     } catch (error) {
-      // eslint-disable-next-line
       res.status(500).send((error as any).message)
     }
   })

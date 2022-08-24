@@ -1,25 +1,21 @@
 {
-   "presets": [
-     ["@babel/preset-typescript",
-   {
-      "isTSX": true,
-      "allExtensions": true
-   }
-   ],
-     [
-       "@babel/preset-react",
-       {
-         "runtime": "classic"
-       }
-     ]
-   ],
-   "plugins": [
-     "@babel/plugin-transform-modules-commonjs",
-     [
-       "babel-plugin-styled-components",
-       {
-         "ssr": false
-       }
-     ]
-   ]
- }
+  "presets": [
+    [
+      "@babel/preset-typescript",
+      {
+        "isTSX": true,
+        "allExtensions": true
+      }
+    ],
+    ["@babel/preset-react"]
+  ],
+  "plugins": [
+    "@babel/plugin-transform-modules-commonjs",
+    [
+      "babel-plugin-styled-components",
+      {
+        "ssr": false
+      }
+    ]
+  ]
+}
