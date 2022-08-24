@@ -5,9 +5,8 @@ import { ReactRender } from './ReactRender/index';
 import { IMailAppConfig } from '../../interfaces/IMailApp';
 
 export class Render implements IRender {
-  constructor(private inputPath: string) {}
+  constructor(private inputPath: string, private config?: any) {}
 
-  // eslint-disable-next-line
   async run(templateName: string, variables?: any): Promise<string> {
     const indexFilePath = path.join(this.inputPath, 'index.js');
 
@@ -29,6 +28,29 @@ export class Render implements IRender {
 
     const { htmlCode, styleTag } = await reactRender.run();
 
-    return `<!DOCTYPE html><html><head><title>${templateName}</title>${styleTag}</head><body>${htmlCode}</body></html>`;
+    const resultCode = `
+    <!DOCTYPE html>
+    <html lang="${this.config?.lang || 'en'}">
+      <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
+        <title>${templateName}</title>
+        <style>
+          body {
+            margin: 0;
+            padding: 0;
+          }
+        </style>
+        ${styleTag}
+      </head>
+      <body>
+        ${htmlCode}
+      </body>
+    </html>
+    `;
+
+    return resultCode.replace(/\n/g, '');
   }
 }

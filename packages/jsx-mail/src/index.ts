@@ -9,7 +9,7 @@ export async function render(templateName: string, variables: any) {
 
   const core = new Core(mailPath, `dist`);
 
-  return await core.render(templateName, variables);
+  return await core.render(templateName, variables, config);
 }
 
 export function getAbsolutePath(subPath: string) {
