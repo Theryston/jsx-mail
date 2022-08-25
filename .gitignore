@@ -32,3 +32,7 @@ yarn-error.log*
 
 # turbo
 .turbo
+
+# jsx-mail
+html-check
+css-check

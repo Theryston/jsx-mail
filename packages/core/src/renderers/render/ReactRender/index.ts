@@ -1,5 +1,5 @@
 import { ServerStyleSheet } from 'styled-components';
-import { renderToString } from 'react-dom/server';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 export class ReactRender {
   sheet: ServerStyleSheet;
@@ -18,7 +18,7 @@ export class ReactRender {
     styleTag: string;
   }> {
     const code = this.sheet.collectStyles(this.inicialCode(this.variables));
-    const htmlCode = renderToString(code);
+    const htmlCode = renderToStaticMarkup(code);
     const styleTag = this.sheet.getStyleTags();
     return {
       htmlCode,

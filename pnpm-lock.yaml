@@ -35,107 +35,18 @@ importers:
       prettier: 2.7.1
       turbo: 1.4.3
 
-  examples/use-component-button:
+  examples/error-react-hook:
     specifiers:
       '@jsx-mail/components': workspace:^1.0.0
-      '@jsx-mail/core': workspace:*
       '@types/react': ^18.0.17
-      '@types/styled-components': ^5.1.26
       jsx-mail: workspace:^1.0.0
       react: ^18.2.0
-      styled-components: ^5.3.5
-    dependencies:
-      '@jsx-mail/components': link:../../packages/components
-      '@jsx-mail/core': link:../../packages/core
-      jsx-mail: link:../../packages/jsx-mail
-      react: 18.2.0
-      styled-components: 5.3.5_pumtretovylab5lwhztzjp2kuy
-    devDependencies:
-      '@types/react': 18.0.17
-      '@types/styled-components': 5.1.26
-
-  examples/use-component-group:
-    specifiers:
-      '@jsx-mail/components': workspace:^1.0.0
-      '@types/react': ^18.0.17
-      '@types/styled-components': ^5.1.26
-      react: ^18.2.0
-      styled-components: ^5.3.5
-    dependencies:
-      '@jsx-mail/components': link:../../packages/components
-      react: 18.2.0
-      styled-components: 5.3.5_pumtretovylab5lwhztzjp2kuy
-    devDependencies:
-      '@types/react': 18.0.17
-      '@types/styled-components': 5.1.26
-
-  examples/use-component-image:
-    specifiers:
-      '@jsx-mail/components': workspace:^1.0.0
-      '@types/react': ^18.0.17
-      '@types/styled-components': ^5.1.26
-      jsx-mail: workspace:^1.0.0
-      react: ^18.2.0
-      styled-components: ^5.3.5
     dependencies:
       '@jsx-mail/components': link:../../packages/components
       jsx-mail: link:../../packages/jsx-mail
       react: 18.2.0
-      styled-components: 5.3.5_pumtretovylab5lwhztzjp2kuy
     devDependencies:
       '@types/react': 18.0.17
-      '@types/styled-components': 5.1.26
-
-  examples/use-core:
-    specifiers:
-      '@jsx-mail/components': workspace:^1.0.0
-      '@jsx-mail/core': workspace:*
-      '@types/react': ^18.0.17
-      '@types/styled-components': ^5.1.26
-      react: ^18.2.0
-      styled-components: ^5.3.5
-    dependencies:
-      '@jsx-mail/components': link:../../packages/components
-      '@jsx-mail/core': link:../../packages/core
-      react: 18.2.0
-      styled-components: 5.3.5_pumtretovylab5lwhztzjp2kuy
-    devDependencies:
-      '@types/react': 18.0.17
-      '@types/styled-components': 5.1.26
-
-  examples/use-jsxm:
-    specifiers:
-      '@jsx-mail/components': workspace:^1.0.0
-      '@types/react': ^18.0.17
-      '@types/styled-components': ^5.1.26
-      jsx-mail: workspace:^1.0.0
-      react: ^18.2.0
-      styled-components: ^5.3.5
-    dependencies:
-      '@jsx-mail/components': link:../../packages/components
-      jsx-mail: link:../../packages/jsx-mail
-      react: 18.2.0
-      styled-components: 5.3.5_pumtretovylab5lwhztzjp2kuy
-    devDependencies:
-      '@types/react': 18.0.17
-      '@types/styled-components': 5.1.26
-
-  examples/with-styled-components:
-    specifiers:
-      '@jsx-mail/components': workspace:^1.0.0
-      '@types/react': ^18.0.17
-      '@types/styled-components': ^5.1.26
-      jsx-mail: workspace:^1.0.0
-      react: ^18.2.0
-      styled-components: ^5.3.5
-    dependencies:
-      '@jsx-mail/components': link:../../packages/components
-      jsx-mail: link:../../packages/jsx-mail
-      react: 18.2.0
-      styled-components: 5.3.5_pumtretovylab5lwhztzjp2kuy
-    devDependencies:
-      '@types/react': 18.0.17
-      '@types/styled-components': 5.1.26
 
   packages/cli:
     specifiers:
