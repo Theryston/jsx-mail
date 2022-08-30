@@ -1,6 +1,7 @@
 # JSXMail
 
-![jsx-mail-comparation](https://user-images.githubusercontent.com/72868196/183707838-19065b95-34fa-430e-a3e1-f4f353a05259.jpg)
+![terminal](https://user-images.githubusercontent.com/72868196/187474934-ba56969c-0fb3-4d07-8f51-6ae2952acdea.gif)
+
 
 jsx-mail is an email framework that uses React to create email templates. Using JSX syntax makes it extremely easy to code your template, allowing you to create highly customized emails and reducing code maintenance work. Also, the main purpose of jsx-mail is to make your email templates compatible with all email clients.
 
