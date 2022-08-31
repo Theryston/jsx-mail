@@ -34,3 +34,7 @@ pnpm jsxm build
 ## Documentation
 
 See the documentation [here](https://jsx-mail.org/docs/cli)
+
+## Server
+
+Here the [figma link](https://www.figma.com/file/hL1IjKPp9kwke9QT6XyokW/jsx-mail-client?node-id=2%3A1654) of the mail client
