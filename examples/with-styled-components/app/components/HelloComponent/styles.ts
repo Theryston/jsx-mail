@@ -6,4 +6,5 @@ export const Container = styled(Group)<{
 }>`
   width: 100%;
   background: ${props => props.bg || 'red'};
+  padding: 10px;
 `;

@@ -8,7 +8,9 @@ export default function App() {
     Welcome: {
       componentFunction: Welcome,
       props: {
-        prefix: 'string',
+        paragraph:
+          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis ratione vel distinctio nulla illum consequuntur quaerat laboriosam ad sequi mollitia, in dolores necessitatibus',
+        name: 'John Doe',
       },
     },
     ResetPassword: {

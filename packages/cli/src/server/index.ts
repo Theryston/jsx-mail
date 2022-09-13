@@ -1,7 +1,7 @@
 import * as express from 'express'
 import { Core } from '@jsx-mail/core'
 import { engine } from 'express-handlebars'
-import { builder } from '../builder'
+import { builder } from '../core/builder'
 
 const app = express()
 let server: any
@@ -15,10 +15,6 @@ export async function start(toolbox, config) {
 
   const core = new Core(path, `dist`)
   await builder(toolbox)
-
-  app.get('/', (req, res) => {
-    res.render('index')
-  })
 
   app.get('/:templateName', async (req, res) => {
     const templateName = req.params.templateName
@@ -40,6 +36,10 @@ export async function start(toolbox, config) {
     } catch (error) {
       res.status(500).send((error as any).message)
     }
+  })
+
+  app.get('*', async (req, res) => {
+    res.status(404).send('Not found')
   })
 
   server = app.listen(port)
