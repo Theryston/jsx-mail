@@ -1,5 +1,5 @@
 import { Core } from '@jsx-mail/core'
-import { getFileConfig } from './utils/getFileConfig'
+import { getFileConfig } from '../utils/getFileConfig'
 import { GluegunToolbox } from 'gluegun'
 
 export async function render(toolbox: GluegunToolbox): Promise<string> {

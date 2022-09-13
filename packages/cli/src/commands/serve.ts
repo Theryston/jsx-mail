@@ -1,40 +1,56 @@
 import { GluegunCommand } from 'gluegun'
-import * as nodemon from 'nodemon'
-import { getFileConfig } from '../utils/getFileConfig'
+import { getIndexContent } from '../utils/getIndexContent'
+import { serve } from '../core/serve'
 
 const command: GluegunCommand = {
   name: 'serve',
   run: async (toolbox) => {
-    const { print } = toolbox
+    console.clear()
 
-    const config = await getFileConfig()
+    const { prompt } = toolbox
 
-    const mailPath = config.mailPath.replace('./', `${process.cwd()}/`)
+    const indexContent = await getIndexContent(toolbox)
 
-    nodemon(
-      `--watch ${mailPath} -e tsx,ts,js,jsx --ignore ${mailPath}/dist/ --ignore ${mailPath}/css-check/ --ignore ${mailPath}/html-check/ --exec "jsxm startServer --path ${mailPath} --port ${
-        config.servePort || 8080
-      }"`
-    )
+    const templates = Object.keys(indexContent).map((key) => {
+      return {
+        name: key,
+        ...indexContent[key],
+      }
+    })
 
-    nodemon
-      .on('start', function () {
-        console.clear()
+    const { template } = await prompt.ask({
+      type: 'select',
+      name: 'template',
+      message: 'Select a template to serve',
+      choices: ['All', ...templates.map((t) => t.name)],
+    })
 
-        print.info(
-          `Mail Client Started. Open in web browser: ${print.colors.blue(
-            `http://localhost:${config.servePort || 8080}`
-          )}`
-        )
+    if (template !== 'All') {
+      const propsAsks: any = []
+      const props = templates.find((t) => t.name === template).props
+
+      for (const prop in props) {
+        propsAsks.push({
+          type: 'input',
+          name: prop,
+          message: `Insert ${prop} value`,
+        })
+      }
+
+      const propsValues = await prompt.ask(propsAsks)
+
+      await serve(toolbox, {
+        templateName: template,
+        props: propsValues,
+        isAll: false,
       })
-      .on('quit', function () {
-        print.info('Mail Client Stopped')
-        process.exit()
+    } else {
+      await serve(toolbox, {
+        isAll: true,
+        templates,
       })
-      // eslint-disable-next-line
-      .on('restart', function (files: any) {
-        print.info('Mail Client Restarted due to: ' + files.join(', '))
-      })
+      console.log('bateu aqui')
+    }
   },
 }
 

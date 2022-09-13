@@ -1,6 +1,6 @@
 import { GluegunCommand } from 'gluegun'
-import { builder } from '../builder'
-import { render } from '../render'
+import { builder } from '../core/builder'
+import { render } from '../core/render'
 
 const command: GluegunCommand = {
   name: 'render',
