@@ -5,6 +5,7 @@
   "description": "A framework to create the look of your emails. 🚀✉️",
   "scripts": {
     "build": "turbo run build",
+    "build:web": "turbo run build --scope=web --no-deps --include-dependencies",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "test": "turbo run test",
