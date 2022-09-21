@@ -1,0 +1,39 @@
+---
+title: 'The Index file of your mail application'
+---
+
+# Index File
+
+The index file is the first file that JSX Mail will read. This file should export a function by default, this function is normally called `app` and this function should return an object where each element of the object is a template. Example of this object:
+
+```json
+{
+  ConfirmEmail: {...},
+  Welcome: {...},
+  ResetPassword: {...}
+}
+```
+
+In the example like this there will be 3 templates (ConfirmEmail, Welcome, ResetPassword) each of these email templates must have an object of it that contains an attribute called `props` (A representation of all props with data set to them) and `componentFunction` (A react component in function form, is not: `<SameComponent />` must be: `SameComponent`)
+
+Finally your index file should look something like this: (the Welcome function can be in another file)
+
+```tsx
+import React from 'react';
+import { Group } from '@jsx-mail/components';
+
+const Welcome = ({ name }) => {
+  return <Group>Hello {name}</Group>;
+};
+
+export default function App() {
+  return {
+    Welcome: {
+      componentFunction: Welcome,
+      props: {
+        name: 'string',
+      },
+    },
+  };
+}
+```
