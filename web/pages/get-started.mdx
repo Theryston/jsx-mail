@@ -1,0 +1,74 @@
+---
+title: 'Your first Hello World with JSX Mail'
+---
+
+# Get Started
+
+To start let's create a hello world?
+
+- I created a folder called jsx-hello and inside it start a nodejs project (I won't go into detail with this part. We urge you to know about nodejs before you start learning about any framework)
+- I created in the folder a file called `jsx-mail.json`, it will be from there that JSX Mail will get all the necessary information. [See more about him here](/json-file)
+
+```json
+{
+  "mailPath": "./app",
+  "allowHtmlNotRecommended": false,
+  "allowCssNotRecommended": false,
+  "servePort": "8080",
+  "lang": "en-US"
+}
+```
+
+- Install the following dependencies:
+
+```bash
+pnpm add -D @jsx-mail/cli
+```
+
+```bash
+pnpm add @jsx-mail/components jsx-mail react
+```
+
+- Now create a folder with the same path as the `mailPath` attribute
+
+- Inside that folder create a file called `index.tsx`
+
+This file must follow the pattern of the index. [Read this to understand](/index-file)
+
+```tsx
+import React from 'react';
+import { Group } from '@jsx-mail/components';
+
+export default function App() {
+  return {
+    Welcome: {
+      componentFunction: ({ name }) => {
+        return <Group>Hello {name}</Group>;
+      },
+      props: {
+        name: 'string',
+      },
+    },
+  };
+}
+```
+
+- Now OUTSIDE the folder where the `index.tsx` file is (the `./app` folder in this case) let's create a file called `index.js`
+
+```json
+const jsxMail = require("jsx-mail");
+
+jsxMail
+  .render("Welcome", {
+    name: "John",
+  })
+  .then((html) => {
+    console.log(html);
+  });
+```
+
+- Run `pnpm jsxm build`
+
+- Run `node index.js`
+
+Congratulations! all the HTML of the email template will be in front of you! Now your creativity is the limit. You can use this HTML to be sent in an email for example
