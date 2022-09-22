@@ -1,0 +1,24 @@
+---
+title: 'Group Component'
+---
+
+# Group Component
+
+```jsx
+import React from 'react';
+import { Group } from '@jsx-mail/components';
+
+const component = ({ name }) => {
+  return (
+    <Group align="center">
+      <h1>Hello {name}, welcome to our website!</h1>
+    </Group>
+  );
+};
+```
+
+The group component is made to make life easier for us developers when we have to group or align something in our email templates. It serves as an html div. We do not advise the use of div but the component group
+
+## align
+
+align is a prop that will inform where the content inside the group will be aligned. their values can be: 'left' | 'center' | 'right'

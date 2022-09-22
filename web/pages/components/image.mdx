@@ -1,0 +1,49 @@
+---
+title: 'Image Component'
+---
+
+# Image Component
+
+```tsx
+import React from 'react';
+import { Image, Group } from '@jsx-mail/components';
+import { getAbsolutePath } from 'jsx-mail';
+
+const component = ({ name }) => {
+  return (
+    <Group>
+      <h1>{name}, see this:</h1>
+      <Image
+        alt="Image from url"
+        height="128"
+        width="128"
+        src="https://i.ibb.co/GdDPZRf/Ellipse-6.png"
+      />
+      <Image
+        alt="Image from path"
+        path={getAbsolutePath('assets/screenshot.png')}
+      />
+    </Group>
+  );
+};
+```
+
+The image component is a component made to save lives by having to send an image in an email template. Basically it will display an image on the screen as the HTML `img` tag. But with some features such as automatic image hosting among others...
+
+## Props
+
+The `Image` component has two main props. One is `src` and one is `path`
+
+If your image is on a host and you have its url, you must pass the image url to the `src` prop, as in the example below:
+
+```tsx
+<Image alt="Image from url" src="https://i.ibb.co/GdDPZRf/Ellipse-6.png" />
+```
+
+But if you don't have the url of the image and it is in your project you can pass the absolute path of the image in the `path` prop that the Image component will automatically host it on the site [https://imgbb.com](https://imgbb.com/)
+
+To get the absolute path of your image use the util called `getAbsolutePath` from inside the `jsx-mail` package [See more about this util here](/utils/get-absolute-path)
+
+```tsx
+<Image alt="Image from path" path={getAbsolutePath('assets/screenshot.png')} />
+```

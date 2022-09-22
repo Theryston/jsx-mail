@@ -1,0 +1,20 @@
+---
+title: 'Button Component'
+---
+
+# Button Component
+
+```tsx
+import React from 'react';
+import { Button } from '@jsx-mail/components';
+
+const component = ({ name }) => {
+  return <Button href="http://localhost:3000">{name}, Click Here</Button>;
+};
+```
+
+The no button component is a simple button that is ultimately compiled into an a tag and can be used to create buttons in your email template. It helps to make it easy and ensure that all email clients show your button
+
+## href
+
+The `href` is a prop that must contain a link, where the user will be redirected once they click on the button.
