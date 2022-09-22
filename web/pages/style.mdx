@@ -1,0 +1,47 @@
+---
+title: 'How to style your email template'
+---
+
+# How To Style
+
+Currently JSX Mail only accepts styled components. It is our plan to accept all forms of styling. Styled components was the most viable way of styling for us to be able to check our unsupported css. Unsupported CSS Check is a validation where jsx mail will see if all css attributes in your template are supported by email clients. [See more on how to disable this here](/json-file)
+
+To install the styled component in jsx mail is super simple. Just install `styled-components` as a dependency of your project
+
+```bash
+pnpm add styled-components
+```
+
+After that you can already import the styled components and exit using as in the examples below:
+
+```jsx
+import React from 'react';
+import { Group } from '@jsx-mail/components';
+import styled from 'styled-components';
+
+export function Welcome({ paragraph, name }) {
+  return (
+    <Container>
+      <Body>
+        <h1>Hello, name</h1>
+        <StyledParagraph>{paragraph}</StyledParagraph>
+      </Body>
+    </Container>
+  );
+}
+
+const StyledParagraph = styled.p`
+  font-size: 1.5em;
+`;
+
+const Container = styled(Group)`
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px 100px;
+  background-color: #f7f7f7;
+`;
+
+const Body = styled(Group)`
+  background-color: #fff;
+  padding: 20px;
+`;
+```

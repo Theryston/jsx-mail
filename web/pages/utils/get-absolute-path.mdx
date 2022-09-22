@@ -1,0 +1,15 @@
+---
+title: 'Get absolute path util'
+---
+
+# Get absolute path util
+
+```js
+import { getAbsolutePath } from 'jsx-mail';
+
+const somePath = getAbsolutePath('/some/path');
+
+console.log(somePath); // C:/projects/my-api/mail-app/some/path;
+```
+
+The `getAbsolutePath` util is a util that returns the absolute path of a file/folder that is at the root of your email application. Your email application is the folder where the `index.tsx` file exists, the same as the path in the `mailPath` parameter in your `jsx-mail.json` file
