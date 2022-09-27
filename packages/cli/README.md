@@ -33,7 +33,7 @@ pnpm jsxm build
 
 ## Documentation
 
-See the documentation [here](https://jsx-mail.org/docs/cli)
+See the documentation [here](https://jsx-mail.org/get-started)
 
 ## Server
 
