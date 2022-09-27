@@ -32,4 +32,4 @@ core.build().then((result) => {
 
 ## Documentation
 
-See the documentation [here](https://jsx-mail.org/docs/core)
+See the documentation [here](https://jsx-mail.org/core)

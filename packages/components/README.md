@@ -21,4 +21,4 @@ It is very simple to use the jsx-mail components, just install it (`pnpm add/yar
 
 ## Documentation
 
-See the documentation [here](https://jsx-mail.org/docs/components)
+See the documentation [here](https://jsx-mail.org/components)

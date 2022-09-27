@@ -36,7 +36,7 @@ console.log(template) // <html>...<h1>John Welcome to jsx-mail</h1>...</html>
 
 ## Documentation
 
-See the documentation [here](https://jsx-mail.org/docs)
+See the documentation [here](https://jsx-mail.org)
 
 ## Why use jsx-mail?
 
