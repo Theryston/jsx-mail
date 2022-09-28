@@ -1,6 +1,6 @@
 {
   "name": "@jsx-mail/cli",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "A framework to create the look of your emails. 🚀✉️",
   "private": true,
   "types": "build/types/types.d.ts",
@@ -34,7 +34,7 @@
     "express": "^4.18.1",
     "express-handlebars": "^6.0.6",
     "gluegun": "latest",
-    "jsx-mail": "workspace:^2.0.0",
+    "jsx-mail": "workspace:^3.0.0",
     "nodemon": "^2.0.19",
     "open": "^8.4.0"
   },

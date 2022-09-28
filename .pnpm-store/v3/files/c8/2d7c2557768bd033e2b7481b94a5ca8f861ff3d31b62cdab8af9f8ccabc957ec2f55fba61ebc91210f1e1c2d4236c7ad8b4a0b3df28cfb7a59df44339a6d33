@@ -1,0 +1,222 @@
+{
+  "name": "gluegun",
+  "version": "5.1.2",
+  "description": "A delightful toolkit for building Node-powered CLIs.",
+  "repository": "infinitered/gluegun",
+  "bin": {
+    "gluegun": "bin/gluegun"
+  },
+  "main": "build/index.js",
+  "types": "build/types/index.d.ts",
+  "scripts": {
+    "format": "prettier --write \"{**/*.ts,**/*.js,.circleci/**/*.js}\" --loglevel error && eslint . --fix",
+    "clean-build": "rimraf ./build && node ./.circleci/removeDirect.js",
+    "compile": "tsc -p .",
+    "copy-templates": "cp -a ./src/cli/templates ./build/cli/",
+    "create-direct": "node ./.circleci/createDirect.js",
+    "clean-types": "node .circleci/cleanDir.js ./build/types",
+    "build": "yarn format && yarn clean-build && yarn compile && yarn copy-templates && yarn create-direct && yarn clean-types && echo 'Run yarn clean-build to remove build artifacts.'",
+    "lint": "eslint .",
+    "integration": "yarn build && jest --config=./.circleci/jest-integration.config.json",
+    "test": "jest",
+    "watch": "jest --watch",
+    "snapupdate": "jest --updateSnapshot",
+    "windows:test": "yarn && yarn format && yarn test && yarn clean-build && yarn compile && yarn copy-templates && jest --config=./.circleci/jest-integration.config.json",
+    "ci:test": "yarn lint && yarn test --maxWorkers=2 && yarn integration",
+    "ci:publish": "yarn build && yarn semantic-release",
+    "semantic-release": "semantic-release",
+    "prepare": "husky install"
+  },
+  "author": {
+    "name": "Infinite Red, Inc.",
+    "email": "npm@infinite.red",
+    "url": "https://github.com/infinitered/gluegun"
+  },
+  "files": [
+    "docs",
+    "bin",
+    "build",
+    "sniff.js",
+    "sniff-async.js",
+    "toolbox.js",
+    "filesystem.js",
+    "strings.js",
+    "print.js",
+    "system.js",
+    "semver.js",
+    "http.js",
+    "patching.js",
+    "prompt.js",
+    "LICENSE",
+    "readme.md"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "apisauce": "^2.1.5",
+    "app-module-path": "^2.2.0",
+    "cli-table3": "0.6.0",
+    "colors": "1.4.0",
+    "cosmiconfig": "7.0.1",
+    "cross-spawn": "7.0.3",
+    "ejs": "3.1.6",
+    "enquirer": "2.3.6",
+    "execa": "5.1.1",
+    "fs-jetpack": "4.3.1",
+    "lodash.camelcase": "^4.3.0",
+    "lodash.kebabcase": "^4.1.1",
+    "lodash.lowercase": "^4.3.0",
+    "lodash.lowerfirst": "^4.3.1",
+    "lodash.pad": "^4.5.1",
+    "lodash.padend": "^4.6.1",
+    "lodash.padstart": "^4.6.1",
+    "lodash.repeat": "^4.1.0",
+    "lodash.snakecase": "^4.1.1",
+    "lodash.startcase": "^4.4.0",
+    "lodash.trim": "^4.5.1",
+    "lodash.trimend": "^4.5.1",
+    "lodash.trimstart": "^4.5.1",
+    "lodash.uppercase": "^4.3.0",
+    "lodash.upperfirst": "^4.3.1",
+    "ora": "4.0.2",
+    "pluralize": "^8.0.0",
+    "semver": "7.3.5",
+    "which": "2.0.2",
+    "yargs-parser": "^21.0.0"
+  },
+  "devDependencies": {
+    "@semantic-release/git": "10.0.1",
+    "@types/cli-table2": "0.2.3",
+    "@types/jest": "27.4.0",
+    "@types/node": "16.11.12",
+    "@types/pluralize": "0.0.29",
+    "@types/sinon": "10.0.6",
+    "@typescript-eslint/eslint-plugin": "5.6.0",
+    "@typescript-eslint/parser": "5.6.0",
+    "cpy-cli": "3.1.1",
+    "eslint": "8.4.1",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-config-standard": "16.0.3",
+    "eslint-plugin-import": "2.25.3",
+    "eslint-plugin-jest": "25.3.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-promise": "5.2.0",
+    "eslint-plugin-standard": "5.0.0",
+    "expect": "27.4.2",
+    "husky": "^7.0.0",
+    "jest": "27.4.7",
+    "jest-mock": "27.4.6",
+    "lint-staged": "12.1.2",
+    "mock-stdin": "1.0.0",
+    "prettier": "2.5.1",
+    "rimraf": "3.0.2",
+    "semantic-release": "18.0.1",
+    "sinon": "12.0.1",
+    "strip-ansi": "6.0.1",
+    "temp-write": "4.0.0",
+    "ts-jest": "^27.1.3",
+    "ts-node": "10.4.0",
+    "typescript": "4.5.2",
+    "unique-temp-dir": "1.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "(\\.|/)(test)\\.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "node"
+    ]
+  },
+  "prettier": {
+    "printWidth": 120,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": 2018,
+      "sourceType": "module"
+    },
+    "plugins": [
+      "@typescript-eslint",
+      "jest"
+    ],
+    "env": {
+      "node": true,
+      "es6": true,
+      "jest/globals": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "eslint-config-standard",
+      "plugin:@typescript-eslint/recommended",
+      "prettier"
+    ],
+    "rules": {
+      "@typescript-eslint/explicit-function-return-type": 0,
+      "@typescript-eslint/no-explicit-any": 0,
+      "@typescript-eslint/no-var-requires": 0,
+      "@typescript-eslint/no-namespace": 0,
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_",
+          "caughtErrorsIgnorePattern": "^_"
+        }
+      ],
+      "node/no-path-concat": 0,
+      "no-use-before-define": 0
+    },
+    "overrides": [
+      {
+        "files": [
+          "sniff.js",
+          "./src/fixtures/**/*.js"
+        ],
+        "rules": {
+          "@typescript-eslint/no-unused-vars": 0,
+          "@typescript-eslint/no-var-requires": 0,
+          "@typescript-eslint/no-empty-function": 0,
+          "no-empty": 0
+        }
+      }
+    ]
+  },
+  "eslintIgnore": [
+    "build"
+  ],
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.md": [
+      "prettier --write"
+    ],
+    "*.json": [
+      "prettier --write"
+    ]
+  },
+  "release": {
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      [
+        "@semantic-release/git",
+        {
+          "assets": "package.json",
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"cli-extension.js","sourceRoot":"","sources":["../../../src/cli/extensions/cli-extension.ts"],"names":[],"mappings":";;AAAA,yBAA8B;AAC9B,6BAA8B;AAG9B,mBAAe,UAAC,OAAuB;IACrC,OAAO,CAAC,UAAU,CAAC,OAAO,GAAG,cAAO,CAAA;IACpC,OAAO,CAAC,UAAU,CAAC,SAAS,GAAG,cAAS,CAAA;AAC1C,CAAC,EAAA"}
