@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - master
-env:
-  CI: true
 jobs:
   version:
     timeout-minutes: 15
