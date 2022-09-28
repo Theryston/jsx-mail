@@ -1,7 +1,7 @@
 # @jsx-mail/components
 
-## 2.0.0
+## 1.0.1
 
-### Major Changes
+### Patch Changes
 
-- publish jsx-mail packages
+- fix: description

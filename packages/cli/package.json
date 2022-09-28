@@ -1,6 +1,6 @@
 {
   "name": "@jsx-mail/cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The official jsx mail CLI. 🚀✉️",
   "types": "build/types/types.d.ts",
   "bin": {
@@ -33,7 +33,7 @@
     "express": "^4.18.1",
     "express-handlebars": "^6.0.6",
     "gluegun": "latest",
-    "jsx-mail": "workspace:^2.0.0",
+    "jsx-mail": "workspace:^1.0.1",
     "nodemon": "^2.0.19",
     "open": "^8.4.0"
   },

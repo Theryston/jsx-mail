@@ -1,22 +1,9 @@
 # @jsx-mail/core
 
-## 2.0.0
-
-### Major Changes
-
-- publish jsx-mail packages
+## 1.0.1
 
 ### Patch Changes
 
+- fix: description
 - Updated dependencies
-  - @jsx-mail/components@2.0.0
-
-## 1.0.0
-
-### Major Changes
-
-- jsx-mail first
-
-### Minor Changes
-
-- 662a92f: jsx-mail core
+  - @jsx-mail/components@1.0.1
