@@ -1,8 +1,7 @@
 {
   "name": "@jsx-mail/cli",
-  "version": "2.0.0",
-  "description": "A framework to create the look of your emails. 🚀✉️",
-  "private": true,
+  "version": "1.0.0",
+  "description": "The official jsx mail CLI. 🚀✉️",
   "types": "build/types/types.d.ts",
   "bin": {
     "jsxm": "bin/cli"

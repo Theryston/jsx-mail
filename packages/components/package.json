@@ -1,8 +1,9 @@
 {
   "name": "@jsx-mail/components",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "description": "Components to facilitate the creation of your templates with jsx mail. 🚀✉️",
   "author": "Theryston",
   "license": "MIT",
   "scripts": {

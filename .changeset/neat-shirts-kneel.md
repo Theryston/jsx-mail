@@ -5,4 +5,4 @@
 'jsx-mail': major
 ---
 
-all packages
+fix versions
