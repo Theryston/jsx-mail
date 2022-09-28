@@ -24,7 +24,7 @@ jobs:
       - name: Setup npmrc
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
       - name: setup pnpm config
-        run: pnpm config set store-dir $PNPM_CACHE_FOLDER && pnpm config set auto-install-peers true
+        run: pnpm config set store-dir $PNPM_CACHE_FOLDER && pnpm config set auto-install-peers true && pnpm config set strict-peer-dependencies false
       - name: install dependencies
         run: pnpm install --no-frozen-lockfile
       - name: build
