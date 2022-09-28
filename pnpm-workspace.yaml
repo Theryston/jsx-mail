@@ -1,6 +1,3 @@
 packages:
-  - packages/components
-  - packages/core
-  - packages/cli
-  - packages/jsx-mail
+  - packages/*
   - web
