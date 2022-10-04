@@ -91,4 +91,4 @@ jsx-mail improves email template compatibility. This means that email templates 
 
 - Simplified Development
 
-With the jsx-mail cli (tool included in jsx-mail) you can simplify the development process, since you can use the `server` command for jsx to start an application that simulates an email client.
+With the jsx-mail cli (tool included in jsx-mail) you can simplify the development process, since you can use the `serve` command for jsx to start an application that simulates an email client.
