@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Gluegun - A delightful toolkit for building Node-powered CLIs.</title>
+  <meta name="description" content="A delightful toolkit for building Node-powered CLIs.">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//unpkg.com/docsify/themes/vue.css">
+</head>
+
+<body>
+  <div id="app"></div>
+</body>
+<script>
+  window.$docsify = {
+    loadSidebar: true,
+    subMaxLevel: 2,
+    repo: 'infinitered/gluegun',
+    name: 'gluegun',
+    coverpage: true,
+    search: 'auto',
+    search: [
+      '/',
+      'getting-started',
+      'guide-architecture',
+      'toolbox-api',
+      'toolbox-config',
+      'toolbox-filesystem',
+      'toolbox-semver',
+      'toolbox-http',
+      'toolbox-meta',
+      'toolbox-parameters',
+      'toolbox-patching',
+      'toolbox-print',
+      'toolbox-prompt',
+      'toolbox-semver',
+      'toolbox-strings',
+      'toolbox-system',
+      'toolbox-template',
+      'tutorial-making-a-plugin',
+      'tutorial-making-a-movie-cli',
+      'runtime',
+      'plugins',
+      'contributing',
+      'sniff',
+
+    ]
+  }
+</script>
+<script src="//unpkg.com/docsify/lib/docsify.js"></script>
+<script src="//unpkg.com/docsify/lib/plugins/search.js"></script>
+<script src="//unpkg.com/docsify/lib/plugins/emoji.js"></script>
+<script src="//unpkg.com/prismjs/components/prism-bash.js"></script>
+<script src="//unpkg.com/prismjs/components/prism-jsx.js"></script>
+
+</html>

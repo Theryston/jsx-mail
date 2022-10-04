@@ -1,0 +1,1 @@
+{"version":3,"file":"version.js","sourceRoot":"","sources":["../../src/core-commands/version.ts"],"names":[],"mappings":";;AAAA,kBAAe;IACb,IAAI,EAAE,SAAS;IACf,KAAK,EAAE,GAAG;IACV,WAAW,EAAE,2BAA2B;IACxC,MAAM,EAAE,IAAI;IACZ,GAAG,EAAE,UAAC,OAAO;QACX,OAAO,CAAC,KAAK,CAAC,IAAI,CAAC,OAAO,CAAC,IAAI,CAAC,OAAO,EAAE,CAAC,CAAA;IAC5C,CAAC;CACF,CAAA"}

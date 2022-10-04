@@ -1,0 +1,26 @@
+# <%= props.name %> CLI
+
+A CLI for <%= props.name %>.
+
+## Customizing your CLI
+
+Check out the documentation at https://github.com/infinitered/gluegun/tree/master/docs.
+
+## Publishing to NPM
+
+To package your CLI up for NPM, do this:
+
+```shell
+$ npm login
+$ npm whoami
+$ npm test
+<% if (props.language === "typescript") { %>
+$ npm run build
+<% } %>
+$ npm publish
+```
+
+# License
+
+MIT - see LICENSE
+
