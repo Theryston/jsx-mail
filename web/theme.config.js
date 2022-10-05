@@ -2,19 +2,15 @@ import Image from 'next/image';
 import LogoImage from './assets/images/logo.png';
 
 export default {
-  defaultMenuCollapsed: true,
   projectLink: 'https://github.com/Theryston/jsx-mail',
   docsRepositoryBase:
     'https://github.com/Theryston/jsx-mail/blob/master/web/pages',
   titleSuffix: ' – JSX Mail',
-  nextLinks: true,
-  prevLinks: true,
-  search: true,
-  customSearch: null,
-  darkMode: true,
-  footer: true,
   footerText: `MIT ${new Date().getFullYear()} © Theryston.`,
   footerEditLink: `Edit this page on GitHub`,
+  floatTOC: true,
+  unstable_flexsearch: true,
+  search: true,
   logo: (
     <div
       style={{
@@ -24,16 +20,12 @@ export default {
       }}
     >
       <Image src={LogoImage} height="30px" width="30px" objectFit="cover" />
-      <p
-        style={{
-          marginBottom: 'auto',
-          marginTop: 'auto',
-          marginLeft: '20px',
-          lineHeight: '20px',
-        }}
+      <span
+        className="mx-2 font-extrabold hidden md:inline select-none"
+        title={'Jsx Mail: A framework to create the email template'}
       >
-        A framework to create the email template
-      </p>
+        Jsx Mail
+      </span>
     </div>
   ),
   head: ({ title, description }) => (

@@ -2,11 +2,50 @@
 title: 'A framework to create the email template'
 ---
 
-# JSXMail
+import Bleed from 'nextra-theme-docs/bleed';
+import Callout from 'nextra-theme-docs/callout';
 
-jsx-mail is an email framework that uses React to create email templates. Using JSX syntax makes it extremely easy to code your template, allowing you to create highly customized emails and reducing code maintenance work. Also, the main purpose of jsx-mail is to make your email templates compatible with all email clients.
+{
+// wrapped with {} to mark it as javascript so mdx will not put it under a p tag
+}
+{<h1 className="text-center font-extrabold md:text-5xl mt-8">Jsx Mail</h1>}
 
-![jsx-mail-comparation](https://user-images.githubusercontent.com/72868196/183707838-19065b95-34fa-430e-a3e1-f4f353a05259.jpg)
+<Bleed>
+  <div className="flex items-center justify-center gap-3">
+    <a aria-label="NPM version" href="https://www.npmjs.com/package/jsx-mail">
+      <img
+        alt=""
+        src="https://img.shields.io/npm/v/jsx-mail.svg?style=for-the-badge&labelColor=000000"
+      />
+    </a>
+    <a
+      aria-label="License"
+      href="https://github.com/Theryston/jsx-mail/blob/master/LICENSE"
+    >
+      <img
+        alt=""
+        src="https://img.shields.io/npm/l/jsx-mail.svg?style=for-the-badge&labelColor=000000"
+      />
+    </a>
+    <a
+      aria-label="Join the community on GitHub"
+      href="https://github.com/Theryston/jsx-mail/discussions"
+    >
+      <img
+        alt=""
+        src="https://img.shields.io/badge/Join%20the%20community-blueviolet.svg?style=for-the-badge&logo=Github&labelColor=000000&logoWidth=20"
+      />
+    </a>
+  </div>
+</Bleed>
+
+<p className="text-center">
+  Jsx Mail is an email framework that uses React to create email templates.
+  Using JSX syntax makes it extremely easy to code your template, allowing you
+  to create highly customized emails and reducing code maintenance work. Also,
+  the main <b>purpose</b> of Jsx Mail is to make your email templates compatible
+  with all email clients.
+</p>
 
 ## Usage
 
@@ -15,7 +54,7 @@ JSX works with 2 different sides. the first side is what we call "jsx-side" this
 ```jsx
 // jsx-side
 export function Welcome({ name }) {
-  return <h1>{name} Welcome to jsx-mail</h1>;
+  return <h1>{name} Welcome to Jsx Mail</h1>;
 }
 
 export default function App() {
@@ -35,10 +74,12 @@ export default function App() {
 import { render } = from 'jsx-mail';
 const template = await render('Welcome', { name: 'John' });
 
-console.log(template) // <html>...<h1>John Welcome to jsx-mail</h1>...</html>
+console.log(template) // <html>...<h1>John Welcome to Jsx Mail</h1>...</html>
 ```
 
-## Why use jsx-mail?
+## Why use Jsx Mail?
+
+![jsx-mail-comparation](https://user-images.githubusercontent.com/72868196/183707838-19065b95-34fa-430e-a3e1-f4f353a05259.jpg)
 
 If you've ever needed to create email templates, you know how complex it can be, from having to host the image on a separate server to a footer that appears overlaying the main button. So why use jsx? Because it solves all that for you! But ok, if you're still not convinced, here's a list of perks:
 
@@ -70,7 +111,7 @@ If you've ever needed to create email templates, you know how complex it can be,
 ```
 
 ```jsx
-// jsx-mail
+// Jsx Mail
 import { Button } from 'jsx-mail/components';
 import styled from 'styled-components';
 
@@ -83,12 +124,12 @@ const ButtonStyled = styled(Button)`
 `;
 ```
 
-Which of these two codes can you understand faster? I believe the second, because the power of jsx is very big when it comes to simplifying codes and making them easier to understand. So this is what jsx-mail brings for creating email templates, all the power of JSX.
+Which of these two codes can you understand faster? I believe the second, because the power of jsx is very big when it comes to simplifying codes and making them easier to understand. So this is what Jsx Mail brings for creating email templates, all the power of JSX.
 
 - Compatibility with email clients
 
-jsx-mail improves email template compatibility. This means that email templates created with JSX-Mail will display correctly in all email clients, including the most popular ones like Gmail, Yahoo! Mail and Outlook. What it does is block the use of some html tags or css attributes which are not accepted in email clients.
+Jsx Mail improves email template compatibility. This means that email templates created with JSX-Mail will display correctly in all email clients, including the most popular ones like Gmail, Yahoo! Mail and Outlook. What it does is block the use of some html tags or css attributes which are not accepted in email clients.
 
 - Simplified Development
 
-With the jsx-mail cli (tool included in jsx-mail) you can simplify the development process, since you can use the `serve` command for jsx to start an application that simulates an email client.
+With the Jsx Mail cli (tool included in Jsx Mail) you can simplify the development process, since you can use the `serve` command for jsx to start an application that simulates an email client.

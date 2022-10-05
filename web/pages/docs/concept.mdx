@@ -16,7 +16,7 @@ Another advantage of using Jsx Mail is that it makes it easy to reuse components
 
 ## JSX side and JS side
 
-In Jsx Mail we have 2 sides. The first side is the JSX side, it should be a folder where inside it there is a file called `index.tsx` which is the [configuration file](/config-files/index-file). In this folder there is what we call the jsx side which is where all your email templates are, all your jsx code.
+In Jsx Mail we have 2 sides. The first side is the JSX side, it should be a folder where inside it there is a file called `index.tsx` which is the [configuration file](/docs/index-file). In this folder there is what we call the jsx side which is where all your email templates are, all your jsx code.
 
 The js side is your application. It can be a rest api, a lambda, or anything. just install `jsx-mail` on it and you can run a function called `render` that will return an `HTML` that can be sent to your email
 
@@ -35,4 +35,4 @@ const template = await render('Welcome', { name: 'John' });
 console.log(template); // <html>...<h1>John Welcome to jsx-mail</h1>...</html>
 ```
 
-We go into more detail on how to do each of the things listed here in the [get started](/get-started)
+We go into more detail on how to do each of the things listed here in the [get started](/docs/get-started)

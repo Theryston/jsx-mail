@@ -1,7 +1,11 @@
 {
-  "index": "Introduction",
-  "concept": "Concept",
-  "get-started": "Get Started",
-  "style": "How to Style",
-  "config-files": "Config Files"
+  "index": {
+    "title": "Introduction",
+    "type": "page",
+    "hidden": true
+  },
+  "docs": {
+    "title": "Docs",
+    "type": "page"
+  }
 }
