@@ -6,7 +6,7 @@ jsx-mail is an email framework that uses React to create email templates. Using 
 
 ## Usage
 
-JSX works with 2 different sides. The first side is what we call "jsx-side" this is the part where you should define the jsx/tsx content for your email template. the second side is called the "js-side" this is the side of your api (or whoever needs the HTML of the email).
+JSX works with 2 different sides. The first side is what we call "jsx-side" this is the part where you should define the jsx/tsx content for your email template. The second side is called the "js-side" this is the side of your api (or whoever needs the HTML of the email).
 
 ```jsx
 // jsx-side
