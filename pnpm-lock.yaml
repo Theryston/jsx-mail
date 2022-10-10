@@ -41,7 +41,7 @@ importers:
       '@types/express': ^4.17.13
       '@types/express-handlebars': ^6.0.0
       '@types/jest': ^26.0.20
-      '@types/node': ^12.7.11
+      '@types/node': ^12.20.55
       '@types/nodemon': ^1.19.2
       '@types/open': ^6.2.1
       copyfiles: ^2.4.1
@@ -50,6 +50,7 @@ importers:
       gluegun: latest
       jest: ^26.6.3
       jsx-mail: workspace:^1.0.1
+      loading-cli: ^1.1.0
       nodemon: ^2.0.19
       open: ^8.4.0
       prettier: ^2.2.1
@@ -65,6 +66,7 @@ importers:
       express-handlebars: 6.0.6
       gluegun: 5.1.2
       jsx-mail: link:../jsx-mail
+      loading-cli: 1.1.0
       nodemon: 2.0.19
       open: 8.4.0
     devDependencies:
@@ -4845,6 +4847,11 @@ packages:
   /color-name/1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
 
+  /colors-cli/1.0.28:
+    resolution: {integrity: sha512-2XE8s1mB3Jr5rvirk/fFzhWY2m9S2dpZ0mWz3Yl/mzMM8hDVBawL0Rsal5hR1gJP4lgqhQfFfEmaGZpUZgEKrA==}
+    hasBin: true
+    dev: false
+
   /colors/1.4.0:
     resolution: {integrity: sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==}
     engines: {node: '>=0.1.90'}
@@ -9297,6 +9304,12 @@ packages:
       js-yaml: 3.14.1
       pify: 4.0.1
       strip-bom: 3.0.0
+    dev: false
+
+  /loading-cli/1.1.0:
+    resolution: {integrity: sha512-r6Kj0Y3d3isT4vvJ0tFlND1CcLkpatWmlgQs/PEfnSofJSHZwAbsqexnpQEDj4nlxSXEqFWh/Wu2iQXAAZRPNQ==}
+    dependencies:
+      colors-cli: 1.0.28
     dev: false
 
   /locate-path/5.0.0:
