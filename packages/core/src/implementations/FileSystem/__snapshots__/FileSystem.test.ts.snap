@@ -4,12 +4,12 @@ exports[`FileSystem fileSystem.getAllDirectoryTree should return all directories
 Array [
   Object {
     "children": Array [],
-    "path": "C:\\\\Projects\\\\jsx-mail\\\\packages\\\\core\\\\src\\\\implementations\\\\FileSystem\\\\test-fs-get-all-directory-tree/index.tsx",
+    "path": "C:\\\\Projects\\\\jsx-mail\\\\packages\\\\core\\\\src\\\\implementations\\\\FileSystem\\\\test-fs-get-all-directory-tree\\\\index.tsx",
     "type": "file",
   },
   Object {
     "children": Array [],
-    "path": "C:\\\\Projects\\\\jsx-mail\\\\packages\\\\core\\\\src\\\\implementations\\\\FileSystem\\\\test-fs-get-all-directory-tree/main.ts",
+    "path": "C:\\\\Projects\\\\jsx-mail\\\\packages\\\\core\\\\src\\\\implementations\\\\FileSystem\\\\test-fs-get-all-directory-tree\\\\main.ts",
     "type": "file",
   },
 ]

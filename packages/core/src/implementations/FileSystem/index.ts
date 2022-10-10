@@ -14,7 +14,7 @@ export class FileSystem implements IFileSystem {
     });
     const directoryTree: IDirectoryTree[] = [];
     for (const entity of entities) {
-      const entityPath = `${basePath}/${entity.name}`;
+      const entityPath = path.join(basePath, entity.name);
       if (entity.isDirectory()) {
         const children = await this.getAllDirectoryTree(entityPath);
         directoryTree.push({
@@ -38,6 +38,7 @@ export class FileSystem implements IFileSystem {
         }
       }
     }
+
     return directoryTree;
   }
 
