@@ -1,6 +1,6 @@
 {
   "name": "@jsx-mail/cli",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "The official jsx mail CLI. 🚀✉️",
   "types": "build/types/types.d.ts",
   "bin": {
@@ -10,7 +10,9 @@
     "clean-build": "rm -rf ./build",
     "compile": "tsc -p .",
     "copy-views": "copyfiles -u 1 src/**/*.handlebars build/",
-    "build": "pnpm clean-build && pnpm compile && pnpm copy-views",
+    "copy-templates": "copyfiles -u 1 src/templates/*.ejs build/",
+    "copy-folders": "pnpm run copy-views && pnpm run copy-templates",
+    "build": "pnpm clean-build && pnpm compile && pnpm copy-folders",
     "prepublishOnly": "pnpm build",
     "lint": "eslint src",
     "test": "jest",

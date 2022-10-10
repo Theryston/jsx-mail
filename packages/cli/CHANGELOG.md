@@ -1,5 +1,11 @@
 # @jsx-mail/cli
 
+## 1.1.1
+
+### Patch Changes
+
+- copy templates folder to templates
+
 ## 1.1.0
 
 ### Minor Changes
