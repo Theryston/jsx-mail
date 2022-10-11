@@ -1,86 +1,31 @@
-# Example app with styled-components
+# Jsx Mail Web
 
-This example features how you use a different styling solution than [styled-jsx](https://github.com/vercel/styled-jsx) that also supports universal styles. That means we can serve the required styles for the first render within the HTML and then load the rest in the client. In this case we are using [styled-components](https://github.com/styled-components/styled-components).
+This is the web project where it contains all the jsx mail documentation, description of examples, and even articles made to facilitate the understanding of the use of the framework and to promote new changes and alterations.
 
-This example uses the Rust-based [SWC](https://nextjs.org/docs/advanced-features/compiler#styled-components) in Next.js for better performance than Babel.
+## Requirements
 
-Currently, only the `ssr` and `displayName` transforms have been implemented. These two transforms are the main requirement for using `styled-components` in Next.js.
+- Node.js LTS
+- PNPM 7.\*
 
-## Deploy your own
+## Running
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-styled-components)
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-styled-components&project-name=with-styled-components&repository-name=with-styled-components)
-
-## How to use
-
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+First step to run the web project is to clone the jsx mail repository and install the project's dependencies, to do this run the commands below:
 
 ```bash
-npx create-next-app --example with-styled-components with-styled-components-app
+git clone https://github.com/Theryston/jsx-mail.git
+cd jsx-mail
+pnpm install
 ```
+
+Right after doing this `pnpm` will start downloading the packages needed for the project. Just wait for this process to finish and after that enter the `web` folder and run the `dev` script with the following command:
 
 ```bash
-yarn create next-app --example with-styled-components with-styled-components-app
+cd web
+pnpm dev
 ```
 
-```bash
-pnpm create next-app --example with-styled-components with-styled-components-app
-```
+Congratulations! the jsx mail web application will be running on port 3000, so now just open your browser at: [http://localhost:3000](http://localhost:3000)
 
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+## What can I do here?
 
-### Try it on CodeSandbox
-
-[Open this example on CodeSandbox](https://codesandbox.io/s/github/vercel/next.js/tree/canary/examples/with-styled-components)
-
-### Notes
-
-When wrapping a [Link](https://nextjs.org/docs/api-reference/next/link) from `next/link` within a styled-component, the [as](https://styled-components.com/docs/api#as-polymorphic-prop) prop provided by `styled` will collide with the Link's `as` prop and cause styled-components to throw an `Invalid tag` error. To avoid this, you can either use the recommended [forwardedAs](https://styled-components.com/docs/api#forwardedas-prop) prop from styled-components or use a different named prop to pass to a `styled` Link.
-
-<details>
-<summary>Click to expand workaround example</summary>
-<br />
-
-**components/StyledLink.js**
-
-```javascript
-import Link from 'next/link'
-import styled from 'styled-components'
-
-const StyledLink = ({ as, children, className, href }) => (
-  <Link href={href} as={as} passHref>
-    <a className={className}>{children}</a>
-  </Link>
-)
-
-export default styled(StyledLink)`
-  color: #0075e0;
-  text-decoration: none;
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    color: #40a9ff;
-  }
-
-  &:focus {
-    color: #40a9ff;
-    outline: none;
-    border: 0;
-  }
-`
-```
-
-**pages/index.js**
-
-```javascript
-import StyledLink from '../components/StyledLink'
-
-export default () => (
-  <StyledLink href="/post/[pid]" forwardedAs="/post/abc">
-    First post
-  </StyledLink>
-)
-```
-
-</details>
+Recently working hard to write and improve the jsx mail documentation more and more, and all the documentation is here. on the `web` you can check what we have to do in the [documentation issues](https://github.com/Theryston/jsx-mail/issues?q=is%3Aopen+is%3Aissue+label%3Adocumentation)
