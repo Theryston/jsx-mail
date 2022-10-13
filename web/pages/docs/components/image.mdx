@@ -45,5 +45,11 @@ But if you don't have the url of the image and it is in your project you can pas
 To get the absolute path of your image use the util called `getAbsolutePath` from inside the `jsx-mail` package [See more about this util here](/docs/utils/get-absolute-path)
 
 ```tsx
-<Image alt="Image from path" path={getAbsolutePath('assets/screenshot.png')} />
+<Image
+  alt="Image from path"
+  path={getAbsolutePath('assets/screenshot.png')}
+  imgbbApiKey="1a37..."
+/>
 ```
+
+If you are using a local image you need to pass the imgbbApiKey prop with your key from [https://imgbb.com](https://imgbb.com)

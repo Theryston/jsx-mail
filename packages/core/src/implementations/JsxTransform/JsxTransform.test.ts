@@ -72,6 +72,7 @@ describe('JsxTransform', () => {
       await jsxTransform.directory('', '');
       expect(fileSystem.getAllDirectoryTree).toHaveBeenCalledWith('', {
         justFilenameInFilePath: true,
+        fileExtensions: ['ts', 'js', 'jsx', 'tsx'],
       });
     });
 

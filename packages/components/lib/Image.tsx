@@ -3,10 +3,9 @@ import request from 'sync-request';
 import fs from 'fs';
 import formData from 'form-data';
 
-const IMGBB_API_KEY = '18729af79bd6b645940b032aa98089a6';
-
 export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   path?: string;
+  imgbbApiKey?: string;
 }
 
 export const Image = (props: ImageProps) => {
@@ -15,7 +14,7 @@ export const Image = (props: ImageProps) => {
     return <p>Error! See The Logs</p>;
   }
 
-  const { src, path, ...rest } = props;
+  const { src, path, imgbbApiKey, ...rest } = props;
 
   if (!src && !path) {
     console.log('\x1b[31m', 'Error: Image src is required', '\x1b[0m');
@@ -40,6 +39,15 @@ export const Image = (props: ImageProps) => {
     return <img src={src} {...rest} />;
   }
 
+  if (!imgbbApiKey) {
+    console.log(
+      '\x1b[31m',
+      'Error: You need to enter the imgbbApiKey in props if you want to use a local image',
+      '\x1b[0m',
+    );
+    return <p>Error! See The Logs</p>;
+  }
+
   if (path) {
     const file = fs.readFileSync(path);
     const base64 = Buffer.from(file).toString('base64');
@@ -48,7 +56,7 @@ export const Image = (props: ImageProps) => {
 
     const response = request(
       'POST',
-      `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
+      `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`,
       {
         headers: form.getHeaders(),
         body: form.getBuffer(),

@@ -10,15 +10,16 @@ export default function App() {
         return (
           <Group>
             <h1>{name}, see this:</h1>
-            <Image
+            <StyledImage
               alt="Image from url"
               height="128"
-              width="128"
-              src="https://i.ibb.co/GdDPZRf/Ellipse-6.png"
+              src="https://cdn.pixabay.com/photo/2022/08/15/09/14/koyasan-temple-7387445_960_720.jpg"
             />
-            <StyledImage
+            <Image
               alt="Image from path"
               path={getAbsolutePath('assets/screenshot.png')}
+              imgbbApiKey="1a375e669ceebf6721ce2150d36d90c2"
+              height="128"
             />
           </Group>
         );
