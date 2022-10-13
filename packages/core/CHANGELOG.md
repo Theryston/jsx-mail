@@ -1,5 +1,13 @@
 # @jsx-mail/core
 
+## 1.0.3
+
+### Patch Changes
+
+- Correction of some bugs referring to the image and referring to the indexing of folders and files
+- Updated dependencies
+  - @jsx-mail/components@1.0.2
+
 ## 1.0.2
 
 ### Patch Changes
