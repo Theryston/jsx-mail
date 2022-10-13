@@ -7,7 +7,8 @@ export class FileSystem implements IFileSystem {
     basePath: string,
     options?: IFileSystemOptions
   ): Promise<IDirectoryTree[]> {
-    const { justFilenameInFilePath = false } = options || {};
+    const { justFilenameInFilePath = false, fileExtensions = [] } =
+      options || {};
 
     const entities = await fs.promises.readdir(basePath, {
       withFileTypes: true,
@@ -16,7 +17,7 @@ export class FileSystem implements IFileSystem {
     for (const entity of entities) {
       const entityPath = path.join(basePath, entity.name);
       if (entity.isDirectory()) {
-        const children = await this.getAllDirectoryTree(entityPath);
+        const children = await this.getAllDirectoryTree(entityPath, options);
         directoryTree.push({
           children,
           path: entityPath,
@@ -24,17 +25,27 @@ export class FileSystem implements IFileSystem {
         });
       } else {
         if (justFilenameInFilePath) {
-          directoryTree.push({
-            children: [],
-            path: path.basename(entityPath),
-            type: 'file',
-          });
+          if (
+            fileExtensions.length === 0 ||
+            fileExtensions.includes(entityPath.split('.').pop())
+          ) {
+            directoryTree.push({
+              children: [],
+              path: path.basename(entityPath),
+              type: 'file',
+            });
+          }
         } else {
-          directoryTree.push({
-            children: [],
-            path: entityPath,
-            type: 'file',
-          });
+          if (
+            fileExtensions.length === 0 ||
+            fileExtensions.includes(entityPath.split('.').pop())
+          ) {
+            directoryTree.push({
+              children: [],
+              path: entityPath,
+              type: 'file',
+            });
+          }
         }
       }
     }

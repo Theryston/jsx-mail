@@ -23,6 +23,7 @@ export class JsxTransform implements IJsxTransform {
 
     const entities = await this.fileSystem.getAllDirectoryTree(sourcePath, {
       justFilenameInFilePath: true,
+      fileExtensions: ['ts', 'js', 'jsx', 'tsx'],
     });
     for (const entity of entities) {
       if (entity.type === 'directory') {

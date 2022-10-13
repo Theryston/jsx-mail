@@ -12,6 +12,7 @@ export interface IFileSystem {
 
 export interface IFileSystemOptions {
   justFilenameInFilePath?: boolean;
+  fileExtensions?: string[];
 }
 
 export interface IDirectoryTree {
