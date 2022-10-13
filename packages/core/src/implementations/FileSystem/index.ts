@@ -3,10 +3,16 @@ import { IDirectoryTree, IFileSystem, IFileSystemOptions } from './IFileSystem';
 import path from 'path';
 
 export class FileSystem implements IFileSystem {
+  private getAllDirectoryTree_firstBase: string;
+
   async getAllDirectoryTree(
     basePath: string,
     options?: IFileSystemOptions
   ): Promise<IDirectoryTree[]> {
+    if (!this.getAllDirectoryTree_firstBase) {
+      this.getAllDirectoryTree_firstBase = basePath;
+    }
+
     const { justFilenameInFilePath = false, fileExtensions = [] } =
       options || {};
 
@@ -31,7 +37,10 @@ export class FileSystem implements IFileSystem {
           ) {
             directoryTree.push({
               children: [],
-              path: path.basename(entityPath),
+              path: path.relative(
+                this.getAllDirectoryTree_firstBase,
+                entityPath
+              ),
               type: 'file',
             });
           }

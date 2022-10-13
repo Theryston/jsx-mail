@@ -3,6 +3,8 @@ import { IFileSystem } from '../FileSystem/IFileSystem';
 import { IJsxTransform, IJsxTransformOptions } from './IJsxTransform';
 import path from 'path';
 
+const DEFAULT_DELETE_FOLDERS = ['dist'];
+
 export class JsxTransform implements IJsxTransform {
   private firstAbsoluteSourcePath: string;
 
@@ -21,6 +23,16 @@ export class JsxTransform implements IJsxTransform {
       await this.fileSystem.rm(path.join(sourcePath, outputDir));
     }
 
+    for (const DEFAULT_DELETE_FOLDER of DEFAULT_DELETE_FOLDERS) {
+      if (
+        await this.fileSystem.exists(
+          path.join(sourcePath, DEFAULT_DELETE_FOLDER)
+        )
+      ) {
+        await this.fileSystem.rm(path.join(sourcePath, DEFAULT_DELETE_FOLDER));
+      }
+    }
+
     const entities = await this.fileSystem.getAllDirectoryTree(sourcePath, {
       justFilenameInFilePath: true,
       fileExtensions: ['ts', 'js', 'jsx', 'tsx'],
@@ -32,7 +44,7 @@ export class JsxTransform implements IJsxTransform {
             await this.directory(child.path, outputDir);
           } else {
             await this.file(
-              child.path,
+              path.join(sourcePath, child.path),
               path.join(this.firstAbsoluteSourcePath, outputDir),
               options
             );
