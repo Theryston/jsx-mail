@@ -35,6 +35,27 @@ importers:
       prettier: 2.7.1
       turbo: 1.5.6
 
+  examples/jsx-hello:
+    specifiers:
+      '@jsx-mail/cli': workspace:^1.1.1
+      '@jsx-mail/components': workspace:^1.0.2
+      '@types/styled-components': ^5.1.26
+      dotenv: ^16.0.3
+      jsx-mail: workspace:^1.0.3
+      nodemailer: ^6.8.0
+      react: ^18.2.0
+      styled-components: ^5.3.6
+    dependencies:
+      '@jsx-mail/components': link:../../packages/components
+      dotenv: 16.0.3
+      jsx-mail: link:../../packages/jsx-mail
+      nodemailer: 6.8.0
+      react: 18.2.0
+      styled-components: 5.3.6_pumtretovylab5lwhztzjp2kuy
+    devDependencies:
+      '@jsx-mail/cli': link:../../packages/cli
+      '@types/styled-components': 5.1.26
+
   packages/cli:
     specifiers:
       '@jsx-mail/core': '*'
@@ -121,7 +142,7 @@ importers:
       '@babel/plugin-transform-modules-commonjs': ^7.18.6
       '@babel/preset-react': ^7.18.6
       '@babel/preset-typescript': ^7.18.6
-      '@jsx-mail/components': workspace:^1.0.1
+      '@jsx-mail/components': workspace:^1.0.2
       '@size-limit/preset-small-lib': ^8.0.1
       '@types/babel-core': ^6.25.7
       '@types/express-handlebars': ^6.0.0
@@ -4303,6 +4324,19 @@ packages:
       picomatch: 2.3.1
       styled-components: 5.3.5_pumtretovylab5lwhztzjp2kuy
 
+  /babel-plugin-styled-components/2.0.7_styled-components@5.3.6:
+    resolution: {integrity: sha512-i7YhvPgVqRKfoQ66toiZ06jPNA3p6ierpfUuEWxNF+fV27Uv5gxBkf8KZLHUCc1nFA9j6+80pYoIpqCeyW3/bA==}
+    peerDependencies:
+      styled-components: '>= 2'
+    dependencies:
+      '@babel/helper-annotate-as-pure': 7.18.6
+      '@babel/helper-module-imports': 7.18.6
+      babel-plugin-syntax-jsx: 6.18.0
+      lodash: 4.17.21
+      picomatch: 2.3.1
+      styled-components: 5.3.6_pumtretovylab5lwhztzjp2kuy
+    dev: false
+
   /babel-plugin-syntax-jsx/6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
 
@@ -5455,6 +5489,11 @@ packages:
     dependencies:
       is-obj: 2.0.0
     dev: true
+
+  /dotenv/16.0.3:
+    resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
+    dev: false
 
   /ecc-jsbn/0.1.2:
     resolution: {integrity: sha512-eh9O+hwRHNbG4BLTjEl3nw044CkGm5X6LoaCf7LPp7UU8Qrt47JYNi6nPX8xjW97TKGKm1ouctg0QSpZe9qrnw==}
@@ -10421,6 +10460,11 @@ packages:
   /node-releases/2.0.6:
     resolution: {integrity: sha512-PiVXnNuFm5+iYkLBNeq5211hvO38y63T0i2KKh2KnUs3RpzJ+JtODFjkD8yjLwnDkTYF1eKXheUwdssR+NRZdg==}
 
+  /nodemailer/6.8.0:
+    resolution: {integrity: sha512-EjYvSmHzekz6VNkNd12aUqAco+bOkRe3Of5jVhltqKhEsjw/y0PYPJfp83+s9Wzh1dspYAkUW/YNQ350NATbSQ==}
+    engines: {node: '>=6.0.0'}
+    dev: false
+
   /nodemon/2.0.19:
     resolution: {integrity: sha512-4pv1f2bMDj0Eeg/MhGqxrtveeQ5/G/UVe9iO6uTZzjnRluSA4PVWf8CW99LUPwGB3eNIA7zUFoP77YuI7hOc0A==}
     engines: {node: '>=8.10.0'}
@@ -12306,6 +12350,30 @@ packages:
       react-is: 17.0.2
       shallowequal: 1.1.0
       supports-color: 5.5.0
+
+  /styled-components/5.3.6_pumtretovylab5lwhztzjp2kuy:
+    resolution: {integrity: sha512-hGTZquGAaTqhGWldX7hhfzjnIYBZ0IXQXkCYdvF1Sq3DsUaLx6+NTHC5Jj1ooM2F68sBiVz3lvhfwQs/S3l6qg==}
+    engines: {node: '>=10'}
+    requiresBuild: true
+    peerDependencies:
+      react: '>= 16.8.0'
+      react-dom: '>= 16.8.0'
+      react-is: '>= 16.8.0'
+    dependencies:
+      '@babel/helper-module-imports': 7.18.6
+      '@babel/traverse': 7.18.11_supports-color@5.5.0
+      '@emotion/is-prop-valid': 1.2.0
+      '@emotion/stylis': 0.8.5
+      '@emotion/unitless': 0.7.5
+      babel-plugin-styled-components: 2.0.7_styled-components@5.3.6
+      css-to-react-native: 3.0.0
+      hoist-non-react-statics: 3.3.2
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-is: 17.0.2
+      shallowequal: 1.1.0
+      supports-color: 5.5.0
+    dev: false
 
   /styled-jsx/5.0.2_react@18.2.0:
     resolution: {integrity: sha512-LqPQrbBh3egD57NBcHET4qcgshPks+yblyhPlH2GY8oaDgKs8SK4C3dBh3oSJjgzJ3G5t1SYEZGHkP+QEpX9EQ==}

@@ -36,3 +36,4 @@ yarn-error.log*
 # jsx-mail
 html-check
 css-check
+.env
