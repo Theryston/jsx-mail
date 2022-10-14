@@ -7,7 +7,7 @@ This is the most complete example of using jsx mail. Unlike the other usage exam
 To start jsx-hello you first need to clone the project on your machine, to do this just run the following command below:
 
 ```bash
-git clone -n https://github.com/Theryston/jsx-mail.git jsx-hello && cd jsx-hello && git checkout HEAD examples/jsx-hello && mv examples/jsx-hello/* . && rm -rf examples
+git clone -n https://github.com/Theryston/jsx-mail.git jsx-hello && cd jsx-hello && git checkout HEAD examples/jsx-hello && mv examples/jsx-hello/* . && rm -rf examples && rm -rf .git
 ```
 
 After that git will clone only the jsx hello files from the github jsx mail repository and go into its folder. So now we just need to install the dependencies and in this case we are pnpm as a package generator:
