@@ -1,6 +1,6 @@
-import React from "react";
-import { Group } from "@jsx-mail/components";
-import { Layout } from "../components/Layout";
+import React from 'react';
+import { Group } from '@jsx-mail/components';
+import { Layout } from '../components/Layout';
 
 type Props = {
   name: string;

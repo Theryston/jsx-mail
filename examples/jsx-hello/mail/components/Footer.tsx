@@ -1,14 +1,14 @@
-import React from "react";
-import styled from "styled-components";
-import { Button, Image, Group } from "@jsx-mail/components";
-import { getAbsolutePath } from "jsx-mail";
+import React from 'react';
+import styled from 'styled-components';
+import { Button, Image, Group } from '@jsx-mail/components';
+import { getAbsolutePath } from 'jsx-mail';
 
 export function Footer() {
   return (
     <Container align="center">
       <Anchor href="https://github.com/Theryston/jsx-mail">
         <Image
-          path={getAbsolutePath("assets/icons/github.png")}
+          path={getAbsolutePath('assets/icons/github.png')}
           imgbbApiKey={process.env.IMGBB_API_KEY}
           width={20}
           height={20}
@@ -16,7 +16,7 @@ export function Footer() {
       </Anchor>
       <Anchor href="https://www.npmjs.com/package/jsx-mail">
         <Image
-          path={getAbsolutePath("assets/icons/npm.png")}
+          path={getAbsolutePath('assets/icons/npm.png')}
           imgbbApiKey={process.env.IMGBB_API_KEY}
           width={20}
           height={20}
@@ -24,7 +24,7 @@ export function Footer() {
       </Anchor>
       <Anchor href="https://github.com/Theryston/jsx-mail/blob/master/LICENSE">
         <Image
-          path={getAbsolutePath("assets/icons/license.png")}
+          path={getAbsolutePath('assets/icons/license.png')}
           imgbbApiKey={process.env.IMGBB_API_KEY}
           width={20}
           height={20}

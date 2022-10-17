@@ -1,6 +1,6 @@
-const jsxMail = require("jsx-mail");
-const nodemailer = require("nodemailer");
-require("dotenv").config();
+const jsxMail = require('jsx-mail');
+const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 const transport = nodemailer.createTransport({
   service: process.env.EMAIL_SENDER_SERVICE,
@@ -11,14 +11,14 @@ const transport = nodemailer.createTransport({
 });
 
 (async () => {
-  const html = await jsxMail.render("Welcome", {
-    name: "Jonh Doe",
+  const html = await jsxMail.render('Welcome', {
+    name: 'Jonh Doe',
   });
 
   const sentEmail = await transport.sendMail({
     from: process.env.EMAIL_SENDER_USERNAME,
     to: process.env.EMAIL_RECEIVER,
-    subject: "Welcome To Jsx Mail",
+    subject: 'Welcome To Jsx Mail',
     html,
   });
 

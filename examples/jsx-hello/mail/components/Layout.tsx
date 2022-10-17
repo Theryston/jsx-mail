@@ -1,8 +1,8 @@
-import React from "react";
-import { Group } from "@jsx-mail/components";
-import styled from "styled-components";
-import { Footer } from "./Footer";
-import { Header } from "./Header";
+import React from 'react';
+import { Group } from '@jsx-mail/components';
+import styled from 'styled-components';
+import { Footer } from './Footer';
+import { Header } from './Header';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,9 +15,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 const Container = styled(Group)`
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding: 20px 150px;
   background-color: #f7f7f7;
+
+  @media (max-width: 600px) {
+    padding: 20px;
+  }
 `;
 
 const Body = styled(Group)`

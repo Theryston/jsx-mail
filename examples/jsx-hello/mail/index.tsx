@@ -1,6 +1,6 @@
-import React from "react";
-import { WelcomeTemplate } from "./templates/Welcome";
-import dotenv from "dotenv";
+import React from 'react';
+import { WelcomeTemplate } from './templates/Welcome';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -9,7 +9,7 @@ export default function App() {
     Welcome: {
       componentFunction: WelcomeTemplate,
       props: {
-        name: "Jonh Doe",
+        name: 'Jonh Doe',
       },
     },
   };
