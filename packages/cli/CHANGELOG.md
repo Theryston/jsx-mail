@@ -1,5 +1,12 @@
 # @jsx-mail/cli
 
+## 1.2.2
+
+### Patch Changes
+
+- @jsx-mail/core@1.0.7
+- jsx-mail@1.0.5
+
 ## 1.2.1
 
 ### Patch Changes

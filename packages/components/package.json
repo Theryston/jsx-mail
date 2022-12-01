@@ -1,6 +1,6 @@
 {
   "name": "@jsx-mail/components",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Components to facilitate the creation of your templates with jsx mail. 🚀✉️",

@@ -8,7 +8,7 @@ export interface IButtonProps
 }
 
 export const Button = ({ children, href, ...rest }: IButtonProps) => {
-  if (href && !href.startsWith('http')) {
+  if (href && !href.startsWith('{{') && !href.startsWith('http')) {
     console.log(
       '\x1b[31m',
       'Error: Button href should start with http:// or https://',
