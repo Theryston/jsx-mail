@@ -3,8 +3,7 @@
   "name": "web",
   "scripts": {
     "dev": "next",
-    "build": "next build",
-    "postbuild": "next-sitemap",
+    "build": "next build && next-sitemap",
     "start": "next start"
   },
   "dependencies": {

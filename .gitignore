@@ -38,3 +38,8 @@ html-check
 css-check
 .env
 hbs
+
+# SEO
+robots.txt
+sitemap.xml
+sitemap-0.xml
