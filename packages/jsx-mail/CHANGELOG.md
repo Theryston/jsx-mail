@@ -1,5 +1,13 @@
 # jsx-mail
 
+## 1.0.4
+
+### Patch Changes
+
+- Adding specific versions to packages
+- Updated dependencies
+  - @jsx-mail/core@1.0.6
+
 ## 1.0.3
 
 ### Patch Changes

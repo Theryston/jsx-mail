@@ -37,3 +37,4 @@ yarn-error.log*
 html-check
 css-check
 .env
+hbs

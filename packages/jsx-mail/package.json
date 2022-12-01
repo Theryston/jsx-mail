@@ -1,5 +1,5 @@
 {
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -15,7 +15,7 @@
     "build": "tsdx build"
   },
   "dependencies": {
-    "@jsx-mail/core": "*"
+    "@jsx-mail/core": "1.0.6"
   },
   "prettier": {
     "printWidth": 80,
