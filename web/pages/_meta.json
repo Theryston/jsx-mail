@@ -1,8 +1,8 @@
 {
   "index": {
-    "title": "Introduction",
+    "title": "Building the future of email",
     "type": "page",
-    "hidden": true
+    "display": "hidden"
   },
   "docs": {
     "title": "Docs",
