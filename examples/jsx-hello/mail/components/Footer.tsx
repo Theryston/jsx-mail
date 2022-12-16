@@ -22,7 +22,7 @@ export function Footer() {
           height={20}
         />
       </Anchor>
-      <Anchor href="https://github.com/Theryston/jsx-mail/blob/master/LICENSE">
+      <Anchor href="https://github.com/Theryston/jsx-mail/blob/main/LICENSE">
         <Image
           path={getAbsolutePath('assets/icons/license.png')}
           imgbbApiKey={process.env.IMGBB_API_KEY}

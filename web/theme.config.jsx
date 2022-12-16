@@ -6,7 +6,7 @@ export default {
   project: {
     link: 'https://github.com/Theryston/jsx-mail',
   },
-  docsRepositoryBase: 'https://github.com/Theryston/jsx-mail/blob/master/web',
+  docsRepositoryBase: 'https://github.com/Theryston/jsx-mail/blob/main/web',
   logo: <Image src={LogoImage} height="26.99px" width="30px" />,
   useNextSeoProps: () => {
     return {
