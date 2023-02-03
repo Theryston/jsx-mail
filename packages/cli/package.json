@@ -1,6 +1,6 @@
 {
   "name": "@jsx-mail/cli",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "The official jsx mail CLI. 🚀✉️",
   "types": "build/types/types.d.ts",
   "bin": {

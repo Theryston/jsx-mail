@@ -1,5 +1,11 @@
 # @jsx-mail/cli
 
+## 1.2.3
+
+### Patch Changes
+
+- fix mkdir
+
 ## 1.2.2
 
 ### Patch Changes
