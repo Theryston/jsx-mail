@@ -1,43 +1,17 @@
 {
-  "name": "jsx-mail-project",
-  "version": "0.0.0",
+  "name": "jsx-mail",
   "private": true,
-  "description": "A framework to create the look of your emails. 🚀✉️",
   "scripts": {
-    "build": "turbo run build",
-    "build:web": "turbo run build --scope=web --no-deps --include-dependencies",
-    "dev": "turbo run dev --parallel",
-    "lint": "turbo run lint",
-    "test": "turbo run test",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "commit": "pnpm git-cz",
-    "preinstall": "npx only-allow pnpm"
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.0.3",
-    "@commitlint/config-conventional": "^17.0.3",
-    "commitizen": "^4.2.5",
-    "husky": "^8.0.1",
-    "prettier": "latest",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "prettier": "^3.1.0",
     "turbo": "latest"
   },
-  "engines": {
-    "npm": ">=7.0.0",
-    "node": ">=14.0.0"
-  },
-  "dependencies": {
-    "@babel/plugin-transform-modules-commonjs": "^7.18.6",
-    "@babel/preset-react": "^7.18.6",
-    "@babel/preset-typescript": "^7.18.6",
-    "@changesets/cli": "^2.24.2",
-    "@typescript-eslint/eslint-plugin": "^5.33.0",
-    "@typescript-eslint/parser": "^5.33.0",
-    "babel-plugin-styled-components": "^2.0.7",
-    "eslint": "^8.21.0"
-  },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
-  }
+  "packageManager": "pnpm@8.9.0"
 }

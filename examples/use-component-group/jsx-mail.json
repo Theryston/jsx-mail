@@ -1,7 +1,0 @@
-{
-  "mailPath": "./app",
-  "allowHtmlNotRecommended": false,
-  "allowCssNotRecommended": false,
-  "servePort": "8080",
-  "lang": "pt-BR"
-}

@@ -1,7 +1,0 @@
-{
-  "mailPath": "./mail",
-  "lang": "en-US",
-  "servePort": 3002,
-  "allowCssNotRecommended": false,
-  "allowHtmlNotRecommended": false
-}

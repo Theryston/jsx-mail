@@ -1,11 +1,7 @@
 {
-  "cSpell.words": [
-    "calt",
-    "esnext",
-    "gluegun",
-    "Gluegun",
-    "pnpm",
-    "rlig",
-    "Theryston"
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
   ]
 }
