@@ -4,7 +4,7 @@ type renderInputType = {
   builtDirPath: string
 }
 
-export default function render({ templateName, builtDirPath }: renderInputType): string {
+export default async function render({ templateName, builtDirPath }: renderInputType): Promise<string> {
   console.log(JSON.stringify({ templateName, builtDirPath }))
   return '<h1>Hello</h1>'
 }

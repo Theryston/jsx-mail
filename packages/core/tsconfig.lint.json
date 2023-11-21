@@ -1,5 +1,5 @@
 {
-	"extends": "@jsx-mail/typescript-config/react-library.json",
+	"extends": "@jsx-mail/typescript-config/base.json",
 	"compilerOptions": {
 		"outDir": "dist"
 	},
