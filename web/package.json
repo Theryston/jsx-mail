@@ -7,7 +7,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "12.2.0",
+    "next": "13.5.0",
     "next-sitemap": "^3.1.32",
     "nextra": "^2.0.0",
     "nextra-theme-docs": "^2.0.0",
