@@ -1,5 +1,9 @@
-export default function core(): string {
-  console.log("Hello!")
+import build from "./build";
+import render from "./render";
 
-  return "Hello"
+const core = {
+  render,
+  build
 }
+
+export default core

@@ -61,6 +61,12 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
+  examples/use-core:
+    dependencies:
+      '@jsx-mail/core':
+        specifier: workspace:^
+        version: link:../../packages/core
+
   packages/core:
     devDependencies:
       '@jsx-mail/eslint-config':
