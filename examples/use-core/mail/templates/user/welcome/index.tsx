@@ -1,18 +1,23 @@
 import Layout from '../../../components/Layout/index';
 
-export const props = ['name'];
-
-type propsType = {
-	name: string;
+export const props = {
+	name: String(),
+	price: Number(),
+	createdAt: Date(),
 };
 
-export default function UserWelcomeTemplate({ name }: propsType) {
+export default function UserWelcomeTemplate({
+	name,
+	price,
+	createdAt,
+}: typeof props) {
 	return (
 		<Layout>
 			<div>
 				<div>
-					<></>
 					<div>Hello, {name}</div>
+					<div>Price: {price}</div>
+					<div>Price: {createdAt}</div>
 				</div>
 			</div>
 		</Layout>

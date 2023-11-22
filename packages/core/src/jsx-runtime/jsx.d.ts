@@ -7,11 +7,11 @@ declare namespace JSX {
 	};
 
 	type ElementChildrenAttribute = {
-		children: Element | string | (Element | string)[];
+		children: Element | string | number | (Element | string)[];
 	};
 
 	interface IntrinsicElements {
-		div: { children?: Element | string | (Element | string)[], t?: string, a?: string };
-		h1: { children?: Element | string | (Element | string)[] };
+		div: { children?: Element | string | number | (Element | string | number)[], t?: string, a?: string };
+		h1: { children?: Element | string | number | (Element | string | number)[] };
 	}
 }
