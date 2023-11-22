@@ -1,3 +1,5 @@
+import Layout from '../../../components/Layout/index';
+
 export const props = ['name'];
 
 type propsType = {
@@ -6,8 +8,13 @@ type propsType = {
 
 export default function UserWelcomeTemplate({ name }: propsType) {
 	return (
-		<div>
-			<h1>Hello {name}</h1>
-		</div>
+		<Layout>
+			<div>
+				<div>
+					<></>
+					<div>Hello, {name}</div>
+				</div>
+			</div>
+		</Layout>
 	);
 }
