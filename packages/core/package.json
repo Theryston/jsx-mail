@@ -14,7 +14,8 @@
 		"node": ">=10"
 	},
 	"scripts": {
-		"build": "tsc"
+		"build": "tsc && pnpm copy-jsx-types",
+		"copy-jsx-types": "cp ./src/jsx-runtime/jsx.d.ts ./dist/jsx-runtime/jsx.d.ts"
 	},
 	"devDependencies": {
 		"@jsx-mail/eslint-config": "workspace:*",
