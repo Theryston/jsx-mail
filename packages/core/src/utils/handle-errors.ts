@@ -1,9 +1,16 @@
 import CoreError from "./error";
 
-export default function handleErrors(error: unknown) {
+export default function handleErrors(error: unknown, log?: boolean, load?: any) {
+  let newError;
   if (error instanceof CoreError) {
-    throw error;
+    newError = error;
   } else {
-    throw new CoreError('unknown');
+    newError = new CoreError('unknown');
   }
+
+  if (log) {
+    load.fail(newError.message)
+  }
+
+  throw newError;
 }
