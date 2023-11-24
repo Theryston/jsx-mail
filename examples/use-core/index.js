@@ -1,13 +1,13 @@
 const core = require('@jsx-mail/core').default;
 
 core
-	.build('./mail')
-	.then((resultBuild) => {
-		console.log('resultBuild', resultBuild);
+	.prepare('./mail')
+	.then((resultPrepare) => {
+		console.log('resultPrepare', resultPrepare);
 
 		core
 			.render({
-				builtDirPath: resultBuild.outDir,
+				builtDirPath: resultPrepare.outDir,
 				templateName: 'test',
 			})
 			.then((resultRender) => {

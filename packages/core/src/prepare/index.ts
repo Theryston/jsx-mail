@@ -3,7 +3,7 @@ import esbuild from 'esbuild';
 import { changePathExt, copyFileAndCreateFolder, createFileWithFolder, createFolder, exists, getAllFilesByDirectory, getBaseCorePath, getRelativePath, getTemplateFolder, joinPath, readFile } from "../utils/file-system"
 import handleErrors from "../utils/handle-errors";
 
-export default async function build(dirPath: string) {
+export default async function prepare(dirPath: string) {
   try {
     const { baseCorePath, outDirFolder } = await handleInitialPaths(dirPath);
 

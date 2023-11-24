@@ -1,10 +1,10 @@
-import build from "./build";
+import prepare from "./prepare";
 import render from "./render";
 import { jsx } from './jsx-runtime'
 
 const core = {
   render,
-  build,
+  prepare,
   jsx
 }
 
