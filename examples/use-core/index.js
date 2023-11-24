@@ -1,7 +1,9 @@
 const core = require('@jsx-mail/core').default;
 
 core
-	.prepare('./mail')
+	.prepare('./mail', {
+		log: true,
+	})
 	.then((resultPrepare) => {
 		console.log('resultPrepare', resultPrepare);
 
