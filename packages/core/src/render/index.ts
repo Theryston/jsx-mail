@@ -1,4 +1,3 @@
-
 type renderInputType = {
   templateName: string;
   builtDirPath: string
