@@ -2,6 +2,7 @@ import CoreError from "../utils/error";
 import esbuild from 'esbuild';
 import { changePathExt, copyFileAndCreateFolder, createFileWithFolder, createFolder, exists, getAllFilesByDirectory, getBaseCorePath, getRelativePath, getTemplateFolder, joinPath, readFile } from "../utils/file-system"
 import handleErrors from "../utils/handle-errors";
+import getStorage, { StorageType } from "../utils/storage";
 
 type ProcessName = 'checking_mail_app_folder' | 'checking_jsx_files' | 'compiling_file' | 'copying_file'
 
@@ -11,11 +12,11 @@ type Options = {
 }
 
 export default async function prepare(dirPath: string, options?: Options) {
-  const { onProcessChange } = options || {
-    onProcessChange: () => { }
-  }
+  const { onProcessChange } = getOptions(options)
 
   try {
+    const storage = await setupTempStorage();
+
     const { baseCorePath, outDirFolder } = await handleInitialPaths(dirPath, onProcessChange);
 
     const allJsxFiles = await getJsxFiles(dirPath, onProcessChange);
@@ -24,6 +25,8 @@ export default async function prepare(dirPath: string, options?: Options) {
 
     await copyAllNotJsxFiles(dirPath, outDirFolder, onProcessChange);
 
+    await cleanTempStorage(storage);
+
     return {
       outDir: outDirFolder,
       warnings: compilationWarnings
@@ -31,6 +34,24 @@ export default async function prepare(dirPath: string, options?: Options) {
   } catch (error) {
     handleErrors(error);
   }
+}
+
+async function setupTempStorage() {
+  const storage = await getStorage();
+
+  await storage.setItem('CURRENT_PROCESS', 'PREPARING');
+
+  return storage;
+}
+
+async function cleanTempStorage(storage: StorageType) {
+  await storage.removeItem('CURRENT_PROCESS');
+}
+
+function getOptions(options: Options | undefined): { onProcessChange: Options['onProcessChange']; } {
+  return options || {
+    onProcessChange: () => { }
+  };
 }
 
 async function copyAllNotJsxFiles(dirPath: string, outDirFolder: string, onProcessChange: Options['onProcessChange']) {
