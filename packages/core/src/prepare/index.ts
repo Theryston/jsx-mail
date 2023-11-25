@@ -1,10 +1,10 @@
 import CoreError from "../utils/error";
 import esbuild from 'esbuild';
-import { changePathExt, copyFileAndCreateFolder, createFileWithFolder, createFolder, exists, getAllFilesByDirectory, getBaseCorePath, getRelativePath, getTemplateFolder, joinPath, readFile } from "../utils/file-system"
+import { changePathExt, copyFileAndCreateFolder, createFileWithFolder, createFolder, exists, getAllFilesByDirectory, getBaseCorePath, getFileUrl, getRelativePath, getTemplateFolder, joinPath, readFile } from "../utils/file-system"
 import handleErrors from "../utils/handle-errors";
 import getStorage, { StorageType } from "../utils/storage";
 
-type ProcessName = 'checking_mail_app_folder' | 'checking_jsx_files' | 'compiling_file' | 'copying_file'
+type ProcessName = 'checking_mail_app_folder' | 'checking_jsx_files' | 'compiling_file' | 'copying_file' | 'running_template'
 
 type Options = {
   // eslint-disable-next-line no-unused-vars
@@ -17,18 +17,20 @@ export default async function prepare(dirPath: string, options?: Options) {
   try {
     const storage = await setupTempStorage();
 
-    const { baseCorePath, outDirFolder } = await handleInitialPaths(dirPath, onProcessChange);
+    const { baseCorePath, builtMailAppPath } = await handleInitialPaths(dirPath, onProcessChange);
 
     const allJsxFiles = await getJsxFiles(dirPath, onProcessChange);
 
-    const compilationWarnings = await transformJsxFiles(allJsxFiles, baseCorePath, dirPath, outDirFolder, onProcessChange);
+    const compilationWarnings = await transformJsxFiles(allJsxFiles, baseCorePath, dirPath, builtMailAppPath, onProcessChange);
 
-    await copyAllNotJsxFiles(dirPath, outDirFolder, onProcessChange);
+    await copyAllNotJsxFiles(dirPath, builtMailAppPath, onProcessChange);
+
+    await executeTemplates(builtMailAppPath, onProcessChange)
 
     await cleanTempStorage(storage);
 
     return {
-      outDir: outDirFolder,
+      outDir: builtMailAppPath,
       warnings: compilationWarnings
     }
   } catch (error) {
@@ -46,6 +48,51 @@ async function setupTempStorage() {
 
 async function cleanTempStorage(storage: StorageType) {
   await storage.removeItem('CURRENT_PROCESS');
+}
+
+async function executeTemplates(builtMailAppPath: string, onProcessChange: Options['onProcessChange']) {
+  const templateFolderPath = await getTemplateFolder(builtMailAppPath)
+
+  const allTemplatesFiles = await getAllFilesByDirectory(templateFolderPath as string, {
+    extensions: ['js']
+  })
+
+  for (const templateFile of allTemplatesFiles) {
+    const templateFileUrl = await getFileUrl(templateFile.path)
+
+    onProcessChange('running_template', {
+      ...templateFile,
+      templateFileUrl
+    })
+
+    const { default: templateImport } = await import(templateFileUrl)
+
+    const component = getComponent(templateImport, templateFile, templateFileUrl);
+
+    const props = templateImport.props
+
+    try {
+      await component(props)
+    } catch (error) {
+      throw new CoreError('fails_to_run_template_in_prepare', {
+        path: templateFile.path,
+        templateFileUrl,
+        error
+      });
+    }
+  }
+}
+
+function getComponent(templateImport: any, templateFile: { path: string; ext: string; }, templateFileUrl: string) {
+  const component = templateImport.default;
+
+  if (!component || typeof component !== 'function') {
+    throw new CoreError('export_a_component_as_default', {
+      templateBuiltPath: templateFile.path,
+      templateBuiltUrl: templateFileUrl
+    });
+  }
+  return component;
 }
 
 function getOptions(options: Options | undefined): { onProcessChange: Options['onProcessChange']; } {
@@ -167,12 +214,12 @@ async function handleInitialPaths(dirPath: string, onProcessChange: Options['onP
   }
 
   const baseCorePath = await getBaseCorePath();
-  const outDirFolder = await joinPath(baseCorePath, 'mail-app-built');
-  const outDirFolderExists = await exists(outDirFolder);
+  const builtMailAppPath = await joinPath(baseCorePath, 'mail-app-built');
+  const outDirFolderExists = await exists(builtMailAppPath);
 
   if (!outDirFolderExists) {
-    await createFolder(outDirFolder);
+    await createFolder(builtMailAppPath);
   }
 
-  return { baseCorePath, outDirFolder };
+  return { baseCorePath, builtMailAppPath };
 }

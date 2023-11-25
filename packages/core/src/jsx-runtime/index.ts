@@ -1,13 +1,20 @@
-export function jsx(...rest: any) {
-  console.log('jsx', rest)
-  return '<h1>ok</h1>'
+export async function jsx(node: any, props: any) {
+  if (typeof node === 'function') {
+    return await node(props.children)
+  }
+
+  return await props.children
 }
 
-export function jsxs(...rest: any) {
-  console.log('jsxs', rest)
-  return '<h1>ok</h1>'
+export async function jsxs(node: any, props: any) {
+  if (typeof node === 'function') {
+    return await node(props.children)
+  }
+
+  return await props.children
 }
 
-export function Fragment() {
+export async function Fragment() {
+  console.log()
   return ''
 }

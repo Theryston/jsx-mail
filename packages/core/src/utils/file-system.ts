@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import url from 'url'
 
 declare const __dirname: string;
 
@@ -121,4 +122,8 @@ export async function copyFileAndCreateFolder(originFilePath: string, destinatio
   const originFileBytes = await fs.promises.readFile(originFilePath)
 
   await fs.promises.writeFile(destinationFilePath, originFileBytes)
+}
+
+export async function getFileUrl(filePath: string) {
+  return url.pathToFileURL(filePath).href
 }

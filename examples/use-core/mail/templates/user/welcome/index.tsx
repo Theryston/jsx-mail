@@ -15,7 +15,7 @@ export default function UserWelcomeTemplate({
 		<Layout>
 			<div>
 				<div>
-					<div>Hello, {name}</div>
+					<div>Hello, {name.toLocaleUpperCase()}</div>
 					<div>Price: {price}</div>
 					<div>Price: {createdAt}</div>
 				</div>
