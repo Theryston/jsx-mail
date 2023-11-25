@@ -2,7 +2,9 @@ const core = require('@jsx-mail/core').default;
 
 core
 	.prepare('./mail', {
-		log: true,
+		onProcessChange: (name, data) => {
+			console.log(name, data);
+		},
 	})
 	.then((resultPrepare) => {
 		console.log('resultPrepare', resultPrepare);
