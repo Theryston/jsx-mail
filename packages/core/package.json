@@ -26,7 +26,6 @@
 		"typescript": "^5.2.2"
 	},
 	"dependencies": {
-		"esbuild": "^0.19.7",
-		"loading-cli": "^1.1.1"
+		"esbuild": "^0.19.7"
 	}
 }

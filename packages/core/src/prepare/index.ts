@@ -2,50 +2,38 @@ import CoreError from "../utils/error";
 import esbuild from 'esbuild';
 import { changePathExt, copyFileAndCreateFolder, createFileWithFolder, createFolder, exists, getAllFilesByDirectory, getBaseCorePath, getRelativePath, getTemplateFolder, joinPath, readFile } from "../utils/file-system"
 import handleErrors from "../utils/handle-errors";
-import load from "../utils/load";
+
+type ProcessName = 'checking_mail_app_folder' | 'checking_jsx_files' | 'compiling_file' | 'copying_file'
 
 type Options = {
-  log?: boolean
+  // eslint-disable-next-line no-unused-vars
+  onProcessChange: (processName: ProcessName, data: { [key: string]: string }) => void
 }
 
 export default async function prepare(dirPath: string, options?: Options) {
-  const { log } = options || {}
+  const { onProcessChange } = options || {
+    onProcessChange: () => { }
+  }
 
   try {
-    startLoad(log);
+    const { baseCorePath, outDirFolder } = await handleInitialPaths(dirPath, onProcessChange);
 
-    const { baseCorePath, outDirFolder } = await handleInitialPaths(dirPath);
+    const allJsxFiles = await getJsxFiles(dirPath, onProcessChange);
 
-    const allJsxFiles = await getJsxFiles(dirPath);
+    const compilationWarnings = await transformJsxFiles(allJsxFiles, baseCorePath, dirPath, outDirFolder, onProcessChange);
 
-    const compilationWarnings = await transformJsxFiles(allJsxFiles, baseCorePath, dirPath, outDirFolder, log);
-
-    await copyAllNotJsxFiles(dirPath, outDirFolder, log);
-
-    successLoad(log);
+    await copyAllNotJsxFiles(dirPath, outDirFolder, onProcessChange);
 
     return {
       outDir: outDirFolder,
       warnings: compilationWarnings
     }
   } catch (error) {
-    handleErrors(error, log, load);
+    handleErrors(error);
   }
 }
 
-function successLoad(log: boolean | undefined) {
-  if (log) {
-    load.succeed('Prepare ran successfully');
-  }
-}
-
-function startLoad(log: boolean | undefined) {
-  if (log) {
-    load.start('Getting infos about the mail app...');
-  }
-}
-
-async function copyAllNotJsxFiles(dirPath: string, outDirFolder: string, log?: boolean) {
+async function copyAllNotJsxFiles(dirPath: string, outDirFolder: string, onProcessChange: Options['onProcessChange']) {
   const allNoJsxFiles = await getAllFilesByDirectory(dirPath, {
     excludeExtensions: ['jsx', 'tsx']
   });
@@ -53,23 +41,36 @@ async function copyAllNotJsxFiles(dirPath: string, outDirFolder: string, log?: b
   for (const noJsxFile of allNoJsxFiles) {
     const relativePath = await getRelativePath(dirPath, noJsxFile.path);
 
-    if (log) {
-      load.text = `Copying file ${relativePath} to built folder...`
-    }
-
     const outPath = await joinPath(outDirFolder, relativePath);
+
+
+    onProcessChange('copying_file', {
+      relativePath,
+      path: noJsxFile.path,
+      destinationPath: outPath
+    })
 
     await copyFileAndCreateFolder(noJsxFile.path, outPath);
   }
 }
 
-async function transformJsxFiles(allJsxFiles: { path: string; ext: string; }[], baseCorePath: string, dirPath: string, outDirFolder: string, log?: boolean) {
+async function transformJsxFiles(allJsxFiles: { path: string; ext: string; }[], baseCorePath: string, dirPath: string, outDirFolder: string, onProcessChange: Options['onProcessChange']) {
   const compilationWarnings = [];
 
   for (const jsxFile of allJsxFiles) {
     const relativeJsxPath = await getRelativePath(dirPath, jsxFile.path);
 
-    transformFileLog(log, relativeJsxPath);
+    const jsFilePath = await changePathExt(jsxFile.path, 'js');
+
+    const relativeJsPath = await getRelativePath(dirPath, jsFilePath);
+
+    const builtPath = await joinPath(outDirFolder, relativeJsPath);
+
+    onProcessChange('compiling_file', {
+      relativePath: relativeJsxPath,
+      destinationPath: builtPath,
+      ...jsxFile
+    })
 
     const fileCode = await readFile(jsxFile.path);
 
@@ -86,22 +87,10 @@ async function transformJsxFiles(allJsxFiles: { path: string; ext: string; }[], 
       }
     }
 
-    const jsFilePath = await changePathExt(jsxFile.path, 'js');
-
-    const relativeJsPath = await getRelativePath(dirPath, jsFilePath);
-
-    const builtPath = await joinPath(outDirFolder, relativeJsPath);
-
     await createFileWithFolder(builtPath, builtFile.code);
   }
 
   return compilationWarnings;
-}
-
-function transformFileLog(log: boolean | undefined, relativeJsxPath: string) {
-  if (log) {
-    load.text = `Building file ${relativeJsxPath}...`;
-  }
 }
 
 async function transformCodeAndHandleError(fileCode: string, coreRelativePath: string, jsxFile: { path: string; ext: string; }) {
@@ -131,7 +120,10 @@ function handleErrorTransform(error: any) {
   });
 }
 
-async function getJsxFiles(dirPath: string) {
+async function getJsxFiles(dirPath: string, onProcessChange: Options['onProcessChange']) {
+  onProcessChange('checking_jsx_files', {
+    dirPath
+  })
   const allJsxFiles = await getAllFilesByDirectory(dirPath, {
     extensions: ['jsx', 'tsx']
   });
@@ -142,7 +134,11 @@ async function getJsxFiles(dirPath: string) {
   return allJsxFiles;
 }
 
-async function handleInitialPaths(dirPath: string) {
+async function handleInitialPaths(dirPath: string, onProcessChange: Options['onProcessChange']) {
+  onProcessChange('checking_mail_app_folder', {
+    dirPath
+  })
+
   const templateFolderPath = await getTemplateFolder(dirPath);
 
   if (!templateFolderPath) {
@@ -156,5 +152,6 @@ async function handleInitialPaths(dirPath: string) {
   if (!outDirFolderExists) {
     await createFolder(outDirFolder);
   }
+
   return { baseCorePath, outDirFolder };
 }
