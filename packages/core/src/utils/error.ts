@@ -36,6 +36,26 @@ export const ERRORS: IError[] = [
     name: 'fails_to_run_template_in_prepare',
     message: 'The prepare process tried to run your template, but received an error',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/fails-to-run-template-in-prepare`
+  },
+  {
+    name: 'not_supported_tag',
+    message: 'You used a tag not supported by email clients so it doesn\'t exist in jsx mail',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/not-supported-tag`
+  },
+  {
+    name: 'not_supported_style',
+    message: 'You used css which is not supported by some email clients so it is not implemented in JSX Mail',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/not-supported-style`
+  },
+  {
+    name: 'not_supported_style_value',
+    message: 'The value you used in your css is not supported by some email clients',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/not-supported-style-value`
+  },
+  {
+    name: 'promise_not_allowed',
+    message: 'No component can return a promise, please do all the asynchronous things you have to do directly in "onRender"',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/promise-not-allowed`
   }
 ]
 

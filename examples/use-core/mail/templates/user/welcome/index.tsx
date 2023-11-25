@@ -15,7 +15,14 @@ export default function UserWelcomeTemplate({
 		<Layout>
 			<div>
 				<div>
-					<div>Hello, {name.toLocaleUpperCase()}</div>
+					<div
+						style={{
+							width: '10px',
+							backgroundColor: 'red',
+						}}
+					>
+						Hello, {name.toLocaleUpperCase()}
+					</div>
 					<div>Price: {price}</div>
 					<div>Price: {createdAt}</div>
 				</div>

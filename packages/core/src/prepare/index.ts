@@ -72,7 +72,14 @@ async function executeTemplates(builtMailAppPath: string, onProcessChange: Optio
     const props = templateImport.props
 
     try {
-      await component(props)
+      const result = component(props)
+
+      if (result instanceof Promise) {
+        throw new CoreError('promise_not_allowed');
+      }
+
+      // remove-log
+      console.log('executeTemplates', JSON.stringify(result))
     } catch (error) {
       throw new CoreError('fails_to_run_template_in_prepare', {
         path: templateFile.path,
