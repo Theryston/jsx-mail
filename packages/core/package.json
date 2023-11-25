@@ -22,11 +22,11 @@
 		"@jsx-mail/typescript-config": "workspace:*",
 		"@types/eslint": "^8.44.7",
 		"@types/node": "^20.5.2",
+		"@types/node-persist": "^3.1.7",
 		"eslint": "^8.53.0",
 		"typescript": "^5.2.2"
 	},
 	"dependencies": {
-		"@types/node-persist": "^3.1.7",
 		"esbuild": "^0.19.7",
 		"node-persist": "^3.1.3"
 	}
