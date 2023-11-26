@@ -52,14 +52,14 @@ export default function UserWelcomeTemplate({
 }: typeof props) {
   return (
     <Layout title="Welcome">
-      <div container>
+      <div container sectionPending="10px">
         <div style={S.NameWrapper} section>
           <div style={S.NameText}>Hello, {name.toLocaleUpperCase()}</div>
         </div>
         <div section>
           <Products products={products} />
+          <div>Buy at: {createdAt}</div>
         </div>
-        <div section>Buy at: {createdAt}</div>
       </div>
     </Layout>
   );

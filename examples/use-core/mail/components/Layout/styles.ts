@@ -5,7 +5,7 @@ export const Container: JSX.ElementStyle = {
 };
 
 export const Header: JSX.ElementStyle = {
-  height: '50px',
+  paddingBottom: '20px',
 };
 
 export const Content: JSX.ElementStyle = {

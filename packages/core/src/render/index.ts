@@ -1,5 +1,4 @@
 import { JSXMailVirtualDOM } from '..';
-import camelToDash from '../utils/camel-to-dash';
 import CoreError from '../utils/error';
 import {
   getFileUrl,
@@ -47,7 +46,7 @@ function convertToHTML(virtualDOM: JSXMailVirtualDOM) {
     .join('');
 
   const propsHTML = Object.keys(props)
-    .map((key) => ` ${camelToDash(key)}="${props[key]}"`)
+    .map((key) => ` ${key}="${props[key]}"`)
     .join('');
 
   return `<${node}${propsHTML}>${childrenHTML}</${node}>`;

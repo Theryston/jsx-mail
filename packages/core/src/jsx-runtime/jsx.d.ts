@@ -76,12 +76,18 @@ declare namespace JSX {
     div: {
       alignY?: 'top' | 'center' | 'bottom';
       alignX?: 'left' | 'center' | 'right';
+      sectionPending?: string;
       className?: string;
       id?: string;
       style?: ElementStyle;
       children?: ElementChildren;
       container?: boolean;
       section?: boolean;
+    };
+    styling: {
+      style: {
+        [selector: string]: ElementStyle;
+      };
     };
   }
 }
