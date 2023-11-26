@@ -18,8 +18,8 @@ export const ERRORS: IError[] = [
     docsPageUrl: `${WEBSITE_URL}/docs/errors/no-template-folder`
   },
   {
-    name: 'no_tsx_or_jsx_files',
-    message: 'I didn\'t find any file with the extension .tsx/.jsx in your mail app, please create one and export a component as default',
+    name: 'compile_files',
+    message: 'I didn\'t find any file with the extension .tsx/.jsx/.js/.ts in your mail app, please create one and export a component as default',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/no-tsx-or-jsx-files`
   },
   {
@@ -56,6 +56,11 @@ export const ERRORS: IError[] = [
     name: 'promise_not_allowed',
     message: 'No component can return a promise, please do all the asynchronous things you have to do directly in "onRender"',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/promise-not-allowed`
+  },
+  {
+    name: 'not_supported_props',
+    message: 'You used props that are not supported by this tag',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/not-supported-props`
   }
 ]
 

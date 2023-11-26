@@ -35,3 +35,7 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Run example output
+/examples/use-core/example-vd.json
+/examples/use-core/example-vd.html

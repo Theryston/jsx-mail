@@ -1,31 +1,44 @@
 import Layout from '../../../components/Layout/index';
+import Products from '../../../components/Products/index';
+import * as S from './styles';
 
 export const props = {
 	name: String(),
-	price: Number(),
+	products: Array({
+		price: Number(),
+		name: String(),
+	}),
 	createdAt: Date(),
 };
 
+// export const props = {
+// 	name: 'Theryston',
+// 	products: [
+// 		{
+// 			price: 100,
+// 			name: 'Phone',
+// 		},
+// 		{
+// 			price: 1000,
+// 			name: 'macbook',
+// 		},
+// 	],
+// 	createdAt: Date(),
+// };
+
 export default function UserWelcomeTemplate({
 	name,
-	price,
+	products,
 	createdAt,
 }: typeof props) {
 	return (
 		<Layout>
 			<div>
-				<div>
-					<div
-						style={{
-							width: '10px',
-							backgroundColor: 'red',
-						}}
-					>
-						Hello, {name.toLocaleUpperCase()}
-					</div>
-					<div>Price: {price}</div>
-					<div>Price: {createdAt}</div>
+				<div style={S.NameWrapper}>
+					<div style={S.NameText}>Hello, {name.toLocaleUpperCase()}</div>
 				</div>
+				<Products products={products} />
+				<div>Buy at: {createdAt}</div>
 			</div>
 		</Layout>
 	);

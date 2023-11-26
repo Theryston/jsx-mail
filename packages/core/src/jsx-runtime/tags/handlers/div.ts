@@ -1,13 +1,10 @@
-import getStyle from "../../get-style"
+import { TagResult } from ".."
 
-const allowedProps = ['align', 'className', 'id', 'style', 'children']
+export const DivProps = ['align', 'className', 'id', 'style', 'children']
 
-export default function DivHandler(props: JSX.IntrinsicElements['div']) {
-  const style = getStyle(props)
-
-  delete props.style
+export default function DivHandler(props: JSX.IntrinsicElements['div']): TagResult {
   return {
-    props,
-    style,
+    node: 'div',
+    props: props,
   }
 }

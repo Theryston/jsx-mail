@@ -8,4 +8,4 @@ export function jsxs(node: JSX.ElementNode, props: JSX.ElementProps) {
   return factory(node, props)
 }
 
-export function Fragment() { }
+export const Fragment = 'div'

@@ -1,10 +1,14 @@
 import CoreError from "../utils/error";
 import esbuild from 'esbuild';
-import { changePathExt, copyFileAndCreateFolder, createFileWithFolder, createFolder, exists, getAllFilesByDirectory, getBaseCorePath, getFileUrl, getRelativePath, getTemplateFolder, joinPath, readFile } from "../utils/file-system"
+import { changePathExt, copyFileAndCreateFolder, createFileWithFolder, createFolder, exists, getAllFilesByDirectory, getAllTemplates, getBaseCorePath, getFileUrl, getRelativePath, getTemplateFolder, joinPath, readFile } from "../utils/file-system"
 import handleErrors from "../utils/handle-errors";
 import getStorage, { StorageType } from "../utils/storage";
 
-type ProcessName = 'checking_mail_app_folder' | 'checking_jsx_files' | 'compiling_file' | 'copying_file' | 'running_template'
+type CompileFilePath = 'jsx' | 'tsx' | 'js' | 'ts'
+
+const COMPILE_FILES_EXT: CompileFilePath[] = ['jsx', 'tsx', 'js', 'ts']
+
+type ProcessName = 'checking_mail_app_folder' | 'checking_compile_files' | 'compiling_file' | 'compiled_file' | 'copying_file' | 'running_template' | 'ran_template'
 
 type Options = {
   // eslint-disable-next-line no-unused-vars
@@ -19,11 +23,11 @@ export default async function prepare(dirPath: string, options?: Options) {
 
     const { baseCorePath, builtMailAppPath } = await handleInitialPaths(dirPath, onProcessChange);
 
-    const allJsxFiles = await getJsxFiles(dirPath, onProcessChange);
+    const allCompileFiles = await getCompileFiles(dirPath, onProcessChange);
 
-    const compilationWarnings = await transformJsxFiles(allJsxFiles, baseCorePath, dirPath, builtMailAppPath, onProcessChange);
+    const compilationWarnings = await transformCompileFiles(allCompileFiles, baseCorePath, dirPath, builtMailAppPath, onProcessChange);
 
-    await copyAllNotJsxFiles(dirPath, builtMailAppPath, onProcessChange);
+    await copyAllNotCompileFiles(dirPath, builtMailAppPath, onProcessChange);
 
     await executeTemplates(builtMailAppPath, onProcessChange)
 
@@ -51,11 +55,7 @@ async function cleanTempStorage(storage: StorageType) {
 }
 
 async function executeTemplates(builtMailAppPath: string, onProcessChange: Options['onProcessChange']) {
-  const templateFolderPath = await getTemplateFolder(builtMailAppPath)
-
-  const allTemplatesFiles = await getAllFilesByDirectory(templateFolderPath as string, {
-    extensions: ['js']
-  })
+  const allTemplatesFiles = await getAllTemplates(builtMailAppPath);
 
   for (const templateFile of allTemplatesFiles) {
     const templateFileUrl = await getFileUrl(templateFile.path)
@@ -78,14 +78,21 @@ async function executeTemplates(builtMailAppPath: string, onProcessChange: Optio
         throw new CoreError('promise_not_allowed');
       }
 
-      // remove-log
-      console.log('executeTemplates', JSON.stringify(result))
-    } catch (error) {
-      throw new CoreError('fails_to_run_template_in_prepare', {
-        path: templateFile.path,
+      onProcessChange('ran_template', {
+        ...templateFile,
         templateFileUrl,
-        error
-      });
+        virtualDOM: result
+      })
+    } catch (error) {
+      if (error instanceof CoreError) {
+        throw error;
+      } else {
+        throw new CoreError('fails_to_run_template_in_prepare', {
+          path: templateFile.path,
+          templateFileUrl,
+          error
+        });
+      }
     }
   }
 }
@@ -108,55 +115,62 @@ function getOptions(options: Options | undefined): { onProcessChange: Options['o
   };
 }
 
-async function copyAllNotJsxFiles(dirPath: string, outDirFolder: string, onProcessChange: Options['onProcessChange']) {
-  const allNoJsxFiles = await getAllFilesByDirectory(dirPath, {
-    excludeExtensions: ['jsx', 'tsx']
+async function copyAllNotCompileFiles(dirPath: string, outDirFolder: string, onProcessChange: Options['onProcessChange']) {
+  const allNoCompileFiles = await getAllFilesByDirectory(dirPath, {
+    excludeExtensions: COMPILE_FILES_EXT
   });
 
-  for (const noJsxFile of allNoJsxFiles) {
-    const relativePath = await getRelativePath(dirPath, noJsxFile.path);
+  for (const noCompileFile of allNoCompileFiles) {
+    const relativePath = await getRelativePath(dirPath, noCompileFile.path);
 
     const outPath = await joinPath(outDirFolder, relativePath);
 
 
     onProcessChange('copying_file', {
       relativePath,
-      path: noJsxFile.path,
+      path: noCompileFile.path,
       destinationPath: outPath
     })
 
-    await copyFileAndCreateFolder(noJsxFile.path, outPath);
+    await copyFileAndCreateFolder(noCompileFile.path, outPath);
   }
 }
 
-async function transformJsxFiles(allJsxFiles: { path: string; ext: string; }[], baseCorePath: string, dirPath: string, outDirFolder: string, onProcessChange: Options['onProcessChange']) {
+async function transformCompileFiles(allCompileFiles: { path: string; ext: string; }[], baseCorePath: string, dirPath: string, outDirFolder: string, onProcessChange: Options['onProcessChange']) {
   const compilationWarnings = [];
 
-  for (const jsxFile of allJsxFiles) {
-    const relativeJsxPath = await getRelativePath(dirPath, jsxFile.path);
+  for (const compileFile of allCompileFiles) {
+    const relativeCompilePath = await getRelativePath(dirPath, compileFile.path);
 
-    const jsFilePath = await changePathExt(jsxFile.path, 'js');
+    const jsFilePath = await changePathExt(compileFile.path, 'js');
 
     const relativeJsPath = await getRelativePath(dirPath, jsFilePath);
 
     const builtPath = await joinPath(outDirFolder, relativeJsPath);
 
     onProcessChange('compiling_file', {
-      relativePath: relativeJsxPath,
+      relativePath: relativeCompilePath,
       destinationPath: builtPath,
-      ...jsxFile
+      ...compileFile
     })
 
-    const fileCode = await readFile(jsxFile.path);
+    const fileCode = await readFile(compileFile.path);
 
-    const coreRelativePath = await getRelativePath(jsxFile.path, baseCorePath);
+    const coreRelativePath = await getRelativePath(compileFile.path, baseCorePath);
 
-    const builtFile = await transformCodeAndHandleError(fileCode, coreRelativePath, jsxFile);
+    const builtFile = await transformCodeAndHandleError(fileCode, coreRelativePath, compileFile);
+
+    onProcessChange('compiled_file', {
+      relativePath: relativeCompilePath,
+      destinationPath: builtPath,
+      code: builtFile.code,
+      ...compileFile
+    })
 
     if (builtFile.warnings) {
       for (const warning of builtFile.warnings) {
         compilationWarnings.push({
-          ...jsxFile,
+          ...compileFile,
           ...warning
         });
       }
@@ -168,21 +182,21 @@ async function transformJsxFiles(allJsxFiles: { path: string; ext: string; }[], 
   return compilationWarnings;
 }
 
-async function transformCodeAndHandleError(fileCode: string, coreRelativePath: string, jsxFile: { path: string; ext: string; }) {
+async function transformCodeAndHandleError(fileCode: string, coreRelativePath: string, compileFile: { path: string; ext: string; }) {
   try {
-    return await transformCode(fileCode, coreRelativePath, jsxFile);
+    return await transformCode(fileCode, coreRelativePath, compileFile);
   } catch (error: any) {
     handleErrorTransform(error);
   }
 }
 
-async function transformCode(fileCode: string, coreRelativePath: string, jsxFile: { path: string; ext: string; }) {
+async function transformCode(fileCode: string, coreRelativePath: string, compileFile: { path: string; ext: string; }) {
   const builtFile: any = await esbuild.transform(fileCode, {
     jsxFactory: 'jsx',
     jsx: 'automatic',
     jsxImportSource: coreRelativePath.replace(/\\/g, '/'),
     format: 'cjs',
-    loader: jsxFile.ext as 'jsx' | 'tsx'
+    loader: compileFile.ext as CompileFilePath
   });
 
   return builtFile
@@ -195,18 +209,18 @@ function handleErrorTransform(error: any) {
   });
 }
 
-async function getJsxFiles(dirPath: string, onProcessChange: Options['onProcessChange']) {
-  onProcessChange('checking_jsx_files', {
+async function getCompileFiles(dirPath: string, onProcessChange: Options['onProcessChange']) {
+  onProcessChange('checking_compile_files', {
     dirPath
   })
-  const allJsxFiles = await getAllFilesByDirectory(dirPath, {
-    extensions: ['jsx', 'tsx']
+  const allCompileFiles = await getAllFilesByDirectory(dirPath, {
+    extensions: COMPILE_FILES_EXT
   });
 
-  if (!allJsxFiles || !allJsxFiles.length) {
-    throw new CoreError('no_tsx_or_jsx_files');
+  if (!allCompileFiles || !allCompileFiles.length) {
+    throw new CoreError('compile_files');
   }
-  return allJsxFiles;
+  return allCompileFiles;
 }
 
 async function handleInitialPaths(dirPath: string, onProcessChange: Options['onProcessChange']) {

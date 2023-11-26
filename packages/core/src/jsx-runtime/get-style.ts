@@ -72,11 +72,11 @@ export default function getStyle(props: {
   [key: string]: any,
   style?: JSX.ElementStyle
 }) {
-  if (!props.style) {
-    return {}
+  if (!props || !props.style || !Object.keys(props.style).length) {
+    return
   }
 
-  const resultStyles: any = {}
+  let resultStyles = '';
   for (const style of Object.entries(props.style)) {
     const [key, value] = style;
 
@@ -104,7 +104,7 @@ export default function getStyle(props: {
 
     const dashKey = camelToDash(key)
 
-    resultStyles[dashKey] = value
+    resultStyles += `${dashKey}:${value};`
   }
 
   return resultStyles

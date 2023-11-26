@@ -8,4 +8,11 @@ const core = {
   jsx
 }
 
+export type JSXMailVirtualDOM = {
+  node: string,
+  props: any,
+  children: (JSXMailVirtualDOM | string | number)[]
+  __jsx_mail_vdom: boolean
+}
+
 export default core

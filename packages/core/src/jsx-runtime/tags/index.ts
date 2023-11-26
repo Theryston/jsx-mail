@@ -1,9 +1,15 @@
-import DivHandler from "./handlers/div"
+import DivHandler, { DivProps } from "./handlers/div"
+
+export type TagResult = {
+  node: string,
+  props: any,
+}
 
 const tags = [
   {
     node: 'div',
-    handler: DivHandler
+    handler: DivHandler,
+    supportedProps: DivProps
   }
 ]
 

@@ -2,6 +2,8 @@ import path from 'path';
 import fs from 'fs';
 import url from 'url'
 
+const NO_TEMPLATE_FILE_NAME = ['styles']
+
 declare const __dirname: string;
 
 type GetAllFilesByDirectoryOptions = {
@@ -78,6 +80,38 @@ export async function getTemplateFolder(pathDir: string) {
   }
 
   return templateFolderPath
+}
+
+
+export async function getAllTemplates(pathDir: string) {
+  const templateFolderPath = await getTemplateFolder(pathDir)
+
+  if (!templateFolderPath) {
+    return []
+  }
+
+  const allFilesIntoTemplate = await getAllFilesByDirectory(templateFolderPath, {
+    extensions: ['js', 'ts', 'jsx', 'tsx']
+  })
+
+  const templateFiles = []
+
+  for (const templateFile of allFilesIntoTemplate) {
+    const fileName = await extractFileName(templateFile.path)
+
+    if (NO_TEMPLATE_FILE_NAME.includes(fileName)) {
+      continue
+    }
+
+    templateFiles.push(templateFile)
+  }
+
+  return templateFiles
+}
+
+async function extractFileName(filePath: string) {
+  const fileNameWithExt = path.basename(filePath);
+  return path.parse(fileNameWithExt).name;
 }
 
 export async function readFile(filePath: string) {
