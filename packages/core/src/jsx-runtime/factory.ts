@@ -1,33 +1,38 @@
-import { JSXMailVirtualDOM } from "..";
-import CoreError from "../utils/error";
-import tags from "./tags"
+import { JSXMailVirtualDOM } from '..';
+import CoreError from '../utils/error';
+import tags from './tags';
 
-export default function factory(node: JSX.ElementNode, props: any): JSXMailVirtualDOM {
+export default function factory(
+  node: JSX.ElementNode,
+  props: any,
+): JSXMailVirtualDOM {
   if (typeof node === 'function') {
     return handleNodeFunction(node, props);
   }
 
   const tag = getTag(node, props);
 
-  const notSupportedProps = Object.keys(props).filter(prop => !tag.supportedProps.includes(prop))
+  const notSupportedProps = Object.keys(props).filter(
+    (prop) => !tag.supportedProps.includes(prop),
+  );
 
   if (notSupportedProps.length) {
     throw new CoreError('not_supported_props', {
       tag: node,
-      props: notSupportedProps
+      props: notSupportedProps,
     });
   }
 
-  return tag.handler(props)
+  return tag.handler(props);
 }
 
 function getTag(node: any, props: any) {
-  const tag = tags.find(tag => tag.node === node);
+  const tag = tags.find((tag) => tag.node === node);
 
   if (!tag) {
     throw new CoreError('not_supported_tag', {
       node,
-      props
+      props,
     });
   }
 
@@ -47,4 +52,3 @@ function handlePromiseResult(result: any) {
     throw new CoreError('promise_not_allowed');
   }
 }
-

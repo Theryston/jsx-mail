@@ -1,42 +1,76 @@
-import CoreError from "../utils/error";
+import CoreError from '../utils/error';
 import esbuild from 'esbuild';
-import { changePathExt, copyFileAndCreateFolder, createFileWithFolder, createFolder, exists, getAllFilesByDirectory, getAllTemplates, getBaseCorePath, getFileUrl, getRelativePath, getTemplateFolder, joinPath, readFile } from "../utils/file-system"
-import handleErrors from "../utils/handle-errors";
-import getStorage, { StorageType } from "../utils/storage";
+import {
+  changePathExt,
+  copyFileAndCreateFolder,
+  createFileWithFolder,
+  createFolder,
+  exists,
+  getAllFilesByDirectory,
+  getAllTemplates,
+  getBaseCorePath,
+  getFileUrl,
+  getRelativePath,
+  getTemplateFolder,
+  joinPath,
+  readFile,
+} from '../utils/file-system';
+import handleErrors from '../utils/handle-errors';
+import getStorage, { StorageType } from '../utils/storage';
 
-type CompileFilePath = 'jsx' | 'tsx' | 'js' | 'ts'
+type CompileFilePath = 'jsx' | 'tsx' | 'js' | 'ts';
 
-const COMPILE_FILES_EXT: CompileFilePath[] = ['jsx', 'tsx', 'js', 'ts']
+const COMPILE_FILES_EXT: CompileFilePath[] = ['jsx', 'tsx', 'js', 'ts'];
 
-type ProcessName = 'checking_mail_app_folder' | 'checking_compile_files' | 'compiling_file' | 'compiled_file' | 'copying_file' | 'running_template' | 'ran_template'
+type ProcessName =
+  | 'checking_mail_app_folder'
+  | 'checking_compile_files'
+  | 'compiling_file'
+  | 'compiled_file'
+  | 'copying_file'
+  | 'running_template'
+  | 'ran_template';
 
 type Options = {
-  // eslint-disable-next-line no-unused-vars
-  onProcessChange: (processName: ProcessName, data: { [key: string]: string }) => void
-}
+  onProcessChange: (
+    // eslint-disable-next-line no-unused-vars
+    processName: ProcessName,
+    // eslint-disable-next-line no-unused-vars
+    data: { [key: string]: string },
+  ) => void;
+};
 
 export default async function prepare(dirPath: string, options?: Options) {
-  const { onProcessChange } = getOptions(options)
+  const { onProcessChange } = getOptions(options);
 
   try {
     const storage = await setupTempStorage();
 
-    const { baseCorePath, builtMailAppPath } = await handleInitialPaths(dirPath, onProcessChange);
+    const { baseCorePath, builtMailAppPath } = await handleInitialPaths(
+      dirPath,
+      onProcessChange,
+    );
 
     const allCompileFiles = await getCompileFiles(dirPath, onProcessChange);
 
-    const compilationWarnings = await transformCompileFiles(allCompileFiles, baseCorePath, dirPath, builtMailAppPath, onProcessChange);
+    const compilationWarnings = await transformCompileFiles(
+      allCompileFiles,
+      baseCorePath,
+      dirPath,
+      builtMailAppPath,
+      onProcessChange,
+    );
 
     await copyAllNotCompileFiles(dirPath, builtMailAppPath, onProcessChange);
 
-    await executeTemplates(builtMailAppPath, onProcessChange)
+    await executeTemplates(builtMailAppPath, onProcessChange);
 
     await cleanTempStorage(storage);
 
     return {
       outDir: builtMailAppPath,
-      warnings: compilationWarnings
-    }
+      warnings: compilationWarnings,
+    };
   } catch (error) {
     handleErrors(error);
   }
@@ -54,25 +88,32 @@ async function cleanTempStorage(storage: StorageType) {
   await storage.removeItem('CURRENT_PROCESS');
 }
 
-async function executeTemplates(builtMailAppPath: string, onProcessChange: Options['onProcessChange']) {
+async function executeTemplates(
+  builtMailAppPath: string,
+  onProcessChange: Options['onProcessChange'],
+) {
   const allTemplatesFiles = await getAllTemplates(builtMailAppPath);
 
   for (const templateFile of allTemplatesFiles) {
-    const templateFileUrl = await getFileUrl(templateFile.path)
+    const templateFileUrl = await getFileUrl(templateFile.path);
 
     onProcessChange('running_template', {
       ...templateFile,
-      templateFileUrl
-    })
+      templateFileUrl,
+    });
 
-    const { default: templateImport } = await import(templateFileUrl)
+    const { default: templateImport } = await import(templateFileUrl);
 
-    const component = getComponent(templateImport, templateFile, templateFileUrl);
+    const component = getComponent(
+      templateImport,
+      templateFile,
+      templateFileUrl,
+    );
 
-    const props = templateImport.props
+    const props = templateImport.props;
 
     try {
-      const result = component(props)
+      const result = component(props);
 
       if (result instanceof Promise) {
         throw new CoreError('promise_not_allowed');
@@ -81,8 +122,8 @@ async function executeTemplates(builtMailAppPath: string, onProcessChange: Optio
       onProcessChange('ran_template', {
         ...templateFile,
         templateFileUrl,
-        virtualDOM: result
-      })
+        virtualDOM: result,
+      });
     } catch (error) {
       if (error instanceof CoreError) {
         throw error;
@@ -90,34 +131,46 @@ async function executeTemplates(builtMailAppPath: string, onProcessChange: Optio
         throw new CoreError('fails_to_run_template_in_prepare', {
           path: templateFile.path,
           templateFileUrl,
-          error
+          error,
         });
       }
     }
   }
 }
 
-function getComponent(templateImport: any, templateFile: { path: string; ext: string; }, templateFileUrl: string) {
+function getComponent(
+  templateImport: any,
+  templateFile: { path: string; ext: string },
+  templateFileUrl: string,
+) {
   const component = templateImport.default;
 
   if (!component || typeof component !== 'function') {
     throw new CoreError('export_a_component_as_default', {
       templateBuiltPath: templateFile.path,
-      templateBuiltUrl: templateFileUrl
+      templateBuiltUrl: templateFileUrl,
     });
   }
   return component;
 }
 
-function getOptions(options: Options | undefined): { onProcessChange: Options['onProcessChange']; } {
-  return options || {
-    onProcessChange: () => { }
-  };
+function getOptions(options: Options | undefined): {
+  onProcessChange: Options['onProcessChange'];
+} {
+  return (
+    options || {
+      onProcessChange: () => {},
+    }
+  );
 }
 
-async function copyAllNotCompileFiles(dirPath: string, outDirFolder: string, onProcessChange: Options['onProcessChange']) {
+async function copyAllNotCompileFiles(
+  dirPath: string,
+  outDirFolder: string,
+  onProcessChange: Options['onProcessChange'],
+) {
   const allNoCompileFiles = await getAllFilesByDirectory(dirPath, {
-    excludeExtensions: COMPILE_FILES_EXT
+    excludeExtensions: COMPILE_FILES_EXT,
   });
 
   for (const noCompileFile of allNoCompileFiles) {
@@ -125,22 +178,30 @@ async function copyAllNotCompileFiles(dirPath: string, outDirFolder: string, onP
 
     const outPath = await joinPath(outDirFolder, relativePath);
 
-
     onProcessChange('copying_file', {
       relativePath,
       path: noCompileFile.path,
-      destinationPath: outPath
-    })
+      destinationPath: outPath,
+    });
 
     await copyFileAndCreateFolder(noCompileFile.path, outPath);
   }
 }
 
-async function transformCompileFiles(allCompileFiles: { path: string; ext: string; }[], baseCorePath: string, dirPath: string, outDirFolder: string, onProcessChange: Options['onProcessChange']) {
+async function transformCompileFiles(
+  allCompileFiles: { path: string; ext: string }[],
+  baseCorePath: string,
+  dirPath: string,
+  outDirFolder: string,
+  onProcessChange: Options['onProcessChange'],
+) {
   const compilationWarnings = [];
 
   for (const compileFile of allCompileFiles) {
-    const relativeCompilePath = await getRelativePath(dirPath, compileFile.path);
+    const relativeCompilePath = await getRelativePath(
+      dirPath,
+      compileFile.path,
+    );
 
     const jsFilePath = await changePathExt(compileFile.path, 'js');
 
@@ -151,27 +212,34 @@ async function transformCompileFiles(allCompileFiles: { path: string; ext: strin
     onProcessChange('compiling_file', {
       relativePath: relativeCompilePath,
       destinationPath: builtPath,
-      ...compileFile
-    })
+      ...compileFile,
+    });
 
     const fileCode = await readFile(compileFile.path);
 
-    const coreRelativePath = await getRelativePath(compileFile.path, baseCorePath);
+    const coreRelativePath = await getRelativePath(
+      compileFile.path,
+      baseCorePath,
+    );
 
-    const builtFile = await transformCodeAndHandleError(fileCode, coreRelativePath, compileFile);
+    const builtFile = await transformCodeAndHandleError(
+      fileCode,
+      coreRelativePath,
+      compileFile,
+    );
 
     onProcessChange('compiled_file', {
       relativePath: relativeCompilePath,
       destinationPath: builtPath,
       code: builtFile.code,
-      ...compileFile
-    })
+      ...compileFile,
+    });
 
     if (builtFile.warnings) {
       for (const warning of builtFile.warnings) {
         compilationWarnings.push({
           ...compileFile,
-          ...warning
+          ...warning,
         });
       }
     }
@@ -182,7 +250,11 @@ async function transformCompileFiles(allCompileFiles: { path: string; ext: strin
   return compilationWarnings;
 }
 
-async function transformCodeAndHandleError(fileCode: string, coreRelativePath: string, compileFile: { path: string; ext: string; }) {
+async function transformCodeAndHandleError(
+  fileCode: string,
+  coreRelativePath: string,
+  compileFile: { path: string; ext: string },
+) {
   try {
     return await transformCode(fileCode, coreRelativePath, compileFile);
   } catch (error: any) {
@@ -190,31 +262,38 @@ async function transformCodeAndHandleError(fileCode: string, coreRelativePath: s
   }
 }
 
-async function transformCode(fileCode: string, coreRelativePath: string, compileFile: { path: string; ext: string; }) {
+async function transformCode(
+  fileCode: string,
+  coreRelativePath: string,
+  compileFile: { path: string; ext: string },
+) {
   const builtFile: any = await esbuild.transform(fileCode, {
     jsxFactory: 'jsx',
     jsx: 'automatic',
     jsxImportSource: coreRelativePath.replace(/\\/g, '/'),
     format: 'cjs',
-    loader: compileFile.ext as CompileFilePath
+    loader: compileFile.ext as CompileFilePath,
   });
 
-  return builtFile
+  return builtFile;
 }
 
 function handleErrorTransform(error: any) {
   throw new CoreError('compilation_error', {
     errors: error.errors,
-    warnings: error.warnings
+    warnings: error.warnings,
   });
 }
 
-async function getCompileFiles(dirPath: string, onProcessChange: Options['onProcessChange']) {
+async function getCompileFiles(
+  dirPath: string,
+  onProcessChange: Options['onProcessChange'],
+) {
   onProcessChange('checking_compile_files', {
-    dirPath
-  })
+    dirPath,
+  });
   const allCompileFiles = await getAllFilesByDirectory(dirPath, {
-    extensions: COMPILE_FILES_EXT
+    extensions: COMPILE_FILES_EXT,
   });
 
   if (!allCompileFiles || !allCompileFiles.length) {
@@ -223,10 +302,13 @@ async function getCompileFiles(dirPath: string, onProcessChange: Options['onProc
   return allCompileFiles;
 }
 
-async function handleInitialPaths(dirPath: string, onProcessChange: Options['onProcessChange']) {
+async function handleInitialPaths(
+  dirPath: string,
+  onProcessChange: Options['onProcessChange'],
+) {
   onProcessChange('checking_mail_app_folder', {
-    dirPath
-  })
+    dirPath,
+  });
 
   const templateFolderPath = await getTemplateFolder(dirPath);
 

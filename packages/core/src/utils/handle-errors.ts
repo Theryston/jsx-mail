@@ -1,4 +1,4 @@
-import CoreError from "./error";
+import CoreError from './error';
 
 export default function handleErrors(error: unknown) {
   let newError;

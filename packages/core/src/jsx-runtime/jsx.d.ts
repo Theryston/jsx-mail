@@ -1,19 +1,23 @@
 /* eslint-disable no-unused-vars */
 // eslint-disable-next-line no-redeclare
 declare namespace JSX {
-  type ElementChildren = Element | string | number | (Element | string | number)[]
+  type ElementChildren =
+    | Element
+    | string
+    | number
+    | (Element | string | number)[];
 
   type ElementProps = {
-    children?: ElementChildren
-    className: string
-  }
+    children?: ElementChildren;
+    className: string;
+  };
 
-  type ElementNode = any
+  type ElementNode = any;
 
   type Element = {
     type: string;
     props: ElementProps;
-  }
+  };
 
   type ElementChildrenAttribute = {
     children: ElementChildren;
@@ -43,7 +47,23 @@ declare namespace JSX {
     borderTopStyle?: string;
     borderWidth?: string;
     color?: string;
-    display?: "block" | "flex" | "inline-block" | "inline-flex" | "inline" | "inline-table" | "list-item" | "table" | "table-caption" | "table-cell" | "table-column" | "table-column-group" | "table-footer-group" | "table-header-group" | "table-row" | "table-row-group";
+    display?:
+      | 'block'
+      | 'flex'
+      | 'inline-block'
+      | 'inline-flex'
+      | 'inline'
+      | 'inline-table'
+      | 'list-item'
+      | 'table'
+      | 'table-caption'
+      | 'table-cell'
+      | 'table-column'
+      | 'table-column-group'
+      | 'table-footer-group'
+      | 'table-header-group'
+      | 'table-row'
+      | 'table-row-group';
     font?: string;
     fontFamily?: string;
     fontSize?: string;
@@ -66,15 +86,15 @@ declare namespace JSX {
     textTransform?: string;
     verticalAlign?: string;
     width?: string;
-  }
+  };
 
   interface IntrinsicElements {
     div: {
-      align?: 'left' | 'center' | 'right'
-      className?: string
-      id?: string
-      style?: ElementStyle
-      children?: ElementChildren
-    }
+      align?: 'left' | 'center' | 'right';
+      className?: string;
+      id?: string;
+      style?: ElementStyle;
+      children?: ElementChildren;
+    };
   }
 }

@@ -3,12 +3,12 @@ import Products from '../../../components/Products/index';
 import * as S from './styles';
 
 export const props = {
-	name: String(),
-	products: Array({
-		price: Number(),
-		name: String(),
-	}),
-	createdAt: Date(),
+  name: String(),
+  products: Array({
+    price: Number(),
+    name: String(),
+  }),
+  createdAt: Date(),
 };
 
 // export const props = {
@@ -27,22 +27,19 @@ export const props = {
 // };
 
 export default function UserWelcomeTemplate({
-	name,
-	products,
-	createdAt,
+  name,
+  products,
+  createdAt,
 }: typeof props) {
-	return (
-		<Layout>
-			<div>
-				<div
-					style={S.NameWrapper}
-					align="center"
-				>
-					<div style={S.NameText}>Hello, {name.toLocaleUpperCase()}</div>
-				</div>
-				<Products products={products} />
-				<div>Buy at: {createdAt}</div>
-			</div>
-		</Layout>
-	);
+  return (
+    <Layout>
+      <div>
+        <div style={S.NameWrapper} align="center">
+          <div style={S.NameText}>Hello, {name.toLocaleUpperCase()}</div>
+        </div>
+        <Products products={products} />
+        <div>Buy at: {createdAt}</div>
+      </div>
+    </Layout>
+  );
 }

@@ -1,42 +1,45 @@
 import path from 'path';
 import fs from 'fs';
-import url from 'url'
+import url from 'url';
 
-const NO_TEMPLATE_FILE_NAME = ['styles']
+const NO_TEMPLATE_FILE_NAME = ['styles'];
 
 declare const __dirname: string;
 
 type GetAllFilesByDirectoryOptions = {
-  extensions?: string[]
-  excludeExtensions?: string[]
-}
+  extensions?: string[];
+  excludeExtensions?: string[];
+};
 
 type GetAllFilesByDirectoryFile = {
-  path: string
-  ext: string
-}
+  path: string;
+  ext: string;
+};
 
 export async function joinPath(...paths: string[]) {
-  return path.join(...paths)
+  return path.join(...paths);
 }
 
 export async function getBaseCorePath() {
   const currentPath = __dirname;
 
-  const distPath = joinPath(currentPath, '..')
+  const distPath = joinPath(currentPath, '..');
 
-  return distPath
+  return distPath;
 }
 
 export async function createFolder(pathDir: string) {
-  await fs.promises.mkdir(pathDir)
+  await fs.promises.mkdir(pathDir);
 }
 
 export async function exists(pathExists: string) {
-  return fs.existsSync(pathExists)
+  return fs.existsSync(pathExists);
 }
 
-export async function getAllFilesByDirectory(pathDir: string, options?: GetAllFilesByDirectoryOptions) {
+export async function getAllFilesByDirectory(
+  pathDir: string,
+  options?: GetAllFilesByDirectoryOptions,
+) {
   const { extensions, excludeExtensions } = options || {};
 
   const files: GetAllFilesByDirectoryFile[] = [];
@@ -48,7 +51,7 @@ export async function getAllFilesByDirectory(pathDir: string, options?: GetAllFi
 
     if (stat.isDirectory()) {
       const subFiles = await getAllFilesByDirectory(entryPath, options);
-      files.push(...subFiles)
+      files.push(...subFiles);
     } else {
       const fileExt = entry.split('.').pop() as string;
 
@@ -56,10 +59,13 @@ export async function getAllFilesByDirectory(pathDir: string, options?: GetAllFi
         continue;
       }
 
-      if (excludeExtensions && excludeExtensions.length && excludeExtensions.includes(fileExt)) {
+      if (
+        excludeExtensions &&
+        excludeExtensions.length &&
+        excludeExtensions.includes(fileExt)
+      ) {
         continue;
       }
-
 
       files.push({
         path: entryPath,
@@ -68,45 +74,47 @@ export async function getAllFilesByDirectory(pathDir: string, options?: GetAllFi
     }
   }
 
-  return files
+  return files;
 }
 
 export async function getTemplateFolder(pathDir: string) {
-  const templateFolderPath = await joinPath(pathDir, 'templates')
-  const existsTemplateFolder = await exists(templateFolderPath)
+  const templateFolderPath = await joinPath(pathDir, 'templates');
+  const existsTemplateFolder = await exists(templateFolderPath);
 
   if (!existsTemplateFolder) {
-    return null
+    return null;
   }
 
-  return templateFolderPath
+  return templateFolderPath;
 }
 
-
 export async function getAllTemplates(pathDir: string) {
-  const templateFolderPath = await getTemplateFolder(pathDir)
+  const templateFolderPath = await getTemplateFolder(pathDir);
 
   if (!templateFolderPath) {
-    return []
+    return [];
   }
 
-  const allFilesIntoTemplate = await getAllFilesByDirectory(templateFolderPath, {
-    extensions: ['js', 'ts', 'jsx', 'tsx']
-  })
+  const allFilesIntoTemplate = await getAllFilesByDirectory(
+    templateFolderPath,
+    {
+      extensions: ['js', 'ts', 'jsx', 'tsx'],
+    },
+  );
 
-  const templateFiles = []
+  const templateFiles = [];
 
   for (const templateFile of allFilesIntoTemplate) {
-    const fileName = await extractFileName(templateFile.path)
+    const fileName = await extractFileName(templateFile.path);
 
     if (NO_TEMPLATE_FILE_NAME.includes(fileName)) {
-      continue
+      continue;
     }
 
-    templateFiles.push(templateFile)
+    templateFiles.push(templateFile);
   }
 
-  return templateFiles
+  return templateFiles;
 }
 
 async function extractFileName(filePath: string) {
@@ -116,25 +124,28 @@ async function extractFileName(filePath: string) {
 
 export async function readFile(filePath: string) {
   return await fs.promises.readFile(filePath, {
-    encoding: 'utf8'
-  })
+    encoding: 'utf8',
+  });
 }
 
-export async function createFileWithFolder(filePath: string, fileContent: string) {
-  const folder = path.dirname(filePath)
-  const existsFolder = await exists(folder)
+export async function createFileWithFolder(
+  filePath: string,
+  fileContent: string,
+) {
+  const folder = path.dirname(filePath);
+  const existsFolder = await exists(folder);
 
   if (!existsFolder) {
     await fs.promises.mkdir(folder, {
-      recursive: true
-    })
+      recursive: true,
+    });
   }
 
-  await fs.promises.writeFile(filePath, fileContent)
+  await fs.promises.writeFile(filePath, fileContent);
 }
 
 export async function getRelativePath(from: string, to: string) {
-  return path.relative(from, to)
+  return path.relative(from, to);
 }
 
 export async function changePathExt(filePath: string, newExt: string) {
@@ -143,21 +154,24 @@ export async function changePathExt(filePath: string, newExt: string) {
   return newPath;
 }
 
-export async function copyFileAndCreateFolder(originFilePath: string, destinationFilePath: string) {
-  const folder = path.dirname(destinationFilePath)
-  const existsFolder = await exists(folder)
+export async function copyFileAndCreateFolder(
+  originFilePath: string,
+  destinationFilePath: string,
+) {
+  const folder = path.dirname(destinationFilePath);
+  const existsFolder = await exists(folder);
 
   if (!existsFolder) {
     await fs.promises.mkdir(folder, {
-      recursive: true
-    })
+      recursive: true,
+    });
   }
 
-  const originFileBytes = await fs.promises.readFile(originFilePath)
+  const originFileBytes = await fs.promises.readFile(originFilePath);
 
-  await fs.promises.writeFile(destinationFilePath, originFileBytes)
+  await fs.promises.writeFile(destinationFilePath, originFileBytes);
 }
 
 export async function getFileUrl(filePath: string) {
-  return url.pathToFileURL(filePath).href
+  return url.pathToFileURL(filePath).href;
 }

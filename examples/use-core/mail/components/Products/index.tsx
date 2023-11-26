@@ -1,19 +1,19 @@
 export default function Products({
-	products,
+  products,
 }: {
-	products: {
-		price: number;
-		name: string;
-	}[];
+  products: {
+    price: number;
+    name: string;
+  }[];
 }) {
-	return (
-		<>
-			{products.map((product) => (
-				<>
-					<div>Name: {product.name}</div>
-					<div>Price: {product.price}</div>
-				</>
-			))}
-		</>
-	);
+  return (
+    <>
+      {products.map((product) => (
+        <>
+          <div>Name: {product.name}</div>
+          <div>Price: {product.price}</div>
+        </>
+      ))}
+    </>
+  );
 }
