@@ -25,7 +25,7 @@ function NormalDivVirtualDOM(
   return {
     node: 'div',
     props: {
-      style,
+      ...(style ? { style } : {}),
       ...props,
     },
     children,
@@ -53,7 +53,7 @@ function SectionVirtualDOM(
       {
         node: 'td',
         props: {
-          style,
+          ...(style ? { style } : {}),
           align,
           valign,
           ...props,
@@ -82,7 +82,7 @@ function ContainerVirtualDOM(
       width: '100%',
       cellPadding: '0',
       cellSpacing: '0',
-      style,
+      ...(style ? { style } : {}),
       ...props,
     },
     children,

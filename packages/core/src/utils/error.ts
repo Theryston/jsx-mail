@@ -27,7 +27,7 @@ export const ERRORS: IError[] = [
   },
   {
     name: 'compilation_error',
-    message: 'There was an error trying to compile your mail app',
+    message: 'There was an error trying to compile the template',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/compilation-error`,
   },
   {
@@ -70,6 +70,16 @@ export const ERRORS: IError[] = [
     name: 'not_supported_props',
     message: 'You used props that are not supported by this tag',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/not-supported-props`,
+  },
+  {
+    name: 'no_template_name',
+    message: 'You must enter a template name',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/no-template-name`,
+  },
+  {
+    name: 'on_render_error',
+    message: 'Error when executing onRender function',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/on-render-error`,
   },
 ];
 

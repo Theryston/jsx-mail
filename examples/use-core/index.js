@@ -1,4 +1,5 @@
 const core = require('@jsx-mail/core').default;
+const path = require('path');
 const fs = require('fs');
 
 core
@@ -8,22 +9,32 @@ core
 
       if (name === 'ran_template') {
         fs.writeFileSync('./example-vd.json', JSON.stringify(data.virtualDOM));
+        const templateName = path.basename(data.path);
         console.log(
-          `Virtual DOM for ${data.path} is in file ./example-vd.json`,
+          `Virtual DOM for ${templateName} is in file ./example-vd.json`,
         );
       }
     },
   })
   .then((resultPrepare) => {
-    console.log('resultPrepare', resultPrepare);
-
     core
       .render({
         builtDirPath: resultPrepare.outDir,
-        templateName: 'test',
+        lang: 'pt-BR',
+        template: 'user:welcome',
+        props: {
+          name: 'Theryston',
+          createdAt: Date(),
+        },
       })
       .then((resultRender) => {
-        console.log(`resultRender: ${resultRender}`);
+        fs.writeFileSync('./example-vd.html', resultRender.code);
+        console.log(
+          'The render result of welcome is into the file: ./example-vd.html',
+        );
+      })
+      .catch((error) => {
+        console.log(error);
       });
   })
   .catch((error) => {

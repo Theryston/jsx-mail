@@ -72,6 +72,7 @@ export default async function prepare(dirPath: string, options?: Options) {
       warnings: compilationWarnings,
     };
   } catch (error) {
+    console.log(error);
     handleErrors(error);
   }
 }

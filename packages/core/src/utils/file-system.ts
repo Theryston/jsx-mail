@@ -36,6 +36,11 @@ export async function exists(pathExists: string) {
   return fs.existsSync(pathExists);
 }
 
+export async function isDirectory(filePath: string) {
+  const stat = await fs.promises.stat(filePath);
+  return stat.isDirectory();
+}
+
 export async function getAllFilesByDirectory(
   pathDir: string,
   options?: GetAllFilesByDirectoryOptions,
@@ -47,9 +52,9 @@ export async function getAllFilesByDirectory(
 
   for (const entry of entries) {
     const entryPath = await joinPath(pathDir, entry);
-    const stat = await fs.promises.stat(entryPath);
+    const isEntryDirectory = await isDirectory(entryPath);
 
-    if (stat.isDirectory()) {
+    if (isEntryDirectory) {
       const subFiles = await getAllFilesByDirectory(entryPath, options);
       files.push(...subFiles);
     } else {
