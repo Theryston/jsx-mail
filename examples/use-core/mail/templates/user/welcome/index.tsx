@@ -33,12 +33,14 @@ export default function UserWelcomeTemplate({
 }: typeof props) {
   return (
     <Layout>
-      <div>
-        <div style={S.NameWrapper} align="center">
+      <div container>
+        <div style={S.NameWrapper} section>
           <div style={S.NameText}>Hello, {name.toLocaleUpperCase()}</div>
         </div>
-        <Products products={products} />
-        <div>Buy at: {createdAt}</div>
+        <div section>
+          <Products products={products} />
+        </div>
+        <div section>Buy at: {createdAt}</div>
       </div>
     </Layout>
   );

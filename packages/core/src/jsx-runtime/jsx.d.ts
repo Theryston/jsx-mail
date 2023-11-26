@@ -47,23 +47,7 @@ declare namespace JSX {
     borderTopStyle?: string;
     borderWidth?: string;
     color?: string;
-    display?:
-      | 'block'
-      | 'flex'
-      | 'inline-block'
-      | 'inline-flex'
-      | 'inline'
-      | 'inline-table'
-      | 'list-item'
-      | 'table'
-      | 'table-caption'
-      | 'table-cell'
-      | 'table-column'
-      | 'table-column-group'
-      | 'table-footer-group'
-      | 'table-header-group'
-      | 'table-row'
-      | 'table-row-group';
+    display?: 'block' | 'inline-block' | 'inline';
     font?: string;
     fontFamily?: string;
     fontSize?: string;
@@ -90,11 +74,14 @@ declare namespace JSX {
 
   interface IntrinsicElements {
     div: {
-      align?: 'left' | 'center' | 'right';
+      alignY?: 'top' | 'center' | 'bottom';
+      alignX?: 'left' | 'center' | 'right';
       className?: string;
       id?: string;
       style?: ElementStyle;
       children?: ElementChildren;
+      container?: boolean;
+      section?: boolean;
     };
   }
 }

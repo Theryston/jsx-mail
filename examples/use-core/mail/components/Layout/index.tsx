@@ -1,9 +1,14 @@
+import * as S from './styles';
+
 export default function Layout({ children }: { children: JSX.Element }) {
   return (
-    <div>
-      <div />
-      <div>I'm The layout</div>
-      <div>{children}</div>
+    <div style={S.Container} container>
+      <div style={S.Header} section alignX="center" alignY="center">
+        JSX Mail
+      </div>
+      <div style={S.Content} section>
+        {children}
+      </div>
     </div>
   );
 }

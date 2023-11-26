@@ -1,23 +1,23 @@
-import DivHandler, { DivProps } from "./handlers/div"
+import DivHandler, { DivProps } from './handlers/div';
 
 export function getChildrenFromProps(props: any) {
-  let children = props.children
+  let children = props.children;
 
   if (children && !Array.isArray(children)) {
-    children = [children]
+    children = [children];
   } else if (!children) {
-    children = []
+    children = [];
   }
 
-  return children
+  return children;
 }
 
 const tags = [
   {
     node: 'div',
     handler: DivHandler,
-    supportedProps: DivProps
-  }
-]
+    supportedProps: DivProps,
+  },
+];
 
-export default tags
+export default tags;
