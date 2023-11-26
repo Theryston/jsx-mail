@@ -63,7 +63,7 @@ export default async function prepare(dirPath: string, options?: Options) {
 
     await copyAllNotCompileFiles(dirPath, builtMailAppPath, onProcessChange);
 
-    await executeTemplates(builtMailAppPath, onProcessChange);
+    await executeAllTemplates(builtMailAppPath, onProcessChange);
 
     await cleanTempStorage(storage);
 
@@ -88,7 +88,7 @@ async function cleanTempStorage(storage: StorageType) {
   await storage.removeItem('CURRENT_PROCESS');
 }
 
-async function executeTemplates(
+async function executeAllTemplates(
   builtMailAppPath: string,
   onProcessChange: Options['onProcessChange'],
 ) {
@@ -112,28 +112,44 @@ async function executeTemplates(
 
     const props = templateImport.props;
 
-    try {
-      const result = component(props);
+    executeComponent(
+      component,
+      props,
+      onProcessChange,
+      templateFile,
+      templateFileUrl,
+    );
+  }
+}
 
-      if (result instanceof Promise) {
-        throw new CoreError('promise_not_allowed');
-      }
+function executeComponent(
+  component: any,
+  props: any,
+  onProcessChange: Options['onProcessChange'],
+  templateFile: { path: string; ext: string },
+  templateFileUrl: string,
+) {
+  try {
+    const result = component(props);
 
-      onProcessChange('ran_template', {
-        ...templateFile,
+    if (result instanceof Promise) {
+      throw new CoreError('promise_not_allowed');
+    }
+
+    onProcessChange('ran_template', {
+      ...templateFile,
+      templateFileUrl,
+      virtualDOM: result,
+    });
+  } catch (error) {
+    if (error instanceof CoreError) {
+      throw error;
+    } else {
+      throw new CoreError('fails_to_run_template_in_prepare', {
+        path: templateFile.path,
         templateFileUrl,
-        virtualDOM: result,
+        error,
       });
-    } catch (error) {
-      if (error instanceof CoreError) {
-        throw error;
-      } else {
-        throw new CoreError('fails_to_run_template_in_prepare', {
-          path: templateFile.path,
-          templateFileUrl,
-          error,
-        });
-      }
     }
   }
 }
@@ -159,7 +175,9 @@ function getOptions(options: Options | undefined): {
 } {
   return (
     options || {
-      onProcessChange: () => {},
+      onProcessChange: () => {
+        return;
+      },
     }
   );
 }
