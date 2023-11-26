@@ -34,7 +34,10 @@ export default function UserWelcomeTemplate({
 	return (
 		<Layout>
 			<div>
-				<div style={S.NameWrapper}>
+				<div
+					style={S.NameWrapper}
+					align="center"
+				>
 					<div style={S.NameText}>Hello, {name.toLocaleUpperCase()}</div>
 				</div>
 				<Products products={products} />

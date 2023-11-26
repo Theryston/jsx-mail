@@ -1,6 +1,5 @@
 import { JSXMailVirtualDOM } from "..";
 import CoreError from "../utils/error";
-import getStyle from "./get-style";
 import tags from "./tags"
 
 export default function factory(node: JSX.ElementNode, props: any): JSXMailVirtualDOM {
@@ -19,38 +18,7 @@ export default function factory(node: JSX.ElementNode, props: any): JSXMailVirtu
     });
   }
 
-  const tagResult = tag.handler(props)
-
-  let children
-  const newProps = tagResult.props
-  const result: any = {
-    node
-  }
-
-  if (newProps) {
-    children = newProps.children
-    delete newProps.children
-    result.props = newProps
-  }
-
-  const style = getStyle(result.props)
-  delete result.props.style
-
-  if (style) {
-    result.props.style = style
-  }
-
-  if (children && !Array.isArray(children)) {
-    result.children = [children]
-  } else if (children) {
-    result.children = children
-  } else {
-    result.children = []
-  }
-
-  result.__jsx_mail_vdom = true
-
-  return result
+  return tag.handler(props)
 }
 
 function getTag(node: any, props: any) {

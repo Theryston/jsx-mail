@@ -1,6 +1,10 @@
 const fs = require('fs');
 const virtualDOM = require('./example-vd.json');
 
+function camelToDash(str) {
+	return str.replace(/[A-Z]/g, (match) => '-' + match.toLowerCase());
+}
+
 function convertToHTML(virtualDOM) {
 	if (!virtualDOM) {
 		return '';
@@ -19,7 +23,7 @@ function convertToHTML(virtualDOM) {
 		.join('');
 
 	const propsHTML = Object.keys(props)
-		.map((key) => ` ${key}="${props[key]}"`)
+		.map((key) => ` ${camelToDash(key)}="${props[key]}"`)
 		.join('');
 
 	return `<${node}${propsHTML}>${childrenHTML}</${node}>`;

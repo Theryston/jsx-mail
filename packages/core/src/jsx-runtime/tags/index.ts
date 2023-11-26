@@ -1,8 +1,15 @@
 import DivHandler, { DivProps } from "./handlers/div"
 
-export type TagResult = {
-  node: string,
-  props: any,
+export function getChildrenFromProps(props: any) {
+  let children = props.children
+
+  if (children && !Array.isArray(children)) {
+    children = [children]
+  } else if (!children) {
+    children = []
+  }
+
+  return children
 }
 
 const tags = [
