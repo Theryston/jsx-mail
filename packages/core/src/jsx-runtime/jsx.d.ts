@@ -89,5 +89,8 @@ declare namespace JSX {
         [selector: string]: ElementStyle;
       };
     };
+    title: {
+      children: string;
+    };
   }
 }

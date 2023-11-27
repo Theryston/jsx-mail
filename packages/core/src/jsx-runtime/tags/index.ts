@@ -1,5 +1,6 @@
 import DivHandler, { DivProps } from './handlers/div';
 import StylingHandler, { StylingProps } from './handlers/styling';
+import TitleHandler, { TitleProps } from './handlers/title';
 
 export function getChildrenFromProps(props: any) {
   let children = props.children;
@@ -31,6 +32,11 @@ const tags = [
     node: 'styling',
     handler: StylingHandler,
     supportedProps: StylingProps,
+  },
+  {
+    node: 'title',
+    handler: TitleHandler,
+    supportedProps: TitleProps,
   },
 ];
 

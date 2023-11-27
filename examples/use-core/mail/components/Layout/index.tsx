@@ -2,12 +2,14 @@ import * as S from './styles';
 
 export default function Layout({
   children,
+  title,
 }: {
   children: JSX.Element;
   title: string;
 }) {
   return (
     <div>
+      <title>{title}</title>
       <styling
         style={{
           body: {
