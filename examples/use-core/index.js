@@ -17,6 +17,8 @@ core
     },
   })
   .then((resultPrepare) => {
+    console.log('Prepare result: ', resultPrepare);
+
     core
       .render({
         builtDirPath: resultPrepare.outDir,

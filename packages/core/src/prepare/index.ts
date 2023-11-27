@@ -16,7 +16,7 @@ import {
   readFile,
 } from '../utils/file-system';
 import handleErrors from '../utils/handle-errors';
-import getStorage, { StorageType } from '../utils/storage';
+import { cleanGlobalVariable, readGlobalVariable } from '../utils/global';
 
 type CompileFilePath = 'jsx' | 'tsx' | 'js' | 'ts';
 
@@ -44,8 +44,6 @@ export default async function prepare(dirPath: string, options?: Options) {
   const { onProcessChange } = getOptions(options);
 
   try {
-    const storage = await setupTempStorage();
-
     const { baseCorePath, builtMailAppPath } = await handleInitialPaths(
       dirPath,
       onProcessChange,
@@ -53,7 +51,7 @@ export default async function prepare(dirPath: string, options?: Options) {
 
     const allCompileFiles = await getCompileFiles(dirPath, onProcessChange);
 
-    const compilationWarnings = await transformCompileFiles(
+    const esbuildWarnings = await transformCompileFiles(
       allCompileFiles,
       baseCorePath,
       dirPath,
@@ -65,11 +63,14 @@ export default async function prepare(dirPath: string, options?: Options) {
 
     await executeAllTemplates(builtMailAppPath, onProcessChange);
 
-    await cleanTempStorage(storage);
+    const warnings = readGlobalVariable('__jsx_mail_warnings');
+
+    await cleanTempStorage();
 
     return {
       outDir: builtMailAppPath,
-      warnings: compilationWarnings,
+      esbuildWarnings,
+      warnings,
     };
   } catch (error) {
     console.log(error);
@@ -77,16 +78,8 @@ export default async function prepare(dirPath: string, options?: Options) {
   }
 }
 
-async function setupTempStorage() {
-  const storage = await getStorage();
-
-  await storage.setItem('CURRENT_PROCESS', 'PREPARING');
-
-  return storage;
-}
-
-async function cleanTempStorage(storage: StorageType) {
-  await storage.removeItem('CURRENT_PROCESS');
+async function cleanTempStorage() {
+  cleanGlobalVariable('__jsx_mail_warnings');
 }
 
 async function executeAllTemplates(
@@ -214,7 +207,7 @@ async function transformCompileFiles(
   outDirFolder: string,
   onProcessChange: Options['onProcessChange'],
 ) {
-  const compilationWarnings = [];
+  const esbuildWarnings = [];
 
   for (const compileFile of allCompileFiles) {
     const relativeCompilePath = await getRelativePath(
@@ -256,7 +249,7 @@ async function transformCompileFiles(
 
     if (builtFile.warnings) {
       for (const warning of builtFile.warnings) {
-        compilationWarnings.push({
+        esbuildWarnings.push({
           ...compileFile,
           ...warning,
         });
@@ -266,7 +259,7 @@ async function transformCompileFiles(
     await createFileWithFolder(builtPath, builtFile.code);
   }
 
-  return compilationWarnings;
+  return esbuildWarnings;
 }
 
 async function transformCodeAndHandleError(

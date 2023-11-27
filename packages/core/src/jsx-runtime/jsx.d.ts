@@ -73,6 +73,17 @@ declare namespace JSX {
   };
 
   interface IntrinsicElements {
+    html: {
+      children?: ElementChildren;
+      lang?: string;
+    };
+    head: {
+      children?: ElementChildren;
+    };
+    body: {
+      children?: ElementChildren;
+      style?: ElementStyle;
+    };
     div: {
       alignY?: 'top' | 'center' | 'bottom';
       alignX?: 'left' | 'center' | 'right';
@@ -84,13 +95,13 @@ declare namespace JSX {
       container?: boolean;
       section?: boolean;
     };
-    styling: {
-      style: {
-        [selector: string]: ElementStyle;
-      };
-    };
     title: {
       children: string;
+    };
+    link: {
+      rel?: string;
+      href?: string;
+      crossOrigin?: string | boolean;
     };
   }
 }

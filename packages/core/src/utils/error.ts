@@ -82,11 +82,6 @@ export const ERRORS: IError[] = [
     docsPageUrl: `${WEBSITE_URL}/docs/errors/on-render-error`,
   },
   {
-    name: 'prop_style_required',
-    message: 'When you use the <styling /> tag you must use the prop style',
-    docsPageUrl: `${WEBSITE_URL}/docs/errors/prop-style-required`,
-  },
-  {
     name: 'prop_align_not_supported',
     message: 'Only a div with props section can have props alignX and alignY',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/prop-align-not-supported`,

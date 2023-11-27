@@ -49,7 +49,15 @@ function convertToHTML(virtualDOM: JSXMailVirtualDOM) {
     .map((key) => ` ${key}="${props[key]}"`)
     .join('');
 
-  return `<${node}${propsHTML}>${childrenHTML}</${node}>`;
+  let html = `<${node}${propsHTML}`;
+
+  if (childrenHTML) {
+    html += `>${childrenHTML}</${node}>`;
+  } else {
+    html += ` />`;
+  }
+
+  return html;
 }
 
 async function getVirtualDOM(

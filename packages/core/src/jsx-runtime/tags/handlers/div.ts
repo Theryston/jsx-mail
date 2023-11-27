@@ -105,7 +105,14 @@ function ContainerVirtualDOM(
       cellspacing: '0',
       ...getProps(props, style),
     },
-    children,
+    children: [
+      {
+        node: 'tbody',
+        props: {},
+        children,
+        __jsx_mail_vdom: true,
+      },
+    ],
     __jsx_mail_vdom: true,
   };
 }

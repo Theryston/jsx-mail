@@ -1,5 +1,8 @@
+import BodyHandler, { BodyProps } from './handlers/body';
 import DivHandler, { DivProps } from './handlers/div';
-import StylingHandler, { StylingProps } from './handlers/styling';
+import HeadHandler, { HeadProps } from './handlers/head';
+import HtmlHandler, { HtmlProps } from './handlers/html';
+import LinkHandler, { LinkProps } from './handlers/link';
 import TitleHandler, { TitleProps } from './handlers/title';
 
 export function getChildrenFromProps(props: any) {
@@ -15,11 +18,20 @@ export function getChildrenFromProps(props: any) {
 }
 
 export function getProps(props: any, style: string | undefined) {
-  return {
-    ...props,
-    ...(style ? { style } : {}),
-    ...(props.className ? { class: props.className } : {}),
-  };
+  if (props.className) {
+    props.class = props.className;
+    delete props.className;
+  }
+
+  if (props.style) {
+    delete props.style;
+  }
+
+  if (style) {
+    props.style = style;
+  }
+
+  return props;
 }
 
 const tags = [
@@ -29,14 +41,29 @@ const tags = [
     supportedProps: DivProps,
   },
   {
-    node: 'styling',
-    handler: StylingHandler,
-    supportedProps: StylingProps,
-  },
-  {
     node: 'title',
     handler: TitleHandler,
     supportedProps: TitleProps,
+  },
+  {
+    node: 'html',
+    handler: HtmlHandler,
+    supportedProps: HtmlProps,
+  },
+  {
+    node: 'head',
+    handler: HeadHandler,
+    supportedProps: HeadProps,
+  },
+  {
+    node: 'body',
+    handler: BodyHandler,
+    supportedProps: BodyProps,
+  },
+  {
+    node: 'link',
+    handler: LinkHandler,
+    supportedProps: LinkProps,
   },
 ];
 
