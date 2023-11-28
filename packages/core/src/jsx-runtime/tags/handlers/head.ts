@@ -1,5 +1,10 @@
 import { getChildrenFromProps } from '..';
 import { JSXMailVirtualDOM } from '../../..';
+import CoreError from '../../../utils/error';
+import {
+  insertGlobalVariableItem,
+  readGlobalVariable,
+} from '../../../utils/global';
 
 export const HeadProps = ['children'];
 
@@ -7,6 +12,16 @@ export default function HeadHandler(
   props: JSX.IntrinsicElements['head'],
 ): JSXMailVirtualDOM {
   const children = getChildrenFromProps(props);
+
+  const headGlobal = readGlobalVariable('head');
+
+  if (headGlobal.length) {
+    throw new CoreError('only_one_head_tag');
+  } else {
+    insertGlobalVariableItem('head', {
+      id: 'head',
+    });
+  }
 
   delete props.children;
 

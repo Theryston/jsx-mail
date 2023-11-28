@@ -16,7 +16,7 @@ import {
   readFile,
 } from '../utils/file-system';
 import handleErrors from '../utils/handle-errors';
-import { cleanGlobalVariable, readGlobalVariable } from '../utils/global';
+import { cleanAllGlobalVariables, readGlobalVariable } from '../utils/global';
 
 type CompileFilePath = 'jsx' | 'tsx' | 'js' | 'ts';
 
@@ -65,7 +65,7 @@ export default async function prepare(dirPath: string, options?: Options) {
 
     const warnings = readGlobalVariable('__jsx_mail_warnings');
 
-    await cleanTempStorage();
+    cleanAllGlobalVariables();
 
     return {
       outDir: builtMailAppPath,
@@ -76,10 +76,6 @@ export default async function prepare(dirPath: string, options?: Options) {
     console.log(error);
     handleErrors(error);
   }
-}
-
-async function cleanTempStorage() {
-  cleanGlobalVariable('__jsx_mail_warnings');
 }
 
 async function executeAllTemplates(

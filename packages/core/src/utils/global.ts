@@ -40,6 +40,10 @@ export function cleanGlobalVariable(name: string) {
   delete global.__jsx_mail[name];
 }
 
+export function cleanAllGlobalVariables() {
+  global.__jsx_mail = {};
+}
+
 export function updateGlobalVariableItem(
   name: string,
   id: string,

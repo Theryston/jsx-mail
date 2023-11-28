@@ -1,4 +1,5 @@
 import { JSXMailVirtualDOM } from '..';
+import factory from '../jsx-runtime/factory';
 import CoreError from '../utils/error';
 import {
   getFileUrl,
@@ -6,6 +7,7 @@ import {
   isDirectory,
   joinPath,
 } from '../utils/file-system';
+import { cleanAllGlobalVariables } from '../utils/global';
 import handleErrors from '../utils/handle-errors';
 
 type renderInputType = {
@@ -23,6 +25,8 @@ export default async function render({
     const { virtualDOM } = await getVirtualDOM(template, builtDirPath, props);
 
     const templateHTML = convertToHTML(virtualDOM);
+
+    cleanAllGlobalVariables();
 
     return {
       code: `<!DOCTYPE html>\n${templateHTML}`,
@@ -97,7 +101,7 @@ async function getVirtualDOM(
     }
   }
 
-  let virtualDOM;
+  let virtualDOM: JSXMailVirtualDOM;
   try {
     virtualDOM = component(newProps);
   } catch (error) {
@@ -111,10 +115,33 @@ async function getVirtualDOM(
     throw new CoreError('promise_not_allowed');
   }
 
+  if (virtualDOM.node !== 'html') {
+    virtualDOM = await insertHTMLStructure(virtualDOM);
+  }
+
   return {
     virtualDOM,
     templateName,
   };
+}
+
+async function insertHTMLStructure(
+  virtualDOM: JSXMailVirtualDOM,
+): Promise<JSXMailVirtualDOM> {
+  const headVirtualDOM = factory('head', {});
+  const bodyVirtualDOM = factory('body', {
+    style: {
+      margin: '0',
+      padding: '0',
+    },
+    children: [virtualDOM as any],
+  });
+  const htmlVirtualDOM = factory('html', {
+    children: [headVirtualDOM as any, bodyVirtualDOM as any],
+    lang: 'en',
+  });
+
+  return htmlVirtualDOM;
 }
 
 async function getTemplatePath(template: string, builtDirPath: string) {

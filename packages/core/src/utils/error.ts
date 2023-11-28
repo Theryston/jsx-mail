@@ -91,6 +91,11 @@ export const ERRORS: IError[] = [
     message: 'Only a div with props container can have prop gap',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/prop-gap-not-supported`,
   },
+  {
+    name: 'only_one_head_tag',
+    message: 'You can only have one head tag per template',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/only-one-head-tag`,
+  },
 ];
 
 export default class CoreError implements IError {
