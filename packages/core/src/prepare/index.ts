@@ -43,8 +43,10 @@ type ProcessName =
   | 'compiling_file'
   | 'compiled_file'
   | 'copying_file'
+  | 'copied_file'
   | 'looking_for_images'
   | 'uploading_image'
+  | 'image_uploaded'
   | 'running_template'
   | 'template_executed';
 
@@ -176,6 +178,12 @@ async function imgbbUploadImage(
     },
   );
 
+  onProcessChange('image_uploaded', {
+    ...imagesToUpload,
+    images: allImages,
+    response: response.data,
+  });
+
   return response.data;
 }
 
@@ -294,6 +302,12 @@ async function copyAllNotCompileFiles(
     });
 
     await copyFileAndCreateFolder(noCompileFile.path, outPath);
+
+    onProcessChange('copied_file', {
+      relativePath,
+      path: noCompileFile.path,
+      destinationPath: outPath,
+    });
   }
 }
 
