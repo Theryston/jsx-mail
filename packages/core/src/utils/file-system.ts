@@ -16,11 +16,11 @@ type GetAllFilesByDirectoryFile = {
   ext: string;
 };
 
-export async function joinPath(...paths: string[]) {
+export function joinPath(...paths: string[]) {
   return path.join(...paths);
 }
 
-export async function getBaseCorePath() {
+export function getBaseCorePath() {
   const currentPath = __dirname;
 
   const distPath = joinPath(currentPath, '..');

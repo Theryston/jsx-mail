@@ -1,13 +1,11 @@
-import storage from 'node-persist';
+import { LocalStorage } from 'node-localstorage';
 import { getBaseCorePath, joinPath } from './file-system';
 
-export type StorageType = typeof storage;
+export type StorageType = typeof LocalStorage;
 
-export default async function getStorage() {
-  const baseCorePath = await getBaseCorePath();
-  await storage.init({
-    dir: await joinPath(baseCorePath, 'cache'),
-  });
+export default function getStorage() {
+  const baseCorePath = getBaseCorePath();
+  const storage = new LocalStorage(joinPath(baseCorePath, 'cache'));
 
   return storage;
 }
