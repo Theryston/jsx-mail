@@ -2,10 +2,8 @@ import camelToDash from '../utils/camel-to-dash';
 import CoreError from '../utils/error';
 
 export const CSS_LIST = {
-  background: ['*'],
   backgroundColor: ['*'],
   border: ['*'],
-  margin: ['*'],
   borderBottom: ['*'],
   borderBottomColor: ['*'],
   borderBottomStyle: ['*'],
@@ -23,15 +21,17 @@ export const CSS_LIST = {
   borderTop: ['*'],
   borderTopColor: ['*'],
   borderWidth: ['*'],
+  margin: ['*'],
+  marginBottom: ['*'],
+  marginLeft: ['*'],
+  marginRight: ['*'],
+  marginTop: ['*'],
   color: ['*'],
   display: ['block', 'inline-block', 'inline'],
   font: ['*'],
   fontFamily: ['*'],
   fontSize: ['*'],
-  fontStyle: ['*'],
-  fontVariant: ['*'],
   fontWeight: ['*'],
-  height: ['*'],
   letterSpacing: ['*'],
   lineHeight: ['*'],
   listStyleType: ['*'],
@@ -40,13 +40,13 @@ export const CSS_LIST = {
   paddingLeft: ['*'],
   paddingRight: ['*'],
   paddingTop: ['*'],
-  tableLayout: ['*'],
   textAlign: ['*'],
   textDecoration: ['*'],
   textIndent: ['*'],
   textTransform: ['*'],
   verticalAlign: ['*'],
   width: ['*'],
+  height: ['*'],
 };
 
 type CSSList = typeof CSS_LIST;

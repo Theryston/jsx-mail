@@ -24,10 +24,8 @@ declare namespace JSX {
   };
 
   type ElementStyle = {
-    background?: string;
     backgroundColor?: string;
     border?: string;
-    margin?: string;
     borderBottom?: string;
     borderBottomColor?: string;
     borderBottomStyle?: string;
@@ -44,17 +42,18 @@ declare namespace JSX {
     borderStyle?: string;
     borderTop?: string;
     borderTopColor?: string;
-    borderTopStyle?: string;
     borderWidth?: string;
+    margin?: string;
+    marginBottom?: string;
+    marginLeft?: string;
+    marginRight?: string;
+    marginTop?: string;
     color?: string;
     display?: 'block' | 'inline-block' | 'inline';
     font?: string;
     fontFamily?: string;
     fontSize?: string;
-    fontStyle?: string;
-    fontVariant?: string;
     fontWeight?: string;
-    height?: string;
     letterSpacing?: string;
     lineHeight?: string;
     listStyleType?: string;
@@ -63,13 +62,13 @@ declare namespace JSX {
     paddingLeft?: string;
     paddingRight?: string;
     paddingTop?: string;
-    tableLayout?: string;
     textAlign?: string;
     textDecoration?: string;
     textIndent?: string;
     textTransform?: string;
     verticalAlign?: string;
     width?: string;
+    height?: string;
   };
 
   interface IntrinsicElements {
