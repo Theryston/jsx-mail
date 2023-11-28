@@ -96,6 +96,27 @@ export const ERRORS: IError[] = [
     message: 'You can only have one head tag per template',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/only-one-head-tag`,
   },
+  {
+    name: 'src_is_required',
+    message: 'You must enter a src for the img tag',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/src-is-required`,
+  },
+  {
+    name: 'alt_is_required',
+    message: 'You must enter a alt for the img tag',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/alt-is-required`,
+  },
+  {
+    name: 'image_not_found',
+    message: 'The image you are trying to use was not found',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/image-not-found`,
+  },
+  {
+    name: 'on_image_as_props',
+    message:
+      'You passed an image as props in your template, this is not allowed',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/on-image-as-props`,
+  },
 ];
 
 export default class CoreError implements IError {

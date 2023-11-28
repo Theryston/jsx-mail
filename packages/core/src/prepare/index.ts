@@ -1,6 +1,7 @@
 import CoreError from '../utils/error';
 import esbuild from 'esbuild';
 import {
+  bufferToBase64,
   changePathExt,
   copyFileAndCreateFolder,
   createFileWithFolder,
@@ -14,13 +15,27 @@ import {
   getTemplateFolder,
   joinPath,
   readFile,
+  readImage,
 } from '../utils/file-system';
 import handleErrors from '../utils/handle-errors';
-import { cleanAllGlobalVariables, readGlobalVariable } from '../utils/global';
+import {
+  cleanAllGlobalVariables,
+  cleanGlobalVariable,
+  insertGlobalVariableItem,
+  readGlobalVariable,
+} from '../utils/global';
+import handleImagesImport from '../utils/handle-images-import';
+import getStorage from '../utils/storage';
+import { ImageInfo } from '..';
+import NodeFormData from 'form-data';
+import axios from 'axios';
+
+handleImagesImport();
 
 type CompileFilePath = 'jsx' | 'tsx' | 'js' | 'ts';
 
 const COMPILE_FILES_EXT: CompileFilePath[] = ['jsx', 'tsx', 'js', 'ts'];
+const JSX_MAIL_IMGBB_API_KEY = '753d982d37fff6345371be3c4fff3b8b';
 
 type ProcessName =
   | 'checking_mail_app_folder'
@@ -28,15 +43,17 @@ type ProcessName =
   | 'compiling_file'
   | 'compiled_file'
   | 'copying_file'
+  | 'looking_for_images'
+  | 'uploading_image'
   | 'running_template'
-  | 'ran_template';
+  | 'template_executed';
 
 type Options = {
   onProcessChange: (
     // eslint-disable-next-line no-unused-vars
     processName: ProcessName,
     // eslint-disable-next-line no-unused-vars
-    data: { [key: string]: string },
+    data: { [key: string]: any },
   ) => void;
 };
 
@@ -44,6 +61,10 @@ export default async function prepare(dirPath: string, options?: Options) {
   const { onProcessChange } = getOptions(options);
 
   try {
+    insertGlobalVariableItem('state', {
+      id: 'prepare',
+    });
+
     const { baseCorePath, builtMailAppPath } = await handleInitialPaths(
       dirPath,
       onProcessChange,
@@ -61,6 +82,8 @@ export default async function prepare(dirPath: string, options?: Options) {
 
     await copyAllNotCompileFiles(dirPath, builtMailAppPath, onProcessChange);
 
+    await prepareImages(builtMailAppPath, onProcessChange);
+
     await executeAllTemplates(builtMailAppPath, onProcessChange);
 
     const warnings = readGlobalVariable('__jsx_mail_warnings');
@@ -73,9 +96,87 @@ export default async function prepare(dirPath: string, options?: Options) {
       warnings,
     };
   } catch (error) {
-    console.log(error);
     handleErrors(error);
   }
+}
+
+async function prepareImages(
+  builtMailAppPath: string,
+  onProcessChange: Options['onProcessChange'],
+) {
+  insertGlobalVariableItem('onlyTag', {
+    id: 'img',
+  });
+
+  await executeAllTemplates(builtMailAppPath, (processName, data) => {
+    if (processName === 'running_template') {
+      onProcessChange('looking_for_images', data);
+    }
+  });
+
+  cleanGlobalVariable('onlyTag');
+
+  const storage = getStorage();
+  const imagesString = storage.getItem('images');
+  let images: ImageInfo[] = JSON.parse(imagesString || '[]');
+
+  for (const image of images) {
+    if (!['pending_upload', 'error'].includes(image.status)) {
+      continue;
+    }
+
+    try {
+      const imageInfo = await imgbbUploadImage(image, onProcessChange, images);
+
+      image.url = imageInfo.data.url;
+      image.status = 'uploaded';
+      delete image.error;
+    } catch (error: any) {
+      image.status = 'error';
+      if (error.response?.data) {
+        image.error = error.response.data;
+      } else {
+        image.error = error;
+      }
+    }
+
+    const imageIndex = images.findIndex((i) => i.hash === image.hash);
+    images[imageIndex] = image;
+  }
+
+  storage.setItem('images', JSON.stringify(images));
+}
+
+async function imgbbUploadImage(
+  imagesToUpload: ImageInfo,
+  onProcessChange: Options['onProcessChange'],
+  allImages: ImageInfo[],
+) {
+  onProcessChange('uploading_image', {
+    ...imagesToUpload,
+    images: allImages,
+  });
+
+  const imageContent = readImage(imagesToUpload.path);
+
+  const formData = new NodeFormData();
+  formData.append('image', bufferToBase64(imageContent));
+
+  const response = await axios.post(
+    'https://api.imgbb.com/1/upload',
+    formData,
+    {
+      headers: {
+        ...formData.getHeaders(),
+      },
+      params: {
+        key: JSX_MAIL_IMGBB_API_KEY,
+        name: imagesToUpload.hash,
+      },
+    },
+  );
+
+  return response.data;
 }
 
 async function executeAllTemplates(
@@ -126,7 +227,7 @@ function executeComponent(
       throw new CoreError('promise_not_allowed');
     }
 
-    onProcessChange('ran_template', {
+    onProcessChange('template_executed', {
       ...templateFile,
       templateFileUrl,
       virtualDOM: result,

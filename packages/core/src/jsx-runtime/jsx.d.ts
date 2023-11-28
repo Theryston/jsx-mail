@@ -1,6 +1,11 @@
 /* eslint-disable no-unused-vars */
 // eslint-disable-next-line no-redeclare
 declare namespace JSX {
+  type ImportedImage = {
+    __jsx_mail_image: boolean;
+    path: string;
+  };
+
   type ElementChildren =
     | Element
     | string
@@ -102,5 +107,38 @@ declare namespace JSX {
       href?: string;
       crossOrigin?: string | boolean;
     };
+    img: {
+      src: ImportedImage | string;
+      alt: string;
+      align?: string;
+      border?: string;
+      height?: string;
+      width?: string;
+      style?: ElementStyle;
+    };
   }
+}
+
+// Declare images
+declare module '*.png' {
+  const value: JSX.ImportedImage;
+  export default value;
+}
+
+declare module '*.jpg' {
+  // eslint-disable-next-line no-unreachable
+  const value: JSX.ImportedImage;
+  export default value;
+}
+
+declare module '*.jpeg' {
+  // eslint-disable-next-line no-unreachable
+  const value: JSX.ImportedImage;
+  export default value;
+}
+
+declare module '*.gif' {
+  // eslint-disable-next-line no-unreachable
+  const value: JSX.ImportedImage;
+  export default value;
 }

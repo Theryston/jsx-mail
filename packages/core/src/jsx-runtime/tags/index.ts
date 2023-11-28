@@ -2,6 +2,7 @@ import BodyHandler, { BodyProps } from './handlers/body';
 import DivHandler, { DivProps } from './handlers/div';
 import HeadHandler, { HeadProps } from './handlers/head';
 import HtmlHandler, { HtmlProps } from './handlers/html';
+import ImgHandler, { ImgProps } from './handlers/img';
 import LinkHandler, { LinkProps } from './handlers/link';
 import TitleHandler, { TitleProps } from './handlers/title';
 
@@ -64,6 +65,11 @@ const tags = [
     node: 'link',
     handler: LinkHandler,
     supportedProps: LinkProps,
+  },
+  {
+    node: 'img',
+    handler: ImgHandler,
+    supportedProps: ImgProps,
   },
 ];
 

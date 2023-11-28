@@ -8,6 +8,14 @@ const core = {
   jsx,
 };
 
+export type ImageInfo = {
+  path: string;
+  url: string;
+  status: 'pending_upload' | 'uploaded' | 'error';
+  error?: any;
+  hash: string;
+};
+
 export type JSXMailVirtualDOM = {
   node: string;
   props: any;

@@ -15,7 +15,10 @@ export default function BodyHandler(
 
   return {
     node: 'body',
-    props: getProps(props, style),
+    props: {
+      ...getProps(props, style),
+      style: `margin: 0; padding: 0;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;${style}`,
+    },
     children,
     __jsx_mail_vdom: true,
   };

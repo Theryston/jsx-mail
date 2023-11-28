@@ -7,8 +7,14 @@ import {
   isDirectory,
   joinPath,
 } from '../utils/file-system';
-import { cleanAllGlobalVariables } from '../utils/global';
+import {
+  cleanAllGlobalVariables,
+  insertGlobalVariableItem,
+} from '../utils/global';
 import handleErrors from '../utils/handle-errors';
+import handleImagesImport from '../utils/handle-images-import';
+
+handleImagesImport();
 
 type renderInputType = {
   template: string;
@@ -22,6 +28,10 @@ export default async function render({
   props,
 }: renderInputType) {
   try {
+    insertGlobalVariableItem('state', {
+      id: 'prepare',
+    });
+
     const { virtualDOM } = await getVirtualDOM(template, builtDirPath, props);
 
     const templateHTML = convertToHTML(virtualDOM);
@@ -99,6 +109,8 @@ async function getVirtualDOM(
         template,
       });
     }
+
+    verifyProps(newProps);
   }
 
   let virtualDOM: JSXMailVirtualDOM;
@@ -123,6 +135,20 @@ async function getVirtualDOM(
     virtualDOM,
     templateName,
   };
+}
+
+function verifyProps(onRenderResult: any) {
+  if (!onRenderResult || typeof onRenderResult !== 'object') {
+    return;
+  }
+
+  if ('__jsx_mail_image' in onRenderResult) {
+    throw new CoreError('on_image_as_props', onRenderResult);
+  }
+
+  for (let key in onRenderResult) {
+    verifyProps(onRenderResult[key]);
+  }
 }
 
 async function insertHTMLStructure(

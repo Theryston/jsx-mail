@@ -1,5 +1,6 @@
 import { JSXMailVirtualDOM } from '..';
 import CoreError from '../utils/error';
+import { readGlobalVariable } from '../utils/global';
 import tags from './tags';
 
 export default function factory(
@@ -8,6 +9,12 @@ export default function factory(
 ): JSXMailVirtualDOM {
   if (typeof node === 'function') {
     return handleNodeFunction(node, props);
+  }
+
+  const fakeVirtualDOM = handleTagOnly(node);
+
+  if (fakeVirtualDOM) {
+    return fakeVirtualDOM;
   }
 
   const tag = getTag(node, props);
@@ -24,6 +31,23 @@ export default function factory(
   }
 
   return tag.handler(props);
+}
+
+function handleTagOnly(node: any) {
+  const onlyTag = readGlobalVariable('onlyTag');
+
+  const tagInOnlyTag = onlyTag.find((tag: any) => tag.id === node);
+
+  if (onlyTag.length && !tagInOnlyTag) {
+    return {
+      node: 'div',
+      props: {},
+      children: [],
+      __jsx_mail_vdom: true,
+    };
+  }
+
+  return false;
 }
 
 function getTag(node: any, props: any) {

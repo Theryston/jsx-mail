@@ -27,7 +27,9 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "axios": "^1.6.2",
     "esbuild": "^0.19.7",
+    "form-data": "^4.0.0",
     "node-localstorage": "^3.0.5"
   }
 }

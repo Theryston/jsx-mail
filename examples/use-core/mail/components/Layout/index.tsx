@@ -1,4 +1,5 @@
 import * as S from './styles';
+import LogoImg from '../../assets/logu.png';
 
 export default function Layout({
   children,
@@ -15,7 +16,7 @@ export default function Layout({
       <body style={S.BodyStyles}>
         <div style={S.Container} container>
           <div style={S.Header} section alignX="center" alignY="center">
-            JSX Mail
+            <img style={S.Logo} src={LogoImg} alt="JSX Mail" />
           </div>
           <div style={S.Content} section>
             {children}

@@ -133,6 +133,15 @@ export async function readFile(filePath: string) {
   });
 }
 
+export function readImage(filePath: string) {
+  return fs.readFileSync(filePath);
+}
+
+// eslint-disable-next-line no-undef
+export function bufferToBase64(buffer: Buffer) {
+  return buffer.toString('base64');
+}
+
 export async function createFileWithFolder(
   filePath: string,
   fileContent: string,
@@ -157,6 +166,10 @@ export async function changePathExt(filePath: string, newExt: string) {
   const fileName = path.basename(filePath, path.extname(filePath));
   const newPath = path.join(path.dirname(filePath), `${fileName}.${newExt}`);
   return newPath;
+}
+
+export function getFileExt(filePath: string) {
+  return path.extname(filePath);
 }
 
 export async function copyFileAndCreateFolder(
