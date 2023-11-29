@@ -70,6 +70,18 @@ export default function UserWelcomeTemplate({
           <h6 style={S.NameText} id="name-h6" className="name" align="center">
             Hello, {name.toLocaleUpperCase()}
           </h6>
+          <ol style={S.OlList}>
+            <li style={S.LiItem}>Test</li>
+            <li style={S.LiItem}>Test</li>
+            <li style={S.LiItem}>Test</li>
+            <li style={S.LiItem}>Test</li>
+          </ol>
+          <ul style={S.UlList}>
+            <li style={S.LiItem}>Test</li>
+            <li style={S.LiItem}>Test</li>
+            <li style={S.LiItem}>Test</li>
+            <li style={S.LiItem}>Test</li>
+          </ul>
         </div>
         <div section>
           <Products

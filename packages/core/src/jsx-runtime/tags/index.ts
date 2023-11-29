@@ -9,9 +9,12 @@ import HeadHandler, { HeadProps } from './handlers/head';
 import HrHandler, { HrProps } from './handlers/hr';
 import HtmlHandler, { HtmlProps } from './handlers/html';
 import ImgHandler, { ImgProps } from './handlers/img';
+import LiHandler, { LiProps } from './handlers/li';
 import LinkHandler, { LinkProps } from './handlers/link';
+import OlHandler, { OlProps } from './handlers/ol';
 import StrongHandler, { StrongProps } from './handlers/strong';
 import TitleHandler, { TitleProps } from './handlers/title';
+import UlHandler, { UlProps } from './handlers/ul';
 
 export function getChildrenFromProps(props: any) {
   let children = props.children;
@@ -139,6 +142,21 @@ const tags: Tag[] = [
     node: 'hr',
     handler: HrHandler,
     supportedProps: HrProps,
+  },
+  {
+    node: 'li',
+    handler: LiHandler,
+    supportedProps: LiProps,
+  },
+  {
+    node: 'ol',
+    handler: OlHandler,
+    supportedProps: OlProps,
+  },
+  {
+    node: 'ul',
+    handler: UlHandler,
+    supportedProps: UlProps,
   },
 ];
 

@@ -154,6 +154,29 @@ declare namespace JSX {
       size?: string;
       width?: string;
     };
+    li: {
+      className?: string;
+      dir?: string;
+      id?: string;
+      style?: ElementStyle;
+      type?: string;
+      children?: ElementChildren;
+    };
+    ol: {
+      className?: string;
+      dir?: string;
+      id?: string;
+      style?: ElementStyle;
+      type?: string;
+      children: ElementChildren;
+    };
+    ul: {
+      className?: string;
+      dir?: string;
+      id?: string;
+      style?: ElementStyle;
+      children: ElementChildren;
+    };
   }
 }
 
