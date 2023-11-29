@@ -170,6 +170,14 @@ declare namespace JSX {
       type?: string;
       children: ElementChildren;
     };
+    p: {
+      className?: string;
+      dir?: string;
+      id?: string;
+      style?: ElementStyle;
+      type?: string;
+      children: ElementChildren;
+    };
     ul: {
       className?: string;
       dir?: string;

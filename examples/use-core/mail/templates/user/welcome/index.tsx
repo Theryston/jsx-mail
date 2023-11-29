@@ -101,7 +101,15 @@ export default function UserWelcomeTemplate({
               },
             ]}
           />
-          <div>Now: {createdAt}</div>
+          <p
+            style={S.CreatedAtText}
+            id="created-at"
+            className="created-at"
+            type="date"
+            dir="rtl"
+          >
+            Now: {createdAt}
+          </p>
         </div>
       </div>
     </Layout>

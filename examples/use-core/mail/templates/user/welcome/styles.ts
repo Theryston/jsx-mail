@@ -11,3 +11,7 @@ export const UlList: JSX.ElementStyle = OlList;
 export const LiItem: JSX.ElementStyle = {
   marginBottom: '10px',
 };
+
+export const CreatedAtText: JSX.ElementStyle = {
+  fontSize: '12px',
+};

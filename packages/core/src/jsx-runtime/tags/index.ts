@@ -12,6 +12,7 @@ import ImgHandler, { ImgProps } from './handlers/img';
 import LiHandler, { LiProps } from './handlers/li';
 import LinkHandler, { LinkProps } from './handlers/link';
 import OlHandler, { OlProps } from './handlers/ol';
+import PHandler, { PProps } from './handlers/p';
 import StrongHandler, { StrongProps } from './handlers/strong';
 import TitleHandler, { TitleProps } from './handlers/title';
 import UlHandler, { UlProps } from './handlers/ul';
@@ -152,6 +153,11 @@ const tags: Tag[] = [
     node: 'ol',
     handler: OlHandler,
     supportedProps: OlProps,
+  },
+  {
+    node: 'p',
+    handler: PHandler,
+    supportedProps: PProps,
   },
   {
     node: 'ul',
