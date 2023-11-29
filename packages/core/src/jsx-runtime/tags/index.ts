@@ -1,3 +1,4 @@
+import AHandler, { AProps } from './handlers/a';
 import BodyHandler, { BodyProps } from './handlers/body';
 import DivHandler, { DivProps } from './handlers/div';
 import HeadHandler, { HeadProps } from './handlers/head';
@@ -70,6 +71,11 @@ const tags = [
     node: 'img',
     handler: ImgHandler,
     supportedProps: ImgProps,
+  },
+  {
+    node: 'a',
+    handler: AHandler,
+    supportedProps: AProps,
   },
 ];
 

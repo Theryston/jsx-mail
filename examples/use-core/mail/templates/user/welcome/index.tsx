@@ -12,6 +12,7 @@ const FAKE_PRODUCTS_DB: (typeof props)['products'] = [
     image:
       'https://i.ibb.co/86z29Rv/macbook-air-space-gray-select-201810-1-removebg-preview-1.png',
     userName: 'Theryston',
+    link: 'https://www.apple.com/macbook-air/',
   },
 ];
 
@@ -36,6 +37,7 @@ export const props = {
     price: Number(),
     userName: String(),
     image: String(),
+    link: String(),
     name: String(),
   }),
   createdAt: Date(),
@@ -60,15 +62,17 @@ export default function UserWelcomeTemplate({
                 name: 'Macbook Pro',
                 price: 10000,
                 image: MacbookImg,
+                link: 'https://www.apple.com/macbook-pro-13/',
               },
               {
                 name: 'Phone',
                 price: 20000,
                 image: PhoneImg,
+                link: 'https://www.apple.com/iphone/',
               },
             ]}
           />
-          <div>Buy at: {createdAt}</div>
+          <div>Now: {createdAt}</div>
         </div>
       </div>
     </Layout>

@@ -6,6 +6,7 @@ export default function Products({
   products: {
     price: number;
     image: JSX.ImportedImage | string;
+    link: string;
     name: string;
   }[];
 }) {
@@ -26,6 +27,9 @@ export default function Products({
               currency: 'USD',
             })}
           </div>
+          <a style={S.ProductLink} href={product.link}>
+            Buy Now
+          </a>
         </div>
       ))}
     </div>

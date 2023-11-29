@@ -29,7 +29,7 @@ export default async function render({
 }: renderInputType) {
   try {
     insertGlobalVariableItem('state', {
-      id: 'prepare',
+      id: 'render',
     });
 
     const { virtualDOM } = await getVirtualDOM(template, builtDirPath, props);

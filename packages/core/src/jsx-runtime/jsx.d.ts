@@ -116,6 +116,14 @@ declare namespace JSX {
       width?: string;
       style?: ElementStyle;
     };
+    a: {
+      className?: string;
+      href: string;
+      id?: string;
+      style?: ElementStyle;
+      target?: string;
+      children?: ElementChildren;
+    };
   }
 }
 

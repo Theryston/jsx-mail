@@ -117,6 +117,12 @@ export const ERRORS: IError[] = [
       'You passed an image as props in your template, this is not allowed',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/on-image-as-props`,
   },
+  {
+    name: 'href_is_required',
+    message:
+      'You must enter a href for the a tag and it must be a string that starts with http',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/href-is-required`,
+  },
 ];
 
 export default class CoreError implements IError {
