@@ -36,14 +36,6 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
   const { db } = await connectToDatabase();
 
-  const image = await db.collection('images').findOne({ hash: body.hash });
-
-  if (image) {
-    return res.json({
-      url: image.url,
-    });
-  }
-
   const imagesCount = await getIpImagesCount(db, ip);
 
   if (imagesCount >= MAX_IMAGES_PER_IP) {
@@ -55,23 +47,42 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     body.mimetype,
   );
 
-  await db.collection('images').insertOne({
-    ip,
+  const image = await db.collection('images').findOne({ hash: body.hash });
+
+  if (!image) {
+    await db.collection('images').insertOne({
+      ip,
+      url,
+      hash: body.hash,
+      mimetype: body.mimetype,
+      size: body.size,
+      created_at: new Date(),
+    });
+  }
+
+  const result: {
+    url: string;
+    upload_url?: string;
+  } = {
     url,
-    hash: body.hash,
-    mimetype: body.mimetype,
-    size: body.size,
-    created_at: new Date(),
-    updated_at: new Date(),
-    deleted_at: null,
+  }
+
+  const imageExists = await existsImage(url);
+
+  if (!imageExists) {
+    const uploadUrl = await generatePresignedUrl(body.hash, body.mimetype, body.size);
+    result['upload_url'] = uploadUrl;
+  }
+
+  res.json(result);
+}
+
+async function existsImage(url: string) {
+  const response = await fetch(url, {
+    method: 'HEAD',
   });
 
-  const uploadUrl = await generatePresignedUrl(body.hash, body.mimetype, body.size);
-
-  res.json({
-    upload_url: uploadUrl,
-    url
-  });
+  return response.status === 200;
 }
 
 function getImageDirectUrl(hash: string, mimetype: string) {
