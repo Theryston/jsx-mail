@@ -6,6 +6,7 @@ import BrHandler, { BrProps } from './handlers/br';
 import DivHandler, { DivProps } from './handlers/div';
 import HHandler, { HProps } from './handlers/h';
 import HeadHandler, { HeadProps } from './handlers/head';
+import HrHandler, { HrProps } from './handlers/hr';
 import HtmlHandler, { HtmlProps } from './handlers/html';
 import ImgHandler, { ImgProps } from './handlers/img';
 import LinkHandler, { LinkProps } from './handlers/link';
@@ -133,6 +134,11 @@ const tags: Tag[] = [
     node: 'h6',
     handler: HHandler,
     supportedProps: HProps,
+  },
+  {
+    node: 'hr',
+    handler: HrHandler,
+    supportedProps: HrProps,
   },
 ];
 

@@ -47,6 +47,7 @@ export default function Products({
           <a style={S.ProductLink} href={product.link}>
             Buy Now
           </a>
+          <hr size="10px" width="50%" align="left" />
         </div>
       ))}
     </div>

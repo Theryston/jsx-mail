@@ -149,6 +149,11 @@ declare namespace JSX {
     h4: JSX.IntrinsicElements['h'];
     h5: JSX.IntrinsicElements['h'];
     h6: JSX.IntrinsicElements['h'];
+    hr: {
+      align?: string;
+      size?: string;
+      width?: string;
+    };
   }
 }
 
