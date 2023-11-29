@@ -87,9 +87,9 @@ export const ERRORS: IError[] = [
     docsPageUrl: `${WEBSITE_URL}/docs/errors/prop-align-not-supported`,
   },
   {
-    name: 'prop_gap_not_supported',
-    message: 'Only a div with props container can have prop gap',
-    docsPageUrl: `${WEBSITE_URL}/docs/errors/prop-gap-not-supported`,
+    name: 'prop_padding_not_supported',
+    message: 'Only a div with props container can have prop padding',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/prop-padding-not-supported`,
   },
   {
     name: 'only_one_head_tag',

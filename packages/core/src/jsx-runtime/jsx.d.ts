@@ -135,6 +135,7 @@ declare namespace JSX {
       id?: string;
       style?: ElementStyle;
     };
+    strong: JSX.IntrinsicElements['b'];
   }
 }
 

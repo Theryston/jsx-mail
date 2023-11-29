@@ -7,6 +7,7 @@ import HeadHandler, { HeadProps } from './handlers/head';
 import HtmlHandler, { HtmlProps } from './handlers/html';
 import ImgHandler, { ImgProps } from './handlers/img';
 import LinkHandler, { LinkProps } from './handlers/link';
+import StrongHandler, { StrongProps } from './handlers/strong';
 import TitleHandler, { TitleProps } from './handlers/title';
 
 export function getChildrenFromProps(props: any) {
@@ -88,6 +89,11 @@ const tags = [
     node: 'br',
     handler: BrHandler,
     supportedProps: BrProps,
+  },
+  {
+    node: 'strong',
+    handler: StrongHandler,
+    supportedProps: StrongProps,
   },
 ];
 

@@ -23,7 +23,7 @@ function handleAlignError(props: JSX.IntrinsicElements['div']) {
 
 function handleGapError(props: JSX.IntrinsicElements['div']) {
   if (props.sectionPending) {
-    throw new CoreError('prop_gap_not_supported');
+    throw new CoreError('prop_padding_not_supported');
   }
 }
 

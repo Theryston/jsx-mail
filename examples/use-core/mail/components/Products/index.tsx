@@ -11,9 +11,9 @@ export default function Products({
   }[];
 }) {
   return (
-    <div style={S.ProductsWrapper}>
+    <div style={S.ProductsWrapper} container sectionPending="10px">
       {products.map((product) => (
-        <div style={S.ProductWrapper}>
+        <div style={S.ProductWrapper} section>
           <img
             style={S.ProductImage}
             src={product.image}
@@ -31,13 +31,19 @@ export default function Products({
           >
             Name: {product.name}
           </b>
-          <div>
+          <br />
+          <strong
+            className="product-price"
+            id={`product-price-${product.name}`}
+            style={S.ProductPrice}
+          >
             Price:{' '}
             {(product.price / 100).toLocaleString('en-US', {
               style: 'currency',
               currency: 'USD',
             })}
-          </div>
+          </strong>
+          <br />
           <a style={S.ProductLink} href={product.link}>
             Buy Now
           </a>
