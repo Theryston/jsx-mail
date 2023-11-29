@@ -1,10 +1,10 @@
+import WEBSITE_URL from './website-url';
+
 interface IError {
   name: string;
   message: string;
   docsPageUrl: string;
 }
-
-const WEBSITE_URL = 'https://jsxmail.org';
 
 export const ERRORS: IError[] = [
   {
