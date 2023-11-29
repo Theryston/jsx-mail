@@ -82,6 +82,13 @@ export default function UserWelcomeTemplate({
             <li style={S.LiItem}>Test</li>
             <li style={S.LiItem}>Test</li>
           </ul>
+          <span style={S.SpanText} id="span-text" className="span-text">
+            I'm a <b>span</b> element
+          </span>
+          <br />
+          <button style={S.Button} href="http://example.com">
+            Button
+          </button>
         </div>
         <div section>
           <Products

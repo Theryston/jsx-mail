@@ -3,6 +3,7 @@ import AHandler, { AProps } from './handlers/a';
 import BHandler, { BProps } from './handlers/b';
 import BodyHandler, { BodyProps } from './handlers/body';
 import BrHandler, { BrProps } from './handlers/br';
+import ButtonHandler, { ButtonProps } from './handlers/button';
 import DivHandler, { DivProps } from './handlers/div';
 import HHandler, { HProps } from './handlers/h';
 import HeadHandler, { HeadProps } from './handlers/head';
@@ -13,6 +14,7 @@ import LiHandler, { LiProps } from './handlers/li';
 import LinkHandler, { LinkProps } from './handlers/link';
 import OlHandler, { OlProps } from './handlers/ol';
 import PHandler, { PProps } from './handlers/p';
+import SpanHandler, { SpanProps } from './handlers/span';
 import StrongHandler, { StrongProps } from './handlers/strong';
 import TitleHandler, { TitleProps } from './handlers/title';
 import UlHandler, { UlProps } from './handlers/ul';
@@ -160,9 +162,19 @@ const tags: Tag[] = [
     supportedProps: PProps,
   },
   {
+    node: 'span',
+    handler: SpanHandler,
+    supportedProps: SpanProps,
+  },
+  {
     node: 'ul',
     handler: UlHandler,
     supportedProps: UlProps,
+  },
+  {
+    node: 'button',
+    handler: ButtonHandler,
+    supportedProps: ButtonProps,
   },
 ];
 

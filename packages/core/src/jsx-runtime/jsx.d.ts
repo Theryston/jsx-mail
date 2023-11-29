@@ -117,12 +117,12 @@ declare namespace JSX {
       style?: ElementStyle;
     };
     a: {
-      className?: string;
       href: string;
+      children: ElementChildren;
+      className?: string;
       id?: string;
       style?: ElementStyle;
       target?: string;
-      children?: ElementChildren;
     };
     b: {
       className?: string;
@@ -178,12 +178,25 @@ declare namespace JSX {
       type?: string;
       children: ElementChildren;
     };
+    span: {
+      className?: string;
+      id?: string;
+      style?: ElementStyle;
+      children: ElementChildren;
+    };
     ul: {
       className?: string;
       dir?: string;
       id?: string;
       style?: ElementStyle;
       children: ElementChildren;
+    };
+    button: {
+      href: string;
+      children: ElementChildren;
+      className?: string;
+      id?: string;
+      style?: ElementStyle;
     };
   }
 }

@@ -15,3 +15,12 @@ export const LiItem: JSX.ElementStyle = {
 export const CreatedAtText: JSX.ElementStyle = {
   fontSize: '12px',
 };
+
+export const SpanText: JSX.ElementStyle = {
+  fontSize: '12px',
+};
+
+export const Button: JSX.ElementStyle = {
+  backgroundColor: '#FF013E',
+  height: '100px',
+};
