@@ -124,6 +124,12 @@ declare namespace JSX {
       target?: string;
       children?: ElementChildren;
     };
+    b: {
+      className?: string;
+      id?: string;
+      style?: ElementStyle;
+      children: ElementChildren;
+    };
   }
 }
 

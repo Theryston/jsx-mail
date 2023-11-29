@@ -19,7 +19,13 @@ export default function Products({
             src={product.image}
             alt={`Photo of ${product.name}`}
           />
-          <div>Name: {product.name}</div>
+          <b
+            className="product-name"
+            id={`product-name-${product.name}`}
+            style={S.ProductName}
+          >
+            Name: {product.name}
+          </b>
           <div>
             Price:{' '}
             {(product.price / 100).toLocaleString('en-US', {
