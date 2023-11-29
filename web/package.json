@@ -9,21 +9,24 @@
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
-    "backblaze-b2": "^1.7.0",
+    "@aws-sdk/client-s3": "^3.462.0",
+    "@aws-sdk/s3-request-presigner": "^3.462.0",
+    "mongodb": "^6.3.0",
     "next": "13",
     "next-connect": "^1.0.0-next.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "request-ip": "^3.3.0"
   },
   "devDependencies": {
     "@jsx-mail/eslint-config": "*",
     "@jsx-mail/typescript-config": "*",
     "@next/eslint-plugin-next": "^14.0.2",
-    "@types/backblaze-b2": "^1.5.6",
     "@types/eslint": "^8.44.7",
     "@types/node": "^17.0.12",
     "@types/react": "^18.0.22",
     "@types/react-dom": "^18.0.7",
+    "@types/request-ip": "^0.0.41",
     "eslint": "^8.53.0",
     "prettier": "^3.1.0",
     "typescript": "^5.2.2"
