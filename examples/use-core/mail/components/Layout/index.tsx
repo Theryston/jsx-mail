@@ -1,5 +1,5 @@
 import * as S from './styles';
-import LogoImg from '../../assets/logu.png';
+import LogoImg from '../../assets/logo.png';
 
 export default function Layout({
   children,

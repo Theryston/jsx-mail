@@ -7,7 +7,7 @@ core
     onProcessChange: (name, data) => {
       console.log(`Process ${name} was called`);
 
-      if (name === 'ran_template') {
+      if (name === 'template_executed') {
         fs.writeFileSync('./example-vd.json', JSON.stringify(data.virtualDOM));
         const templateName = path.basename(data.path);
         console.log(
