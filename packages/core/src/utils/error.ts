@@ -123,6 +123,11 @@ export const ERRORS: IError[] = [
       'You must enter a href for the a tag and it must be a string that starts with http',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/href-is-required`,
   },
+  {
+    name: 'invalid_h_tag',
+    message: 'You used an invalid h tag. It must be h1, h2, h3, h4, h5 or h6',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/invalid-h-tag`,
+  },
 ];
 
 export default class CoreError implements IError {

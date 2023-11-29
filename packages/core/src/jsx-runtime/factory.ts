@@ -30,7 +30,7 @@ export default function factory(
     });
   }
 
-  return tag.handler(props);
+  return tag.handler(props, node);
 }
 
 function handleTagOnly(node: any) {

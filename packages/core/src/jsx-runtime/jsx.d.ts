@@ -136,6 +136,19 @@ declare namespace JSX {
       style?: ElementStyle;
     };
     strong: JSX.IntrinsicElements['b'];
+    h: {
+      align?: string;
+      className?: string;
+      id?: string;
+      style?: ElementStyle;
+      children: ElementChildren;
+    };
+    h1: JSX.IntrinsicElements['h'];
+    h2: JSX.IntrinsicElements['h'];
+    h3: JSX.IntrinsicElements['h'];
+    h4: JSX.IntrinsicElements['h'];
+    h5: JSX.IntrinsicElements['h'];
+    h6: JSX.IntrinsicElements['h'];
   }
 }
 

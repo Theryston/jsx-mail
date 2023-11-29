@@ -52,7 +52,24 @@ export default function UserWelcomeTemplate({
     <Layout title="Welcome">
       <div container sectionPending="10px">
         <div style={S.NameWrapper} section>
-          <div style={S.NameText}>Hello, {name.toLocaleUpperCase()}</div>
+          <h1 style={S.NameText} id="name-h1" className="name" align="center">
+            Hello, {name.toLocaleUpperCase()}
+          </h1>
+          <h2 style={S.NameText} id="name-h2" className="name" align="center">
+            Hello, {name.toLocaleUpperCase()}
+          </h2>
+          <h3 style={S.NameText} id="name-h3" className="name" align="center">
+            Hello, {name.toLocaleUpperCase()}
+          </h3>
+          <h4 style={S.NameText} id="name-h4" className="name" align="center">
+            Hello, {name.toLocaleUpperCase()}
+          </h4>
+          <h5 style={S.NameText} id="name-h5" className="name" align="center">
+            Hello, {name.toLocaleUpperCase()}
+          </h5>
+          <h6 style={S.NameText} id="name-h6" className="name" align="center">
+            Hello, {name.toLocaleUpperCase()}
+          </h6>
         </div>
         <div section>
           <Products

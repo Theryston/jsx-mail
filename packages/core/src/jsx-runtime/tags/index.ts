@@ -1,8 +1,10 @@
+import { JSXMailVirtualDOM } from '../..';
 import AHandler, { AProps } from './handlers/a';
 import BHandler, { BProps } from './handlers/b';
 import BodyHandler, { BodyProps } from './handlers/body';
 import BrHandler, { BrProps } from './handlers/br';
 import DivHandler, { DivProps } from './handlers/div';
+import HHandler, { HProps } from './handlers/h';
 import HeadHandler, { HeadProps } from './handlers/head';
 import HtmlHandler, { HtmlProps } from './handlers/html';
 import ImgHandler, { ImgProps } from './handlers/img';
@@ -39,7 +41,14 @@ export function getProps(props: any, style: string | undefined) {
   return props;
 }
 
-const tags = [
+type Tag = {
+  node: string;
+  // eslint-disable-next-line no-unused-vars
+  handler: (props: any, node: string) => JSXMailVirtualDOM;
+  supportedProps: string[];
+};
+
+const tags: Tag[] = [
   {
     node: 'div',
     handler: DivHandler,
@@ -94,6 +103,36 @@ const tags = [
     node: 'strong',
     handler: StrongHandler,
     supportedProps: StrongProps,
+  },
+  {
+    node: 'h1',
+    handler: HHandler,
+    supportedProps: HProps,
+  },
+  {
+    node: 'h2',
+    handler: HHandler,
+    supportedProps: HProps,
+  },
+  {
+    node: 'h3',
+    handler: HHandler,
+    supportedProps: HProps,
+  },
+  {
+    node: 'h4',
+    handler: HHandler,
+    supportedProps: HProps,
+  },
+  {
+    node: 'h5',
+    handler: HHandler,
+    supportedProps: HProps,
+  },
+  {
+    node: 'h6',
+    handler: HHandler,
+    supportedProps: HProps,
   },
 ];
 
