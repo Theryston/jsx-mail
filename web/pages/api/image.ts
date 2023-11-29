@@ -39,13 +39,8 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const image = await db.collection('images').findOne({ hash: body.hash });
 
   if (image) {
-    const url = getImageDirectUrl(
-      image.hash,
-      image.mimetype,
-    );
-
     return res.json({
-      url,
+      url: image.url,
     });
   }
 
@@ -55,8 +50,14 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).json({ message: `you can only upload ${MAX_IMAGES_PER_IP} images` });
   }
 
+  const url = getImageDirectUrl(
+    body.hash,
+    body.mimetype,
+  );
+
   await db.collection('images').insertOne({
     ip,
+    url,
     hash: body.hash,
     mimetype: body.mimetype,
     size: body.size,
@@ -66,11 +67,6 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   });
 
   const uploadUrl = await generatePresignedUrl(body.hash, body.mimetype, body.size);
-
-  const url = getImageDirectUrl(
-    body.hash,
-    body.mimetype,
-  )
 
   res.json({
     upload_url: uploadUrl,
