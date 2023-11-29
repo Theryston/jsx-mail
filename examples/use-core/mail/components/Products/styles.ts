@@ -20,3 +20,7 @@ export const ProductLink: JSX.ElementStyle = {
   textDecoration: 'none',
   color: 'red',
 };
+
+export const BreakLine: JSX.ElementStyle = {
+  width: '100%',
+};

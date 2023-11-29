@@ -1,6 +1,7 @@
 import AHandler, { AProps } from './handlers/a';
 import BHandler, { BProps } from './handlers/b';
 import BodyHandler, { BodyProps } from './handlers/body';
+import BrHandler, { BrProps } from './handlers/br';
 import DivHandler, { DivProps } from './handlers/div';
 import HeadHandler, { HeadProps } from './handlers/head';
 import HtmlHandler, { HtmlProps } from './handlers/html';
@@ -82,6 +83,11 @@ const tags = [
     node: 'b',
     handler: BHandler,
     supportedProps: BProps,
+  },
+  {
+    node: 'br',
+    handler: BrHandler,
+    supportedProps: BrProps,
   },
 ];
 

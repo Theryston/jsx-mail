@@ -19,6 +19,11 @@ export default function Products({
             src={product.image}
             alt={`Photo of ${product.name}`}
           />
+          <br
+            className="break-line"
+            style={S.BreakLine}
+            id={`break-line-${product.name}`}
+          />
           <b
             className="product-name"
             id={`product-name-${product.name}`}

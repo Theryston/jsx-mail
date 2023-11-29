@@ -130,6 +130,11 @@ declare namespace JSX {
       style?: ElementStyle;
       children: ElementChildren;
     };
+    br: {
+      className?: string;
+      id?: string;
+      style?: ElementStyle;
+    };
   }
 }
 
