@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 import error from "../../utils/error";
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import requestIp from 'request-ip';
 import { connectToDatabase } from "../../config/mongodb";
@@ -153,6 +153,53 @@ function isHashAnSHA256(hash: string) {
   return /^[a-f0-9]{64}$/i.test(hash);
 }
 
+async function deleteHandler(req: NextApiRequest, res: NextApiResponse) {
+  const hash = req.query.hash as string;
+
+  if (!hash) {
+    return res.status(400).json({ message: 'hash is required' });
+  }
+
+  const { db } = await connectToDatabase();
+
+  const image = await db.collection('images').findOne({ hash });
+
+  if (!image) {
+    return res.status(404).json({ message: 'image not found' });
+  }
+
+  const ip = requestIp.getClientIp(req);
+
+  if (ip !== image.ip) {
+    return res.status(403).json({ message: 'you are not allowed to delete this image' });
+  }
+
+  await deleteImage(hash, image.mimetype);
+
+  await db.collection('images').deleteOne({ hash });
+
+  res.json({ message: 'image deleted' });
+}
+
+async function deleteImage(hash: string, mimetype: string) {
+  const s3Client = new S3Client({
+    region: process.env.BACKBLAZE_REGION,
+    endpoint: process.env.BACKBLAZE_ENDPOINT,
+    credentials: {
+      accessKeyId: process.env.BACKBLAZE_ID_KEY!,
+      secretAccessKey: process.env.BACKBLAZE_APPLICATION_KEY!,
+    },
+  });
+
+  const command = new DeleteObjectCommand({
+    Bucket: process.env.BACKBLAZE_BUCKET_NAME!,
+    Key: `${hash}.${mimetype.split('/')[1]}`,
+  })
+
+  await s3Client.send(command);
+}
+
+router.delete(deleteHandler);
 router.post(postHandler);
 
 export default router.handler(error);
