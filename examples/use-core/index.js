@@ -2,21 +2,23 @@ const core = require('@jsx-mail/core').default;
 const path = require('path');
 const fs = require('fs');
 
-core
-  .prepare('./mail', {
-    onProcessChange: (name, data) => {
-      console.log(`Process ${name} was called`);
+const config = {
+  onProcessChange: (name, data) => {
+    console.log(`Process ${name} was called`);
 
-      if (name === 'template_executed') {
-        fs.writeFileSync('./example-vd.json', JSON.stringify(data.virtualDOM));
-        const templateName = path.basename(data.path);
-        console.log(
-          `Virtual DOM for ${templateName} is in file ./example-vd.json`,
-        );
-      }
-    },
-    ignoreCloud: false,
-  })
+    if (name === 'template_executed') {
+      fs.writeFileSync('./example-vd.json', JSON.stringify(data.virtualDOM));
+      const templateName = path.basename(data.path);
+      console.log(
+        `Virtual DOM for ${templateName} is in file ./example-vd.json`,
+      );
+    }
+  },
+  ignoreCloud: false,
+};
+
+core
+  .prepare('./mail', config)
   .then((resultPrepare) => {
     console.log('Prepare result: ', resultPrepare);
 

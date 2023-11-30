@@ -51,7 +51,7 @@ type ProcessName =
   | 'running_template'
   | 'template_executed';
 
-type Options = {
+type AllOptions = {
   onProcessChange: (
     // eslint-disable-next-line no-unused-vars
     processName: ProcessName,
@@ -60,6 +60,8 @@ type Options = {
   ) => void;
   ignoreCloud: boolean;
 };
+
+type Options = Partial<AllOptions>;
 
 export default async function prepare(dirPath: string, options?: Options) {
   const { onProcessChange, ignoreCloud } = getOptions(options);
@@ -120,7 +122,7 @@ function handleIgnoreCloud(ignoreCloud: boolean) {
 
 async function prepareImages(
   builtMailAppPath: string,
-  onProcessChange: Options['onProcessChange'],
+  onProcessChange: AllOptions['onProcessChange'],
   ignoreCloud: boolean,
 ) {
   insertGlobalVariableItem('onlyTag', {
@@ -193,7 +195,7 @@ async function prepareImages(
 
 async function uploadImage(
   imagesToUpload: ImageInfo,
-  onProcessChange: Options['onProcessChange'],
+  onProcessChange: AllOptions['onProcessChange'],
   allImages: ImageInfo[],
   ignoreCloud: boolean,
 ): Promise<string> {
@@ -231,7 +233,7 @@ async function uploadImage(
 
 async function executeAllTemplates(
   builtMailAppPath: string,
-  onProcessChange: Options['onProcessChange'],
+  onProcessChange: AllOptions['onProcessChange'],
 ) {
   const allTemplatesFiles = await getAllTemplates(builtMailAppPath);
 
@@ -266,7 +268,7 @@ async function executeAllTemplates(
 function executeComponent(
   component: any,
   props: any,
-  onProcessChange: Options['onProcessChange'],
+  onProcessChange: AllOptions['onProcessChange'],
   templateFile: { path: string; ext: string },
   templateFileUrl: string,
 ) {
@@ -311,21 +313,22 @@ function getComponent(
   return component;
 }
 
-function getOptions(options: Options | undefined): Options {
-  const defaultOptions = {
+function getOptions(options: Options | undefined): AllOptions {
+  const newOptions = {
     onProcessChange: () => {
       return;
     },
     ignoreCloud: false,
+    ...options,
   };
 
-  return options || defaultOptions;
+  return newOptions;
 }
 
 async function copyAllNotCompileFiles(
   dirPath: string,
   outDirFolder: string,
-  onProcessChange: Options['onProcessChange'],
+  onProcessChange: AllOptions['onProcessChange'],
 ) {
   const allNoCompileFiles = await getAllFilesByDirectory(dirPath, {
     excludeExtensions: COMPILE_FILES_EXT,
@@ -357,7 +360,7 @@ async function transformCompileFiles(
   baseCorePath: string,
   dirPath: string,
   outDirFolder: string,
-  onProcessChange: Options['onProcessChange'],
+  onProcessChange: AllOptions['onProcessChange'],
 ) {
   const esbuildWarnings = [];
 
@@ -451,7 +454,7 @@ function handleErrorTransform(error: any) {
 
 async function getCompileFiles(
   dirPath: string,
-  onProcessChange: Options['onProcessChange'],
+  onProcessChange: AllOptions['onProcessChange'],
 ) {
   onProcessChange('checking_compile_files', {
     dirPath,
@@ -468,7 +471,7 @@ async function getCompileFiles(
 
 async function handleInitialPaths(
   dirPath: string,
-  onProcessChange: Options['onProcessChange'],
+  onProcessChange: AllOptions['onProcessChange'],
 ) {
   onProcessChange('checking_mail_app_folder', {
     dirPath,
