@@ -15,6 +15,7 @@ core
         );
       }
     },
+    ignoreCloud: false,
   })
   .then((resultPrepare) => {
     console.log('Prepare result: ', resultPrepare);

@@ -13,6 +13,7 @@ import {
 } from '../utils/global';
 import handleErrors from '../utils/handle-errors';
 import handleImagesImport from '../utils/handle-images-import';
+import getStorage from '../utils/storage';
 
 handleImagesImport();
 
@@ -36,6 +37,7 @@ export default async function render({
 
     const templateHTML = convertToHTML(virtualDOM);
 
+    handlePostIgnoreCloud();
     cleanAllGlobalVariables();
 
     return {
@@ -43,6 +45,18 @@ export default async function render({
     };
   } catch (error) {
     handleErrors(error);
+  }
+}
+
+function handlePostIgnoreCloud() {
+  const storage = getStorage();
+
+  const usedIgnoreCloudStr = storage.getItem('ignoreCloud');
+  const usedIgnoreCloud = JSON.parse(usedIgnoreCloudStr || 'false');
+
+  if (usedIgnoreCloud) {
+    storage.removeItem('ignoreCloud');
+    storage.removeItem('images');
   }
 }
 

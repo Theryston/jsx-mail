@@ -58,15 +58,18 @@ type Options = {
     // eslint-disable-next-line no-unused-vars
     data: { [key: string]: any },
   ) => void;
+  ignoreCloud: boolean;
 };
 
 export default async function prepare(dirPath: string, options?: Options) {
-  const { onProcessChange } = getOptions(options);
+  const { onProcessChange, ignoreCloud } = getOptions(options);
 
   try {
     insertGlobalVariableItem('state', {
       id: 'prepare',
     });
+
+    handleIgnoreCloud(ignoreCloud);
 
     const { baseCorePath, builtMailAppPath } = await handleInitialPaths(
       dirPath,
@@ -85,7 +88,7 @@ export default async function prepare(dirPath: string, options?: Options) {
 
     await copyAllNotCompileFiles(dirPath, builtMailAppPath, onProcessChange);
 
-    await prepareImages(builtMailAppPath, onProcessChange);
+    await prepareImages(builtMailAppPath, onProcessChange, ignoreCloud);
 
     await executeAllTemplates(builtMailAppPath, onProcessChange);
 
@@ -103,9 +106,22 @@ export default async function prepare(dirPath: string, options?: Options) {
   }
 }
 
+function handleIgnoreCloud(ignoreCloud: boolean) {
+  const storage = getStorage();
+
+  if (!ignoreCloud) {
+    storage.removeItem('ignoreCloud');
+    return;
+  }
+
+  storage.setItem('images', '[]');
+  storage.setItem('ignoreCloud', 'true');
+}
+
 async function prepareImages(
   builtMailAppPath: string,
   onProcessChange: Options['onProcessChange'],
+  ignoreCloud: boolean,
 ) {
   insertGlobalVariableItem('onlyTag', {
     id: 'img',
@@ -130,7 +146,12 @@ async function prepareImages(
     }
 
     try {
-      const imageUrl = await uploadImage(image, onProcessChange, images);
+      const imageUrl = await uploadImage(
+        image,
+        onProcessChange,
+        images,
+        ignoreCloud,
+      );
 
       image.url = imageUrl;
       image.status = 'uploaded';
@@ -174,7 +195,12 @@ async function uploadImage(
   imagesToUpload: ImageInfo,
   onProcessChange: Options['onProcessChange'],
   allImages: ImageInfo[],
+  ignoreCloud: boolean,
 ): Promise<string> {
+  if (ignoreCloud) {
+    return imagesToUpload.path;
+  }
+
   onProcessChange('uploading_image', {
     ...imagesToUpload,
     images: allImages,
@@ -285,16 +311,15 @@ function getComponent(
   return component;
 }
 
-function getOptions(options: Options | undefined): {
-  onProcessChange: Options['onProcessChange'];
-} {
-  return (
-    options || {
-      onProcessChange: () => {
-        return;
-      },
-    }
-  );
+function getOptions(options: Options | undefined): Options {
+  const defaultOptions = {
+    onProcessChange: () => {
+      return;
+    },
+    ignoreCloud: false,
+  };
+
+  return options || defaultOptions;
 }
 
 async function copyAllNotCompileFiles(
