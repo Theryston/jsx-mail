@@ -123,6 +123,7 @@ async function prepareImages(
   const storage = getStorage();
   const imagesString = storage.getItem('images');
   let images: ImageInfo[] = JSON.parse(imagesString || '[]');
+  const changedImages: ImageInfo[] = [];
 
   for (const image of images) {
     if (!['pending_upload', 'error'].includes(image.status)) {
@@ -144,8 +145,7 @@ async function prepareImages(
       }
     }
 
-    const imageIndex = images.findIndex((i) => i.hash === image.hash);
-    images[imageIndex] = image;
+    changedImages.push(image);
   }
 
   const imagesError = images.filter((i) => i.status === 'error');
@@ -154,7 +154,21 @@ async function prepareImages(
     throw images[0]?.error;
   }
 
-  storage.setItem('images', JSON.stringify(images));
+  const oldImagesStr = storage.getItem('images');
+  const oldImages = JSON.parse(oldImagesStr || '[]');
+  const newImages = oldImages.map((oldImage: ImageInfo) => {
+    const newImage = changedImages.find(
+      (changedImage) => changedImage.hash === oldImage.hash,
+    );
+
+    if (newImage) {
+      return newImage;
+    }
+
+    return oldImage;
+  });
+
+  storage.setItem('images', JSON.stringify(newImages));
 }
 
 async function uploadImage(

@@ -3,7 +3,10 @@ import { ImageInfo, JSXMailVirtualDOM } from '../../..';
 import calculateHash from '../../../utils/calculate-hash';
 import CoreError from '../../../utils/error';
 import { readImage } from '../../../utils/file-system';
-import { readGlobalVariable } from '../../../utils/global';
+import {
+  insertGlobalVariableItem,
+  readGlobalVariable,
+} from '../../../utils/global';
 import getStorage from '../../../utils/storage';
 import getStyle from '../../get-style';
 
@@ -38,7 +41,11 @@ export default function ImgHandler(
   let newSrc = src;
 
   if ((newSrc as any).__jsx_mail_image) {
-    newSrc = handleImage((newSrc as any).path).url;
+    const imageInfo = handleImage((newSrc as any).path);
+    insertGlobalVariableItem('images_using', {
+      id: imageInfo.hash,
+    });
+    newSrc = imageInfo.url;
   }
 
   return {
