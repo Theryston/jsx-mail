@@ -42,7 +42,11 @@ export async function cloudUploadImage(
     }
 
     const file = await readImage(path);
-    await axios.put(upload_url, file);
+    await axios.put(upload_url, file, {
+      headers: {
+        'Content-Type': mimeType,
+      },
+    });
 
     return url;
   } catch (error: any) {
