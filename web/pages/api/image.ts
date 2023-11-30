@@ -47,9 +47,12 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     body.mimetype,
   );
 
-  const image = await db.collection('images').findOne({ hash: body.hash });
+  const sameIpImage = await db.collection('images').findOne({
+    hash: body.hash,
+    ip
+  });
 
-  if (!image) {
+  if (!sameIpImage) {
     await db.collection('images').insertOne({
       ip,
       url,
@@ -162,21 +165,21 @@ async function deleteHandler(req: NextApiRequest, res: NextApiResponse) {
 
   const { db } = await connectToDatabase();
 
-  const image = await db.collection('images').findOne({ hash });
+  const ip = requestIp.getClientIp(req);
 
-  if (!image) {
+  const sameIpImage = await db.collection('images').findOne({ hash, ip });
+
+  if (!sameIpImage) {
     return res.status(404).json({ message: 'image not found' });
   }
 
-  const ip = requestIp.getClientIp(req);
+  const differentIpImages = await db.collection('images').find({ hash, ip: { $ne: ip } }).toArray();
 
-  if (ip !== image.ip) {
-    return res.status(403).json({ message: 'you are not allowed to delete this image' });
+  if (!differentIpImages.length) {
+    await deleteImage(hash, sameIpImage.mimetype);
   }
 
-  await deleteImage(hash, image.mimetype);
-
-  await db.collection('images').deleteOne({ hash });
+  await db.collection('images').deleteOne({ hash, ip });
 
   res.json({ message: 'image deleted' });
 }
@@ -194,6 +197,7 @@ async function deleteImage(hash: string, mimetype: string) {
   const command = new DeleteObjectCommand({
     Bucket: process.env.BACKBLAZE_BUCKET_NAME!,
     Key: `${hash}.${mimetype.split('/')[1]}`,
+    BypassGovernanceRetention: true,
   })
 
   await s3Client.send(command);
