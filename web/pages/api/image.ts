@@ -197,7 +197,6 @@ async function deleteImage(hash: string, mimetype: string) {
   const command = new DeleteObjectCommand({
     Bucket: process.env.BACKBLAZE_BUCKET_NAME!,
     Key: `${hash}.${mimetype.split('/')[1]}`,
-    BypassGovernanceRetention: true,
   })
 
   await s3Client.send(command);
