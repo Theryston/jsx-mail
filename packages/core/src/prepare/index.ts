@@ -1,7 +1,6 @@
 import CoreError from '../utils/error';
 import esbuild from 'esbuild';
 import {
-  bufferToBase64,
   changePathExt,
   copyFileAndCreateFolder,
   createFileWithFolder,
@@ -15,7 +14,6 @@ import {
   getTemplateFolder,
   joinPath,
   readFile,
-  readImage,
 } from '../utils/file-system';
 import handleErrors from '../utils/handle-errors';
 import {
@@ -27,15 +25,18 @@ import {
 import handleImagesImport from '../utils/handle-images-import';
 import getStorage from '../utils/storage';
 import { ImageInfo } from '..';
-import NodeFormData from 'form-data';
-import axios from 'axios';
+import { cloudUploadImage } from '../cloud/image/upload';
 
 handleImagesImport();
 
 type CompileFilePath = 'jsx' | 'tsx' | 'js' | 'ts';
 
 const COMPILE_FILES_EXT: CompileFilePath[] = ['jsx', 'tsx', 'js', 'ts'];
-const JSX_MAIL_IMGBB_API_KEY = '753d982d37fff6345371be3c4fff3b8b';
+
+type StorageType = {
+  // eslint-disable-next-line no-unused-vars
+  [key: string]: (path: string, hash: string) => Promise<string>;
+};
 
 type ProcessName =
   | 'checking_mail_app_folder'
@@ -129,9 +130,9 @@ async function prepareImages(
     }
 
     try {
-      const imageInfo = await imgbbUploadImage(image, onProcessChange, images);
+      const imageUrl = await uploadImage(image, onProcessChange, images);
 
-      image.url = imageInfo.data.url;
+      image.url = imageUrl;
       image.status = 'uploaded';
       delete image.error;
     } catch (error: any) {
@@ -147,45 +148,46 @@ async function prepareImages(
     images[imageIndex] = image;
   }
 
+  const imagesError = images.filter((i) => i.status === 'error');
+
+  if (imagesError.length) {
+    throw images[0]?.error;
+  }
+
   storage.setItem('images', JSON.stringify(images));
 }
 
-async function imgbbUploadImage(
+async function uploadImage(
   imagesToUpload: ImageInfo,
   onProcessChange: Options['onProcessChange'],
   allImages: ImageInfo[],
-) {
+): Promise<string> {
   onProcessChange('uploading_image', {
     ...imagesToUpload,
     images: allImages,
   });
 
-  const imageContent = readImage(imagesToUpload.path);
+  const storageType: StorageType = {
+    JSX_MAIL_CLOUD: cloudUploadImage,
+  };
 
-  const formData = new NodeFormData();
-  formData.append('image', bufferToBase64(imageContent));
+  const uploadImage =
+    // eslint-disable-next-line turbo/no-undeclared-env-vars, no-undef
+    storageType[process.env.JSX_MAIL_STORAGE_TYPE || 'JSX_MAIL_CLOUD'];
 
-  const response = await axios.post(
-    'https://api.imgbb.com/1/upload',
-    formData,
-    {
-      headers: {
-        ...formData.getHeaders(),
-      },
-      params: {
-        key: JSX_MAIL_IMGBB_API_KEY,
-        name: imagesToUpload.hash,
-      },
-    },
-  );
+  if (!uploadImage) {
+    throw new CoreError('invalid_storage_type');
+  }
+
+  const url = await uploadImage(imagesToUpload.path, imagesToUpload.hash);
 
   onProcessChange('image_uploaded', {
     ...imagesToUpload,
+    url,
     images: allImages,
-    response: response.data,
   });
 
-  return response.data;
+  return url;
 }
 
 async function executeAllTemplates(

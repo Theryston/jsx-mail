@@ -128,6 +128,21 @@ export const ERRORS: IError[] = [
     message: 'You used an invalid h tag. It must be h1, h2, h3, h4, h5 or h6',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/invalid-h-tag`,
   },
+  {
+    name: 'invalid_storage_type',
+    message: 'Invalid storage type',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/invalid-storage-type`,
+  },
+  {
+    name: 'invalid_file_type',
+    message: 'Invalid file type',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/invalid-file-type`,
+  },
+  {
+    name: 'upload_error',
+    message: 'Error uploading image',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/upload-error`,
+  },
 ];
 
 export default class CoreError implements IError {

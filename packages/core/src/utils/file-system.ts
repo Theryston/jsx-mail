@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import url from 'url';
+import mime from 'mime-types';
 
 const NO_TEMPLATE_FILE_NAME = ['styles'];
 
@@ -137,9 +138,14 @@ export function readImage(filePath: string) {
   return fs.readFileSync(filePath);
 }
 
-// eslint-disable-next-line no-undef
-export function bufferToBase64(buffer: Buffer) {
-  return buffer.toString('base64');
+export function getFileSize(filePath: string) {
+  const stats = fs.statSync(filePath);
+  const fileSizeInBytes = stats.size;
+  return fileSizeInBytes;
+}
+
+export function getFileMimetype(filePath: string) {
+  return mime.lookup(filePath);
 }
 
 export async function createFileWithFolder(
