@@ -99,7 +99,6 @@ export default async function prepare(dirPath: string, options?: Options) {
       warnings,
     };
   } catch (error) {
-    console.log(error);
     handleErrors(error);
   }
 }

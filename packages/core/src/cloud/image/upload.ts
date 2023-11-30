@@ -35,8 +35,6 @@ export async function cloudUploadImage(
       body,
     );
 
-    console.log('cloudImage', cloudImage);
-
     const { url, upload_url } = cloudImage;
 
     if (!upload_url) {
