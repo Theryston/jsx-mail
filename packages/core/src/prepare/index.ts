@@ -94,6 +94,8 @@ export default async function prepare(dirPath: string, options?: Options) {
 
     await executeAllTemplates(builtMailAppPath, onProcessChange);
 
+    handlePostIgnoreCloud(ignoreCloud);
+
     const warnings = readGlobalVariable('__jsx_mail_warnings');
 
     cleanAllGlobalVariables();
@@ -112,12 +114,28 @@ function handleIgnoreCloud(ignoreCloud: boolean) {
   const storage = getStorage();
 
   if (!ignoreCloud) {
-    storage.removeItem('ignoreCloud');
     return;
   }
 
   storage.setItem('images', '[]');
-  storage.setItem('ignoreCloud', 'true');
+}
+
+function handlePostIgnoreCloud(ignoreCloud: boolean) {
+  const storage = getStorage();
+
+  if (!ignoreCloud) {
+    return;
+  }
+
+  const imagesStr = storage.getItem('images');
+  const images = JSON.parse(imagesStr || '[]');
+
+  const newImages = images.map((image: ImageInfo) => ({
+    ...image,
+    status: 'pending_upload',
+  }));
+
+  storage.setItem('images', JSON.stringify(newImages));
 }
 
 async function prepareImages(
