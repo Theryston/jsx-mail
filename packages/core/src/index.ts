@@ -1,11 +1,13 @@
 import prepare from './prepare';
 import render from './render';
 import { jsx } from './jsx-runtime';
+import cleanCache from './clean-cache';
 
 const core = {
   render,
   prepare,
   jsx,
+  cleanCache,
 };
 
 export type ImageInfo = {

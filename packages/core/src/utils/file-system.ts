@@ -144,6 +144,12 @@ export function getFileSize(filePath: string) {
   return fileSizeInBytes;
 }
 
+export async function deleteFolder(folderPath: string) {
+  await fs.promises.rm(folderPath, {
+    recursive: true,
+  });
+}
+
 export async function transformChildrenFileToPath(folderPath: string) {
   const files = await getAllFilesByDirectory(folderPath);
   const file = files[0];

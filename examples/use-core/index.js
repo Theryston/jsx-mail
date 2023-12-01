@@ -41,6 +41,15 @@ core
         console.log(
           'The render result of welcome is into the file: ./example-vd.html',
         );
+
+        core
+          .cleanCache()
+          .then(() => {
+            console.log('Cache cleaned');
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((error) => {
         console.log(error);
