@@ -169,6 +169,16 @@ export const ERRORS: IError[] = [
     message: 'When using aws s3 storage, you must enter awsRegion',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/aws-region-not-found`,
   },
+  {
+    name: 'no_built_dir',
+    message: 'You must to run the prepare command before the render',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/no-built-dir`,
+  },
+  {
+    name: 'built_dir_is_not_directory',
+    message: 'There is a problem with the builtDirPath you entered',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/built-dir-is-not-directory`,
+  },
 ];
 
 export default class CoreError implements IError {

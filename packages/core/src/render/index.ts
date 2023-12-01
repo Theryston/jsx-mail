@@ -2,6 +2,7 @@ import { JSXMailVirtualDOM } from '..';
 import factory from '../jsx-runtime/factory';
 import CoreError from '../utils/error';
 import {
+  exists,
   getFileUrl,
   getTemplateFolder,
   isDirectory,
@@ -31,6 +32,22 @@ export default async function render({
     insertGlobalVariableItem('state', {
       id: 'render',
     });
+
+    const builtDirPathExists = await exists(builtDirPath);
+
+    if (!builtDirPathExists) {
+      throw new CoreError('no_built_dir', {
+        builtDirPath,
+      });
+    }
+
+    const isBuiltDirPathDirectory = await isDirectory(builtDirPath);
+
+    if (!isBuiltDirPathDirectory) {
+      throw new CoreError('built_dir_is_not_directory', {
+        builtDirPath,
+      });
+    }
 
     const { virtualDOM } = await getVirtualDOM(template, builtDirPath, props);
 
