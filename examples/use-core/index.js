@@ -2,23 +2,27 @@ const core = require('@jsx-mail/core').default;
 const path = require('path');
 const fs = require('fs');
 
-const config = {
-  onProcessChange: (name, data) => {
-    console.log(`Process ${name} was called`);
-
-    if (name === 'template_executed') {
-      fs.writeFileSync('./example-vd.json', JSON.stringify(data.virtualDOM));
-      const templateName = path.basename(data.path);
-      console.log(
-        `Virtual DOM for ${templateName} is in file ./example-vd.json`,
-      );
-    }
-  },
-  ignoreCloud: false,
-};
-
 core
-  .prepare('./mail', config)
+  .prepare('./mail', {
+    onProcessChange: (name, data) => {
+      console.log(`Process ${name} was called`);
+
+      if (name === 'template_executed') {
+        fs.writeFileSync('./example-vd.json', JSON.stringify(data.virtualDOM));
+        const templateName = path.basename(data.path);
+        console.log(
+          `Virtual DOM for ${templateName} is in file ./example-vd.json`,
+        );
+      }
+    },
+    ignoreCloud: false,
+    storage: 'JSX_MAIL_CLOUD',
+    // awsAccessKeyId: 'AWS_ACCESS_KEY_ID',
+    // awsSecretAccessKey: 'AWS_SECRET_ACCESS_KEY',
+    // awsBucket: 'AWS_BUCKET',
+    // awsRegion: 'AWS_REGION',
+    // awsFolder: 'AWS_FOLDER',
+  })
   .then((resultPrepare) => {
     console.log('Prepare result: ', resultPrepare);
 

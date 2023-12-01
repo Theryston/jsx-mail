@@ -148,6 +148,26 @@ export const ERRORS: IError[] = [
     message: 'Error when optimizing or uploading image',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/fails-to-prepare-image`,
   },
+  {
+    name: 'aws_access_key_id_not_found',
+    message: 'When using aws s3 storage, you must enter awsAccessKeyId',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/aws-access-key-id-not-found`,
+  },
+  {
+    name: 'aws_secret_access_key_not_found',
+    message: 'When using aws s3 storage, you must enter awsSecretAccessKey',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/aws-secret-access-key-not-found`,
+  },
+  {
+    name: 'aws_bucket_not_found',
+    message: 'When using aws s3 storage, you must enter awsBucket',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/aws-bucket-not-found`,
+  },
+  {
+    name: 'aws_region_not_found',
+    message: 'When using aws s3 storage, you must enter awsRegion',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/aws-region-not-found`,
+  },
 ];
 
 export default class CoreError implements IError {

@@ -14,6 +14,7 @@ import {
   getTemplateFolder,
   joinPath,
   readFile,
+  readImage,
   transformChildrenFileToPath,
 } from '../utils/file-system';
 import handleErrors from '../utils/handle-errors';
@@ -27,6 +28,7 @@ import handleImagesImport from '../utils/handle-images-import';
 import getStorage from '../utils/storage';
 import { ImageInfo } from '..';
 import { cloudUploadImage } from '../cloud/image/upload';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 handleImagesImport();
 
@@ -35,8 +37,14 @@ type CompileFilePath = 'jsx' | 'tsx' | 'js' | 'ts';
 const COMPILE_FILES_EXT: CompileFilePath[] = ['jsx', 'tsx', 'js', 'ts'];
 
 type StorageType = {
-  // eslint-disable-next-line no-unused-vars
-  [key: string]: (path: string, hash: string) => Promise<string>;
+  [key: string]: (
+    // eslint-disable-next-line no-unused-vars
+    path: string,
+    // eslint-disable-next-line no-unused-vars
+    hash: string,
+    // eslint-disable-next-line no-unused-vars
+    options: AllOptions,
+  ) => Promise<string>;
 };
 
 type ProcessName =
@@ -57,12 +65,19 @@ type AllOptions = {
     data: { [key: string]: any },
   ) => void;
   ignoreCloud: boolean;
+  storage: 'JSX_MAIL_CLOUD' | 'S3';
+  awsAccessKeyId: string;
+  awsSecretAccessKey: string;
+  awsRegion: string;
+  awsBucket: string;
+  awsFolder: string;
 };
 
 type Options = Partial<AllOptions>;
 
 export default async function prepare(dirPath: string, options?: Options) {
-  const { onProcessChange, ignoreCloud } = getOptions(options);
+  const allOptions = getOptions(options);
+  const { onProcessChange, ignoreCloud } = allOptions;
 
   try {
     insertGlobalVariableItem('state', {
@@ -88,7 +103,12 @@ export default async function prepare(dirPath: string, options?: Options) {
 
     await copyAllNotCompileFiles(dirPath, builtMailAppPath, onProcessChange);
 
-    await prepareImages(builtMailAppPath, onProcessChange, ignoreCloud);
+    await prepareImages(
+      builtMailAppPath,
+      onProcessChange,
+      ignoreCloud,
+      allOptions,
+    );
 
     await executeAllTemplates(builtMailAppPath, onProcessChange);
 
@@ -140,10 +160,18 @@ async function prepareImages(
   builtMailAppPath: string,
   onProcessChange: AllOptions['onProcessChange'],
   ignoreCloud: boolean,
+  options: AllOptions,
 ) {
   insertGlobalVariableItem('onlyTag', {
     id: 'img',
   });
+
+  const storage = getStorage();
+  const lastStorage = storage.getItem('image_storage');
+
+  if (lastStorage && lastStorage !== options.storage) {
+    storage.setItem('images', '[]');
+  }
 
   await executeAllTemplates(builtMailAppPath, (processName, data) => {
     if (processName === 'running_template') {
@@ -153,7 +181,6 @@ async function prepareImages(
 
   cleanGlobalVariable('onlyTag');
 
-  const storage = getStorage();
   const imagesString = storage.getItem('images');
   let images: ImageInfo[] = JSON.parse(imagesString || '[]');
   const changedImages: ImageInfo[] = [];
@@ -173,6 +200,7 @@ async function prepareImages(
         onProcessChange,
         images,
         ignoreCloud,
+        options,
       );
 
       image.url = imageUrl;
@@ -207,6 +235,7 @@ async function prepareImages(
     .filter((i: ImageInfo) => i.status !== 'error');
 
   storage.setItem('images', JSON.stringify(newImages));
+  storage.setItem('image_storage', options.storage);
 
   const imagesError = images.filter((i) => i.status === 'error');
 
@@ -282,6 +311,7 @@ async function uploadImage(
   onProcessChange: AllOptions['onProcessChange'],
   allImages: ImageInfo[],
   ignoreCloud: boolean,
+  options: AllOptions,
 ): Promise<string> {
   if (ignoreCloud) {
     return imagesToUpload.path;
@@ -294,17 +324,71 @@ async function uploadImage(
 
   const storageType: StorageType = {
     JSX_MAIL_CLOUD: cloudUploadImage,
+    S3: uploadImageToS3,
   };
 
-  const uploadImage =
-    // eslint-disable-next-line turbo/no-undeclared-env-vars, no-undef
-    storageType[process.env.JSX_MAIL_STORAGE_TYPE || 'JSX_MAIL_CLOUD'];
+  const uploadImage = storageType[options.storage];
 
   if (!uploadImage) {
     throw new CoreError('invalid_storage_type');
   }
 
-  const url = await uploadImage(imagesToUpload.path, imagesToUpload.hash);
+  const url = await uploadImage(
+    imagesToUpload.path,
+    imagesToUpload.hash,
+    options,
+  );
+
+  return url;
+}
+
+async function uploadImageToS3(
+  path: string,
+  hash: string,
+  options: AllOptions,
+): Promise<string> {
+  if (!options.awsAccessKeyId) {
+    throw new CoreError('aws_access_key_id_not_found');
+  }
+
+  if (!options.awsSecretAccessKey) {
+    throw new CoreError('aws_secret_access_key_not_found');
+  }
+
+  if (!options.awsBucket) {
+    throw new CoreError('aws_bucket_not_found');
+  }
+
+  if (!options.awsRegion) {
+    throw new CoreError('aws_region_not_found');
+  }
+
+  const s3Client = new S3Client({
+    region: options.awsRegion,
+    credentials: {
+      accessKeyId: options.awsAccessKeyId,
+      secretAccessKey: options.awsSecretAccessKey,
+    },
+  });
+
+  const ext = path.split('.').pop();
+  const fileName = `${hash}.${ext}`;
+
+  const fileContent = readImage(path);
+
+  const uploadParams = {
+    Bucket: options.awsBucket,
+    Key: options.awsFolder ? `${options.awsFolder}/${fileName}` : fileName,
+    Body: fileContent,
+    ContentType: `image/${ext}`,
+    ACL: 'public-read' as 'public-read',
+  };
+
+  const command = new PutObjectCommand(uploadParams);
+
+  await s3Client.send(command);
+
+  const url = `https://${options.awsBucket}.s3.${options.awsRegion}.amazonaws.com/${uploadParams.Key}`;
 
   return url;
 }
@@ -386,11 +470,17 @@ function getComponent(
 }
 
 function getOptions(options: Options | undefined): AllOptions {
-  const newOptions = {
+  const newOptions: AllOptions = {
     onProcessChange: () => {
       return;
     },
     ignoreCloud: false,
+    storage: 'JSX_MAIL_CLOUD',
+    awsAccessKeyId: '',
+    awsSecretAccessKey: '',
+    awsRegion: '',
+    awsBucket: '',
+    awsFolder: '',
     ...options,
   };
 
