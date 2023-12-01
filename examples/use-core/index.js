@@ -14,7 +14,7 @@ const config = {
       );
     }
   },
-  ignoreCloud: true,
+  ignoreCloud: false,
 };
 
 core

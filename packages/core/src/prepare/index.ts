@@ -14,6 +14,7 @@ import {
   getTemplateFolder,
   joinPath,
   readFile,
+  transformChildrenFileToPath,
 } from '../utils/file-system';
 import handleErrors from '../utils/handle-errors';
 import {
@@ -42,14 +43,11 @@ type ProcessName =
   | 'checking_mail_app_folder'
   | 'checking_compile_files'
   | 'compiling_file'
-  | 'compiled_file'
   | 'copying_file'
-  | 'copied_file'
   | 'looking_for_images'
+  | 'optimizing_image'
   | 'uploading_image'
-  | 'image_uploaded'
-  | 'running_template'
-  | 'template_executed';
+  | 'running_template';
 
 type AllOptions = {
   onProcessChange: (
@@ -166,8 +164,12 @@ async function prepareImages(
     }
 
     try {
+      const newPath = await optimizeImage(image, onProcessChange, images);
       const imageUrl = await uploadImage(
-        image,
+        {
+          ...image,
+          path: newPath,
+        },
         onProcessChange,
         images,
         ignoreCloud,
@@ -211,6 +213,60 @@ async function prepareImages(
   storage.setItem('images', JSON.stringify(newImages));
 }
 
+async function optimizeImage(
+  image: ImageInfo,
+  onProcessChange: AllOptions['onProcessChange'],
+  allImages: ImageInfo[],
+): Promise<string> {
+  const imagemin = (await import('imagemin')).default;
+  const imageminJpegoptim = (await import('imagemin-jpegoptim')).default;
+  const imageminPngquant = (await import('imagemin-pngquant')).default;
+  const imageminGiflossy = (await import('imagemin-giflossy')).default;
+
+  const baseCorePath = getBaseCorePath();
+  const optimizedFolder = joinPath(baseCorePath, 'optimized-images');
+  const existsOptimizedFolder = await exists(optimizedFolder);
+
+  if (!existsOptimizedFolder) {
+    await createFolder(optimizedFolder);
+  }
+
+  const imageExt = image.path.split('.').pop();
+  const optimizedImagePath = joinPath(
+    optimizedFolder,
+    `${image.hash}.${imageExt}`,
+  );
+  const existsOptimizedImage = await exists(optimizedImagePath);
+
+  if (existsOptimizedImage) {
+    return optimizedImagePath;
+  }
+
+  onProcessChange('optimizing_image', {
+    ...image,
+    images: allImages,
+  });
+
+  const plugins = [];
+
+  if (imageExt === 'jpg' || imageExt === 'jpeg') {
+    plugins.push(imageminJpegoptim());
+  } else if (imageExt === 'png') {
+    plugins.push(imageminPngquant());
+  } else if (imageExt === 'gif') {
+    plugins.push(imageminGiflossy());
+  }
+
+  await imagemin([image.path], {
+    destination: optimizedImagePath,
+    plugins,
+  });
+
+  await transformChildrenFileToPath(optimizedImagePath);
+
+  return optimizedImagePath;
+}
+
 async function uploadImage(
   imagesToUpload: ImageInfo,
   onProcessChange: AllOptions['onProcessChange'],
@@ -239,12 +295,6 @@ async function uploadImage(
   }
 
   const url = await uploadImage(imagesToUpload.path, imagesToUpload.hash);
-
-  onProcessChange('image_uploaded', {
-    ...imagesToUpload,
-    url,
-    images: allImages,
-  });
 
   return url;
 }
@@ -296,12 +346,6 @@ function executeComponent(
     if (result instanceof Promise) {
       throw new CoreError('promise_not_allowed');
     }
-
-    onProcessChange('template_executed', {
-      ...templateFile,
-      templateFileUrl,
-      virtualDOM: result,
-    });
   } catch (error) {
     if (error instanceof CoreError) {
       throw error;
@@ -364,12 +408,6 @@ async function copyAllNotCompileFiles(
     });
 
     await copyFileAndCreateFolder(noCompileFile.path, outPath);
-
-    onProcessChange('copied_file', {
-      relativePath,
-      path: noCompileFile.path,
-      destinationPath: outPath,
-    });
   }
 }
 
@@ -412,13 +450,6 @@ async function transformCompileFiles(
       coreRelativePath,
       compileFile,
     );
-
-    onProcessChange('compiled_file', {
-      relativePath: relativeCompilePath,
-      destinationPath: builtPath,
-      code: builtFile.code,
-      ...compileFile,
-    });
 
     if (builtFile.warnings) {
       for (const warning of builtFile.warnings) {

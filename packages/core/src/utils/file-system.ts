@@ -144,6 +144,31 @@ export function getFileSize(filePath: string) {
   return fileSizeInBytes;
 }
 
+export async function transformChildrenFileToPath(folderPath: string) {
+  const files = await getAllFilesByDirectory(folderPath);
+  const file = files[0];
+
+  if (!file) {
+    return;
+  }
+
+  const coreBasePath = getBaseCorePath();
+  const temp = joinPath(coreBasePath, 'temp');
+
+  const tempFileName = `${Date.now()}.${file.ext}`;
+  const tempImage = joinPath(temp, tempFileName);
+
+  await copyFileAndCreateFolder(file.path, tempImage);
+
+  await fs.promises.rm(folderPath, {
+    recursive: true,
+  });
+
+  await fs.promises.rename(tempImage, folderPath);
+
+  return folderPath;
+}
+
 export function getFileMimetype(filePath: string) {
   return mime.lookup(filePath);
 }
