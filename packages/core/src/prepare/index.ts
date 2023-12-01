@@ -159,7 +159,7 @@ async function prepareImages(
   const changedImages: ImageInfo[] = [];
 
   for (const image of images) {
-    if (!['pending_upload', 'error'].includes(image.status)) {
+    if (image.status !== 'pending_upload') {
       continue;
     }
 
@@ -190,27 +190,37 @@ async function prepareImages(
     changedImages.push(image);
   }
 
+  const oldImagesStr = storage.getItem('images');
+  const oldImages = JSON.parse(oldImagesStr || '[]');
+  const newImages = oldImages
+    .map((oldImage: ImageInfo) => {
+      const newImage = changedImages.find(
+        (changedImage) => changedImage.hash === oldImage.hash,
+      );
+
+      if (newImage) {
+        return newImage;
+      }
+
+      return oldImage;
+    })
+    .filter((i: ImageInfo) => i.status !== 'error');
+
+  storage.setItem('images', JSON.stringify(newImages));
+
   const imagesError = images.filter((i) => i.status === 'error');
 
   if (imagesError.length) {
-    throw images[0]?.error;
-  }
+    const firstImageError = imagesError[0];
 
-  const oldImagesStr = storage.getItem('images');
-  const oldImages = JSON.parse(oldImagesStr || '[]');
-  const newImages = oldImages.map((oldImage: ImageInfo) => {
-    const newImage = changedImages.find(
-      (changedImage) => changedImage.hash === oldImage.hash,
-    );
-
-    if (newImage) {
-      return newImage;
+    if (firstImageError?.error instanceof CoreError) {
+      throw firstImageError.error;
+    } else if (firstImageError instanceof CoreError) {
+      throw firstImageError;
+    } else {
+      throw new CoreError('fails_to_prepare_image', firstImageError);
     }
-
-    return oldImage;
-  });
-
-  storage.setItem('images', JSON.stringify(newImages));
+  }
 }
 
 async function optimizeImage(

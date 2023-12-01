@@ -143,6 +143,11 @@ export const ERRORS: IError[] = [
     message: 'Error uploading image',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/upload-error`,
   },
+  {
+    name: 'fails_to_prepare_image',
+    message: 'Error when optimizing or uploading image',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/fails-to-prepare-image`,
+  },
 ];
 
 export default class CoreError implements IError {
