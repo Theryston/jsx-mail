@@ -1,3 +1,4 @@
+import { readGlobalVariable } from './global';
 import WEBSITE_URL from './website-url';
 
 interface IError {
@@ -174,9 +175,21 @@ export default class CoreError implements IError {
   message: string;
   name: string;
   docsPageUrl: string;
+  fileContext?: string;
   customJson?: any;
 
   constructor(name: string, customJson?: any) {
+    const hasAnotherError = getCoreErrorIntoCustomJson(customJson);
+
+    if (hasAnotherError) {
+      this.message = hasAnotherError.message;
+      this.name = hasAnotherError.name;
+      this.docsPageUrl = hasAnotherError.docsPageUrl;
+      this.customJson = hasAnotherError.customJson;
+      this.fileContext = hasAnotherError.fileContext;
+      return;
+    }
+
     let errorCustom = ERRORS.find((e) => e.name === name);
 
     const error: IError = (errorCustom ? errorCustom : ERRORS[0]) as IError;
@@ -185,5 +198,24 @@ export default class CoreError implements IError {
     this.name = error.name;
     this.docsPageUrl = error.docsPageUrl;
     this.customJson = customJson;
+
+    const globalFileContext = readGlobalVariable('fileContext');
+
+    if (globalFileContext) {
+      this.fileContext = globalFileContext[globalFileContext.length - 1]?.id;
+    }
   }
 }
+
+export const getCoreErrorIntoCustomJson = (
+  customJson?: any,
+): CoreError | null => {
+  if (!customJson) return null;
+
+  if (customJson instanceof CoreError) return customJson;
+
+  if (customJson.customJson)
+    return getCoreErrorIntoCustomJson(customJson.customJson);
+
+  return null;
+};

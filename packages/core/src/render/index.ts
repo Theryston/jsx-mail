@@ -84,6 +84,10 @@ async function getVirtualDOM(
     builtDirPath,
   );
 
+  insertGlobalVariableItem('fileContext', {
+    id: templatePath,
+  });
+
   const templateFileUrl = await getFileUrl(templatePath);
 
   const { default: templateImport } = await import(templateFileUrl);

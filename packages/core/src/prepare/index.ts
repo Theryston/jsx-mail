@@ -186,6 +186,10 @@ async function prepareImages(
   const changedImages: ImageInfo[] = [];
 
   for (const image of images) {
+    insertGlobalVariableItem('fileContext', {
+      id: image.path,
+    });
+
     if (image.status !== 'pending_upload') {
       continue;
     }
@@ -400,6 +404,10 @@ async function executeAllTemplates(
   const allTemplatesFiles = await getAllTemplates(builtMailAppPath);
 
   for (const templateFile of allTemplatesFiles) {
+    insertGlobalVariableItem('fileContext', {
+      id: templateFile.path,
+    });
+
     const templateFileUrl = await getFileUrl(templateFile.path);
 
     onProcessChange('running_template', {
@@ -497,6 +505,10 @@ async function copyAllNotCompileFiles(
   });
 
   for (const noCompileFile of allNoCompileFiles) {
+    insertGlobalVariableItem('fileContext', {
+      id: noCompileFile.path,
+    });
+
     const relativePath = await getRelativePath(dirPath, noCompileFile.path);
 
     const outPath = await joinPath(outDirFolder, relativePath);
@@ -521,6 +533,10 @@ async function transformCompileFiles(
   const esbuildWarnings = [];
 
   for (const compileFile of allCompileFiles) {
+    insertGlobalVariableItem('fileContext', {
+      id: compileFile.path,
+    });
+
     const relativeCompilePath = await getRelativePath(
       dirPath,
       compileFile.path,
