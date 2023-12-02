@@ -68,6 +68,10 @@ function convertToHTML(virtualDOM: JSXMailVirtualDOM) {
 
   const childrenHTML: string = children
     .map((child) => {
+      if (!child) {
+        throw new CoreError('undefined_child');
+      }
+
       if ((child as JSXMailVirtualDOM).__jsx_mail_vdom) {
         return convertToHTML(child as JSXMailVirtualDOM);
       } else {
@@ -217,7 +221,11 @@ async function getTemplatePath(template: string, builtDirPath: string) {
   const isTemplateDirectory = await isDirectory(templatePath);
 
   if (isTemplateDirectory) {
-    templatePath = await joinPath(templatePath, 'index.js');
+    templatePath = joinPath(templatePath, 'index.js');
+  } else {
+    if (!templatePath.endsWith('.js')) {
+      templatePath += '.js';
+    }
   }
 
   return {

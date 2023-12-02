@@ -5,6 +5,7 @@ interface IError {
   name: string;
   message: string;
   docsPageUrl: string;
+  solutions?: string[];
 }
 
 export const ERRORS: IError[] = [
@@ -179,12 +180,24 @@ export const ERRORS: IError[] = [
     message: 'There is a problem with the builtDirPath you entered',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/built-dir-is-not-directory`,
   },
+  {
+    name: 'undefined_child',
+    message: 'Some child is undefined. Please check your template',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/undefined-child`,
+    solutions: [
+      'Maybe you just forgot to return something in your onRender function',
+      'Maybe you forgot to return something in your template function',
+      'Maybe you forgot to pass a prop to the jsx mail render function',
+      'Maybe you forgot to pass a prop to a component',
+    ],
+  },
 ];
 
 export default class CoreError implements IError {
   message: string;
   name: string;
   docsPageUrl: string;
+  solutions?: string[];
   fileContext?: string;
   customJson?: any;
 
@@ -195,6 +208,7 @@ export default class CoreError implements IError {
       this.message = hasAnotherError.message;
       this.name = hasAnotherError.name;
       this.docsPageUrl = hasAnotherError.docsPageUrl;
+      this.solutions = hasAnotherError.solutions;
       this.customJson = hasAnotherError.customJson;
       this.fileContext = hasAnotherError.fileContext;
       return;
@@ -208,6 +222,10 @@ export default class CoreError implements IError {
     this.name = error.name;
     this.docsPageUrl = error.docsPageUrl;
     this.customJson = customJson;
+
+    if (error.solutions) {
+      this.solutions = error.solutions;
+    }
 
     const globalFileContext = readGlobalVariable('fileContext');
 

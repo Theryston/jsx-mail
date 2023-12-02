@@ -1,29 +1,38 @@
 import { print } from 'gluegun';
 
-const BREAK_LINE = '\n\n';
+const BREAK_TWO_LINES = '\n\n';
+const BREAK_ONE_LINE = '\n';
 
 export function showError(object: any) {
   function formatObject(obj: any, indent: string = ''): string {
     let result = '';
 
     if (typeof obj === 'string') {
-      return `${indent}${print.colors.error(obj)}${BREAK_LINE}`;
+      return `${indent}${print.colors.error(obj)}${BREAK_TWO_LINES}`;
     }
 
     for (const key in obj) {
       // eslint-disable-next-line no-prototype-builtins
       if (obj.hasOwnProperty(key)) {
         const value = obj[key];
-        if (typeof value === 'object') {
+        if (!Array.isArray(value) && typeof value === 'object') {
           result += `${indent}${handleKeyCollor(
             key,
-          )}:${BREAK_LINE}${formatObject(value, indent + '  ')}${BREAK_LINE}`;
+          )}:${BREAK_TWO_LINES}${formatObject(
+            value,
+            indent + '  ',
+          )}${BREAK_TWO_LINES}`;
         } else if (Array.isArray(value)) {
           result += `${indent}${handleKeyCollor(
             key,
-          )}:${BREAK_LINE}${formatArray(value, indent + '  ')}${BREAK_LINE}`;
+          )}:${BREAK_ONE_LINE}${formatArray(
+            value,
+            indent + '  ',
+          )}${BREAK_TWO_LINES}`;
         } else {
-          result += `${indent}${handleKeyCollor(key)}: ${value}${BREAK_LINE}`;
+          result += `${indent}${handleKeyCollor(
+            key,
+          )}: ${value}${BREAK_TWO_LINES}`;
         }
       }
     }
@@ -31,8 +40,12 @@ export function showError(object: any) {
   }
 
   function handleKeyCollor(key: string) {
-    if (key === 'solution') {
+    if (key === 'solution' || key === 'solutions') {
       return print.colors.green(key);
+    }
+
+    if (typeof key === 'number') {
+      return print.colors.yellow(key);
     }
 
     if (key === 'site') {
@@ -44,26 +57,25 @@ export function showError(object: any) {
 
   function formatArray(arr: any[], indent: string = ''): string {
     let result = '';
-    for (let i = 0; i < arr.length; i++) {
-      const value = arr[i];
+    for (let index = 0; index < arr.length; index++) {
+      const value = arr[index];
       if (typeof value === 'object') {
         result += `${indent}- ${formatObject(
           value,
           indent + '  ',
-        )}${BREAK_LINE}`;
+        )}${BREAK_TWO_LINES}`;
       } else if (Array.isArray(value)) {
         result += `${indent}- ${formatArray(
           value,
           indent + '  ',
-        )}${BREAK_LINE}`;
+        )}${BREAK_TWO_LINES}`;
       } else {
-        result += `${indent}- ${value}${BREAK_LINE}`;
+        result += `${indent}- ${value}${BREAK_ONE_LINE}`;
       }
     }
     return result;
   }
 
   const formattedObject = formatObject(object);
-  print.info('');
   print.info(formattedObject);
 }

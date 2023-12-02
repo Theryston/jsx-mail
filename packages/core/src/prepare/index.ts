@@ -9,6 +9,7 @@ import {
   getAllFilesByDirectory,
   getAllTemplates,
   getBaseCorePath,
+  getBuiltPath,
   getFileUrl,
   getRelativePath,
   getTemplateFolder,
@@ -649,7 +650,8 @@ async function handleInitialPaths(
   }
 
   const baseCorePath = await getBaseCorePath();
-  const builtMailAppPath = await joinPath(baseCorePath, 'mail-app-built');
+  const builtMailAppPath = getBuiltPath();
+
   const outDirFolderExists = await exists(builtMailAppPath);
 
   if (!outDirFolderExists) {

@@ -29,6 +29,12 @@ export function getBaseCorePath() {
   return distPath;
 }
 
+export function getBuiltPath() {
+  const baseCorePath = getBaseCorePath();
+  const builtPath = joinPath(baseCorePath, 'mail-app-built');
+  return builtPath;
+}
+
 export async function createFolder(pathDir: string) {
   await fs.promises.mkdir(pathDir);
 }
@@ -38,8 +44,12 @@ export async function exists(pathExists: string) {
 }
 
 export async function isDirectory(filePath: string) {
-  const stat = await fs.promises.stat(filePath);
-  return stat.isDirectory();
+  try {
+    const stat = await fs.promises.stat(filePath);
+    return stat.isDirectory();
+  } catch {
+    return false;
+  }
 }
 
 export async function getAllFilesByDirectory(

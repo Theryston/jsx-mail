@@ -4,6 +4,7 @@ import core from '@jsx-mail/core';
 import { getMailAppPath } from './utils/get-mail-app-path';
 import { getJsxMailConfig } from './utils/get-config';
 import load from './utils/load';
+import showCoreError from './utils/show-core-error';
 
 type ProcessName =
   | 'checking_mail_app_folder'
@@ -77,12 +78,7 @@ export async function prepare(ignoreCloud?: boolean) {
     load.stop();
   } catch (error: any) {
     load.stop();
-    showError({
-      ...(error.name ? { name: error.name } : {}),
-      message: error.message,
-      ...(error.customJson ? error.customJson : {}),
-      ...(error.docsPageUrl ? { site: error.docsPageUrl } : {}),
-    });
+    showCoreError(error);
     process.exit(1);
   }
 }
