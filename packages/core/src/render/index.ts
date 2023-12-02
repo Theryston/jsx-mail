@@ -228,6 +228,14 @@ async function getTemplatePath(template: string, builtDirPath: string) {
     }
   }
 
+  const existsTemplatePath = await exists(templatePath);
+
+  if (!existsTemplatePath) {
+    throw new CoreError('template_not_found', {
+      templatePath,
+    });
+  }
+
   return {
     templatePath,
     templateName,

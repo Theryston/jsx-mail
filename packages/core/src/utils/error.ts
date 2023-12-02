@@ -191,6 +191,15 @@ export const ERRORS: IError[] = [
       'Maybe you forgot to pass a prop to a component',
     ],
   },
+  {
+    name: 'template_not_found',
+    message: 'Template not found',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/template-not-found`,
+    solutions: [
+      'Maybe you did not create a template with the name you passed',
+      'Maybe you did not run the prepare command after creating the template',
+    ],
+  },
 ];
 
 export default class CoreError implements IError {
