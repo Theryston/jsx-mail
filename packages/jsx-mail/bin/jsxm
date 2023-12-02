@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+
+const devMode = require('fs').existsSync(`${__dirname}/../src`);
+const { exec } = require('child_process');
+const path = require('path');
+const loading = require('loading-cli');
+
+const basePath = path.resolve(__dirname, '..');
+const distPath = path.resolve(basePath, 'dist');
+const cliPath = path.resolve(distPath, 'cli');
+
+async function compileAndRun() {
+  const load = loading('Compiling...').start();
+
+  const compileCommand = 'yarn build';
+
+  const compile = exec(compileCommand, { cwd: basePath });
+
+  compile.on('exit', (code) => {
+    if (code !== 0) {
+      load.fail('Compilation failed');
+      return;
+    }
+
+    load.stop();
+
+    const cli = require(cliPath);
+
+    cli.run(process.argv);
+  });
+}
+
+async function run() {
+  if (!devMode) {
+    require(cliPath).run(process.argv);
+  } else {
+    compileAndRun();
+  }
+}
+
+run();

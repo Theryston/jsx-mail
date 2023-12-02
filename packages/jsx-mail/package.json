@@ -1,0 +1,40 @@
+{
+  "name": "jsx-mail",
+  "version": "2.0.0",
+  "description": "Building the future of email with JSX syntax",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "repository": "https://github.com/Theryston/jsx-mail",
+  "author": "Theryston Santos",
+  "license": "MIT",
+  "private": false,
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "bin",
+    "package.json"
+  ],
+  "bin": {
+    "jsxm": "bin/jsxm"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix"
+  },
+  "dependencies": {
+    "gluegun": "^5.1.6",
+    "loading-cli": "^1.1.2"
+  },
+  "devDependencies": {
+    "@jsx-mail/core": "*",
+    "@jsx-mail/eslint-config": "*",
+    "@jsx-mail/typescript-config": "*",
+    "@types/eslint": "^8.44.8",
+    "@types/node": "^20.10.2",
+    "eslint": "^8.55.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2"
+  }
+}

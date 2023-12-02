@@ -1,0 +1,22 @@
+{
+  "name": "use-jsx-mail",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@jsx-mail/core": "*",
+    "@jsx-mail/eslint-config": "*",
+    "@jsx-mail/typescript-config": "*",
+    "jsx-mail": "*",
+    "@types/eslint": "^8.44.7",
+    "@types/node": "^20.5.2",
+    "eslint": "^8.53.0",
+    "typescript": "^5.2.2"
+  }
+}
