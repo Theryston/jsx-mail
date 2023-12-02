@@ -5,7 +5,7 @@ export default function handleErrors(error: unknown) {
   if (error instanceof CoreError) {
     newError = error;
   } else {
-    newError = new CoreError('unknown');
+    newError = new CoreError('unknown', error);
   }
 
   throw newError;
