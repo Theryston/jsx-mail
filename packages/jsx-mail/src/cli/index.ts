@@ -1,4 +1,5 @@
 import { build } from 'gluegun';
+import '../utils/config-env';
 
 export async function run(argv: string[]) {
   const cli = build()

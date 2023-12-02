@@ -24,6 +24,7 @@
     "lint:fix": "eslint . --ext .ts,.tsx --fix"
   },
   "dependencies": {
+    "dotenv": "^16.3.1",
     "gluegun": "^5.1.6",
     "loading-cli": "^1.1.2"
   },

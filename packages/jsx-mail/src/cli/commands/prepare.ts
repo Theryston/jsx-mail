@@ -1,10 +1,12 @@
-import { GluegunToolbox } from 'gluegun';
+import { prepare } from '../../prepare';
+import load from '../../utils/load';
 
 module.exports = {
   command: 'prepare',
   alias: ['p'],
-  description: 'Prepare everything in your email for the render',
-  run: async (toolbox: GluegunToolbox) => {
-    toolbox.print.info('Preparing your email for the render...');
+  description: 'Prepare everything for the render',
+  run: async () => {
+    await prepare();
+    load.succeed('Everything is ready');
   },
 };
