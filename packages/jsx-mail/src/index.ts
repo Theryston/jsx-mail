@@ -1,3 +1,4 @@
+import render from './render';
 import './utils/config-env';
 
 export type JsxMailConfig = {
@@ -5,6 +6,4 @@ export type JsxMailConfig = {
   storage: 'JSX_MAIL_CLOUD' | 'S3';
 };
 
-export async function render() {
-  console.log('Rendering your email...');
-}
+export { render };
