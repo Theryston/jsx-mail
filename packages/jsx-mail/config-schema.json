@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "properties": {
+    "dir": {
+      "type": "string"
+    },
+    "storage": {
+      "type": "string",
+      "enum": ["S3", "JSX_MAIL_CLOUD"]
+    }
+  },
+  "required": ["dir", "storage"]
+}
