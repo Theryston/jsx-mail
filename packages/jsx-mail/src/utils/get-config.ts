@@ -16,7 +16,7 @@ export function getJsxMailConfig() {
       message: 'jsx-mail.config.js not found',
       solution: 'Create a jsx-mail.config.js file in your project root',
     });
-    process.exit(1);
+    throw new Error('jsx-mail.config.js not found');
   }
 
   return config;

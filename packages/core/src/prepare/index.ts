@@ -1,7 +1,9 @@
+/* eslint-disable no-undef */
 import CoreError from '../utils/error';
 import esbuild from 'esbuild';
 import {
   changePathExt,
+  clearModuleFromCache,
   copyFileAndCreateFolder,
   createFileWithFolder,
   createFolder,
@@ -416,7 +418,8 @@ async function executeAllTemplates(
       templateFileUrl,
     });
 
-    const { default: templateImport } = await import(templateFileUrl);
+    clearModuleFromCache(templateFile.path);
+    const templateImport = require(templateFile.path);
 
     const component = getComponent(
       templateImport,

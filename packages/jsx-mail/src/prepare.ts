@@ -79,7 +79,7 @@ export async function prepare(ignoreCloud?: boolean) {
   } catch (error: any) {
     load.stop();
     showCoreError(error);
-    process.exit(1);
+    throw error;
   }
 }
 
@@ -95,6 +95,6 @@ function verifyS3Envs() {
       solution:
         'Add the JSX_MAIL_S3_BUCKET, JSX_MAIL_S3_REGION, JSX_MAIL_S3_ACCESS_KEY_ID, JSX_MAIL_S3_SECRET_ACCESS_KEY envs',
     });
-    process.exit(1);
+    throw new Error('You must provide all the S3 envs');
   }
 }

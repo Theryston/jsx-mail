@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="./index.js"></script>
+    <title>Preview</title>
+  </head>
+  <body>
+    <div class="sidebar">
+      <img src="./assets/logo.svg" alt="JSX Mail Logo" class="jsx-mail-logo" />
+      <div class="templates-wrapper" id="templates-container"></div>
+    </div>
+
+    <iframe
+      frameborder="0"
+      class="preview"
+      id="preview"
+      srcdoc="<!DOCTYPE html><html><head><style>.loader { border: 1px solid #f3f3f3; border-top: 1px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 2s linear infinite; } @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style></head><body><div class='loader'></div></body></html>"
+    ></iframe>
+  </body>
+</html>

@@ -1,9 +1,10 @@
+/* eslint-disable no-undef */
 import { JSXMailVirtualDOM } from '..';
 import factory from '../jsx-runtime/factory';
 import CoreError from '../utils/error';
 import {
+  clearModuleFromCache,
   exists,
-  getFileUrl,
   getTemplateFolder,
   isDirectory,
   joinPath,
@@ -21,12 +22,14 @@ type renderInputType = {
   template: string;
   builtDirPath: string;
   props?: any;
+  useMock?: boolean;
 };
 
 export default async function render({
   template,
   builtDirPath,
   props,
+  useMock,
 }: renderInputType) {
   try {
     insertGlobalVariableItem('state', {
@@ -49,7 +52,12 @@ export default async function render({
       });
     }
 
-    const { virtualDOM } = await getVirtualDOM(template, builtDirPath, props);
+    const { virtualDOM } = await getVirtualDOM(
+      template,
+      builtDirPath,
+      props,
+      useMock,
+    );
 
     const templateHTML = convertToHTML(virtualDOM);
 
@@ -68,7 +76,7 @@ function convertToHTML(virtualDOM: JSXMailVirtualDOM) {
 
   const childrenHTML: string = children
     .map((child) => {
-      if (!child) {
+      if (typeof child === 'undefined') {
         throw new CoreError('undefined_child');
       }
 
@@ -99,6 +107,7 @@ async function getVirtualDOM(
   template: string,
   builtDirPath: string,
   props: any,
+  useMock?: boolean,
 ) {
   const { templatePath, templateName } = await getTemplatePath(
     template,
@@ -109,9 +118,8 @@ async function getVirtualDOM(
     id: templatePath,
   });
 
-  const templateFileUrl = await getFileUrl(templatePath);
-
-  const { default: templateImport } = await import(templateFileUrl);
+  clearModuleFromCache(templatePath);
+  const templateImport = require(templatePath);
 
   const component = templateImport.default;
   const onRender = templateImport.onRender;
@@ -136,6 +144,11 @@ async function getVirtualDOM(
     }
 
     verifyProps(newProps);
+  }
+
+  if (useMock) {
+    const props = templateImport.props;
+    newProps = { ...props, ...newProps };
   }
 
   let virtualDOM: JSXMailVirtualDOM;

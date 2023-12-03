@@ -2,7 +2,11 @@ import prepare from './prepare';
 import render from './render';
 import { jsx } from './jsx-runtime';
 import cleanCache from './clean-cache';
-import { getAllTemplates, getBuiltPath } from './utils/file-system';
+import {
+  getAllTemplates,
+  getBuiltPath,
+  getBaseCorePath,
+} from './utils/file-system';
 
 const core = {
   render,
@@ -10,6 +14,7 @@ const core = {
   jsx,
   getAllTemplates,
   getBuiltPath,
+  getBaseCorePath,
   cleanCache,
 };
 

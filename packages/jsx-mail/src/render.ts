@@ -1,7 +1,11 @@
 import core from '@jsx-mail/core';
 import fs from 'fs';
 
-export default async function render(templateName: string, props?: any) {
+export default async function render(
+  templateName: string,
+  props?: any,
+  useMock?: boolean,
+) {
   const builtPath = core.getBuiltPath();
 
   const builtExists = fs.existsSync(builtPath);
@@ -18,6 +22,7 @@ export default async function render(templateName: string, props?: any) {
     builtDirPath: builtPath,
     template: templateName,
     props,
+    useMock,
   });
 
   if (!result) {

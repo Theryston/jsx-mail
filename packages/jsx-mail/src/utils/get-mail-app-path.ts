@@ -11,7 +11,7 @@ export function getMailAppPath() {
       message: 'The dir property is required',
       solution: 'Add a dir property to your jsx-mail.config.js file',
     });
-    process.exit(1);
+    throw new Error('The dir property is required');
   }
 
   const cwd = process.cwd();
@@ -26,7 +26,7 @@ export function getMailAppPath() {
       ],
       solution: 'Create the directory or change the dir property',
     });
-    process.exit(1);
+    throw new Error(`The directory ${mailAppPath} does not exist`);
   }
 
   return mailAppPath;

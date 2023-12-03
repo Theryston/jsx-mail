@@ -1,9 +1,21 @@
+/* eslint-disable no-undef */
 import path from 'path';
 import fs from 'fs';
 import url from 'url';
 import mime from 'mime-types';
 
-const NO_TEMPLATE_FILE_NAME = ['styles'];
+const STYLE_EXT_FILE = [
+  'styles',
+  'style',
+  'styles.ts',
+  'style.ts',
+  'styles.js',
+  'style.js',
+  'styles.tsx',
+  'style.tsx',
+  'style.jsx',
+  'styles.jsx',
+];
 
 declare const __dirname: string;
 
@@ -122,8 +134,9 @@ export async function getAllTemplates(pathDir: string) {
 
   for (const templateFile of allFilesIntoTemplate) {
     const fileName = await extractFileName(templateFile.path);
+    const shouldIgnore = STYLE_EXT_FILE.find((name) => fileName.endsWith(name));
 
-    if (NO_TEMPLATE_FILE_NAME.includes(fileName)) {
+    if (shouldIgnore) {
       continue;
     }
 
@@ -238,5 +251,25 @@ export async function copyFileAndCreateFolder(
 }
 
 export async function getFileUrl(filePath: string) {
-  return url.pathToFileURL(filePath).href;
+  const urlFile = url.pathToFileURL(filePath).href;
+  return urlFile;
+}
+
+export function clearModuleFromCache(modulePath: string) {
+  const resolvedPath = require.resolve(modulePath);
+
+  function clearChildren(myModule: any) {
+    if (myModule && myModule.children) {
+      myModule.children.forEach((child: any) => {
+        const isIntoBuiltPath = child.id.includes(getBuiltPath());
+
+        if (isIntoBuiltPath) {
+          clearModuleFromCache(child.id);
+        }
+      });
+    }
+  }
+
+  clearChildren(require.cache[resolvedPath]);
+  delete require.cache[resolvedPath];
 }
