@@ -1,0 +1,83 @@
+* {
+	font-family: 'Space Grotesk', sans-serif;
+  color: #EEEEEE;
+  margin: 0;
+  padding: 0;
+  background-color: #000000;
+}
+
+body {
+  overflow: hidden;
+  display: flex;
+}
+
+.sidebar {
+  background: #000000;
+  width: 300px;
+  height: 100vh;
+  padding: 0px 10px 0px 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #555555 #000000;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #555555;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #222222;
+}
+
+.jsx-mail-logo {
+  width: 100px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.templates-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.template-folder {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.template-folder .folder-name {
+  font-weight: 600;
+}
+
+.template-item {
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.template-item:hover {
+  text-decoration: underline;
+}
+
+.preview {
+  width: 100%;
+  height: 100vh;
+  border: none;
+}
+
+.template-folder > .template-folder {
+  margin-left: 20px;
+  border-left: 2px solid #555;
+  padding-left: 20px;
+}
