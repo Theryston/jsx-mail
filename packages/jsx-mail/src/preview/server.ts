@@ -16,6 +16,11 @@ let currentTemplate: string | null = null;
 
 app.use(express.static(path.join(__dirname, 'client')));
 
+const coreBasePath = core.getBaseCorePath();
+const optimizedPath = path.join(coreBasePath, 'optimized-images');
+app.use('/static_images', express.static(optimizedPath));
+(global as any).__jsx_mail_image_host = `http://localhost:3256/static_images`;
+
 app.get('/', (req: Request, res: Response) => {
   res.sendFile('index.html', { root: path.join(__dirname, 'client') });
 });
@@ -66,7 +71,7 @@ async function emitAllTemplates() {
 
 async function emitCode() {
   try {
-    await prepare();
+    await prepare(true);
 
     load.start(`Refreshing template ${currentTemplate}...`);
 

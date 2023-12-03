@@ -321,7 +321,7 @@ async function uploadImage(
   options: AllOptions,
 ): Promise<string> {
   if (ignoreCloud) {
-    return imagesToUpload.path;
+    return handleLocalImage(imagesToUpload);
   }
 
   onProcessChange('uploading_image', {
@@ -345,6 +345,21 @@ async function uploadImage(
     imagesToUpload.hash,
     options,
   );
+
+  return url;
+}
+
+function handleLocalImage(imagesToUpload: ImageInfo): string {
+  const imageHost = (global as any).__jsx_mail_image_host;
+
+  if (!imageHost) {
+    return imagesToUpload.path;
+  }
+
+  const imageExt = imagesToUpload.path.split('.').pop();
+  const imageFileName = `${imagesToUpload.hash}.${imageExt}`;
+
+  const url = `${imageHost}/${imageFileName}`;
 
   return url;
 }
