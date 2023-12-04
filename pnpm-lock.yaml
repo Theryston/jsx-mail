@@ -76,8 +76,8 @@ importers:
         specifier: 1.0.5
         version: link:../jsx-mail
       loading-cli:
-        specifier: ^1.1.0
-        version: 1.1.0
+        specifier: ^1.1.2
+        version: 1.1.2
       nodemon:
         specifier: ^2.0.19
         version: 2.0.19
@@ -9286,8 +9286,8 @@ packages:
       strip-bom: 3.0.0
     dev: false
 
-  /loading-cli@1.1.0:
-    resolution: {integrity: sha512-r6Kj0Y3d3isT4vvJ0tFlND1CcLkpatWmlgQs/PEfnSofJSHZwAbsqexnpQEDj4nlxSXEqFWh/Wu2iQXAAZRPNQ==}
+  /loading-cli@1.1.2:
+    resolution: {integrity: sha512-M1ntfXHpdGoQxfaqKBOQPwSrTr9EIoTgj664Q9UVSbSnJvAFdribo+Ij//1jvACgrGHaTvfKoD9PG3NOxGj44g==}
     dependencies:
       colors-cli: 1.0.28
     dev: false

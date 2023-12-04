@@ -36,7 +36,7 @@
     "express-handlebars": "^6.0.6",
     "gluegun": "latest",
     "jsx-mail": "1.0.5",
-    "loading-cli": "^1.1.0",
+    "loading-cli": "^1.1.2",
     "nodemon": "^2.0.19",
     "open": "^8.4.0",
     "rimraf": "^3.0.2"
