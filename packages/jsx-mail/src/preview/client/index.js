@@ -95,3 +95,10 @@ socket.on('code', (data) => {
   const iframe = document.getElementById('preview');
   iframe.srcdoc = data.code;
 });
+
+socket.on('error', (error) => {
+  const iframe = document.getElementById('preview');
+  iframe.srcdoc = `<h1>Error</h1><p>${
+    error.message || error
+  }</p><p>To see more details of the error look in the terminal where JSX Mail is running</p>`;
+});

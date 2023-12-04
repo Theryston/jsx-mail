@@ -88,6 +88,7 @@ async function emitCode() {
 
     load.succeed(`Template ${currentTemplate} refreshed`);
   } catch (error) {
+    io.emit('error', error);
     load.fail(`Template refresh failed`);
     showCoreError(error);
   } finally {
