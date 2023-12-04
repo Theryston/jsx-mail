@@ -42,7 +42,8 @@ export default function ButtonHandler(
     node: 'a',
     props: {
       ...gotProps,
-      style: `text-decoration: none;padding-left: 16px;padding-right: 16px;height: 32px;line-height: 32px;font-size: 14px;color: white;background-color: #ff00b8;display: inline-block;${styleString}`,
+      target: '_blank',
+      style: `text-decoration: none;padding-left: 16px;padding-right: 16px;height: 32px;line-height: 32px;font-size: 14px;color: white;background-color: #0070F0;display: inline-block;${styleString}`,
     },
     children,
     __jsx_mail_vdom: true,

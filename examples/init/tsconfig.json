@@ -1,0 +1,10 @@
+{
+  "extends": "@jsx-mail/typescript-config/react-library.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "jsxImportSource": "@jsx-mail/core/dist",
+    "types": ["@jsx-mail/core/dist/jsx-runtime/jsx"]
+  },
+  "include": ["mail"],
+  "exclude": ["node_modules", "dist"]
+}

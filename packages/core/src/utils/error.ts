@@ -94,11 +94,6 @@ export const ERRORS: IError[] = [
     docsPageUrl: `${WEBSITE_URL}/docs/errors/prop-padding-not-supported`,
   },
   {
-    name: 'only_one_head_tag',
-    message: 'You can only have one head tag per template',
-    docsPageUrl: `${WEBSITE_URL}/docs/errors/only-one-head-tag`,
-  },
-  {
     name: 'src_is_required',
     message: 'You must enter a src for the img tag',
     docsPageUrl: `${WEBSITE_URL}/docs/errors/src-is-required`,

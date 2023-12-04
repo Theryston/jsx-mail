@@ -1,0 +1,11 @@
+{
+  "name": "init",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@jsx-mail/core": "*",
+    "@types/node": "^20.10.3",
+    "jsx-mail": "*"
+  }
+}
