@@ -69,8 +69,16 @@ async function emitAllTemplates() {
   await emitCode();
 }
 
+let isEmittingCode = false;
 async function emitCode() {
+  if (isEmittingCode) {
+    return;
+  }
+
   try {
+    isEmittingCode = true;
+    await core.cleanCache();
+
     await prepare(true);
 
     load.start(`Refreshing template ${currentTemplate}...`);
@@ -82,6 +90,8 @@ async function emitCode() {
   } catch (error) {
     load.fail(`Template refresh failed`);
     showCoreError(error);
+  } finally {
+    isEmittingCode = false;
   }
 }
 

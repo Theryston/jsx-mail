@@ -1,7 +1,12 @@
 /* eslint-disable no-undef */
 const socket = io(`http://localhost:3256`);
 
+const LOADING_HTML =
+  "<!doctype html><html><head><style>body {display: flex; align-self: center; justify-content: center; width: 100%; height: 100%; padding: 0; margin: 0; padding-top: 100px;} .loader {border: 1px solid #f3f3f3; border-top: 1px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 2s linear infinite;} @keyframes spin {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);}}</style></head><body><div class='loader'></div></body></html>";
+
 socket.on('connect', () => {
+  const iframe = document.getElementById('preview');
+  iframe.srcdoc = LOADING_HTML;
   socket.emit('template');
 });
 
@@ -59,6 +64,8 @@ function renderTemplates(folders) {
           fileContainer.innerText = file.name;
           fileContainer.title = file.name;
           fileContainer.addEventListener('click', () => {
+            const iframe = document.getElementById('preview');
+            iframe.srcdoc = LOADING_HTML;
             socket.emit('template', file.path);
           });
           folderContainer.appendChild(fileContainer);

@@ -5,17 +5,14 @@ import {
   joinPath,
 } from './utils/file-system';
 import { cleanAllGlobalVariables } from './utils/global';
+import getStorage from './utils/storage';
 
 export default async function cleanCache() {
   cleanAllGlobalVariables();
   const baseCorePath = getBaseCorePath();
+  const storage = getStorage();
 
-  const storagePath = joinPath(baseCorePath, 'cache');
-  const existsStorage = await exists(storagePath);
-
-  if (existsStorage) {
-    await deleteFolder(storagePath);
-  }
+  storage.clear();
 
   const mailAppPath = joinPath(baseCorePath, 'mail-app-built');
   const existsMailApp = await exists(mailAppPath);
