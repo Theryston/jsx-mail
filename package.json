@@ -16,7 +16,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
-    "commitizen": "^4.2.5",
+    "commitizen": "^4.3.0",
     "husky": "^8.0.1",
     "prettier": "latest",
     "turbo": "latest"
