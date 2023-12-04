@@ -200,6 +200,12 @@ export const ERRORS: IError[] = [
       'Maybe you did not run the prepare command after creating the template',
     ],
   },
+  {
+    name: 'font_invalid_href',
+    message:
+      'You must pass a valid href to the font tag. It must be a string that starts with http',
+    docsPageUrl: `${WEBSITE_URL}/docs/errors/font-invalid-href`,
+  },
 ];
 
 export default class CoreError implements IError {

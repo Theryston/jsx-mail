@@ -5,6 +5,7 @@ import BodyHandler, { BodyProps } from './handlers/body';
 import BrHandler, { BrProps } from './handlers/br';
 import ButtonHandler, { ButtonProps } from './handlers/button';
 import DivHandler, { DivProps } from './handlers/div';
+import FontHandler, { FontProps } from './handlers/font';
 import HHandler, { HProps } from './handlers/h';
 import HeadHandler, { HeadProps } from './handlers/head';
 import HrHandler, { HrProps } from './handlers/hr';
@@ -175,6 +176,11 @@ const tags: Tag[] = [
     node: 'button',
     handler: ButtonHandler,
     supportedProps: ButtonProps,
+  },
+  {
+    node: 'font',
+    handler: FontHandler,
+    supportedProps: FontProps,
   },
 ];
 

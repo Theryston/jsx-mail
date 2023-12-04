@@ -198,6 +198,9 @@ declare namespace JSX {
       id?: string;
       style?: ElementStyle;
     };
+    font: {
+      href: string;
+    };
   }
 }
 
