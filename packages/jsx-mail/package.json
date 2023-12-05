@@ -29,6 +29,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "gluegun": "^5.1.6",
+    "json5": "^2.2.3",
     "loading-cli": "^1.1.2",
     "socket.io": "^4.7.2"
   },

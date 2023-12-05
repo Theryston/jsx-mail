@@ -1,6 +1,7 @@
 import { GluegunToolbox } from 'gluegun';
 import load from '../../utils/load';
 import path from 'path';
+import JSON5 from 'json5';
 
 module.exports = {
   command: 'init',
@@ -44,7 +45,7 @@ module.exports = {
           process.exit(1);
         }
 
-        const tsConfig = JSON.parse(removeComments(tsConfigString));
+        const tsConfig = JSON5.parse(tsConfigString);
 
         const jsxMailCompilerOptions = {
           types: ['@jsx-mail/core/dist/jsx-runtime/jsx'],
@@ -54,6 +55,10 @@ module.exports = {
         tsConfig.compilerOptions = {
           ...tsConfig.compilerOptions,
           ...jsxMailCompilerOptions,
+          types: [
+            ...(tsConfig.compilerOptions && tsConfig.compilerOptions.types),
+            ...jsxMailCompilerOptions.types,
+          ],
         };
 
         toolbox.filesystem.write('tsconfig.json', tsConfig);
@@ -85,14 +90,3 @@ module.exports = {
     }
   },
 };
-
-function removeComments(jsonString: string) {
-  let withoutSingleLineComments = jsonString.replace(/\/\/.*$/gm, '');
-
-  let withoutComments = withoutSingleLineComments.replace(
-    /\/\*[\s\S]*?\*\//g,
-    '',
-  );
-
-  return withoutComments;
-}
