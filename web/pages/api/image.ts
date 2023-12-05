@@ -202,7 +202,31 @@ async function deleteImage(hash: string, mimetype: string) {
   await s3Client.send(command);
 }
 
+async function getHandler(req: NextApiRequest, res: NextApiResponse) {
+  const ip = requestIp.getClientIp(req);
+
+  if (!ip) {
+    return res.status(400).json({ message: 'ip is invalid' });
+  }
+
+  const { db } = await connectToDatabase();
+
+  const images = await db.collection('images').find({ ip }, {
+    projection: {
+      _id: 0,
+      hash: 1,
+      mimetype: 1,
+      url: 1,
+      size: 1,
+      created_at: 1,
+    }
+  }).toArray();
+
+  res.json(images);
+}
+
 router.delete(deleteHandler);
 router.post(postHandler);
+router.get(getHandler);
 
 export default router.handler(error);
