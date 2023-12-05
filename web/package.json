@@ -11,6 +11,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.462.0",
     "@aws-sdk/s3-request-presigner": "3.462.0",
+    "@nextui-org/react": "^2.2.9",
+    "framer-motion": "^10.16.14",
     "mongodb": "^6.3.0",
     "next": "13",
     "next-connect": "1.0.0-next.4",
