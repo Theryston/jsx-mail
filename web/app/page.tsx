@@ -1,9 +1,5 @@
-import styles from './page.module.css';
+import Image from 'next/image';
 
-export default function Page(): JSX.Element {
-  return (
-    <main className={styles.main}>
-      <h1>JSX Mail v2.x is coming soon!</h1>
-    </main>
-  );
+export default function Home() {
+  return <h1>ok</h1>;
 }

@@ -7,34 +7,34 @@ let cachedClient: MongoClient | null = null
 let cachedDb: Db | null = null
 
 if (!uri) {
-  throw new Error(
-    'Please define the MONGODB_URI environment variable inside .env.local'
-  )
+	throw new Error(
+		'Please define the MONGODB_URI environment variable inside .env.local'
+	)
 }
 
 
 
 export async function connectToDatabase(): Promise<{ client: MongoClient, db: Db }> {
-  if (cachedClient && cachedDb) {
-    return { client: cachedClient, db: cachedDb }
-  }
+	if (cachedClient && cachedDb) {
+		return { client: cachedClient, db: cachedDb }
+	}
 
-  const client: MongoClient = new MongoClient(uri, {
-    serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
-    },
-  });
+	const client: MongoClient = new MongoClient(uri, {
+		serverApi: {
+			version: ServerApiVersion.v1,
+			strict: true,
+			deprecationErrors: true,
+		},
+	});
 
-  await client.connect()
+	await client.connect()
 
-  const db: Db = client.db('prod')
+	const db: Db = client.db('prod')
 
-  await db.command({ ping: 1 })
+	await db.command({ ping: 1 })
 
-  cachedClient = client
-  cachedDb = db
+	cachedClient = client
+	cachedDb = db
 
-  return { client, db }
+	return { client, db }
 }
