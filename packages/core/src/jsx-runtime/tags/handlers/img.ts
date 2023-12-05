@@ -77,12 +77,14 @@ function handleImage(src: string): ImageInfo {
       return storageImageInfo;
     }
 
-    images.push({
+    imageInfo = {
       url: '',
       status: 'pending_upload',
       hash: fileHash,
       path: src,
-    });
+    };
+
+    images.push(imageInfo);
     storage.setItem('images', JSON.stringify(images));
   } else {
     const imagesString = storage.getItem('images');

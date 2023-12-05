@@ -71,16 +71,20 @@ async function deleteNotUsedImages() {
     }
 
     const imagesStr = storage.getItem('images');
-    let images = imagesStr ? JSON.parse(imagesStr) : [];
+    let localImages = imagesStr ? JSON.parse(imagesStr) : [];
     let newImages: ImageInfo[] = [];
 
-    for (const image of images) {
-      const notUsed =
-        !imagesUsing.find((i) => i.id === image.hash) &&
-        image.status === 'uploaded';
+    const { data: cloudImages } = await axios.get(`${WEBSITE_URL}/api/image`);
 
-      if (!notUsed) {
-        newImages.push(image);
+    for (const image of cloudImages) {
+      const isUsed = imagesUsing.find((i) => i.id === image.hash);
+
+      if (isUsed) {
+        const localImage = localImages.find(
+          (i: ImageInfo) => i.hash === image.hash,
+        );
+
+        newImages.push(localImage);
         continue;
       }
 
@@ -90,6 +94,12 @@ async function deleteNotUsedImages() {
         },
       });
     }
+
+    const imagesNotInCloud = localImages.filter(
+      (i: ImageInfo) => !cloudImages.find((c: any) => c.hash === i.hash),
+    );
+
+    newImages = [...newImages, ...imagesNotInCloud];
 
     storage.setItem('images', JSON.stringify(newImages));
     cleanGlobalVariable('images_using');
