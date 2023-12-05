@@ -1,8 +1,6 @@
 import type { Config } from 'tailwindcss'
 import { nextui } from "@nextui-org/react";
 
-const isDev = process.env.VERCEL_ENV !== 'production'
-
 const config: Config = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
