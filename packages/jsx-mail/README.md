@@ -18,7 +18,7 @@ In the end, JSX Mail allows you to use an image in your email template in the sa
 
 Export an asynchronous function with the name `onRender` and it will run whenever your email template is rendered. This is ideal for performing database queries or other dynamic operations. Here is a code example:
 
-![code-onrender](https://github.com/Theryston/jsx-mail/assets/72868196/d84d3e2a-4dfc-44f3-bfeb-63285bffe71b)
+![image](https://github.com/Theryston/jsx-mail/assets/72868196/a2f128e2-c9f9-4dd2-a777-c79b0a845a5f)
 
 **Preview**
 
