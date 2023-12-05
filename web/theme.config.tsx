@@ -72,6 +72,9 @@ const config: DocsThemeConfig = {
   nextThemes: {
     defaultTheme: 'dark',
   },
+  themeSwitch: {
+    component: <p>JSX Mail</p>,
+  },
   footer: {
     text: 'MIT License © JSX Mail',
   },
