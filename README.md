@@ -1,3 +1,1 @@
-# Jsx Mail v2.x
-
-Coming soon
+packages/jsx-mail/README.md
