@@ -8,12 +8,11 @@ import { CTAButton } from './CTAButton';
 export function Hero() {
   return (
     <FadeIn
-      className="w-auto min-h-[calc(100svh-var(--nextra-navbar-height))] pb-16 pt-[48px] md:pb-24 lg:pb-32 md:pt-16 lg:pt-20 flex justify-start gap-8 items-center flex-col relative z-0"
+      className="w-full overflow-x-hidden min-h-[calc(100svh-var(--nextra-navbar-height))] pb-16 pt-[48px] md:pb-24 lg:pb-32 md:pt-16 lg:pt-20 flex justify-start gap-8 items-center flex-col relative z-0"
       noVertical
     >
       <Gradient
         className="top-[-500px] opacity-20"
-        conic
         height={1000}
         width={1000}
       />

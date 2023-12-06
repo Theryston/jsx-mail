@@ -1,7 +1,6 @@
-// import { GradientSectionBorder } from "../home-shared/GradientSectionBorder";
-// import { LandingPageGlobalStyles } from "../home-shared/GlobalStyles";
+import { GradientSectionBorder } from './GradientSectionBorder';
 import { Hero } from './Hero';
-// import { Features } from "./Features";
+import { Features } from './Features';
 // import { Letter } from "./Letter";
 
 export default function Home() {
@@ -9,12 +8,9 @@ export default function Home() {
     <>
       <main className="relative">
         <Hero />
-        {/* <GradientSectionBorder>
+        <GradientSectionBorder>
           <Features />
         </GradientSectionBorder>
-        <GradientSectionBorder>
-          <Letter />
-        </GradientSectionBorder> */}
       </main>
     </>
   );
