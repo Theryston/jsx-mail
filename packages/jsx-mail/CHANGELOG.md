@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.0.1
+
+### Patch Changes
+
+- 789bee0: fix jsx mail version
+
 ## 2.0.0
 
 ### Major Changes
