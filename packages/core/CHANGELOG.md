@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.0.2
+
+### Patch Changes
+
+- fix jsxImportSource
+
 ## 2.0.1
 
 ### Patch Changes

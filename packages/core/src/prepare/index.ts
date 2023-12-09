@@ -626,7 +626,7 @@ async function transformCode(
   const builtFile: any = await esbuild.transform(fileCode, {
     jsxFactory: 'jsx',
     jsx: 'automatic',
-    jsxImportSource: coreRelativePath.replace(/\\/g, '/'),
+    jsxImportSource: '@jsx-mail/core/dist',
     format: 'cjs',
     loader: compileFile.ext as CompileFilePath,
   });
