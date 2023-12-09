@@ -1,6 +1,18 @@
 {
   "index": {
-    "title": "Get started"
+    "title": "Quickstart"
+  },
+  "configuration": {
+    "title": "Configuration"
+  },
+  "structure": {
+    "title": "Structure"
+  },
+  "image": {
+    "title": "Image"
+  },
+  "cloud": {
+    "title": "JSX Mail Cloud"
   },
   "core": {
     "title": "Core"

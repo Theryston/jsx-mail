@@ -1,3 +1,30 @@
-# Get started
+# JSX Mail Quickstart
 
-Hello!
+**JSX Mail** is a framework that allows you to create email templates in a modern way using the JSX syntax. Here you will be able to start a JSX Mail project and have an overview of how everything works.
+
+To start you need to have a node.js project started with `package.json` already configured, if you want to use Typescript it is important that you have the `tsconfig.json` file too, let's create an example just with Javascript to be simpler to understand:
+
+```bash
+mkdir jsx-mail-quickstart
+cd jsx-mail-quickstart
+yarn init -y
+```
+
+Now let's actually start starting your project with JSX Mail, for this you can just install JSX Mail, and run the `init` command, at the end you need to run:
+
+```bash
+yarn add jsx-mail
+yarn jsxm init
+```
+
+After running this there will be some changes to your project:
+
+- `jsx-mail` and `@jsx-mail/core` will be added to your `package.json` file
+- A `jsx-mail.config.js` file will be created. This is the file where everything related to JSX Mail will be configured [see more](/docs/configuration)
+- A `mail` folder will be created, this is where everything related to your emails will be, such as templates, components, images, etc. [see more](/docs/structure)
+
+Now that everything is configured, let's see a preview of your templates. Just run the command:
+
+```bash
+yarn jsxm preview
+```
