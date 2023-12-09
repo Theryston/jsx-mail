@@ -6,7 +6,7 @@
   "description": "All jsx mail core functions.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "private": true,
+  "private": false,
   "files": [
     "dist",
     "src"
