@@ -8,6 +8,9 @@
   "author": "Theryston Santos",
   "license": "MIT",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist",
     "LICENSE",
