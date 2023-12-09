@@ -3,7 +3,7 @@
   "author": "Theryston",
   "version": "2.0.0",
   "license": "MIT",
-  "description": "All jsx mail core functions. 🚀✉️",
+  "description": "All jsx mail core functions.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
