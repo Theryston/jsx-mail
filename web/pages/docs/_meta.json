@@ -2,11 +2,11 @@
   "index": {
     "title": "Quickstart"
   },
-  "configuration": {
-    "title": "Configuration"
-  },
   "image": {
     "title": "Image"
+  },
+  "configuration": {
+    "title": "Configuration"
   },
   "typescript": {
     "title": "With Typescript"
