@@ -27,7 +27,7 @@ export function Hero() {
         </div>
 
         <div className="w-[120px] h-[120px] z-50">
-          <Image alt="Logo" height={120} src="/logo.svg" width={120} />
+          <Image alt="Logo" height={120} src="/logo-circle.svg" width={120} />
         </div>
       </FadeIn>
       <FadeIn

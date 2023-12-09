@@ -44,7 +44,7 @@ const config: DocsThemeConfig = {
         gap: 8,
       }}
     >
-      <Image width={45} height={36} src="/logo.svg" alt="JSX Mail Logo" />
+      <Image width={40} height={31} src="/logo.svg" alt="JSX Mail Logo" />
       <span>JSX Mail</span>
     </div>
   ),
