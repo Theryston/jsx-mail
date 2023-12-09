@@ -21,10 +21,303 @@ After running this there will be some changes to your project:
 
 - `jsx-mail` and `@jsx-mail/core` will be added to your `package.json` file
 - A `jsx-mail.config.js` file will be created. This is the file where everything related to JSX Mail will be configured [see more](/docs/configuration)
-- A `mail` folder will be created, this is where everything related to your emails will be, such as templates, components, images, etc. [see more](/docs/structure)
+- A `mail` folder will be created, this is where everything related to your emails will be, such as templates, components, images, etc. [see more](#understanding-the-structure)
+- If you are using Typescript, the `tsconfig.json` file will be updated with the necessary configurations to use JSX Mail [see more](/docs/typescript)
 
 Now that everything is configured, let's see a preview of your templates. Just run the command:
 
 ```bash
 yarn jsxm preview
 ```
+
+This will start a server on port `3256` with a preview of your templates, you can access it at `http://localhost:3256`.
+
+## Understanding the structure
+
+Now that you have a preview of your templates, let's understand how everything works.
+
+## Mail App
+
+The first thing you have to now is the folder `mail` that was created, this is where everything related to your emails will be, such as templates, components, images, etc.
+
+Inside this folder you will find some other folders, `templates`, `components` and `assets`, let's understand each one:
+
+## Templates
+
+Every single file with the extensions `.js|.ts|.jsx|.tsx` inside this folder will be considered a template, and this is where you will create your emails.
+
+Every template must have a `default` export, this is the function that will be called when you want to send an email, this function must return an JSX component that will be rendered by JSX Mail.
+
+Let's create a simple template to understand how it works:
+
+```jsx
+// mail/templates/my-first.jsx
+export default function MyFirst() {
+	return <h1>Hello!</h1>
+}
+```
+
+Now when you go to the preview page you will see a new template called `my-first`, this is the name of the file without the extension, and when you click on it you will see the content of the template.
+
+You can also add more advanced things to your template, such as props, styles, or even a function the runs before the template is rendered, let's see more about it:
+
+### Props
+
+You can pass props to your template, this is useful when you want to reuse the same template for different emails, for example, you can pass the user name to the template and use it inside the template.
+
+To pass props to your template you just need to export a `props` object with the props type as the value, and then pass the props to the template function:
+
+```jsx
+export const props = {
+  name: String()
+}
+
+export default function MyFirst({ name }) {
+	return <h1>Hello {name}</h1>
+}
+```
+
+If you are using Typescript:
+
+```tsx
+export const props = {
+  name: String()
+}
+
+export default function MyFirst({ name }: typeof props) {
+	return <h1>Hello {name}</h1>
+}
+```
+
+Now when you open the template in the preview page you will see the message "Hello " and the name will be empty, this is because if you want to see some mock values you need to pass it to the `props` object, let's see how it works:
+
+```jsx
+export const props = {
+  name: String('Theryston')
+}
+```
+
+Now when you open the template in the preview page you will see the message "Hello Theryston", this is because the `name` prop will have the value "Theryston" by default. Look this value just appears in the preview page, when you render the email template you need to pass the props to the `render` function. [see more](#rendering-the-template)
+
+It's good to remember that the props object should have every single prop that you want to use in your template, if you don't add a prop to the props object you will not be able to use it in your template. And just templates that receive props need to have the props object.
+
+You don't need to add the props object for components, just for templates.
+
+### Styles
+
+You can also add styles to your template, this is useful when you want to add some styles to your email, for example, you can add a background color to the email.
+
+To add styles to your template you just need to add a `style` props into your tag: 
+
+```jsx
+export default function MyFirst() {
+	return <h1 style={{backgroundColor: 'red'}}>Hello World</h1>
+}
+```
+
+You can create a file that the name ends with `styles.ts|style.ts|styles.js|style.js|styles.tsx|style.tsx|style.jsx|styles.jsx` and export a style object with your styles:
+
+```jsx
+// mail/templates/my-first.styles.jsx
+export const Title = { backgroundColor: 'red' };
+```
+
+If you're using TS:
+
+```tsx
+// mail/templates/my-first.styles.tsx
+export const Title: JSX.ElementStyle = { backgroundColor: 'red' };
+```
+
+And then you can import it and use it in your template or component:
+
+```jsx
+import * as Styles from './my-first.styles';
+
+export default function MyFirst({ name }) {
+	return <h1 style={Styles.Title}>Hello {name}</h1>
+}
+```
+
+Now when you open the template in the preview page you will see the message "Hello World" with a red background, this is because the `style` prop will be added to the `h1` of the template.
+
+You can also use every style props like into React. Some styles does not exists, this is because it is not supported by email clients.
+
+### On Render
+
+You can also add a function that runs before the template is rendered, this is useful when you want to add some logic to your template, for example, you can add a function that fetches some data from an API and pass it to the template.
+
+To add a function that runs before the template is rendered you just need to export a `onRender` function, this function will receive the props as the first argument and must return the props with the data that you want to pass to the template:
+
+```jsx
+export async function onRender({ name }) {
+	const url = `https://api.github.com/users/${name}`;
+	const response = await fetch(url);
+	const user = await response.json();
+
+	return {
+		bio: user.bio,
+	};
+}
+```
+
+The `onRender` function can be asynchronous, this is useful when you want to fetch some data from an API, but you can also return a promise if you want.
+
+The `onRender` also receives the props from the render function or the default props exported object.
+
+You have to add the `bio` props to the props object if you want to use it in your template:
+
+```jsx
+export const props = {
+	name: String('Theryston'),
+	bio: String(),
+};
+```
+
+You can normaly use the `bio` prop in your template:
+
+```jsx
+export default function MyFirst({ name, bio }) {
+	return (
+		<div>
+			<h1 style={Styles.Title}>Hello {name}</h1>
+			<p>{bio}</p>
+		</div>
+	);
+}
+```
+
+Go to the preview page and you will see the message "Hello Theryston" with a red background and the bio of the user.
+
+Perfet! Now you know how to create a template, let's see how to create a component.
+
+## Components
+
+Any file with the extensions `.js|.ts|.jsx|.tsx` that it's not inside the `templates` folder, and is inside the [mail app](#mail-app) will be considered a component, and this is where you will create your components.
+
+For a better organization, it's recommended that you create a folder called `components` inside the `mail` folder, and inside this folder you can create your components.
+
+Let's create a simple component to understand how it works:
+
+```jsx
+// mail/components/my-first-component.jsx
+export default function MyFirstComponent({ bio }) {
+	return (
+		<div>
+			<p>I'm your first component. My function is show the user Bio:</p>
+			<p>{bio}</p>
+		</div>
+	);
+}
+```
+
+Look that for components you don't need to export a `default` function, you can export any function that you want, but it's recommended that you export a function with the same name of the file.
+
+For components or any other file that is not a template, you don't need to export the `prop` object, you can just use the props that you want to use in your component.
+
+Now you can import this component into your template and use it:
+
+```jsx
+import MyFirstComponent from '../components/my-first-component';
+
+export default function MyFirst({ name, bio }) {
+	return (
+		<div>
+			<h1 style={Styles.Title}>Hello {name}</h1>
+			<MyFirstComponent bio={bio} />
+		</div>
+	);
+}
+```
+
+Now when you open the template in the preview page you will see the message "Hello Theryston" with a red background and below this message you will see the message "I'm your first component. My function is show the user Bio:" with the bio of the user.
+
+Perfect! Now you know how to create a component, let's see how to add images to your email.
+
+## Images
+
+You can add images to your email, this is useful when you want to add a logo to your email, for example, you can add the logo of your company to the email.
+
+Here the magic happens, because you don't need to add a url to the image or even add the image as an attachment, you just need to add the image to the `assets` folder and use it in your template or component.
+
+For a better organization, it's recommended that you create a folder called `assets` inside the `mail` folder, and inside this folder you can create your images.
+
+Download the image below and add it to the `assets` folder: [download](/icon.png).
+
+Now just import the image from the `assets` folder and use it in your template or component, execlty like you do in React:
+
+```jsx
+import IconPng from '../assets/icon.png';
+
+export default function MyFirst({ name, bio }) {
+	return (
+		<div>
+			<img
+				src={IconPng}
+				alt="I'm a Icon"
+			/>
+			<h1 style={Styles.Title}>Hello {name}</h1>
+			<MyFirstComponent bio={bio} />
+		</div>
+	);
+}
+```
+
+The JSX Mail will automatically optimize and upload your image to JSX Mail Cloud. But when you are in the preview page, the image will be loaded from your local machine.
+
+Now that you know how to create a template, let's see how to render it.
+
+## Prepare
+
+For render your template you need to prepare everything for this to happen, you don't need to do anything except run `jsxm prepare` before you render your template. Just stop the preview server and run:
+
+```bash
+yarn jsxm prepare
+```
+
+You can see into the terminal that the jsx mail will prepare everything for you, like upload the images to JSX Mail Cloud, optimize the images, compile the templates, etc.
+
+The prepare command should be run every time something changes in your project, like a new image, a new template, a new component, etc. But for the preview page you don't need to run it, because the preview page will run it automatically for you.
+
+You should add this command to your CI to run before your deploy, just after you have installed the dependencies. You can add it to the `build` script into your `package.json` file:
+
+```json
+{
+  "scripts": {
+    "build": "jsxm prepare && your-build-command"
+  }
+}
+```
+
+## Template name
+
+Now that everything is prepared, you can render your template by the name of it. The name of the template is the name of the file without the extension, in our case the name of the template is `my-first`.
+
+If you want to use some folders you can also use contexts, every single folder inside the `mail/templates` folder will be considered a context, and you can use it to organize your templates, for example, you can create a folder called `users` and put all your user templates inside this folder, and then you're template name will be `users:my-first`. If you have more than one folder you can use the `:` to separate the folders, for example, if you have a folder called `users` and another folder called `products` you can use the template name `users:products:my-first`.
+
+## Rendering the template
+
+You have two options to do this. First is with the CLI, just run:
+
+```bash
+yarn jsxm render "my-first" --out="my-first.html" --name="Theryston"
+```
+
+The `render` command receives the name of the template as the first argument, the output file as the `--out` option and the props as the `--{prop-name}` option.
+
+The second option is with the `render` function, this function is exported by the `jsx-mail` package, you can import it and use it in your code:
+
+```js
+// index.js
+const jsxMail = require('jsx-mail');
+
+jsxMail
+	.render('my-first', { name: 'Theryston' })
+	.then((html) => console.log(html));
+```
+
+The `render` function receives the name of the template as the first argument and the props as the second argument, and returns a promise with the html of the template.
+
+And that's it, now you know how to create a template, component, add images and render your template.
+
+See you in the next docs 🚀

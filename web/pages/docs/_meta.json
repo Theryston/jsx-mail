@@ -5,11 +5,11 @@
   "configuration": {
     "title": "Configuration"
   },
-  "structure": {
-    "title": "Structure"
-  },
   "image": {
     "title": "Image"
+  },
+  "typescript": {
+    "title": "With Typescript"
   },
   "cloud": {
     "title": "JSX Mail Cloud"
