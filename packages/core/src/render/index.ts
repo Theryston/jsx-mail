@@ -133,8 +133,8 @@ async function getVirtualDOM(
   let newProps = { ...props };
 
   if (useMock) {
-    const props = templateImport.props;
-    newProps = { ...props, ...newProps };
+    const defaultProps = templateImport.props;
+    newProps = { ...defaultProps, ...newProps };
   }
 
   if (onRender) {
