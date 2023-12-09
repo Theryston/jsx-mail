@@ -76,7 +76,21 @@ const config: DocsThemeConfig = {
     component: <p>JSX Mail</p>,
   },
   footer: {
-    text: 'MIT License © JSX Mail.',
+    component: (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 2,
+          fontSize: 12,
+          padding: '16px 0',
+          backgroundColor: '#000',
+        }}
+      >
+        <p>JSX Mail is licensed under MIT</p>
+      </div>
+    ),
   },
 };
 
