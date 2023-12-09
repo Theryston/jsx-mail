@@ -1,0 +1,37 @@
+name: Changesets
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/*'
+      
+jobs:
+  version:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: setup node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+      - name: install yarn
+        run: npm install -g yarn
+      - name: install dependencies
+        run: yarn
+      - name: build
+        run: yarn build
+      - name: create and publish versions
+        uses: changesets/action@v1
+        with:
+          version: yarn changeset version
+          commit: 'chore: update versions'
+          title: 'chore: update versions'
+          publish: yarn changeset publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
