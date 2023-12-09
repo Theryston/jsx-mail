@@ -135,7 +135,7 @@
   height: var(--height);
   left: var(--gradient-x-offset);
   top: var(--gradient-y-offset);
-  background: linear-gradient(180deg, #58a5ff 0%, #a67af4 100%);
+  background: linear-gradient(180deg, #FF00B8 0%, #FF013E 100%);
   border-radius: 100%;
   mix-blend-mode: normal;
   filter: blur(50px);
@@ -147,7 +147,7 @@
   height: var(--height);
   right: var(--gradient-x-offset);
   top: var(--gradient-y-offset);
-  background: linear-gradient(180deg, #ff3358 0%, #ff4fd8 100%);
+  background: linear-gradient(180deg, #FF013E 0%, #FF00B8 100%);
   border-radius: 100%;
   mix-blend-mode: normal;
   filter: blur(50px);
