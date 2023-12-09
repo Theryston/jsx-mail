@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.0.3
+
+### Patch Changes
+
+- Use mock props to onrender
+
 ## 2.0.2
 
 ### Patch Changes

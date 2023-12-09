@@ -132,6 +132,11 @@ async function getVirtualDOM(
 
   let newProps = { ...props };
 
+  if (useMock) {
+    const props = templateImport.props;
+    newProps = { ...props, ...newProps };
+  }
+
   if (onRender) {
     try {
       const onRenderResult = await onRender(newProps);
@@ -144,11 +149,6 @@ async function getVirtualDOM(
     }
 
     verifyProps(newProps);
-  }
-
-  if (useMock) {
-    const props = templateImport.props;
-    newProps = { ...props, ...newProps };
   }
 
   let virtualDOM: JSXMailVirtualDOM;
