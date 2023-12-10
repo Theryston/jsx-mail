@@ -1,4 +1,3 @@
-import { GradientSectionBorder } from './GradientSectionBorder';
 import { Hero } from './Hero';
 import { Features } from './Features';
 
@@ -7,9 +6,7 @@ export default function Home() {
     <>
       <main className="relative">
         <Hero />
-        <GradientSectionBorder>
-          <Features />
-        </GradientSectionBorder>
+        <Features />
       </main>
     </>
   );
