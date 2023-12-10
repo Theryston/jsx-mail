@@ -1,10 +1,12 @@
+import { Steps, FileTree } from 'nextra/components'
+
 # JSX Mail Quickstart
 
 **JSX Mail** is a framework designed for creating email templates using the modern JSX syntax. This guide provides a quickstart for initializing a JSX Mail project and offers an overview of its functionality.
 
 To begin, ensure you have a Node.js project with a configured `package.json` file. If you're using TypeScript, a `tsconfig.json` file is also necessary. For simplicity, this example will focus on JavaScript:
 
-```bash
+```sh copy
 mkdir jsx-mail-quickstart
 cd jsx-mail-quickstart
 yarn init -y
@@ -12,10 +14,40 @@ yarn init -y
 
 Next, let's set up your project with JSX Mail. Start by installing JSX Mail and then initialize it. Execute the following commands:
 
-```bash
+```sh copy
 yarn add jsx-mail @jsx-mail/core
 yarn jsxm init
 ```
+
+<FileTree>
+  <FileTree.Folder name="jsx-mail-quickstart" defaultOpen>
+    <FileTree.Folder name="mail" defaultOpen>
+      <FileTree.Folder name="components">
+        <FileTree.File name="featured.jsx" />
+        <FileTree.File name="featured.styles.jsx" />
+        <FileTree.File name="info.jsx" />
+        <FileTree.File name="info.styles.jsx" />
+        <FileTree.File name="layout.jsx" />
+        <FileTree.File name="layout.styles.jsx" />
+      </FileTree.Folder>
+      <FileTree.Folder name="templates">
+        <FileTree.Folder name="zoo">
+          <FileTree.File name="example.jsx" />
+        </FileTree.Folder>
+        <FileTree.File name="welcome.jsx" />
+        <FileTree.File name="welcome.styles.jsx" />
+      </FileTree.Folder>
+      <FileTree.Folder name="assets">
+        <FileTree.File name="code.png" />
+        <FileTree.File name="logo.png" />
+      </FileTree.Folder>
+    </FileTree.Folder>
+    <FileTree.Folder name="node_modules" />
+    <FileTree.File name="jsx-mail.config.js" />
+    <FileTree.File name="package.json" />
+    <FileTree.File name="yarn.lock" />
+  </FileTree.Folder>
+</FileTree>
 
 Upon completion, your project will undergo several changes:
 
@@ -26,7 +58,7 @@ Upon completion, your project will undergo several changes:
 
 With everything set up, let's preview your templates. Run the following command:
 
-```bash
+```sh copy
 yarn jsxm preview
 ```
 
@@ -38,9 +70,20 @@ It's essential to familiarize yourself with the `mail` folder, which serves as t
 
 Within the `mail` folder, you'll discover several subfolders, each with a specific purpose:
 
-1. `templates`: This folder contains the email templates. These templates provide a predefined structure for your emails, allowing for consistency and efficiency in email creation.
-2. `components`: Here, you'll find reusable components. These are elements that you can utilize across different email templates, facilitating a more streamlined and cohesive design process.
-3. `assets`: This folder is dedicated to storing assets such as images and other media files. These assets are essential for enriching your email content, making it more engaging and visually appealing.
+<Steps>
+
+### Templates
+This folder contains the email templates. These templates provide a predefined structure for your emails, allowing for consistency and efficiency in email creation.
+
+### Components 
+
+Here, you'll find reusable components. These are elements that you can utilize across different email templates, facilitating a more streamlined and cohesive design process.
+
+### Assets
+
+This folder is dedicated to storing assets such as images and other media files. These assets are essential for enriching your email content, making it more engaging and visually appealing.
+
+</Steps>
 
 You can also create other folder inside the `mail` folder, feel free to create any folder that you want, but it's essential to have a folder called `templates`.
 
@@ -54,8 +97,7 @@ Each template must include a `default` export. This export is a function invoked
 
 To better grasp this concept, let's walk through the creation of a basic template:
 
-```jsx
-// mail/templates/my-first.jsx
+```jsx filename="mail/templates/my-first.jsx" copy
 export default function MyFirst() {
   return <h1>Hello!</h1>;
 }
@@ -81,8 +123,7 @@ Props are a powerful feature in JSX Mail, allowing you to customize templates fo
 
 To define props for your template, export a `props` object. This object should specify the types of the props. You then pass these props into the template function. Here's an example in JSX:
 
-```jsx
-// Defining props for a JSX template
+```jsx {1,2,3,5,6} filename="mail/templates/my-first.jsx" copy
 export const props = {
   name: String()
 };
@@ -94,8 +135,7 @@ export default function MyFirst({ name }) {
 
 For TypeScript users, the process is similar, with a slight modification to ensure type safety:
 
-```tsx
-// Defining props for a TypeScript template
+```tsx /typeof props/ filename="mail/templates/my-first.tsx" copy
 export const props = {
   name: String()
 };
@@ -109,10 +149,14 @@ export default function MyFirst({ name }: typeof props) {
 
 When you open the template in the preview page without passing any values, the `name` will appear empty. To visualize how the template looks with sample data, you can assign mock values to the props:
 
-```jsx
+```jsx /Theryston/ filename="mail/templates/my-first.jsx" copy
 export const props = {
   name: String('Theryston')
 };
+
+export default function MyFirst({ name }) {
+  return <h1>Hello {name}</h1>;
+}
 ```
 
 With this change, the preview page will display "Hello Theryston". Remember, these mock values are only for preview purposes. When rendering the email template for actual use, you must provide the relevant props through the `render` function. [Learn more about rendering templates](#rendering-templates).
@@ -131,9 +175,13 @@ Styles enhance the visual appeal of your emails. JSX Mail allows you to add CSS 
 
 You can apply inline styles directly within your JSX tags. Here’s an example of setting a background color:
 
-```jsx
+```jsx /style={{ backgroundColor: 'red' }}/ filename="mail/templates/my-first.jsx" copy
+export const props = {
+	name: String('Theryston'),
+};
+
 export default function MyFirst({ name }) {
-  return <h1 style={{ backgroundColor: 'red' }}>Hello {name}</h1>;
+	return <h1 style={{ backgroundColor: 'red' }}>Hello {name}</h1>;
 }
 ```
 
@@ -141,17 +189,13 @@ export default function MyFirst({ name }) {
 
 For more complex styling or to maintain cleaner code, you can externalize your styles. Create a file ending in `styles.ts`, `style.ts`, `styles.js`, `style.js`, `styles.tsx`, `style.tsx`, `style.jsx`, or `styles.jsx`. In this file, export an object containing your styles:
 
-```jsx
-// Defining styles in a separate file
-// mail/templates/my-first.styles.jsx
+```jsx filename="mail/templates/my-first.styles.jsx" copy
 export const Title = { backgroundColor: 'red' };
 ```
 
 For TypeScript users, ensure type safety by defining the style object as `JSX.ElementStyle`:
 
-```tsx
-// TypeScript style definition
-// mail/templates/my-first.styles.tsx
+```tsx /: JSX.ElementStyle/ filename="mail/templates/my-first.styles.tsx" copy
 export const Title: JSX.ElementStyle = { backgroundColor: 'red' };
 ```
 
@@ -159,11 +203,15 @@ export const Title: JSX.ElementStyle = { backgroundColor: 'red' };
 
 Import the style object into your template or component and apply it:
 
-```jsx
+```jsx {1} /style={Styles.Title}/ filename="mail/templates/my-first.jsx" copy
 import * as Styles from './my-first.styles';
 
+export const props = {
+	name: String('Theryston'),
+};
+
 export default function MyFirst({ name }) {
-  return <h1 style={Styles.Title}>Hello {name}</h1>;
+	return <h1 style={Styles.Title}>Hello {name}</h1>;
 }
 ```
 
@@ -181,15 +229,25 @@ The `onRender` function is a powerful feature in JSX Mail, allowing you to execu
 
 To incorporate an `onRender` function, export it from your template file. This function takes the props as its argument and should return an updated props object with additional data for the template. Here's an example:
 
-```jsx
-export async function onRender({ name }) {
-  const url = `https://api.github.com/users/${name}`;
-  const response = await fetch(url);
-  const user = await response.json();
+```jsx {7,8,9,10,11,12,13,14,15} filename="mail/templates/my-first.jsx" copy
+import * as Styles from './my-first.styles';
 
-  return {
-    bio: user.bio,
-  };
+export const props = {
+	name: String('Theryston'),
+};
+
+export async function onRender({ name }) {
+	const url = `https://api.github.com/users/${name}`;
+	const response = await fetch(url);
+	const user = await response.json();
+
+	return {
+		bio: user.bio,
+	};
+}
+
+export default function MyFirst({ name }) {
+	return <h1 style={Styles.Title}>Hello {name}</h1>;
 }
 ```
 
@@ -199,25 +257,58 @@ The `onRender` function can be asynchronous, making it ideal for API calls or ot
 
 Ensure you include any new data fields returned by `onRender` in your `props` object. For instance, if `onRender` adds a `bio`, it should be declared in `props`:
 
-```jsx
+```jsx {5} filename="mail/templates/my-first.jsx" copy
+import * as Styles from './my-first.styles';
+
 export const props = {
-  name: String('Theryston'),
-  bio: String(),
+	name: String('Theryston'),
+	bio: String(),
 };
+
+export async function onRender({ name }) {
+	const url = `https://api.github.com/users/${name}`;
+	const response = await fetch(url);
+	const user = await response.json();
+
+	return {
+		bio: user.bio,
+	};
+}
+
+export default function MyFirst({ name }) {
+	return <h1 style={Styles.Title}>Hello {name}</h1>;
+}
 ```
 
 #### Utilizing the Props in the Template
 
 Now, use these props normally within your template:
 
-```jsx
+```jsx {18,22} filename="mail/templates/my-first.jsx" copy
+import * as Styles from './my-first.styles';
+
+export const props = {
+	name: String('Theryston'),
+	bio: String(),
+};
+
+export async function onRender({ name }) {
+	const url = `https://api.github.com/users/${name}`;
+	const response = await fetch(url);
+	const user = await response.json();
+
+	return {
+		bio: user.bio,
+	};
+}
+
 export default function MyFirst({ name, bio }) {
-  return (
-    <div>
-      <h1 style={Styles.Title}>Hello {name}</h1>
-      <p>{bio}</p>
-    </div>
-  );
+	return (
+		<div>
+			<h1 style={Styles.Title}>Hello {name}</h1>
+			<p>{bio}</p>
+		</div>
+	);
 }
 ```
 
@@ -237,9 +328,7 @@ For optimal organization, it's advisable to create a `components` folder inside 
 
 Here's a basic example to illustrate how to create a component:
 
-```jsx
-// Creating a component in the components directory
-// mail/components/my-first-component.jsx
+```jsx filename="mail/components/my-first-component.jsx" copy
 export default function MyFirstComponent({ bio }) {
   return (
     <div>
@@ -260,16 +349,32 @@ Unlike templates, components do not require an exported `props` object. Simply u
 
 You can easily import and utilize your components within templates. Here's how you can incorporate the `MyFirstComponent` into a template:
 
-```jsx
+```jsx {1,23} filename="mail/templates/my-first.jsx" copy
 import MyFirstComponent from '../components/my-first-component';
+import * as Styles from './my-first.styles';
+
+export const props = {
+	name: String('Theryston'),
+	bio: String(),
+};
+
+export async function onRender({ name }) {
+	const url = `https://api.github.com/users/${name}`;
+	const response = await fetch(url);
+	const user = await response.json();
+
+	return {
+		bio: user.bio,
+	};
+}
 
 export default function MyFirst({ name, bio }) {
-  return (
-    <div>
-      <h1 style={Styles.Title}>Hello {name}</h1>
-      <MyFirstComponent bio={bio} />
-    </div>
-  );
+	return (
+		<div>
+			<h1 style={Styles.Title}>Hello {name}</h1>
+			<MyFirstComponent bio={bio} />
+		</div>
+	);
 }
 ```
 
@@ -281,34 +386,57 @@ You're now well-equipped to create components in JSX Mail. Next, let's explore h
 
 In JSX Mail, incorporating images into your emails, such as company logos or other visuals, is a straightforward process. The platform handles images efficiently, simplifying their integration into your templates or components.
 
-### Managing Images with the Assets Folder
-
 For organized management of your images, it's recommended to create an `assets` folder within the `mail` directory. This folder is where you should store your image files.
 
-#### Using Images in JSX Mail
+### Using Images in JSX Mail
 
-1. **Storing Images:** Place your images in the `assets` folder. For example, download and save an image like `icon.png` in this folder. 
-   
-   Download link for the image: [download](/icon.png).
+<Steps>
 
-2. **Importing Images:** Just like in React, import the image into your template or component from the `assets` folder:
+### Storing Images
 
-   ```jsx
-   import IconPng from '../assets/icon.png';
+Place your images in the `assets` folder. For example, download and save an image like `icon.png` in this folder. 
 
-   export default function MyFirst({ name, bio }) {
-     return (
-       <div>
-         <img
-           src={IconPng}
-           alt="I'm an Icon"
-         />
-         <h1 style={Styles.Title}>Hello {name}</h1>
-         <MyFirstComponent bio={bio} />
-       </div>
-     );
-   }
-   ```
+Download link for the image: [download](/icon.png).
+
+### Importing Images
+
+Just like in React, import the image into your template or component from the `assets` folder:
+
+```jsx {3,23,24,25,26} filename="mail/templates/my-first.jsx" copy
+import MyFirstComponent from '../components/my-first-component';
+import * as Styles from './my-first.styles';
+import IconPng from '../assets/icon.png';
+
+export const props = {
+	name: String('Theryston'),
+	bio: String(),
+};
+
+export async function onRender({ name }) {
+	const url = `https://api.github.com/users/${name}`;
+	const response = await fetch(url);
+	const user = await response.json();
+
+	return {
+		bio: user.bio,
+	};
+}
+
+export default function MyFirst({ name, bio }) {
+	return (
+		<div>
+			<img
+				src={IconPng}
+				alt="I'm an Icon"
+			/>
+			<h1 style={Styles.Title}>Hello {name}</h1>
+			<MyFirstComponent bio={bio} />
+		</div>
+	);
+}
+```
+
+</Steps>
 
 ### Image Optimization and Hosting
 
@@ -326,7 +454,7 @@ Before rendering your email templates with JSX Mail, it's essential to prepare y
 
 The `jsxm prepare` command is a crucial step in this process. To execute it, first, stop the preview server and run the following command in your terminal:
 
-```bash
+```sh copy
 yarn jsxm prepare
 ```
 
@@ -342,15 +470,15 @@ This command triggers JSX Mail to handle various tasks such as:
 - **Preview Page:** For the preview page, there's no need to manually run this command. The preview functionality automatically prepares your templates.
 - **Continuous Integration (CI):** Integrate this command into your CI pipeline. It should be executed after installing dependencies but before deploying your project.
   
-  Here's an example of how to include it in your `package.json` file:
+Here's an example of how to include it in your `package.json` file:
 
-  ```json
-  {
-    "scripts": {
-      "build": "jsxm prepare && your-build-command"
-    }
+```json /jsxm prepare/ filename="package.json" copy
+{
+  "scripts": {
+    "build": "jsxm prepare && your-build-command"
   }
-  ```
+}
+```
 
 By following these steps, you ensure that your templates and assets are properly set up and optimized for rendering, contributing to a smoother and more efficient workflow in JSX Mail.
 
@@ -362,7 +490,7 @@ Rendering templates in JSX Mail can be accomplished through two primary methods:
 
 To render a template using the CLI, execute a command like this:
 
-```bash
+```sh copy
 yarn jsxm render "my-first" --out="my-first.html" --name="Theryston"
 ```
 
@@ -376,8 +504,7 @@ This method is quick and suitable for simple rendering tasks or testing.
 
 For more integrated scenarios, use the `render` function in your code:
 
-```js
-// Example of using the render function in a script
+```js filename="my-first.js" copy
 const jsxMail = require('jsx-mail');
 
 jsxMail
