@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { FadeIn } from './FadeIn';
-import { Gradient } from './Gradient';
 import { HeroText, SectionSubtext } from './Headings';
 import { CTAButton } from './CTAButton';
 
@@ -11,11 +10,6 @@ export function Hero() {
       className="w-full overflow-x-hidden min-h-[calc(100svh-var(--nextra-navbar-height))] pb-16 pt-[48px] md:pb-24 lg:pb-32 md:pt-16 lg:pt-20 flex justify-start gap-8 items-center flex-col relative z-0"
       noVertical
     >
-      <Gradient
-        className="top-[-500px] opacity-20"
-        height={1000}
-        width={1000}
-      />
       <FadeIn className="z-50 flex items-center justify-center w-full">
         <div className="absolute min-w-[614px] min-h-[614px]">
           <Image
