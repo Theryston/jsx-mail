@@ -2,6 +2,9 @@
   "index": {
     "title": "Quickstart"
   },
+  "preview": {
+    "title": "Preview"
+  },
   "image": {
     "title": "Image"
   },
@@ -10,6 +13,12 @@
   },
   "typescript": {
     "title": "With Typescript"
+  },
+  "prepare": {
+    "title": "Prepare"
+  },
+  "cache-clean": {
+    "title": "Cache Clean"
   },
   "cloud": {
     "title": "JSX Mail Cloud"
