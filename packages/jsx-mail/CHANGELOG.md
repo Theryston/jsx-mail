@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.0.4
+
+### Patch Changes
+
+- 2b36945: Refactor tsconfig.json to include jsx-mail compiler options and types
+
 ## 2.0.3
 
 ### Patch Changes
