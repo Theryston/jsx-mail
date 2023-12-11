@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/types/index.d.ts",
   "repository": "https://github.com/Theryston/jsx-mail",
+  "homepage": "https://jsxmail.org",
   "author": "Theryston Santos",
   "license": "MIT",
   "private": false,
