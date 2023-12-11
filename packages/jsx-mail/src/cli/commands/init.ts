@@ -52,13 +52,20 @@ module.exports = {
           jsxImportSource: '@jsx-mail/core/dist',
         };
 
+        let types;
+
+        if (tsConfig.compilerOptions && tsConfig.compilerOptions.types) {
+          types = tsConfig.compilerOptions.types;
+        } else {
+          types = [];
+        }
+
+        types = [...types, ...jsxMailCompilerOptions.types];
+
         tsConfig.compilerOptions = {
           ...tsConfig.compilerOptions,
           ...jsxMailCompilerOptions,
-          types: [
-            ...(tsConfig.compilerOptions && tsConfig.compilerOptions.types),
-            ...jsxMailCompilerOptions.types,
-          ],
+          types,
         };
 
         toolbox.filesystem.write('tsconfig.json', tsConfig);
