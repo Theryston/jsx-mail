@@ -6,6 +6,8 @@
   "description": "All jsx mail core functions.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": "https://github.com/Theryston/jsx-mail",
+  "homepage": "https://jsxmail.org",
   "private": false,
   "publishConfig": {
     "access": "public"
