@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.0.5
+
+### Patch Changes
+
+- a49f9d2: add jsx to tsconfig
+
 ## 2.0.4
 
 ### Patch Changes
