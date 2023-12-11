@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.0.4
+
+### Patch Changes
+
+- cb68861: add jsx mail homepage url to package.json
+
 ## 2.0.3
 
 ### Patch Changes
