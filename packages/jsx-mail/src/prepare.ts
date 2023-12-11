@@ -5,6 +5,7 @@ import { getMailAppPath } from './utils/get-mail-app-path';
 import { getJsxMailConfig } from './utils/get-config';
 import load from './utils/load';
 import showCoreError from './utils/show-core-error';
+import { JsxMailConfig } from '.';
 
 type ProcessName =
   | 'checking_mail_app_folder'
@@ -58,8 +59,9 @@ export async function prepare(ignoreCloud?: boolean) {
   const mailAppPath = getMailAppPath();
   const config = getJsxMailConfig();
 
+  let awsEnvs;
   if (config.storage === 'S3') {
-    verifyS3Envs();
+    awsEnvs = verifyS3Envs(config);
   }
 
   try {
@@ -67,12 +69,8 @@ export async function prepare(ignoreCloud?: boolean) {
     await core.prepare(mailAppPath, {
       onProcessChange,
       ignoreCloud,
-      awsAccessKeyId: process.env.JSX_MAIL_S3_ACCESS_KEY_ID,
-      awsBucket: process.env.JSX_MAIL_S3_BUCKET,
-      awsFolder: process.env.JSX_MAIL_S3_FOLDER,
-      awsRegion: process.env.JSX_MAIL_S3_REGION,
-      awsSecretAccessKey: process.env.JSX_MAIL_S3_SECRET_ACCESS_KEY,
       ...config,
+      ...awsEnvs,
     });
 
     load.stop();
@@ -83,13 +81,16 @@ export async function prepare(ignoreCloud?: boolean) {
   }
 }
 
-function verifyS3Envs() {
-  const s3Bucket = process.env.JSX_MAIL_S3_BUCKET;
-  const s3Region = process.env.JSX_MAIL_S3_REGION;
-  const s3AccessKeyId = process.env.JSX_MAIL_S3_ACCESS_KEY_ID;
-  const s3SecretAccessKey = process.env.JSX_MAIL_S3_SECRET_ACCESS_KEY;
+function verifyS3Envs(config: JsxMailConfig) {
+  const awsAccessKeyId =
+    process.env.JSX_MAIL_S3_ACCESS_KEY_ID || config.awsAccessKeyId;
+  const awsBucket = process.env.JSX_MAIL_S3_BUCKET || config.awsBucket;
+  const awsFolder = process.env.JSX_MAIL_S3_FOLDER || config.awsFolder;
+  const awsRegion = process.env.JSX_MAIL_S3_REGION || config.awsRegion;
+  const awsSecretAccessKey =
+    process.env.JSX_MAIL_S3_SECRET_ACCESS_KEY || config.awsSecretAccessKey;
 
-  if (!s3Bucket || !s3Region || !s3AccessKeyId || !s3SecretAccessKey) {
+  if (!awsAccessKeyId || !awsBucket || !awsRegion || !awsSecretAccessKey) {
     showError({
       message: 'You must provide all the S3 envs',
       solution:
@@ -97,4 +98,12 @@ function verifyS3Envs() {
     });
     throw new Error('You must provide all the S3 envs');
   }
+
+  return {
+    awsAccessKeyId,
+    awsBucket,
+    awsFolder,
+    awsRegion,
+    awsSecretAccessKey,
+  };
 }
