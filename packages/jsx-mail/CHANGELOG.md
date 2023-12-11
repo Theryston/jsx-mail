@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.0.2
+
+### Patch Changes
+
+- 3766ecf: Fix aws keys from config
+
 ## 2.0.1
 
 ### Patch Changes
