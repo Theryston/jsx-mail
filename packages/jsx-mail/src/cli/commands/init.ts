@@ -50,6 +50,7 @@ module.exports = {
         const jsxMailCompilerOptions = {
           types: ['@jsx-mail/core/dist/jsx-runtime/jsx'],
           jsxImportSource: '@jsx-mail/core/dist',
+          jsx: 'react-jsx',
         };
 
         let types;
