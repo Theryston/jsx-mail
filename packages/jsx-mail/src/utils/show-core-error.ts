@@ -6,6 +6,5 @@ export default function showCoreError(error: any) {
     message: error.message,
     ...(error.customJson ? error.customJson : {}),
     ...(error.solutions ? { solutions: error.solutions } : {}),
-    ...(error.docsPageUrl ? { site: error.docsPageUrl } : {}),
   });
 }
