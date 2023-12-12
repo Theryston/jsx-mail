@@ -17,6 +17,12 @@
   "cache-clean": {
     "title": "Cache Clean"
   },
+  "style": {
+    "title": "Style"
+  },
+  "tags": {
+    "title": "Tags"
+  },
   "cloud": {
     "title": "JSX Mail Cloud"
   },
