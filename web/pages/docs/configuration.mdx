@@ -1,1 +1,35 @@
 # Configuration
+
+Your JSX Mail project configuration is centralized in the `jsx-mail.config.js` file, situated at the root of your project. This file is essential for defining project-specific settings for JSX Mail.
+
+### Example Configuration File
+
+```js filename="jsx-mail.config.js"
+/** @type {import('jsx-mail').JsxMailConfig} */
+module.exports = {
+  dir: 'mail',
+};
+```
+
+This sample configuration file sets the basic parameter `dir`, indicating the directory where your mail files reside.
+
+## Configurable Parameters
+
+You have the flexibility to tailor your `jsx-mail.config.js` with various parameters to fit your project needs. Below are the available settings you can define:
+
+- **`dir`**: Specifies the directory containing your mail templates. Default is `'mail'`.
+
+- **`storage`**: Chooses the storage location for images. Options include `S3` for Amazon S3 storage or `JSX_MAIL_CLOUD` for [JSX Mail's default cloud storage](/docs/cloud). Default is `JSX_MAIL_CLOUD`.
+
+- **AWS Configuration** (Used with `S3` storage option):
+  - `awsAccessKeyId`: Your Amazon Web Services (AWS) Access Key ID.
+  - `awsBucket`: The AWS bucket designated for image storage.
+  - `awsFolder`: The specific folder within your AWS bucket for storing images.
+  - `awsRegion`: The AWS region for your storage.
+  - `awsSecretAccessKey`: Your AWS Secret Access Key.
+
+- **`ignoreCloud`**: Set to `true` to bypass cloud storage for images. It's not recommended for production environments.
+
+- **`onProcessChange`**: A callback function triggered during each status update in the `prepare` command. This function receives details about the current process event and related data.
+
+These settings allow you to customize the behavior of JSX Mail, ensuring it aligns with your project's requirements and infrastructure.
