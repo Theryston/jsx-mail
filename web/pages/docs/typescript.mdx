@@ -1,1 +1,31 @@
-# Typescript
+import { Steps } from 'nextra/components'
+
+# TypeScript
+
+TypeScript offers significant enhancements to your projects, including improved maintainability and error-checking capabilities. Fortunately, integrating TypeScript into your JSX Mail projects is straightforward and efficient.
+
+### Steps to Integrate TypeScript with JSX Mail
+
+<Steps>
+
+### Initial Setup
+
+Ensure TypeScript is installed and configured in your project before initializing JSX Mail with the command `jsxm init`.
+
+### TypeScript Configuration Check
+
+When initializing, JSX Mail's CLI will look for a `tsconfig.json` file in your project. If found, JSX Mail will automatically apply the following configurations to integrate seamlessly with TypeScript:
+
+- **JSX Runtime Configuration:** Update `compilerOptions.types` in `tsconfig.json` to include `@jsx-mail/core/dist/jsx-runtime/jsx`. This step integrates JSX Mail's runtime for TypeScript projects.
+
+- **JSX Import Source:** Modify `compilerOptions.jsxImportSource` in `tsconfig.json` to include `@jsx-mail/core/dist`. This change specifies the source for JSX components within JSX Mail.
+
+- **JSX Syntax Support:** Add `react-jsx` to `compilerOptions.jsx` in `tsconfig.json`. This addition ensures that the TypeScript compiler properly interprets JSX syntax used in JSX Mail projects.
+
+### Automatic JSX Typing
+
+Post-configuration, JSX Mail automatically sets up JSX typing for your TypeScript project, streamlining the development process.
+
+</Steps>
+
+For further details and guidance on getting started, refer to the [JSX Mail Quickstart Guide](/docs). This guide provides comprehensive information on the basics and advanced usage of JSX Mail, ensuring a smooth integration with TypeScript in your projects.
