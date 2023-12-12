@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.0.5
+
+### Patch Changes
+
+- e47490e: remove docs url from core error
+
 ## 2.0.4
 
 ### Patch Changes
