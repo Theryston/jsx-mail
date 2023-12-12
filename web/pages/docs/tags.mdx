@@ -1,6 +1,6 @@
 # Tags
 
-As a JSX framework, JSX Mail offers some JSX tags that you can use. All tags were carefully created to ensure compatibility with your email template, so here you can see all the props that each tag accepts and what the result of compiling them is.
+As a JSX framework, JSX Mail offers some JSX tags that you can use. All tags were carefully created to ensure compatibility with your email template, so here you can see all the props that each tag accepts.
 
 ## `<a />`
 
@@ -11,5 +11,383 @@ The `<a />` tag is used to create links in your email. It accepts the following 
 | `className` | `string` | Some class to the result HTML |
 | `href` | `string` | The link URL |
 | `id` | `string` | Some ID to the result HTML |
-| `style` | `JSX.ElementStyle` | Some style to the result HTML |
+| `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
+| `target` | `string` | The link target |
+| `children` | `JSX.ElementChildren` | The link text |
 
+### Example
+
+```jsx
+<a href="https://example.com">Example</a>
+```
+
+## `<b />`
+
+The `<b />` tag is used to create bold text in your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `className` | `string` | Some class to the result HTML |
+| `id` | `string` | Some ID to the result HTML |
+| `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
+| `children` | `JSX.ElementChildren` | The bold text |
+
+### Example
+
+```jsx
+<b>Example</b>
+```
+
+## `<body />`
+
+The `<body />` tag is used to create the body of your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
+| `children` | `JSX.ElementChildren` | The body content |
+
+### Example
+
+```jsx
+<body>
+  <h1>Hello World</h1>
+</body>
+```
+
+## `<br />`
+
+The `<br />` tag is used to create a line break in your email. It accepts the following props:
+
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `className` | `string` | Some class to the result HTML |
+| `id` | `string` | Some ID to the result HTML |
+| `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
+
+### Example
+
+```jsx
+<br />
+```
+
+## `<button />`
+
+The `<button />` tag is used to create a button in your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `className` | `string` | Some class to the result HTML |
+| `href` | `string` | The button URL |
+| `id` | `string` | Some ID to the result HTML |
+| `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
+| `children` | `JSX.ElementChildren` | The button text |
+
+### Example
+
+```jsx
+<button href="https://example.com">Example</button>
+```
+
+## `<div />`
+
+The `<div />` tag is used to create a div in your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `alignY` | `string` | The vertical alignment of the div |
+| `alignX` | `string` | The horizontal alignment of the div |
+| `sectionPending` | `number` | The space between each section inside it |
+| `className` | `string` | Some class to the result HTML |
+| `id` | `string` | Some ID to the result HTML |
+| `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
+| `children` | `JSX.ElementChildren` | The div content |
+| `container` | `boolean` | If it is a container or not |
+| `section` | `boolean` | If it is a section or not |
+
+### Example
+
+- Normal div
+
+```jsx
+<div>
+  <h1>Hello World</h1>
+</div>
+```
+
+- Container div
+
+```jsx
+<div container>
+  <div section>
+    <h1>Hello World 1</h1>
+  </div>
+  <div section>
+    <h1>Hello World 2</h1>
+  </div>
+</div>
+```
+
+Every container div must have at least one section div inside it.
+
+The container div is compiled to a table, and the section div is compiled to a table row.
+
+## `<font />`
+
+The `<font />` tag is used to create a font in your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `href` | `string` | The font URL |
+
+### Example
+
+```jsx
+<font href="https://example.com/font.ttf" />
+```
+
+Use the `<font />` tag in the `<head />` tag.
+
+## `<h1-6 />`
+
+The `<h1-6 />` tag is used to create a heading in your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `align` | `string` | The text alignment |
+| `className` | `string` | Some class to the result HTML |
+| `id` | `string` | Some ID to the result HTML |
+| `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
+| `children` | `JSX.ElementChildren` | The heading text |
+
+### Example
+
+```jsx
+<h1>Hello World</h1>
+<h2>Hello World</h2>
+<h3>Hello World</h3>
+<h4>Hello World</h4>
+<h5>Hello World</h5>
+<h6>Hello World</h6>
+```
+
+## `<head />`
+
+The `<head />` tag is used to create the head of your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `children` | `JSX.ElementChildren` | The head content |
+
+### Example
+
+```jsx
+<head>
+  <title>Hello World</title>
+</head>
+```
+
+## `<hr />`
+
+The `<hr />` tag is used to create a horizontal line in your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `align` | `string` | The text alignment |
+| `size` | `number` | The size of the line |
+| `width` | `number` | The width of the line |
+
+### Example
+
+```jsx
+<hr />
+```
+
+## `<html />`
+
+The `<html />` tag is used to create the HTML of your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `children` | `JSX.ElementChildren` | The HTML content |
+| `lang` | `string` | The HTML language |
+
+### Example
+
+```jsx
+<html lang="en">
+  <head>
+    <title>Hello World</title>
+  </head>
+  <body>
+    <h1>Hello World</h1>
+  </body>
+</html>
+```
+
+## `<img />`
+
+The `<img />` tag is used to create an image in your email. See more about it [here](/docs/image).
+
+It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `align` | `string` | The text alignment |
+| `border` | `number` | The border size |
+| `height` | `number` | The image height |
+| `width` | `number` | The image width |
+| `src` | `string` | The image path [see more](/docs/image) |
+| `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
+| `alt` | `string` | The image alt text |
+
+### Example
+
+```jsx
+import MyImage from './my-image.png';
+
+<img src={MyImage} alt="My Image" />
+```
+
+## `<li />`
+
+The `<li />` tag is used to create a list item in your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `className` | `string` | Some class to the result HTML |
+| `dir` | `string` | The list direction |
+| `id` | `string` | Some ID to the result HTML |
+| `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
+| `type` | `string` | The list type |
+| `children` | `JSX.ElementChildren` | The list item text |
+
+### Example
+
+```jsx
+<li>Example</li>
+```
+
+## `<link />`
+
+The `<link />` tag is used to create a link in your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `rel` | `string` | The link relationship |
+| `href` | `string` | The link URL |
+| `crossOrigin` | `string` | The link cross origin |
+
+### Example
+
+```jsx
+<head>
+  <link rel="stylesheet" href="https://example.com/style.css" />
+</head>
+```
+
+## `<ol />`
+
+The `<ol />` tag is used to create an ordered list in your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `className` | `string` | Some class to the result HTML |
+| `dir` | `string` | The list direction |
+| `id` | `string` | Some ID to the result HTML |
+| `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
+| `type` | `string` | The list type |
+| `children` | `JSX.ElementChildren` | The list items |
+
+### Example
+
+```jsx
+<ol>
+  <li>Example 1</li>
+  <li>Example 2</li>
+  <li>Example 3</li>
+</ol>
+```
+
+## `<p />`
+
+The `<p />` tag is used to create a paragraph in your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `className` | `string` | Some class to the result HTML |
+| `dir` | `string` | The text direction |
+| `id` | `string` | Some ID to the result HTML |
+| `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
+| `type` | `string` | The text type |
+| `children` | `JSX.ElementChildren` | The paragraph text |
+
+### Example
+
+```jsx
+<p>Example</p>
+```
+
+## `<span />`
+
+The `<span />` tag is used to create a span in your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `className` | `string` | Some class to the result HTML |
+| `id` | `string` | Some ID to the result HTML |
+| `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
+| `children` | `JSX.ElementChildren` | The span text |
+
+### Example
+
+```jsx
+<span>Example</span>
+```
+
+## `<strong />`
+
+The `<strong />` tag is used to create a bold text in your email. It is compiled to the `<b />` tag.
+
+So look at the `<b />` tag [here](#b-).
+
+## `<title />`
+
+The `<title />` tag is used to create the title of your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `children` | `JSX.ElementChildren` | The title text |
+
+### Example
+
+```jsx
+<head>
+  <title>Hello World</title>
+</head>
+```
+
+## `<ul />`
+
+The `<ul />` tag is used to create an unordered list in your email. It accepts the following props:
+
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `className` | `string` | Some class to the result HTML |
+| `dir` | `string` | The list direction |
+| `id` | `string` | Some ID to the result HTML |
+| `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
+| `children` | `JSX.ElementChildren` | The list items |
+
+### Example
+
+```jsx
+<ul>
+  <li>Example 1</li>
+  <li>Example 2</li>
+  <li>Example 3</li>
+</ul>
+```
+
+That's it! Now you can create your email template using JSX Mail.
