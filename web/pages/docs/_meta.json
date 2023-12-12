@@ -3,10 +3,10 @@
     "title": "Quickstart"
   },
   "preview": {
-    "title": "Preview Feature"
+    "title": "Preview"
   },
   "image": {
-    "title": "Managing Images"
+    "title": "Image"
   },
   "configuration": {
     "title": "Configuration"
@@ -15,7 +15,7 @@
     "title": "Typescript"
   },
   "cache-clean": {
-    "title": "Cache Clean"
+    "title": "Clearing Cache"
   },
   "style": {
     "title": "Style"
