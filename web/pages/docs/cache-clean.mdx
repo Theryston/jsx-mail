@@ -1,1 +1,16 @@
-# Cache Clean
+# Clearing Cache in JSX Mail
+
+In scenarios where modifications are ineffective, errors occur, or a complete refresh is desired, clearing the cache is a straightforward solution. Utilize the following command to reset and clear cached data:
+
+```sh
+yarn jsxm cache clean
+```
+
+Upon executing this command, JSX Mail performs an extensive cache cleanup. The cache, created during the `jsxm prepare` process, consists of several key directories:
+
+1. `node_modules/@jsx-mail/core/dist/cache`: Stores crucial information like URLs of cloud-uploaded images, selected cloud services, etc.
+2. `node_modules/@jsx-mail/core/dist/mail-app-built`: Contains the compiled mail app, which is the outcome of the `jsxm prepare` command. This includes the conversion of JSX files into JS files.
+3. `node_modules/@jsx-mail/core/dist/optimized-images`: Holds optimized images, a result of the `jsxm prepare` command, where each image is enhanced for performance.
+4. `node_modules/@jsx-mail/core/dist/temp`: Temporary files are stored here, with most being discarded post the `jsxm prepare` execution.
+
+Initiating the cache cleaning process ensures that all these directories are thoroughly cleared, allowing JSX Mail to function with updated data and settings.

@@ -14,9 +14,6 @@
   "typescript": {
     "title": "Typescript"
   },
-  "prepare": {
-    "title": "Prepare"
-  },
   "cache-clean": {
     "title": "Cache Clean"
   },
