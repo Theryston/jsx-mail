@@ -1,7 +1,6 @@
 import { GluegunToolbox } from 'gluegun';
 import load from '../../utils/load';
 import path from 'path';
-import JSON5 from 'json5';
 
 module.exports = {
   command: 'init',
@@ -35,42 +34,6 @@ module.exports = {
       load.succeed('Dependencies installed');
 
       load.start('Preparing configs');
-
-      if (isTypescript) {
-        const tsConfigPath = toolbox.filesystem.path('tsconfig.json');
-        const tsConfigString = toolbox.filesystem.read(tsConfigPath);
-
-        if (!tsConfigString) {
-          toolbox.print.error('No tsconfig.json file found');
-          process.exit(1);
-        }
-
-        const tsConfig = JSON5.parse(tsConfigString);
-
-        const jsxMailCompilerOptions = {
-          types: ['@jsx-mail/core/dist/jsx-runtime/jsx'],
-          jsxImportSource: '@jsx-mail/core/dist',
-          jsx: 'react-jsx',
-        };
-
-        let types;
-
-        if (tsConfig.compilerOptions && tsConfig.compilerOptions.types) {
-          types = tsConfig.compilerOptions.types;
-        } else {
-          types = [];
-        }
-
-        types = [...types, ...jsxMailCompilerOptions.types];
-
-        tsConfig.compilerOptions = {
-          ...tsConfig.compilerOptions,
-          ...jsxMailCompilerOptions,
-          types,
-        };
-
-        toolbox.filesystem.write('tsconfig.json', tsConfig);
-      }
 
       await toolbox.template.generate({
         template: 'jsx-mail.config.js.ejs',
