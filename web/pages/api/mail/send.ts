@@ -8,7 +8,7 @@ import sendEmail from '../../../use-cases/sendEmail';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
-const MAX_SENDS_PER_HOUR = 1;
+const MAX_SENDS_PER_HOUR = 20;
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
