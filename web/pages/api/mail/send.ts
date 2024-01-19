@@ -74,6 +74,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     const startOfHour = new Date();
     startOfHour.setSeconds(0, 0);
     startOfHour.setMinutes(0, 0);
+    startOfHour.setMilliseconds(0);
 
     const count = await db.collection('sent_messages').countDocuments({
       mailId: mail._id,
@@ -85,6 +86,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
       nextHour.setHours(nextHour.getHours() + 1);
       nextHour.setSeconds(0, 0);
       nextHour.setMinutes(0, 0);
+      nextHour.setMilliseconds(0);
 
       return res.status(429).json({
         message: `The limit of ${MAX_SENDS_PER_HOUR} has been reached. Try again at: ${nextHour}`,
