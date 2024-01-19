@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.1.0
+
+### Minor Changes
+
+- ecb60ba: add email sending
+
 ## 2.0.6
 
 ### Patch Changes
