@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.1.2
+
+### Patch Changes
+
+- 3a18e54: fixing tsconfig error while compiling with next.js
+
 ## 2.1.1
 
 ### Patch Changes
