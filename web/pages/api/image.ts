@@ -1,11 +1,15 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
-import type { NextApiRequest, NextApiResponse } from "next";
-import { createRouter } from "next-connect";
-import error from "../../utils/error";
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { createRouter } from 'next-connect';
+import error from '../../utils/error';
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import requestIp from 'request-ip';
-import { connectToDatabase } from "../../config/mongodb";
+import { connectToDatabase } from '../../config/mongodb';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -13,7 +17,7 @@ type Body = {
   hash: string;
   mimetype: string;
   size: number;
-}
+};
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_MIMETYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'];
@@ -39,17 +43,16 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const imagesCount = await getIpImagesCount(db, ip);
 
   if (imagesCount >= MAX_IMAGES_PER_IP) {
-    return res.status(400).json({ message: `you can only upload ${MAX_IMAGES_PER_IP} images` });
+    return res
+      .status(400)
+      .json({ message: `you can only upload ${MAX_IMAGES_PER_IP} images` });
   }
 
-  const url = getImageDirectUrl(
-    body.hash,
-    body.mimetype,
-  );
+  const url = getImageDirectUrl(body.hash, body.mimetype);
 
   const sameIpImage = await db.collection('images').findOne({
     hash: body.hash,
-    ip
+    ip,
   });
 
   if (!sameIpImage) {
@@ -68,12 +71,16 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     upload_url?: string;
   } = {
     url,
-  }
+  };
 
   const imageExists = await existsImage(url);
 
   if (!imageExists) {
-    const uploadUrl = await generatePresignedUrl(body.hash, body.mimetype, body.size);
+    const uploadUrl = await generatePresignedUrl(
+      body.hash,
+      body.mimetype,
+      body.size,
+    );
     result['upload_url'] = uploadUrl;
   }
 
@@ -92,18 +99,20 @@ function getImageDirectUrl(hash: string, mimetype: string) {
   const endpoint = process.env.BACKBLAZE_ENDPOINT!;
   const endpointDomain = endpoint.split('//')[1];
   const bucketName = process.env.BACKBLAZE_BUCKET_NAME!;
-  const url = `https://${bucketName}.${endpointDomain}/${hash}.${mimetype.split('/')[1]}`;
+  const url = `https://${bucketName}.${endpointDomain}/${hash}.${mimetype.split('/')[1]
+    }`;
   return url;
 }
 
-async function getIpImagesCount(
-  db: any,
-  ip: string,
-) {
+async function getIpImagesCount(db: any, ip: string) {
   return await db.collection('images').countDocuments({ ip });
 }
 
-async function generatePresignedUrl(hash: string, mimetype: string, size: number) {
+async function generatePresignedUrl(
+  hash: string,
+  mimetype: string,
+  size: number,
+) {
   const s3Client = new S3Client({
     region: process.env.BACKBLAZE_REGION,
     endpoint: process.env.BACKBLAZE_ENDPOINT,
@@ -173,7 +182,10 @@ async function deleteHandler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(404).json({ message: 'image not found' });
   }
 
-  const differentIpImages = await db.collection('images').find({ hash, ip: { $ne: ip } }).toArray();
+  const differentIpImages = await db
+    .collection('images')
+    .find({ hash, ip: { $ne: ip } })
+    .toArray();
 
   if (!differentIpImages.length) {
     await deleteImage(hash, sameIpImage.mimetype);
@@ -197,7 +209,7 @@ async function deleteImage(hash: string, mimetype: string) {
   const command = new DeleteObjectCommand({
     Bucket: process.env.BACKBLAZE_BUCKET_NAME!,
     Key: `${hash}.${mimetype.split('/')[1]}`,
-  })
+  });
 
   await s3Client.send(command);
 }
@@ -211,16 +223,22 @@ async function getHandler(req: NextApiRequest, res: NextApiResponse) {
 
   const { db } = await connectToDatabase();
 
-  const images = await db.collection('images').find({ ip }, {
-    projection: {
-      _id: 0,
-      hash: 1,
-      mimetype: 1,
-      url: 1,
-      size: 1,
-      created_at: 1,
-    }
-  }).toArray();
+  const images = await db
+    .collection('images')
+    .find(
+      { ip },
+      {
+        projection: {
+          _id: 0,
+          hash: 1,
+          mimetype: 1,
+          url: 1,
+          size: 1,
+          created_at: 1,
+        },
+      },
+    )
+    .toArray();
 
   res.json(images);
 }

@@ -1,40 +1,42 @@
-import { MongoClient, ServerApiVersion, Db } from 'mongodb'
+import { MongoClient, ServerApiVersion, Db } from 'mongodb';
 
 // eslint-disable-next-line turbo/no-undeclared-env-vars
-let uri: string = process.env.MONGODB_URI || ""
+let uri: string = process.env.MONGODB_URI || '';
 
-let cachedClient: MongoClient | null = null
-let cachedDb: Db | null = null
+let cachedClient: MongoClient | null = null;
+let cachedDb: Db | null = null;
 
 if (!uri) {
-	throw new Error(
-		'Please define the MONGODB_URI environment variable inside .env.local'
-	)
+  throw new Error(
+    'Please define the MONGODB_URI environment variable inside .env.local',
+  );
 }
 
+export async function connectToDatabase(): Promise<{
+  client: MongoClient;
+  db: Db;
+}> {
+  if (cachedClient && cachedDb) {
+    return { client: cachedClient, db: cachedDb };
+  }
 
+  const client: MongoClient = new MongoClient(uri, {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+    },
+  });
 
-export async function connectToDatabase(): Promise<{ client: MongoClient, db: Db }> {
-	if (cachedClient && cachedDb) {
-		return { client: cachedClient, db: cachedDb }
-	}
+  await client.connect();
 
-	const client: MongoClient = new MongoClient(uri, {
-		serverApi: {
-			version: ServerApiVersion.v1,
-			strict: true,
-			deprecationErrors: true,
-		},
-	});
+  // eslint-disable-next-line turbo/no-undeclared-env-vars
+  const db: Db = client.db(process.env.VERCEL_ENV as string);
 
-	await client.connect()
+  await db.command({ ping: 1 });
 
-	const db: Db = client.db('prod')
+  cachedClient = client;
+  cachedDb = db;
 
-	await db.command({ ping: 1 })
-
-	cachedClient = client
-	cachedDb = db
-
-	return { client, db }
+  return { client, db };
 }

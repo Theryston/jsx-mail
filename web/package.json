@@ -11,8 +11,12 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.462.0",
     "@aws-sdk/s3-request-presigner": "3.462.0",
+    "@azure/arm-communication": "^4.0.0",
+    "@azure/communication-email": "^1.0.0",
+    "@azure/identity": "^4.0.0",
     "classnames": "^2.3.2",
     "framer-motion": "^10.16.14",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.3.0",
     "next": "13",
     "next-connect": "1.0.0-next.4",
@@ -23,6 +27,7 @@
     "request-ip": "3.3.0"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
