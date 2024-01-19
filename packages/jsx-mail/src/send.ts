@@ -17,19 +17,31 @@ export default async function send(templateName: string, data: Data) {
 
   const html = await render(templateName, data.props);
 
-  const { data: result } = await axios.post(
-    `https://jsxmail.org/api/mail/send`,
-    {
-      html,
-      subject: data.subject,
-      to: data.to,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${jsxMailToken}`,
+  try {
+    await axios.post(
+      `https://jsxmail.org/api/mail/send`,
+      {
+        html,
+        subject: data.subject,
+        to: data.to,
       },
-    },
-  );
+      {
+        headers: {
+          Authorization: `Bearer ${jsxMailToken}`,
+        },
+      },
+    );
 
-  return result as { message: 'SENT' };
+    return {
+      message: 'SENT',
+    };
+  } catch (error: any) {
+    let message = error.response?.data?.message || 'Error while sending email';
+
+    if (error.response?.data?.code === 'NOT_EXISTS') {
+      message = `The email from the token does not exists`;
+    }
+
+    throw new Error(message);
+  }
 }
