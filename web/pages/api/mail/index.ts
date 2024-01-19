@@ -140,7 +140,7 @@ async function deleteHandler(req: NextApiRequest, res: NextApiResponse) {
     process.env.AZURE_RESOURCE_GROUP_NAME as string,
     process.env.AZURE_EMAIL_SERVICE_NAME as string,
     process.env.AZURE_DOMAIN_NAME as string,
-    _id,
+    mail.username,
   );
 
   await db.collection('sent_messages').deleteMany({
