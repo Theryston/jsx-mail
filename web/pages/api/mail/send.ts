@@ -5,6 +5,7 @@ import error from '../../../utils/error';
 import * as jwt from 'jsonwebtoken';
 import { connectToDatabase } from '../../../config/mongodb';
 import sendEmail from '../../../use-cases/sendEmail';
+import { ObjectId } from 'mongodb';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -28,11 +29,11 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    let username = '';
+    let _id = '';
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
-      username = (decoded as any).username;
+      _id = (decoded as any)._id;
     } catch (error) {
       return res.status(403).json({
         message: 'Invalid token',
@@ -62,7 +63,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     const { db } = await connectToDatabase();
 
     const mail = await db.collection('mails').findOne({
-      username,
+      _id: new ObjectId(_id),
     });
 
     if (!mail) {

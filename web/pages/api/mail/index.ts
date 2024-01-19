@@ -6,6 +6,7 @@ import * as jwt from 'jsonwebtoken';
 import { connectToDatabase } from '../../../config/mongodb';
 import { CommunicationServiceManagementClient } from '@azure/arm-communication';
 import azureCredential from '@/config/azure-credential';
+import { ObjectId } from 'mongodb';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -101,27 +102,27 @@ async function deleteHandler(req: NextApiRequest, res: NextApiResponse) {
     });
   }
 
-  let username = '';
+  let _id = '';
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
-    username = (decoded as any).username;
+    _id = (decoded as any)._id;
   } catch (error) {
     return res.status(403).json({
       message: 'Invalid token',
     });
   }
 
-  if (!username) {
+  if (!_id) {
     return res.status(403).json({
-      message: 'Invalid username',
+      message: 'Invalid _id',
     });
   }
 
   const { db } = await connectToDatabase();
 
   const mail = await db.collection('mails').findOne({
-    username,
+    _id: new ObjectId(_id),
   });
 
   if (!mail) {
@@ -139,7 +140,7 @@ async function deleteHandler(req: NextApiRequest, res: NextApiResponse) {
     process.env.AZURE_RESOURCE_GROUP_NAME as string,
     process.env.AZURE_EMAIL_SERVICE_NAME as string,
     process.env.AZURE_DOMAIN_NAME as string,
-    username,
+    _id,
   );
 
   await db.collection('sent_messages').deleteMany({

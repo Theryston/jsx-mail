@@ -30,7 +30,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const token = jwt.sign(
-    { username: mail.username },
+    { _id: mail._id },
     process.env.JWT_SECRET || 'secret',
     {
       expiresIn: '200y',
