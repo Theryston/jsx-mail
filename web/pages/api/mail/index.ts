@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createRouter } from 'next-connect';
 import error from '../../../utils/error';
+import * as jwt from 'jsonwebtoken';
 import { connectToDatabase } from '../../../config/mongodb';
 import { CommunicationServiceManagementClient } from '@azure/arm-communication';
 import azureCredential from '@/config/azure-credential';
@@ -83,6 +84,76 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
+async function deleteHandler(req: NextApiRequest, res: NextApiResponse) {
+  const auth = req.headers['authorization'];
+
+  if (!auth) {
+    return res.status(403).json({
+      message: 'Auth not found',
+    });
+  }
+
+  const token = auth.split(' ')[1];
+
+  if (!token) {
+    return res.status(403).json({
+      message: 'Token not found',
+    });
+  }
+
+  let username = '';
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    username = (decoded as any).username;
+  } catch (error) {
+    return res.status(403).json({
+      message: 'Invalid token',
+    });
+  }
+
+  if (!username) {
+    return res.status(403).json({
+      message: 'Invalid username',
+    });
+  }
+
+  const { db } = await connectToDatabase();
+
+  const mail = await db.collection('mails').findOne({
+    username,
+  });
+
+  if (!mail) {
+    return res.status(400).json({
+      code: 'NOT_EXISTS',
+    });
+  }
+
+  const mgmtClient = new CommunicationServiceManagementClient(
+    azureCredential,
+    process.env.AZURE_SUBSCRIPTION_ID as string,
+  );
+
+  await mgmtClient.senderUsernames.delete(
+    process.env.AZURE_RESOURCE_GROUP_NAME as string,
+    process.env.AZURE_EMAIL_SERVICE_NAME as string,
+    process.env.AZURE_DOMAIN_NAME as string,
+    username,
+  );
+
+  await db.collection('sent_messages').deleteMany({
+    mail_id: mail._id,
+  });
+
+  await db.collection('mails').deleteOne({
+    _id: mail._id,
+  });
+
+  return res.status(200).json({ code: 'DELETED' });
+}
+
 router.post(postHandler);
+router.delete(deleteHandler);
 
 export default router.handler(error);
