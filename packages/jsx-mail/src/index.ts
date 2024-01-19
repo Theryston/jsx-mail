@@ -1,4 +1,5 @@
 import render from './render';
+import send from './send';
 import './utils/config-env';
 
 type ProcessName =
@@ -28,4 +29,4 @@ export type JsxMailConfig = {
   awsFolder?: string;
 };
 
-export { render };
+export { render, send };

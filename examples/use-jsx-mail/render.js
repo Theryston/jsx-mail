@@ -4,13 +4,13 @@ const fs = require('fs');
 console.time('Jsx mail render');
 
 jsxMail
-  .render('user-created', {
+  .render('news', {
     name: 'John Doe',
   })
   .then((html) => {
     console.timeEnd('Jsx mail render');
-    fs.writeFileSync('user-created.html', html);
-    console.log('Mail template HTML saved to user-created.html');
+    fs.writeFileSync('news.html', html);
+    console.log('Mail template HTML saved to news.html');
   })
   .catch((error) => {
     console.error('error', error);
