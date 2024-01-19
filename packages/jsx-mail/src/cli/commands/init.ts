@@ -1,6 +1,7 @@
 import { GluegunToolbox } from 'gluegun';
 import load from '../../utils/load';
 import path from 'path';
+import JSON5 from 'json5';
 
 module.exports = {
   command: 'init',
@@ -34,6 +35,25 @@ module.exports = {
       load.succeed('Dependencies installed');
 
       load.start('Preparing configs');
+
+      if (isTypescript) {
+        const tsConfigPath = toolbox.filesystem.path('tsconfig.json');
+        const tsConfigString = toolbox.filesystem.read(tsConfigPath);
+
+        if (!tsConfigString) {
+          toolbox.print.error('No tsconfig.json file found');
+          process.exit(1);
+        }
+
+        let tsConfig = JSON5.parse(tsConfigString);
+
+        tsConfig = {
+          ...tsConfig,
+          exclude: [...tsConfig.exclude, 'mail'],
+        };
+
+        toolbox.filesystem.write('tsconfig.json', tsConfig);
+      }
 
       await toolbox.template.generate({
         template: 'jsx-mail.config.js.ejs',

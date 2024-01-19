@@ -5,5 +5,6 @@
     "jsxImportSource": "@jsx-mail/core/dist",
     "jsx": "react-jsx"
   },
-  "include": ["./**/*"]
+  "include": ["./**/*"],
+  "exclude": ["../node_modules"]
 }
