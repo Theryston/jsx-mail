@@ -77,7 +77,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     startOfHour.setMilliseconds(0);
 
     const count = await db.collection('sent_messages').countDocuments({
-      mailId: mail._id,
+      mail_id: mail._id,
       created_at: { $gte: startOfHour },
     });
 
@@ -101,7 +101,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     });
 
     await db.collection('sent_messages').insertOne({
-      mailId: mail._id,
+      mail_id: mail._id,
       html,
       subject,
       to,
