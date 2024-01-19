@@ -26,6 +26,9 @@
   "cloud": {
     "title": "Cloud"
   },
+  "email": {
+    "title": "Email Functionality"
+  },
   "core": {
     "title": "Core"
   }
