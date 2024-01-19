@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.0.6
+
+### Patch Changes
+
+- 01410b4: fixing nextjs error
+
 ## 2.0.5
 
 ### Patch Changes
