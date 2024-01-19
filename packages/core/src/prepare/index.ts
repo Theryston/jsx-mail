@@ -32,6 +32,8 @@ import getStorage from '../utils/storage';
 import { ImageInfo } from '..';
 import { cloudUploadImage } from '../cloud/image/upload';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import path from 'path';
+import { writeFileSync } from 'fs';
 
 handleImagesImport();
 
@@ -119,6 +121,8 @@ export default async function prepare(dirPath: string, options?: Options) {
       forceUploadImages();
     }
 
+    await prepareForFrameworks();
+
     const warnings = readGlobalVariable('__jsx_mail_warnings');
 
     cleanAllGlobalVariables();
@@ -130,6 +134,55 @@ export default async function prepare(dirPath: string, options?: Options) {
     };
   } catch (error) {
     handleErrors(error);
+  }
+}
+
+async function prepareForFrameworks() {
+  const baseCorePath = getBaseCorePath();
+
+  const nextJsPath = joinPath(baseCorePath, '..', '.next');
+  const usingNextJs = await exists(nextJsPath);
+
+  if (usingNextJs) {
+    await prepareForNextJs(nextJsPath);
+    return;
+  }
+}
+
+async function prepareForNextJs(nextJsPath: string) {
+  const nftFilesPath = await getAllFilesByDirectory(nextJsPath, {
+    extensions: ['.nft.json'],
+  });
+
+  for (const nftFilePath of nftFilesPath) {
+    const fileStr = await readFile(nftFilePath.path);
+    const fileJson = JSON.parse(fileStr);
+
+    if (!fileJson.files) {
+      continue;
+    }
+
+    const usingJSXMail = !!fileJson.files.find((f: string) =>
+      f.endsWith('jsx-mail/package.json'),
+    );
+
+    if (!usingJSXMail) {
+      continue;
+    }
+
+    const baseCorePath = getBaseCorePath();
+
+    const allCoreFiles = await getAllFilesByDirectory(baseCorePath);
+
+    for (const fileCore of allCoreFiles) {
+      const folderPath = path.dirname(nftFilePath.path);
+      const relativePath = path
+        .relative(folderPath, fileCore.path)
+        .replaceAll('\\', '/');
+      fileJson.files.push(relativePath);
+    }
+
+    writeFileSync(nftFilePath.path, JSON.stringify(fileJson));
   }
 }
 

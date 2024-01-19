@@ -34,9 +34,7 @@ export function joinPath(...paths: string[]) {
 }
 
 export function getBaseCorePath() {
-  const currentPath = __dirname;
-
-  const distPath = joinPath(currentPath, '..');
+  const distPath = joinPath(process.cwd(), '.jsxmail');
 
   return distPath;
 }
@@ -83,14 +81,18 @@ export async function getAllFilesByDirectory(
     } else {
       const fileExt = entry.split('.').pop() as string;
 
-      if (extensions && extensions.length && !extensions.includes(fileExt)) {
+      if (
+        extensions &&
+        extensions.length &&
+        !extensions.find((ex) => entry.endsWith(ex))
+      ) {
         continue;
       }
 
       if (
         excludeExtensions &&
         excludeExtensions.length &&
-        excludeExtensions.includes(fileExt)
+        excludeExtensions.find((ex) => entry.endsWith(ex))
       ) {
         continue;
       }

@@ -2,6 +2,7 @@ import { GluegunToolbox } from 'gluegun';
 import load from '../../utils/load';
 import path from 'path';
 import JSON5 from 'json5';
+import core from '@jsx-mail/core';
 
 module.exports = {
   command: 'init',
@@ -54,6 +55,14 @@ module.exports = {
 
         toolbox.filesystem.write('tsconfig.json', tsConfig);
       }
+
+      toolbox.filesystem.append(
+        '.gitignore',
+        `${toolbox.filesystem.exists('.gitignore') ? `\n\n` : ''}${core
+          .getBaseCorePath()
+          .replace(`${process.cwd()}/`, '')
+          .replace(`${process.cwd()}\\`, '')}`,
+      );
 
       await toolbox.template.generate({
         template: 'jsx-mail.config.js.ejs',
