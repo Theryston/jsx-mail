@@ -102,7 +102,6 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
 
     await db.collection('sent_messages').insertOne({
       mail_id: mail._id,
-      html,
       subject,
       to,
       created_at: new Date(),
