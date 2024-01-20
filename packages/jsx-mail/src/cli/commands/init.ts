@@ -16,18 +16,18 @@ module.exports = {
       const packageJsonExists = toolbox.filesystem.exists('package.json');
 
       if (!packageJsonExists) {
-        toolbox.print.error('No package.json file found');
-        process.exit(1);
+        toolbox.filesystem.write(
+          'package.json',
+          JSON.stringify({
+            name: path.basename(process.cwd()),
+            version: '1.0.0',
+            main: 'index.js',
+            license: 'MIT',
+          }),
+        );
       }
 
       const packageJson = toolbox.filesystem.read('package.json', 'json');
-
-      if (
-        !packageJson.dependencies ||
-        !packageJson.dependencies['@jsx-mail/core']
-      ) {
-        await toolbox.packageManager.add('@jsx-mail/core', {});
-      }
 
       if (!packageJson.dependencies || !packageJson.dependencies['jsx-mail']) {
         await toolbox.packageManager.add('jsx-mail', {});
