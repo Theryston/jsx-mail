@@ -19,6 +19,8 @@ yarn add jsx-mail && yarn jsxm init
 }
 ```
 
+**IMPORTANT**: in the `dev` script the `jsxm prepare` command must come BEFORE `next dev` and in the `build` script the `jsxm prepare` command must come AFTER `next build` this is important because when you are in production (with the build) JSX Mail makes some changes to the NextJS built files to ensure that it will work on clouds like Vercel.
+
 Perfect, now you can normally use jsx mail and all its features directly in your Next.js application.
 
 You can see an example of [template rendering](https://jsxmail.org/docs#rendering-in-code) in the [/pages/api/render-email.ts](/pages/api/render-email.ts) file and an example of [sending an email with JSX Mail Cloud](https://jsxmail.org/docs/email#sending-emails) in the [/pages/api/send-email.ts](/pages/api/send-email.ts) file.
