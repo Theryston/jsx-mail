@@ -36,10 +36,10 @@
     "gluegun": "^5.1.6",
     "json5": "^2.2.3",
     "loading-cli": "^1.1.2",
-    "socket.io": "^4.7.2"
+    "socket.io": "^4.7.2",
+    "@jsx-mail/core": "*"
   },
   "devDependencies": {
-    "@jsx-mail/core": "*",
     "@jsx-mail/eslint-config": "*",
     "@jsx-mail/typescript-config": "*",
     "@types/eslint": "^8.44.8",
