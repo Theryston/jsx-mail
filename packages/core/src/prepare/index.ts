@@ -172,11 +172,13 @@ async function prepareForNextJs(nextJsPath: string) {
 
     const baseCorePath = getBaseCorePath();
 
-    const allCoreFiles = await getAllFilesByDirectory(baseCorePath, {
-      excludeExtensions: ['png', 'jpg', 'jpeg', 'gif'],
-    });
+    const allCoreFiles = await getAllFilesByDirectory(baseCorePath);
 
     for (const fileCore of allCoreFiles) {
+      if (fileCore.path.includes('optimized-images')) {
+        continue;
+      }
+
       const folderPath = path.dirname(nftFilePath.path);
       const relativePath = path
         .relative(folderPath, fileCore.path)
