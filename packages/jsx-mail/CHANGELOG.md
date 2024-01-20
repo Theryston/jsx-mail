@@ -1,5 +1,13 @@
 # jsx-mail
 
+## 2.1.4
+
+### Patch Changes
+
+- 516cdd1: fix: add @jsx-mail/core to dependencies
+- Updated dependencies [374d2d5]
+  - @jsx-mail/core@2.0.9
+
 ## 2.1.3
 
 ### Patch Changes

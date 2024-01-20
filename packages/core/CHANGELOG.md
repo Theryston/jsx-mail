@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.0.9
+
+### Patch Changes
+
+- 374d2d5: fix: ignore only the folder optimized-images
+
 ## 2.0.8
 
 ### Patch Changes
