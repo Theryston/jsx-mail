@@ -96,11 +96,8 @@ async function existsImage(url: string) {
 }
 
 function getImageDirectUrl(hash: string, mimetype: string) {
-  const endpoint = process.env.BACKBLAZE_ENDPOINT!;
-  const endpointDomain = endpoint.split('//')[1];
-  const bucketName = process.env.BACKBLAZE_BUCKET_NAME!;
-  const url = `https://${bucketName}.${endpointDomain}/${hash}.${mimetype.split('/')[1]
-    }`;
+  const filePath = `https://${process.env.IMAGES_CDN_HOST}/${hash}`;
+  const url = `${filePath}.${mimetype.split('/')[1]}`;
   return url;
 }
 
