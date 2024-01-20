@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.0.8
+
+### Patch Changes
+
+- 1ad219e: add exclude images
+
 ## 2.0.7
 
 ### Patch Changes
