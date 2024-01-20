@@ -23,4 +23,4 @@ yarn add jsx-mail && yarn jsxm init
 
 Perfect, now you can normally use jsx mail and all its features directly in your Next.js application.
 
-You can see an example of [template rendering](https://jsxmail.org/docs#rendering-in-code) in the [/pages/api/render-email.ts](/pages/api/render-email.ts) file and an example of [sending an email with JSX Mail Cloud](https://jsxmail.org/docs/email#sending-emails) in the [/pages/api/send-email.ts](/pages/api/send-email.ts) file.
+You can see an example of [template rendering](https://jsxmail.org/docs#rendering-in-code) in the [./pages/api/render-email.ts](./pages/api/render-email.ts) file and an example of [sending an email with JSX Mail Cloud](https://jsxmail.org/docs/email#sending-emails) in the [./pages/api/send-email.ts](./pages/api/send-email.ts) file.
