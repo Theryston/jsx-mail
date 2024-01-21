@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.1.5
+
+### Patch Changes
+
+- 111823a: fixing install jsx mail core
+
 ## 2.1.4
 
 ### Patch Changes
