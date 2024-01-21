@@ -29,6 +29,13 @@ module.exports = {
 
       const packageJson = toolbox.filesystem.read('package.json', 'json');
 
+      if (
+        !packageJson.dependencies ||
+        !packageJson.dependencies['@jsx-mail/core']
+      ) {
+        await toolbox.packageManager.add('@jsx-mail/core', {});
+      }
+
       if (!packageJson.dependencies || !packageJson.dependencies['jsx-mail']) {
         await toolbox.packageManager.add('jsx-mail', {});
       }
