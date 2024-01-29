@@ -1,0 +1,37 @@
+service: gender-name-api
+
+useDotenv: true
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+  - serverless-domain-manager
+
+package:
+  patterns:
+    - '!models/**'
+    - '!docs/**'
+
+# custom:
+#   customDomain:
+#     domainName: api.jsxmail.org
+#     basePath: ''
+#     stage: ${opt:stage, self:provider.stage, "dev"}
+#     createRoute53Record: true
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  timeout: 300 # Timeout after 5 minutes
+
+
+functions:
+  main:
+    handler: dist/main.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
