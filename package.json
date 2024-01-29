@@ -17,7 +17,8 @@
   "workspaces": [
     "apps/*",
     "packages/*",
-    "web"
+    "web",
+    "api"
   ],
   "dependencies": {
     "@changesets/cli": "^2.27.1"

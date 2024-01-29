@@ -4,5 +4,6 @@
       "mode": "auto"
     }
   ],
-  "cSpell.words": ["BACKBLAZE", "MIMETYPES"]
+  "cSpell.words": ["BACKBLAZE", "MIMETYPES"],
+  "editor.tabSize": 2
 }
