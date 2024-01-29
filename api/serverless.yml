@@ -1,11 +1,11 @@
-service: gender-name-api
+service: jsxmail-cloud-api
 
 useDotenv: true
 
 plugins:
   - serverless-offline
   - serverless-dotenv-plugin
-  - serverless-domain-manager
+  # - serverless-domain-manager
 
 package:
   patterns:
@@ -22,7 +22,7 @@ package:
 provider:
   name: aws
   runtime: nodejs18.x
-  timeout: 300 # Timeout after 5 minutes
+  timeout: 30 # Timeout after 30 seconds
 
 
 functions:
