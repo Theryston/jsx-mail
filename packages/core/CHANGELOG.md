@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.0.13
+
+### Patch Changes
+
+- d9be75a: fix: error for replace insert
+
 ## 2.0.12
 
 ### Patch Changes
