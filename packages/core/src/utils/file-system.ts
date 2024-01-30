@@ -17,8 +17,6 @@ const STYLE_EXT_FILE = [
   'styles.jsx',
 ];
 
-declare const __dirname: string;
-
 type GetAllFilesByDirectoryOptions = {
   extensions?: string[];
   excludeExtensions?: string[];
@@ -140,6 +138,10 @@ export async function getAllTemplates(pathDir: string) {
 
     if (shouldIgnore) {
       continue;
+    }
+
+    if (fileName === 'index') {
+      templateFile.path = path.dirname(templateFile.path);
     }
 
     templateFiles.push(templateFile);
