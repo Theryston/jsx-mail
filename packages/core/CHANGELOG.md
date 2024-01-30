@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.0.12
+
+### Patch Changes
+
+- 9e61ab1: fix: flex gap
+
 ## 2.0.11
 
 ### Patch Changes
