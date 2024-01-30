@@ -20,7 +20,7 @@ import StrongHandler, { StrongProps } from './handlers/strong';
 import TitleHandler, { TitleProps } from './handlers/title';
 import UlHandler, { UlProps } from './handlers/ul';
 
-export function InjectChildrenProps(
+export function InjectChildrenPropsOrReplaceDefault(
   children: ChildrenJSXMailVirtualDOM[],
   node: string,
   props: any,
@@ -34,11 +34,32 @@ export function InjectChildrenProps(
     }
 
     if (child.node === node) {
-      child.props = { ...child.props, ...props };
+      child.props = { ...child.props };
+
+      for (const propKey of Object.keys(props)) {
+        const currentValue = child.props[propKey];
+
+        if (!currentValue) {
+          child.props[propKey] = props[propKey];
+          continue;
+        }
+
+        if (
+          typeof currentValue === 'string' &&
+          currentValue.startsWith('__jsx_default_')
+        ) {
+          child.props[propKey] = props[propKey];
+          continue;
+        }
+      }
     }
 
     if (child.children.length) {
-      child.children = InjectChildrenProps(child.children, node, props);
+      child.children = InjectChildrenPropsOrReplaceDefault(
+        child.children,
+        node,
+        props,
+      );
     }
 
     newChildren.push(child);

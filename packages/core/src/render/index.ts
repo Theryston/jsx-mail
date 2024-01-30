@@ -89,7 +89,15 @@ function convertToHTML(virtualDOM: JSXMailVirtualDOM) {
     .join('');
 
   const propsHTML = Object.keys(props)
-    .map((key) => ` ${key}="${props[key]}"`)
+    .map((key) => {
+      let value = props[key];
+
+      if (typeof value === 'string' && value.startsWith('__jsx_default_')) {
+        value = value.replace('__jsx_default_', '');
+      }
+
+      return ` ${key}="${value}"`;
+    })
     .join('');
 
   let html = `<${node}${propsHTML}`;

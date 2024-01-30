@@ -1,4 +1,8 @@
-import { InjectChildrenProps, getChildrenFromProps, getProps } from '..';
+import {
+  InjectChildrenPropsOrReplaceDefault,
+  getChildrenFromProps,
+  getProps,
+} from '..';
 import { JSXMailVirtualDOM } from '../../..';
 import CoreError from '../../../utils/error';
 import getStyle from '../../get-style';
@@ -68,8 +72,8 @@ function TdVirtualDOM(
     node: 'td',
     props: {
       ...getProps(props, style),
-      align: 'left',
-      valign: 'top',
+      align: '__jsx_default_left',
+      valign: '__jsx_default_top',
     },
     children,
     __jsx_mail_vdom: true,
@@ -128,8 +132,8 @@ function SectionVirtualDOM(
     );
   }
 
-  const align = props.alignX || 'left';
-  const valign = props.alignY || 'top';
+  const align = props.alignX || '__jsx_default_left';
+  const valign = props.alignY || '__jsx_default_top';
 
   delete props.section;
   delete props.alignX;
@@ -137,7 +141,10 @@ function SectionVirtualDOM(
   delete props.children;
   delete props.style;
 
-  children = InjectChildrenProps(children, 'td', { align, valign });
+  children = InjectChildrenPropsOrReplaceDefault(children, 'td', {
+    align,
+    valign,
+  });
 
   return {
     node: 'tr',
