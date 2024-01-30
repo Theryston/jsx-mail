@@ -22,8 +22,8 @@ export default function Layout({
             {children}
           </div>
         </div>
-        <div container>
-          <div style={S.Footer} section flex alignX="center" alignY="center">
+        <div style={S.Footer} container>
+          <div flex section>
             <p>@ {new Date().getFullYear()}</p>
             <p>JSX Mail</p>
           </div>

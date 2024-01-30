@@ -6,7 +6,6 @@ import getStyle from '../../get-style';
 export const DivProps = [
   'alignY',
   'alignX',
-  'sectionPending',
   'className',
   'id',
   'style',
@@ -27,10 +26,6 @@ function handlePropsContainerError(props: JSX.IntrinsicElements['div']) {
 }
 
 function handlePropsSectionError(props: JSX.IntrinsicElements['div']) {
-  if (props.sectionPending) {
-    throw new CoreError('prop_padding_not_supported');
-  }
-
   if (props.flex && !props.section) {
     throw new CoreError('prop_flex_not_supported');
   }
@@ -83,13 +78,37 @@ function TdVirtualDOM(
 
 function SectionVirtualDOM(
   props: JSX.IntrinsicElements['div'],
+  ignoreFlexSub?: boolean,
 ): JSXMailVirtualDOM {
-  const flex = props.flex;
+  let flex = props.flex;
+  let style = getStyle(props);
+
   delete props.flex;
 
   let children = getChildrenFromProps(props);
 
-  if (!flex) {
+  if (!ignoreFlexSub && flex) {
+    style = '';
+    flex = false;
+    children = [
+      TdVirtualDOM({
+        children: [
+          ContainerVirtualDOM({
+            style: props.style,
+            children: [
+              SectionVirtualDOM(
+                {
+                  flex: true,
+                  children: children as any,
+                },
+                true,
+              ) as any,
+            ],
+          }) as any,
+        ],
+      }),
+    ];
+  } else if (!flex) {
     children = [
       TdVirtualDOM({
         children: props.children,
@@ -112,8 +131,6 @@ function SectionVirtualDOM(
   const align = props.alignX || 'left';
   const valign = props.alignY || 'top';
 
-  const style = getStyle(props);
-
   delete props.section;
   delete props.alignX;
   delete props.alignY;
@@ -134,13 +151,19 @@ function ContainerVirtualDOM(
   props: JSX.IntrinsicElements['div'],
 ): JSXMailVirtualDOM {
   const children = getChildrenFromProps(props);
+  let width = '0';
+
+  if (props.style?.width) {
+    width = props.style.width;
+  }
+
+  delete props.style?.width;
+
   const style = getStyle(props);
-  const cellpadding = props.sectionPending || '0';
 
   delete props.children;
   delete props.style;
   delete props.container;
-  delete props.sectionPending;
 
   const invalidChildren = children.filter(
     (c: any) => !c.__jsx_mail_vdom || c.node !== 'tr',
@@ -157,8 +180,8 @@ function ContainerVirtualDOM(
   return {
     node: 'table',
     props: {
-      width: '100%',
-      cellpadding,
+      width,
+      cellpadding: '0',
       cellspacing: '0',
       ...getProps(props, style),
     },

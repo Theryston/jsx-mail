@@ -107,3 +107,24 @@ function checkStyleValue(
     }
   }
 }
+
+export function getStyleFromString(styleString: string, key: string) {
+  if (typeof styleString !== 'string') {
+    return undefined;
+  }
+
+  const styles = styleString.split(';').filter((s) => s);
+
+  for (const style of styles) {
+    const [keyStyle, value] = style.split(':');
+
+    if (key === keyStyle) {
+      return {
+        key: keyStyle,
+        value,
+      };
+    }
+  }
+
+  return undefined;
+}
