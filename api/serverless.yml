@@ -6,25 +6,23 @@ plugins:
   - serverless-offline
   - serverless-dotenv-plugin
   - serverless-plugin-monorepo
-  # - serverless-domain-manager
+  - serverless-domain-manager
 
 package:
   patterns:
     - '!models/**'
     - '!docs/**'
 
-# custom:
-#   customDomain:
-#     domainName: api.jsxmail.org
-#     basePath: ''
-#     stage: ${opt:stage, self:provider.stage, "dev"}
-#     createRoute53Record: true
+custom:
+  customDomain:
+    domainName: api.jsxmail.org
+    basePath: ''
+    stage: ${opt:stage, self:provider.stage, "dev"}
+    createRoute53Record: true
 
 provider:
   name: aws
   runtime: nodejs18.x
-  timeout: 30 # Timeout after 30 seconds
-
 
 functions:
   main:

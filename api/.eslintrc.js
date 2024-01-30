@@ -6,7 +6,6 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint/eslint-plugin'],
-  extends: ['@jsx-mail/eslint-config/library.js'],
   root: true,
   env: {
     node: true,
