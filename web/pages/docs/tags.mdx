@@ -92,19 +92,19 @@ The `<button />` tag is used to create a button in your email. It accepts the fo
 
 ## `<div />`
 
-The `<div />` tag is used to create a div in your email. It accepts the following props:
+The `<div />` tag is used to create structure in your emails. It is super flexible and JSX Mail automatically compiles it into tables if necessary. It accepts the following props:
 
 | Prop | Type | Description |
 | ---- | ---- | ----------- |
-| `alignY` | `string` | The vertical alignment of the div |
-| `alignX` | `string` | The horizontal alignment of the div |
-| `sectionPending` | `number` | The space between each section inside it |
-| `className` | `string` | Some class to the result HTML |
 | `id` | `string` | Some ID to the result HTML |
 | `style` | `JSX.ElementStyle` | Some style to the result HTML [see more here](/docs/style) |
 | `children` | `JSX.ElementChildren` | The div content |
-| `container` | `boolean` | If it is a container or not |
-| `section` | `boolean` | If it is a section or not |
+| `className` | `string` | Some class to the result HTML |
+| `container` | `boolean` | If it is a container or not. If container is `true`, jsx mail will compile your `div` to a `table` tag in the html |
+| `section` | `boolean` | If it is a section or not. If section is `true`, jsx mail will compile your `div` to a `tr` tag in the html |
+| `flex` | `boolean` | If `true`, jsx mail will automatically place each element within its section in a separate `td` tag. If it is `false`, JSX Mail will place all elements within your section in a single `td`. Only sections can have this defined |
+| `alignX` | `string` | The horizontal alignment of the div. Only sections can have this defined |
+| `alignY` | `string` | The vertical alignment of the div. Only sections can have this defined |
 
 ### Example
 
@@ -123,8 +123,9 @@ The `<div />` tag is used to create a div in your email. It accepts the followin
   <div section>
     <h1>Hello World 1</h1>
   </div>
-  <div section>
-    <h1>Hello World 2</h1>
+  <div section flex>
+    <h2>Hello World 2</h2>
+    <h2>Hello World 3</h2>
   </div>
 </div>
 ```
