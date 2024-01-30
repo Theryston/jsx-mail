@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.1.6
+
+### Patch Changes
+
+- 223c239: fix ts when exclude is undefined
+
 ## 2.1.5
 
 ### Patch Changes
