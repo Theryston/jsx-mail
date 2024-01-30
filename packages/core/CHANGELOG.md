@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.0.11
+
+### Patch Changes
+
+- ea9e62b: fix: flex and alignment
+
 ## 2.0.10
 
 ### Patch Changes
