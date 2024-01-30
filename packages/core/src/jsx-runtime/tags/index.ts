@@ -1,4 +1,4 @@
-import { JSXMailVirtualDOM } from '../..';
+import { ChildrenJSXMailVirtualDOM, JSXMailVirtualDOM } from '../..';
 import AHandler, { AProps } from './handlers/a';
 import BHandler, { BProps } from './handlers/b';
 import BodyHandler, { BodyProps } from './handlers/body';
@@ -20,8 +20,35 @@ import StrongHandler, { StrongProps } from './handlers/strong';
 import TitleHandler, { TitleProps } from './handlers/title';
 import UlHandler, { UlProps } from './handlers/ul';
 
+export function InjectChildrenProps(
+  children: ChildrenJSXMailVirtualDOM[],
+  node: string,
+  props: any,
+): ChildrenJSXMailVirtualDOM[] {
+  const newChildren: ChildrenJSXMailVirtualDOM[] = [];
+
+  for (const child of children) {
+    if (typeof child !== 'object') {
+      newChildren.push(child);
+      continue;
+    }
+
+    if (child.node === node) {
+      child.props = { ...child.props, ...props };
+    }
+
+    if (child.children.length) {
+      child.children = InjectChildrenProps(child.children, node, props);
+    }
+
+    newChildren.push(child);
+  }
+
+  return newChildren;
+}
+
 export function getChildrenFromProps(props: any) {
-  let children = props.children;
+  let children = props.children as ChildrenJSXMailVirtualDOM[];
 
   if (children && !Array.isArray(children)) {
     children = [children];

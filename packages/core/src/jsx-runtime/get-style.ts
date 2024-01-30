@@ -4,6 +4,7 @@ import CoreError from '../utils/error';
 export const CSS_LIST = {
   backgroundColor: ['*'],
   border: ['*'],
+  boxSizing: ['*'],
   borderBottom: ['*'],
   borderBottomColor: ['*'],
   borderBottomStyle: ['*'],

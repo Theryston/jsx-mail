@@ -31,6 +31,7 @@ declare namespace JSX {
   type ElementStyle = {
     backgroundColor?: string;
     border?: string;
+    boxSizing?: string;
     borderBottom?: string;
     borderBottomColor?: string;
     borderBottomStyle?: string;
@@ -98,6 +99,7 @@ declare namespace JSX {
       children?: ElementChildren;
       container?: boolean;
       section?: boolean;
+      flex?: boolean;
     };
     title: {
       children: string;
