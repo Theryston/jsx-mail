@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.0.10
+
+### Patch Changes
+
+- d3dc474: fix: adding jsx mail handle index file as template
+
 ## 2.0.9
 
 ### Patch Changes
