@@ -23,7 +23,8 @@
     "rxjs": "^7.8.1",
     "serverless-domain-manager": "^7.3.3",
     "serverless-dotenv-plugin": "^6.0.0",
-    "serverless-offline": "^13.3.3"
+    "serverless-offline": "^13.3.3",
+    "serverless-plugin-monorepo": "^0.11.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
