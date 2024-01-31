@@ -38,7 +38,10 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   );
 
   await sendEmail({
-    from: 'auth@jsxmail.org',
+    from: {
+      email: 'auth@jsxmail.org',
+      name: 'JSX Mail Auth',
+    },
     html: `<p>Your token:</p> <p>${token}</p> <p>We recommend that you copy the token above, store it in a safe location and then delete this email so that no one can access your token.</p>`,
     subject: `Here's your token`,
     to: [mail.email],

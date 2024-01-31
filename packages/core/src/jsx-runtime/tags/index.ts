@@ -1,4 +1,4 @@
-import { JSXMailVirtualDOM } from '../..';
+import { ChildrenJSXMailVirtualDOM, JSXMailVirtualDOM } from '../..';
 import AHandler, { AProps } from './handlers/a';
 import BHandler, { BProps } from './handlers/b';
 import BodyHandler, { BodyProps } from './handlers/body';
@@ -20,8 +20,56 @@ import StrongHandler, { StrongProps } from './handlers/strong';
 import TitleHandler, { TitleProps } from './handlers/title';
 import UlHandler, { UlProps } from './handlers/ul';
 
+export function InjectChildrenPropsOrReplaceDefault(
+  children: ChildrenJSXMailVirtualDOM[],
+  node: string,
+  props: any,
+): ChildrenJSXMailVirtualDOM[] {
+  const newChildren: ChildrenJSXMailVirtualDOM[] = [];
+
+  for (const child of children) {
+    if (typeof child !== 'object') {
+      newChildren.push(child);
+      continue;
+    }
+
+    if (child.node === node) {
+      child.props = { ...child.props };
+
+      for (const propKey of Object.keys(props)) {
+        const currentValue = child.props[propKey];
+
+        if (!currentValue) {
+          child.props[propKey] = props[propKey];
+          continue;
+        }
+
+        if (
+          typeof currentValue === 'string' &&
+          currentValue.startsWith('__jsx_default_')
+        ) {
+          child.props[propKey] = props[propKey];
+          continue;
+        }
+      }
+    }
+
+    if (child.children.length) {
+      child.children = InjectChildrenPropsOrReplaceDefault(
+        child.children,
+        node,
+        props,
+      );
+    }
+
+    newChildren.push(child);
+  }
+
+  return newChildren;
+}
+
 export function getChildrenFromProps(props: any) {
-  let children = props.children;
+  let children = props.children as ChildrenJSXMailVirtualDOM[];
 
   if (children && !Array.isArray(children)) {
     children = [children];
@@ -51,8 +99,12 @@ export function getProps(props: any, style: string | undefined) {
 
 type Tag = {
   node: string;
-  // eslint-disable-next-line no-unused-vars
-  handler: (props: any, node: string) => JSXMailVirtualDOM;
+  handler: (
+    // eslint-disable-next-line no-unused-vars
+    props: any,
+    // eslint-disable-next-line no-unused-vars
+    node: string,
+  ) => JSXMailVirtualDOM | JSXMailVirtualDOM[];
   supportedProps: string[];
 };
 

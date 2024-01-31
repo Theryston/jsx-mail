@@ -96,7 +96,7 @@ export const ERRORS: IError[] = [
   {
     name: 'href_is_required',
     message:
-      'You must enter a href for the a/button tag and it must be a string that starts with http',
+      'You must enter a href for the a/button tag and it must be a string that starts with http or mailto:',
   },
   {
     name: 'invalid_h_tag',
@@ -164,6 +164,19 @@ export const ERRORS: IError[] = [
     name: 'font_invalid_href',
     message:
       'You must pass a valid href to the font tag. It must be a string that starts with http',
+  },
+  {
+    name: 'invalid_container_children',
+    message:
+      'A div with the props container must have only div sections as children',
+  },
+  {
+    name: 'prop_section_not_supported',
+    message: 'A div cannot be a container and section at the same time',
+  },
+  {
+    name: 'prop_flex_not_supported',
+    message: 'Only one section div can be flex',
   },
 ];
 

@@ -1,5 +1,41 @@
 # @jsx-mail/core
 
+## 2.0.15
+
+### Patch Changes
+
+- a40bb0d: fix: a tag factor can return an array
+
+## 2.0.14
+
+### Patch Changes
+
+- 2be25a4: fix: href accept mailto links
+
+## 2.0.13
+
+### Patch Changes
+
+- d9be75a: fix: error for replace insert
+
+## 2.0.12
+
+### Patch Changes
+
+- 9e61ab1: fix: flex gap
+
+## 2.0.11
+
+### Patch Changes
+
+- ea9e62b: fix: flex and alignment
+
+## 2.0.10
+
+### Patch Changes
+
+- d3dc474: fix: adding jsx mail handle index file as template
+
 ## 2.0.9
 
 ### Patch Changes

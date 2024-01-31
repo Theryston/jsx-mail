@@ -57,7 +57,7 @@ module.exports = {
 
         tsConfig = {
           ...tsConfig,
-          exclude: [...tsConfig.exclude, 'mail'],
+          exclude: [...(tsConfig.exclude || []), 'mail'],
         };
 
         toolbox.filesystem.write('tsconfig.json', tsConfig);

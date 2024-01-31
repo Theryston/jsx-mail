@@ -26,10 +26,12 @@ export type ImageInfo = {
   hash: string;
 };
 
+export type ChildrenJSXMailVirtualDOM = JSXMailVirtualDOM | string | number;
+
 export type JSXMailVirtualDOM = {
   node: string;
   props: any;
-  children: (JSXMailVirtualDOM | string | number)[];
+  children: ChildrenJSXMailVirtualDOM[];
   __jsx_mail_vdom: boolean;
 };
 

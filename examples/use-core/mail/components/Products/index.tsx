@@ -11,7 +11,7 @@ export default function Products({
   }[];
 }) {
   return (
-    <div style={S.ProductsWrapper} container sectionPending="10px">
+    <div style={S.ProductsWrapper} container>
       {products.map((product) => (
         <div style={S.ProductWrapper} section>
           <img

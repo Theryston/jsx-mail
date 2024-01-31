@@ -41,3 +41,6 @@ yarn-error.log*
 /examples/use-core/example-vd.json
 /examples/use-core/example-vd.html
 /examples/use-jsx-mail/user-created.html
+
+# JSX Mail
+.jsxmail

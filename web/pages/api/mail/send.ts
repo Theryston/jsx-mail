@@ -6,10 +6,9 @@ import * as jwt from 'jsonwebtoken';
 import { connectToDatabase } from '../../../config/mongodb';
 import sendEmail from '../../../use-cases/sendEmail';
 import { ObjectId } from 'mongodb';
+import { MAX_EMAIL_SENDS_PER_HOUR } from '@/config/contants';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
-
-const MAX_SENDS_PER_HOUR = 20;
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -82,7 +81,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
       created_at: { $gte: startOfHour },
     });
 
-    if (count >= MAX_SENDS_PER_HOUR) {
+    if (count >= MAX_EMAIL_SENDS_PER_HOUR) {
       const nextHour = new Date();
       nextHour.setHours(nextHour.getHours() + 1);
       nextHour.setSeconds(0, 0);
@@ -90,12 +89,15 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
       nextHour.setMilliseconds(0);
 
       return res.status(429).json({
-        message: `The limit of ${MAX_SENDS_PER_HOUR} has been reached. Try again at: ${nextHour}`,
+        message: `The limit of ${MAX_EMAIL_SENDS_PER_HOUR} has been reached. Try again at: ${nextHour}`,
       });
     }
 
     await sendEmail({
-      from: mail.mail,
+      from: {
+        email: mail.mail,
+        name: mail.name,
+      },
       html,
       subject,
       to,

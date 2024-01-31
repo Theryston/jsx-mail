@@ -50,7 +50,7 @@ export default function UserWelcomeTemplate({
 }: typeof props) {
   return (
     <Layout title="Welcome">
-      <div container sectionPending="10px">
+      <div container>
         <div style={S.NameWrapper} section>
           <h1 style={S.NameText} id="name-h1" className="name" align="center">
             Hello, {name.toLocaleUpperCase()}
