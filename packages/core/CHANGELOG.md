@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.0.14
+
+### Patch Changes
+
+- 2be25a4: fix: href accept mailto links
+
 ## 2.0.13
 
 ### Patch Changes
