@@ -118,7 +118,7 @@ export default function Page() {
           </form>
         </CardBody>
         <CardFooter className="flex justify-center items-center">
-          <Link href="/cloud/login" className="text-sm">
+          <Link href="/cloud/sign-in" className="text-sm">
             Already have an account
           </Link>
         </CardFooter>
