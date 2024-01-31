@@ -1,32 +1,36 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
-import { EmailClient } from '@azure/communication-email';
+
+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 
 type Params = {
   subject: string;
   html: string;
-  from: string;
+  from: {
+    name: string;
+    email: string;
+  };
   to: string[];
 };
 
-const emailClient = new EmailClient(
-  process.env.AZURE_SERVICE_ENDPOINT as string,
-);
+const clientSES = new SESClient();
 
 export default async function sendEmail({ subject, html, from, to }: Params) {
-  const poller = await emailClient.beginSend({
-    senderAddress: from,
-    content: {
-      subject,
-      html,
+  const command = new SendEmailCommand({
+    Source: `"${from.name}" <${from.email}>`,
+    Destination: {
+      ToAddresses: to,
     },
-    recipients: {
-      to: to.map((t) => ({
-        address: t,
-      })),
+    Message: {
+      Subject: {
+        Data: subject,
+      },
+      Body: {
+        Html: {
+          Data: html,
+        },
+      },
     },
   });
 
-  if (!poller.getOperationState().isStarted) {
-    throw 'Poller was not started.';
-  }
+  await clientSES.send(command);
 }

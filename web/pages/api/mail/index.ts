@@ -4,8 +4,6 @@ import { createRouter } from 'next-connect';
 import error from '../../../utils/error';
 import * as jwt from 'jsonwebtoken';
 import { connectToDatabase } from '../../../config/mongodb';
-import { CommunicationServiceManagementClient } from '@azure/arm-communication';
-import azureCredential from '@/config/azure-credential';
 import { ObjectId } from 'mongodb';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
@@ -44,25 +42,7 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const mgmtClient = new CommunicationServiceManagementClient(
-      azureCredential,
-      process.env.AZURE_SUBSCRIPTION_ID as string,
-    );
-
-    const parameters = {
-      username,
-      displayName: name,
-    };
-
-    await mgmtClient.senderUsernames.createOrUpdate(
-      process.env.AZURE_RESOURCE_GROUP_NAME as string,
-      process.env.AZURE_EMAIL_SERVICE_NAME as string,
-      process.env.AZURE_DOMAIN_NAME as string,
-      parameters.username,
-      parameters,
-    );
-
-    const mail = `${username}@${process.env.AZURE_DOMAIN_NAME}`;
+    const mail = `${username}@${process.env.EMAIL_DOMAIN_NAME}`;
 
     await db.collection('mails').insertOne({
       username,
@@ -130,18 +110,6 @@ async function deleteHandler(req: NextApiRequest, res: NextApiResponse) {
       code: 'NOT_EXISTS',
     });
   }
-
-  const mgmtClient = new CommunicationServiceManagementClient(
-    azureCredential,
-    process.env.AZURE_SUBSCRIPTION_ID as string,
-  );
-
-  await mgmtClient.senderUsernames.delete(
-    process.env.AZURE_RESOURCE_GROUP_NAME as string,
-    process.env.AZURE_EMAIL_SERVICE_NAME as string,
-    process.env.AZURE_DOMAIN_NAME as string,
-    mail.username,
-  );
 
   await db.collection('sent_messages').deleteMany({
     mail_id: mail._id,

@@ -95,7 +95,10 @@ async function postHandler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     await sendEmail({
-      from: mail.mail,
+      from: {
+        email: mail.mail,
+        name: mail.name,
+      },
       html,
       subject,
       to,

@@ -31,7 +31,7 @@ export async function connectToDatabase(): Promise<{
   await client.connect();
 
   // eslint-disable-next-line turbo/no-undeclared-env-vars
-  const db: Db = client.db(process.env.VERCEL_ENV as string);
+  const db: Db = client.db(process.env.VERCEL_ENV || 'development');
 
   await db.command({ ping: 1 });
 
