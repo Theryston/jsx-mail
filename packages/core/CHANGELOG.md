@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.0.15
+
+### Patch Changes
+
+- a40bb0d: fix: a tag factor can return an array
+
 ## 2.0.14
 
 ### Patch Changes
