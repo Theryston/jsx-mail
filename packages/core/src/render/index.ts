@@ -71,17 +71,28 @@ export default async function render({
   }
 }
 
-function convertToHTML(virtualDOM: JSXMailVirtualDOM) {
+function convertToHTML(virtualDOM: JSXMailVirtualDOM | JSXMailVirtualDOM[]) {
+  let html = '';
+
+  if (Array.isArray(virtualDOM)) {
+    for (const virtualD of virtualDOM) {
+      html += convertToHTML(virtualD);
+    }
+
+    return html;
+  }
+
   const { node, props, children } = virtualDOM;
 
   const childrenHTML: string = children
-    .map((child) => {
+    .map((childItem) => {
+      const child: JSXMailVirtualDOM | JSXMailVirtualDOM[] = childItem as any;
       if (typeof child === 'undefined') {
         throw new CoreError('undefined_child');
       }
 
-      if ((child as JSXMailVirtualDOM).__jsx_mail_vdom) {
-        return convertToHTML(child as JSXMailVirtualDOM);
+      if (Array.isArray(child) || child.__jsx_mail_vdom) {
+        return convertToHTML(child);
       } else {
         return child;
       }
@@ -100,7 +111,7 @@ function convertToHTML(virtualDOM: JSXMailVirtualDOM) {
     })
     .join('');
 
-  let html = `<${node}${propsHTML}`;
+  html = `<${node}${propsHTML}`;
 
   if (childrenHTML) {
     html += `>${childrenHTML}</${node}>`;
@@ -173,7 +184,7 @@ async function getVirtualDOM(
     throw new CoreError('promise_not_allowed');
   }
 
-  if (virtualDOM.node !== 'html') {
+  if (Array.isArray(virtualDOM) || virtualDOM.node !== 'html') {
     virtualDOM = await insertHTMLStructure(virtualDOM);
   }
 
@@ -198,20 +209,25 @@ function verifyProps(onRenderResult: any) {
 }
 
 async function insertHTMLStructure(
-  virtualDOM: JSXMailVirtualDOM,
+  virtualDOM: JSXMailVirtualDOM | JSXMailVirtualDOM[],
 ): Promise<JSXMailVirtualDOM> {
-  const headVirtualDOM = factory('head', {});
-  const bodyVirtualDOM = factory('body', {
+  const headVirtualDOM: JSXMailVirtualDOM = factory(
+    'head',
+    {},
+  ) as JSXMailVirtualDOM;
+
+  const bodyVirtualDOM: JSXMailVirtualDOM = factory('body', {
     style: {
       margin: '0',
       padding: '0',
     },
-    children: [virtualDOM as any],
-  });
-  const htmlVirtualDOM = factory('html', {
-    children: [headVirtualDOM as any, bodyVirtualDOM as any],
+    children: Array.isArray(virtualDOM) ? virtualDOM : [virtualDOM],
+  }) as JSXMailVirtualDOM;
+
+  const htmlVirtualDOM: JSXMailVirtualDOM = factory('html', {
+    children: [headVirtualDOM, bodyVirtualDOM],
     lang: 'en',
-  });
+  }) as JSXMailVirtualDOM;
 
   return htmlVirtualDOM;
 }

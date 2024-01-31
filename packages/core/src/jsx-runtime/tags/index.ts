@@ -99,8 +99,12 @@ export function getProps(props: any, style: string | undefined) {
 
 type Tag = {
   node: string;
-  // eslint-disable-next-line no-unused-vars
-  handler: (props: any, node: string) => JSXMailVirtualDOM;
+  handler: (
+    // eslint-disable-next-line no-unused-vars
+    props: any,
+    // eslint-disable-next-line no-unused-vars
+    node: string,
+  ) => JSXMailVirtualDOM | JSXMailVirtualDOM[];
   supportedProps: string[];
 };
 

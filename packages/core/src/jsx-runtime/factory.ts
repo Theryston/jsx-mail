@@ -6,7 +6,7 @@ import tags from './tags';
 export default function factory(
   node: JSX.ElementNode,
   props: any,
-): JSXMailVirtualDOM {
+): JSXMailVirtualDOM | JSXMailVirtualDOM[] {
   if (typeof node === 'function') {
     return handleNodeFunction(node, props);
   }
