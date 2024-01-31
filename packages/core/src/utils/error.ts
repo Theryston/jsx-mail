@@ -96,7 +96,7 @@ export const ERRORS: IError[] = [
   {
     name: 'href_is_required',
     message:
-      'You must enter a href for the a/button tag and it must be a string that starts with http',
+      'You must enter a href for the a/button tag and it must be a string that starts with http or mailto:',
   },
   {
     name: 'invalid_h_tag',

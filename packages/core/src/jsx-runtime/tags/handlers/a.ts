@@ -28,7 +28,7 @@ export default function AHandler(
   const isInvalidHref =
     !newProps.href ||
     typeof newProps.href !== 'string' ||
-    !newProps.href.startsWith('http');
+    (!newProps.href.startsWith('http') && !newProps.href.startsWith('mailto:'));
 
   if (isInvalidHref && state === 'render') {
     throw new CoreError('href_is_required', {
