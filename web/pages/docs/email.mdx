@@ -1,10 +1,12 @@
+import { MAX_EMAIL_SENDS_PER_HOUR } from '../../config/contants'
+
 # Email Functionality
 
 JSX Mail is primarily designed for email template creation, not for email dispatch. Nevertheless, to facilitate development testing or the creation of prototypes and small-scale projects, JSX Mail includes a basic email-sending feature.
 
 It's crucial to note that sending emails via JSX Mail is exclusively possible when using an address provisioned from JSX Mail Cloud. These addresses, formatted as `username@jsxmail.org`, are designated solely for sending emails and do not support incoming mail.
 
-Each email account from JSX Mail Cloud is subject to a sending restriction of 20 emails per hour. Should your requirements exceed this threshold, alternatives such as the `nodemailer` library or a professional email service might be more appropriate. Remember, JSX Mail Cloud is best suited for modest-scale applications.
+Each email account from JSX Mail Cloud is subject to a sending restriction of {MAX_EMAIL_SENDS_PER_HOUR} emails per hour. Should your requirements exceed this threshold, alternatives such as the `nodemailer` library or a professional email service might be more appropriate. Remember, JSX Mail Cloud is best suited for modest-scale applications.
 
 ## Creating an Email Account
 

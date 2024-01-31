@@ -10,6 +10,11 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import requestIp from 'request-ip';
 import { connectToDatabase } from '../../config/mongodb';
+import {
+  ALLOWED_IMAGE_MIMETYPES,
+  MAX_IMAGES_PER_IP,
+  MAX_IMAGE_SIZE,
+} from '@/config/contants';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -18,10 +23,6 @@ type Body = {
   mimetype: string;
   size: number;
 };
-
-const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_MIMETYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif'];
-const MAX_IMAGES_PER_IP = 100;
 
 async function postHandler(req: NextApiRequest, res: NextApiResponse) {
   const body = req.body as Body;
@@ -137,8 +138,8 @@ function validateParams(body: Body): string | undefined {
     return 'size is invalid';
   }
 
-  if (body.size > MAX_SIZE) {
-    return `the file is too large (max ${MAX_SIZE} bytes)`;
+  if (body.size > MAX_IMAGE_SIZE) {
+    return `the file is too large (max ${MAX_IMAGE_SIZE} bytes)`;
   }
 
   if (!body.hash || typeof body.hash !== 'string') {
@@ -153,8 +154,10 @@ function validateParams(body: Body): string | undefined {
     return 'mimetype is invalid';
   }
 
-  if (!ALLOWED_MIMETYPES.includes(body.mimetype)) {
-    return `mimetype is not allowed (allowed: ${ALLOWED_MIMETYPES.join(', ')})`;
+  if (!ALLOWED_IMAGE_MIMETYPES.includes(body.mimetype)) {
+    return `mimetype is not allowed (allowed: ${ALLOWED_IMAGE_MIMETYPES.join(
+      ', ',
+    )})`;
   }
 }
 

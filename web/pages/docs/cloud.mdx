@@ -1,3 +1,5 @@
+import { MAX_IMAGES_PER_IP } from '../../config/contants'
+
 # Cloud
 
 JSX Mail Cloud represents a groundbreaking addition to JSX Mail's suite of services. This feature removes the hassle of managing essential resources such as email images and fonts. With JSX Mail Cloud, these elements are automatically handled, streamlining your project's management.
@@ -12,7 +14,7 @@ Our integration with [Backblaze B2](https://www.backblaze.com) provides a robust
 JSX Mail Cloud currently supports image uploads, eliminating the need for external hosting services. Your images are automatically hosted on JSX Mail Cloud. Learn more about this feature [here](/docs/image).
 
 ### Generous Limits and Smart Management
-Each IP is allocated space for up to 100 free image uploads, a limit that typically exceeds the needs of most projects. Additionally, JSX Mail Cloud intelligently manages your image assets. It compares the images linked to your IP against those used in your project. Unused images are identified and removed from the Cloud, optimizing your resource usage.
+Each IP is allocated space for up to {MAX_IMAGES_PER_IP} free image uploads, a limit that typically exceeds the needs of most projects. Additionally, JSX Mail Cloud intelligently manages your image assets. It compares the images linked to your IP against those used in your project. Unused images are identified and removed from the Cloud, optimizing your resource usage.
 
 ## Email Functionality
 
