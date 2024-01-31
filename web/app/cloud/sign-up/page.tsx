@@ -18,9 +18,12 @@ import {
 } from 'react-dom';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { EyeSlashFilledIcon } from '@/app/icons/EyeSlashFilledIcon';
-import { EyeFilledIcon } from '@/app/icons/EyeFilledIcon';
 import { useRouter } from 'next/navigation';
+import {
+  ArrowLeftIcon,
+  EyeClosedIcon,
+  EyeOpenIcon,
+} from '@radix-ui/react-icons';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -54,6 +57,13 @@ export default function Page() {
 
   return (
     <main className="h-screen w-full flex justify-center items-center">
+      <Button
+        isIconOnly
+        onClick={() => router.back()}
+        className="absolute top-5 left-5"
+      >
+        <ArrowLeftIcon />
+      </Button>
       <Card className="w-[400px]">
         <CardHeader className="flex flex-col">
           <h1 className="text-xl font-bold">Create Account</h1>
@@ -81,11 +91,7 @@ export default function Page() {
                   type="button"
                   onClick={toggleVisibility}
                 >
-                  {isVisible ? (
-                    <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                  ) : (
-                    <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                  )}
+                  {isVisible ? <EyeOpenIcon /> : <EyeClosedIcon />}
                 </button>
               }
               isRequired
@@ -101,11 +107,7 @@ export default function Page() {
                   type="button"
                   onClick={toggleVisibility}
                 >
-                  {isVisible ? (
-                    <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                  ) : (
-                    <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                  )}
+                  {isVisible ? <EyeOpenIcon /> : <EyeClosedIcon />}
                 </button>
               }
               isRequired
