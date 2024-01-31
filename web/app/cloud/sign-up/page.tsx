@@ -64,7 +64,7 @@ export default function Page() {
       >
         <ArrowLeftIcon />
       </Button>
-      <Card className="w-[400px]">
+      <Card className="w-11/12 md:w-[400px]">
         <CardHeader className="flex flex-col">
           <h1 className="text-xl font-bold">Create Account</h1>
         </CardHeader>
