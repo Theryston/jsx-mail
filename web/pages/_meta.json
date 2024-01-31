@@ -12,5 +12,11 @@
     "title": "Documentation",
     "type": "page",
     "display": "children"
+  },
+  "cloud_page": {
+    "title": "Cloud",
+    "href": "/cloud/login",
+    "type": "page",
+    "display": "children"
   }
 }
