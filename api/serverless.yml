@@ -10,10 +10,13 @@ plugins:
 
 package:
   patterns:
-    - '!models/**'
-    - '!docs/**'
+    - '.jsxmail/**'
 
 custom:
+  serverless-offline:
+    useChildProcesses: true
+    reloadHandler: true
+    httpPort: 3331
   customDomain:
     domainName: api.jsxmail.org
     basePath: ''
@@ -23,6 +26,7 @@ custom:
 provider:
   name: aws
   runtime: nodejs18.x
+  timeout: 30
 
 functions:
   main:
