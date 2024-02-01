@@ -70,19 +70,19 @@ export class AuthGuard implements CanActivate {
 
     if (permissions.every(permission => permission.startsWith('self:') && session.permissions.includes(PERMISSIONS.SELF_ADMIN.value))) {
       request.user = user;
-      request.permissions = permissions
+      request.permissions = session.permissions
       return true;
     }
 
     if (session.permissions.includes(PERMISSIONS.OTHER_ADMIN.value)) {
       request.user = user;
-      request.permissions = permissions
+      request.permissions = session.permissions
       return true;
     }
 
     if (permissions.every(permission => session.permissions.includes(permission))) {
       request.user = user;
-      request.permissions = permissions
+      request.permissions = session.permissions
       return true;
     }
 

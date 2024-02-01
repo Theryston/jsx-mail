@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import { UseSecurityCodeDto } from '../user.cto';
 import { CreateSessionService } from './create-session.service';
+import { UseSecurityCodeDto } from '../user.dto';
 
 @Injectable()
 export class UseSecurityCodeService {

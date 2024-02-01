@@ -49,3 +49,9 @@ export class AuthUserDto {
 	@IsNotEmpty()
 	password: string;
 }
+
+export class ResetPasswordDto {
+	@IsNotEmpty()
+	@Length(6, 100)
+	newPassword: string;
+}

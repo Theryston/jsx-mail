@@ -21,5 +21,10 @@ export const PERMISSIONS: {
 		title: 'Self Email Validate',
 		value: 'self:email-validate',
 		description: 'Can validate its own email',
-	}
+	},
+	SELF_RESET_PASSWORD: {
+		title: 'Self Reset Password',
+		value: 'self:reset-password',
+		description: 'Can reset its own password',
+	},
 }

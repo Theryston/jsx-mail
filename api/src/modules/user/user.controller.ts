@@ -1,16 +1,17 @@
 import { Body, Controller, Post, Put, Request } from '@nestjs/common';
 import { CreateUserService } from './services/create-user.service';
-import { AuthUserDto, CreateSecurityCodeDto, CreateUserDto, UseSecurityCodeDto } from './user.cto';
+import { AuthUserDto, CreateSecurityCodeDto, CreateUserDto, ResetPasswordDto, UseSecurityCodeDto } from './user.dto';
 import { Permissions } from 'src/auth/permissions.decorator';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { CreateSecurityCodeService } from './services/create-security-code.service';
 import { UseSecurityCodeService } from './services/use-security-code.service';
 import { ValidateEmailService } from './services/validate-email.service';
 import { AuthUserService } from './services/auth-user.service';
+import { ResetPasswordService } from './services/reset-password.service';
 
 @Controller('user')
 export class UserController {
-	constructor(private readonly createUserService: CreateUserService, private readonly createSecurityCodeService: CreateSecurityCodeService, private readonly useSecurityCodeService: UseSecurityCodeService, private readonly validateEmailService: ValidateEmailService, private readonly authUserService: AuthUserService) { }
+	constructor(private readonly createUserService: CreateUserService, private readonly createSecurityCodeService: CreateSecurityCodeService, private readonly useSecurityCodeService: UseSecurityCodeService, private readonly validateEmailService: ValidateEmailService, private readonly authUserService: AuthUserService, private readonly resetPasswordService: ResetPasswordService) { }
 
 	@Post()
 	createUser(@Body() data: CreateUserDto) {
@@ -36,5 +37,11 @@ export class UserController {
 	@Post('auth')
 	authUser(@Body() data: AuthUserDto) {
 		return this.authUserService.execute(data)
+	}
+
+	@Post('reset-password')
+	@Permissions([PERMISSIONS.SELF_RESET_PASSWORD.value])
+	resetPassword(@Body() data: ResetPasswordDto, @Request() req) {
+		return this.resetPasswordService.execute({ ...data, userId: req.user.id, permissions: req.permissions })
 	}
 }
