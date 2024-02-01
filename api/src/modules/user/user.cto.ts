@@ -40,3 +40,12 @@ export class CreateSecurityCodeDto {
 	@IsEmail()
 	email: string;
 }
+
+export class AuthUserDto {
+	@IsNotEmpty()
+	@IsEmail()
+	email: string;
+
+	@IsNotEmpty()
+	password: string;
+}

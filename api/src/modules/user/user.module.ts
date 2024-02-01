@@ -7,10 +7,11 @@ import { CreateSecurityCodeService } from './services/create-security-code.servi
 import { EmailModule } from '../email/email.module';
 import { UseSecurityCodeService } from './services/use-security-code.service';
 import { ValidateEmailService } from './services/validate-email.service';
+import { AuthUserService } from './services/auth-user.service';
 
 @Module({
   controllers: [UserController],
-  providers: [CreateUserService, PrismaService, CreateSessionService, CreateSecurityCodeService, UseSecurityCodeService, ValidateEmailService],
+  providers: [CreateUserService, PrismaService, CreateSessionService, CreateSecurityCodeService, UseSecurityCodeService, ValidateEmailService, AuthUserService],
   imports: [EmailModule],
 })
 export class UserModule { }
