@@ -17,7 +17,39 @@ model User {
   isPhoneVerified   Boolean     @map("is_phone_verified") @default(false)
   createdAt         DateTime    @map("created_at") @default(now())
   updatedAt         DateTime    @map("updated_at") @updatedAt
-  deletedAt         DateTime    @map("deleted_at")
+  deletedAt         DateTime?   @map("deleted_at")
+
+  sessions Session[]
+  securityCodes SecurityCode[]
 
   @@map("users")
+}
+
+model Session {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String      @map("user_id") @db.ObjectId
+  token             String
+  permissions       String[]
+  expiresAt         DateTime?   @map("expires_at")
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("sessions")
+}
+
+model SecurityCode {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String      @map("user_id") @db.ObjectId
+  code              String
+  expiresAt         DateTime    @map("expires_at")
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("security_codes")
 }

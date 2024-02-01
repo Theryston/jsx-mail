@@ -22,6 +22,8 @@ async function build() {
     });
 
     console.log('Code was built');
+  } catch (error) {
+    console.log('Error while building', error);
   } finally {
     isBuilding = false;
   }
