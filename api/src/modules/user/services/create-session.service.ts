@@ -41,6 +41,7 @@ export class CreateSessionService {
 
 		return {
 			token,
+			sessionId: session.id,
 			expiresAt: session.expiresAt || 'never'
 		}
 	}

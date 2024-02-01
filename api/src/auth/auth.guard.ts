@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Permissions } from './permissions.decorator';
 import { PrismaService } from 'src/services/prisma.service';
-import { PERMISSIONS, PRIVATE_ROUTES_CAN_BE_USED_NOT_EMAIL_VERIFIED } from './permissions';
+import { PERMISSIONS } from './permissions';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -59,11 +59,12 @@ export class AuthGuard implements CanActivate {
       },
     });
 
-    delete user.password;
+    delete user.password
+    delete user.deletedAt
 
     const route = context.switchToHttp().getRequest().route.path;
 
-    if (!user.isEmailVerified && !PRIVATE_ROUTES_CAN_BE_USED_NOT_EMAIL_VERIFIED.includes(route)) {
+    if (!user.isEmailVerified && route !== '/user/validate-email') {
       return false;
     }
 

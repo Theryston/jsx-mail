@@ -1,15 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
+import { CreateSecurityCodeDto } from '../user.cto';
 
 @Injectable()
-export class RequestEmailCodeService {
+export class CreateSecurityCodeService {
 	constructor(private readonly prisma: PrismaService, private readonly sendEmail: SendEmailService) { }
 
-	async execute(userId: string) {
+	async execute(data: CreateSecurityCodeDto) {
 		const user = await this.prisma.user.findFirst({
 			where: {
-				id: userId,
+				email: data.email,
 				deletedAt: {
 					isSet: false
 				}
@@ -17,7 +18,12 @@ export class RequestEmailCodeService {
 		});
 
 		if (!user) {
-			throw new HttpException('User not found', HttpStatus.NOT_FOUND)
+			const randomTime = Math.floor(300 + Math.random() * 2000);
+			await new Promise(resolve => setTimeout(resolve, randomTime)); // Delay the response to avoid timing attacks
+
+			return {
+				message: 'Security code sent successfully'
+			}
 		}
 
 		const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -36,12 +42,17 @@ export class RequestEmailCodeService {
 				email: `jsxmail@${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`
 			},
 			to: [user.email],
-			subject: 'Your email code',
-			html: `<p>Your email code is: <strong>${code}</strong></p>`
+			subject: 'Your security code',
+			html: `
+				<div>
+					<p>Hi, ${user.name}!</p>
+					<p>Your security code is: <strong>${code}</strong></p>
+				</div>
+			`
 		})
 
 		return {
-			message: 'Email code sent'
+			message: 'Security code sent successfully'
 		}
 	}
 }

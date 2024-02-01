@@ -26,8 +26,17 @@ export class CreateSessionDto {
 	expirationDate?: Date;
 }
 
-export class ValidateEmailDto {
+export class UseSecurityCodeDto {
 	@IsNotEmpty()
 	@Length(6, 6)
 	securityCode: string;
+
+	@IsNotEmpty()
+	permission: string;
+}
+
+export class CreateSecurityCodeDto {
+	@IsNotEmpty()
+	@IsEmail()
+	email: string;
 }

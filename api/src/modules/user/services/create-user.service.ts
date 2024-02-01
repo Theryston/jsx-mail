@@ -2,12 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../user.cto';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/services/prisma.service';
-import { CreateSessionService } from './create-session.service';
-import { PERMISSIONS } from '../../../auth/permissions';
 
 @Injectable()
 export class CreateUserService {
-	constructor(private readonly prisma: PrismaService, private readonly createSessionService: CreateSessionService) { }
+	constructor(private readonly prisma: PrismaService) { }
 
 	async execute({ email, password, name }: CreateUserDto) {
 		email = email.toLocaleLowerCase().trim()
@@ -37,10 +35,12 @@ export class CreateUserService {
 			}
 		})
 
-		return this.createSessionService.execute({
-			userId: user.id,
-			permissions: [PERMISSIONS.SELF_ADMIN.value],
-			expirationDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 2) // 2 hours
-		})
+		delete user.password
+		delete user.deletedAt
+
+		return {
+			message: 'User created successfully',
+			user
+		}
 	}
 }

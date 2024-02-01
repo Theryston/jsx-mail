@@ -1,12 +1,17 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import { ValidateEmailDto } from '../user.cto';
+import { UseSecurityCodeDto } from '../user.cto';
+import { CreateSessionService } from './create-session.service';
 
 @Injectable()
-export class ValidateEmailService {
-	constructor(private readonly prisma: PrismaService) { }
+export class UseSecurityCodeService {
+	constructor(private readonly prisma: PrismaService, private readonly createSessionService: CreateSessionService) { }
 
-	async execute({ securityCode }: ValidateEmailDto) {
+	async execute({ securityCode, permission }: UseSecurityCodeDto) {
+		if (permission.startsWith('other') || permission.includes('admin')) {
+			throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST)
+		}
+
 		const code = await this.prisma.securityCode.findFirst({
 			where: {
 				code: securityCode,
@@ -37,6 +42,12 @@ export class ValidateEmailService {
 			throw new HttpException('User not found', HttpStatus.NOT_FOUND)
 		}
 
+		const session = this.createSessionService.execute({
+			permissions: [permission],
+			userId: user.id,
+			expirationDate: new Date(new Date().getTime() + 1000 * 60 * 5)
+		});
+
 		await this.prisma.securityCode.update({
 			where: {
 				id: code.id
@@ -46,17 +57,6 @@ export class ValidateEmailService {
 			}
 		})
 
-		await this.prisma.user.update({
-			where: {
-				id: user.id
-			},
-			data: {
-				isEmailVerified: true
-			}
-		})
-
-		return {
-			message: 'Email verified'
-		}
+		return session
 	}
 }
