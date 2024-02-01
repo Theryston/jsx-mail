@@ -29,6 +29,7 @@ model Session {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
   userId            String      @map("user_id") @db.ObjectId
   token             String
+  description       String?
   permissions       String[]
   expiresAt         DateTime?   @map("expires_at")
   createdAt         DateTime    @map("created_at") @default(now())

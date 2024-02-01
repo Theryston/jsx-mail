@@ -24,6 +24,9 @@ export class CreateSessionDto {
 
 	@IsEmpty()
 	expirationDate?: Date;
+
+	@IsEmpty()
+	description?: string;
 }
 
 export class UseSecurityCodeDto {

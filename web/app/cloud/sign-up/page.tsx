@@ -9,51 +9,63 @@ import {
   Input,
   Link,
 } from '@nextui-org/react';
-import { createUser } from './actions';
-import {
-  // @ts-ignore
-  experimental_useFormState as useFormState,
-  // @ts-ignore
-  experimental_useFormStatus as useFormStatus,
-} from 'react-dom';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   ArrowLeftIcon,
   EyeClosedIcon,
   EyeOpenIcon,
 } from '@radix-ui/react-icons';
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button isLoading={pending} color="primary" fullWidth type="submit">
-      Create
-    </Button>
-  );
-}
+import axios from '@/utils/axios';
+import handleRedirectUrl from '@/utils/handle-redirect-url';
 
 export default function Page() {
-  const [state, formAction] = useFormState(createUser);
+  const [isLoading, setIsLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [redirect, setRedirect] = useState('' as string);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setRedirect(handleRedirectUrl(searchParams));
+  }, [searchParams]);
 
   const toggleVisibility = () => setIsVisible((old) => !old);
 
-  useEffect(() => {
-    if (!state) return;
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setIsLoading(true);
+      try {
+        const formData = new FormData(e.currentTarget);
+        const name = formData.get('name') as string;
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+        const password2 = formData.get('password2') as string;
 
-    if (state.isError) {
-      toast.error(state.message);
-    } else {
-      toast.success(state.message);
-      localStorage.setItem('token', state.token);
-      localStorage.setItem('refreshToken', state.refreshToken);
-      router.push('/cloud/verify-email');
-    }
-  }, [state]);
+        if (password !== password2) {
+          throw new Error('Passwords do not match');
+        }
+
+        await axios.post('/user', {
+          name,
+          email,
+          password,
+        });
+
+        toast.success('Account created successfully');
+        router.push(
+          `/cloud/security-code?permission=self:email-validate&email=${email}&redirect=${encodeURIComponent(`/cloud/verify-email?redirect=${redirect}`)}`,
+        );
+      } catch (error: any) {
+        toast.error(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [router, redirect],
+  );
 
   return (
     <main className="h-screen w-full flex justify-center items-center">
@@ -69,7 +81,7 @@ export default function Page() {
           <h1 className="text-xl font-bold">Create Account</h1>
         </CardHeader>
         <CardBody>
-          <form action={formAction} className="w-full flex flex-col gap-5">
+          <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
             <Input
               isRequired
               type="text"
@@ -116,11 +128,21 @@ export default function Page() {
               className="w-full"
               name="password2"
             />
-            <SubmitButton />
+            <Button
+              isLoading={isLoading}
+              color="primary"
+              fullWidth
+              type="submit"
+            >
+              Create
+            </Button>
           </form>
         </CardBody>
         <CardFooter className="flex justify-center items-center">
-          <Link href="/cloud/sign-in" className="text-sm">
+          <Link
+            href={`/cloud/sign-in?redirect=${redirect}`}
+            className="text-sm"
+          >
             Already have an account
           </Link>
         </CardFooter>

@@ -29,10 +29,17 @@ export class AuthUserService {
 			throw new HttpException('Email or password is invalid', HttpStatus.BAD_REQUEST)
 		}
 
-		return this.createSessionService.execute({
+		const session = await this.createSessionService.execute({
 			userId: user.id,
 			permissions: [PERMISSIONS.SELF_ADMIN.value],
-			expirationDate: new Date(new Date().getTime() + 1000 * 60 * 30)
+			description: 'User authenticated',
+			expirationDate: new Date(new Date().getTime() + 1000 * 60 * 30) // 30 minutes
 		})
+
+		if (!user.isEmailVerified) {
+			(session as any).isEmailVerified = false;
+		}
+
+		return session
 	}
 }

@@ -8,7 +8,7 @@ import { PERMISSIONS } from '../../../auth/permissions';
 export class CreateSessionService {
 	constructor(private readonly prisma: PrismaService) { }
 
-	async execute({ userId, expirationDate, permissions }: CreateSessionDto) {
+	async execute({ userId, expirationDate, permissions, description }: CreateSessionDto) {
 		const user = await this.prisma.user.findFirst({
 			where: {
 				id: userId,
@@ -35,7 +35,8 @@ export class CreateSessionService {
 				userId,
 				token,
 				expiresAt: expirationDate,
-				permissions
+				permissions,
+				description
 			}
 		})
 

@@ -45,6 +45,7 @@ export class UseSecurityCodeService {
 		const session = this.createSessionService.execute({
 			permissions: [permission],
 			userId: user.id,
+			description: 'Session created for use the security code',
 			expirationDate: new Date(new Date().getTime() + 1000 * 60 * 5)
 		});
 
