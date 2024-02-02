@@ -31,6 +31,6 @@ jobs:
       - name: Prepare and Deploy API
         run: |
           cd api
-          echo "ENV=${{ secrets.ENV }}" > .env
+          echo "${{ secrets.ENV }}" > .env
           yarn prepare:all
           yarn deploy:aws
