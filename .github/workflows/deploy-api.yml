@@ -31,8 +31,6 @@ jobs:
       - name: Prepare and Deploy API
         run: |
           cd api
-          printenv | grep "^API_" | while IFS= read -r line; do
-            echo "${line#API_}" >> .env
-          done
+          echo "ENV=${{ secrets.ENV }}" > .env
           yarn prepare:all
           yarn deploy:aws
