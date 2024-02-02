@@ -1,7 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
 import { CreateSecurityCodeDto } from '../user.dto';
+import { titleCase } from 'src/utils/title-case';
 
 @Injectable()
 export class CreateSecurityCodeService {
@@ -45,7 +46,7 @@ export class CreateSecurityCodeService {
 			subject: 'Your security code',
 			html: `
 				<div>
-					<p>Hi, ${user.name}!</p>
+					<p>Hi, ${titleCase(user.name)}!</p>
 					<p>Your security code is: <strong>${code}</strong></p>
 				</div>
 			`
