@@ -30,11 +30,8 @@ jobs:
         run: aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} && aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} && aws configure set default.region ${{ secrets.AWS_DEFAULT_REGION }}
       - name: install dependencies
         run: yarn
-      - name: Go to api directory
+      - name: Prepare and Deploy API
         run: |
           cd api
-          pwd
-      - name: Prepare everything
-        run: yarn prepare:all
-      - name: Deploy API
-        run: yarn deploy:aws
+          yarn prepare:all
+          yarn deploy:aws
