@@ -6,6 +6,7 @@ on:
       - cloud
     paths: 
       - 'api/**'
+      - '.github/workflows/deploy-api.yml'
   workflow_dispatch:
       
 jobs:
@@ -21,10 +22,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 20
-      - name: Go to api directory
-        run: |
-          cd api
-          pwd
       - name: install yarn
         run: npm install -g yarn
       - name: Create environment file
@@ -33,6 +30,10 @@ jobs:
         run: aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} && aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} && aws configure set default.region ${{ secrets.AWS_DEFAULT_REGION }}
       - name: install dependencies
         run: yarn
+      - name: Go to api directory
+        run: |
+          cd api
+          pwd
       - name: Prepare everything
         run: yarn prepare:all
       - name: Deploy API
