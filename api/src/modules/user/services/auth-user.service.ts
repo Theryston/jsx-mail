@@ -20,13 +20,13 @@ export class AuthUserService {
 		});
 
 		if (!user) {
-			throw new HttpException('Email or password is invalid', HttpStatus.BAD_REQUEST)
+			throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST)
 		}
 
 		const passwordMatch = await bcrypt.compare(password, user.password);
 
 		if (!passwordMatch) {
-			throw new HttpException('Email or password is invalid', HttpStatus.BAD_REQUEST)
+			throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST)
 		}
 
 		const session = await this.createSessionService.execute({
