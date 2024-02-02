@@ -6,9 +6,6 @@ const withNextra = require('nextra')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...withNextra(),
-  experimental: {
-    serverActions: true,
-  },
 };
 
 module.exports = nextConfig;
