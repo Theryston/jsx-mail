@@ -19,6 +19,7 @@ export default function Page() {
   const [redirect, setRedirect] = useState('');
   const [permission, setPermission] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [stateIsSubmitted, setStateIsSubmitted] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -56,21 +57,26 @@ export default function Page() {
     [permission, redirect, router],
   );
 
+  const setIsSubmitted = useCallback(
+    (value: string) => {
+      let pageSubmitted: URL | string = new URL(window.location.href);
+      pageSubmitted.searchParams.append('isSubmitted', value);
+      pageSubmitted = pageSubmitted.toString();
+
+      router.push(pageSubmitted);
+      setStateIsSubmitted(value === 'true');
+    },
+    [router],
+  );
+
   const handleSendCode = useCallback(async () => {
     if (isLoading) return;
-
-    const isSubmitted = sessionStorage.getItem('isSubmitted');
-    if (isSubmitted) {
-      return;
-    }
 
     setIsLoading(true);
     try {
       await axios.post('/user/security-code', {
         email,
       });
-
-      sessionStorage.setItem('isSubmitted', 'true');
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -108,8 +114,18 @@ export default function Page() {
       return;
     }
 
+    const isSubmitted = searchParams?.get('isSubmitted');
+
+    if (isSubmitted === 'true' || stateIsSubmitted) {
+      return;
+    }
+
+    console.log('passou!');
+
     handleSendCode();
-  }, [email, handleSendCode]);
+
+    setIsSubmitted('true');
+  }, [email, setIsSubmitted, handleSendCode, searchParams, stateIsSubmitted]);
 
   return (
     <main className="h-screen w-full flex justify-center items-center">
@@ -148,10 +164,7 @@ export default function Page() {
               Verify
             </Button>
             <Link
-              onClick={() => {
-                sessionStorage.removeItem('isSubmitted');
-                handleSendCode();
-              }}
+              onClick={handleSendCode}
               href="#"
               className="text-sm text-center"
             >
