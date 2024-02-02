@@ -32,6 +32,7 @@ jobs:
         run: |
           cd api
           yarn install
+          ls node_modules/.prisma
           echo "$ENV_FILE" > api/.env
           yarn prepare:all
           yarn deploy:aws
