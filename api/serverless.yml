@@ -23,7 +23,6 @@ provider:
   name: aws
   runtime: nodejs18.x
   timeout: 30
-  cors: false
 
 functions:
   main:
@@ -32,6 +31,8 @@ functions:
       - http:
           method: ANY
           path: /
+          cors: false
       - http:
           method: ANY
           path: '{proxy+}'
+          cors: false
