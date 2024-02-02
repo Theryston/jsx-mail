@@ -28,6 +28,10 @@ export class CreateSessionService {
 			throw new HttpException('Invalid permissions', HttpStatus.BAD_REQUEST)
 		}
 
+		if (user.accessLevel !== 'other' && permissions.some(p => !p.startsWith('self:'))) {
+			throw new HttpException('You only can access self permissions', HttpStatus.FORBIDDEN)
+		}
+
 		const token = crypto.randomBytes(32).toString('hex');
 
 		const session = await this.prisma.session.create({

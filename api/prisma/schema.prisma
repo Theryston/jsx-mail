@@ -8,11 +8,17 @@ datasource db {
   url      = env("MONGODB_URI")
 }
 
+enum AccessLevel {
+  self
+  other
+}
+
 model User {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
   name              String
   email             String
   isEmailVerified   Boolean     @map("is_email_verified") @default(false)
+  accessLevel       AccessLevel @map("access_level") @default(self)
   password          String
   phone             String?
   isPhoneVerified   Boolean     @map("is_phone_verified") @default(false)
