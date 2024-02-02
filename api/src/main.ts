@@ -23,5 +23,9 @@ export const handler: Handler = async (
   callback: Callback,
 ) => {
   server = server ?? (await bootstrap());
-  return server(event, context, callback);
+  let response = await server(event, context, callback);
+  response = {
+    ...response, headers: { ...response.headers, 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true }
+  };
+  return response;
 };
