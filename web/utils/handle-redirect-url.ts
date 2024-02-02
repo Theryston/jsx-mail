@@ -6,7 +6,7 @@ export default function handleRedirectUrl(searchParams: any) {
 	let url = '';
 	const currentDomain = window.location.hostname;
 	const currentBaseURL = window.location.origin;
-	const defaultRedirect = `${currentBaseURL}/cloud/auth?redirect=${encodeURIComponent(`${currentBaseURL}/cloud/applications`)}`;
+	const defaultRedirect = `${currentBaseURL}/cloud/auth?redirect=${encodeURIComponent(`${currentBaseURL}/cloud/app`)}`;
 	const searchRedirect = searchParams && searchParams.get('redirect');
 
 	url = searchRedirect ? searchRedirect : defaultRedirect;
