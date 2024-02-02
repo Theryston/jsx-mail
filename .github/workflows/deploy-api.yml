@@ -6,6 +6,7 @@ on:
       - cloud
     paths: 
       - 'api/**'
+  workflow_dispatch:
       
 jobs:
   version:
@@ -21,7 +22,9 @@ jobs:
         with:
           node-version: 20
       - name: Go to api directory
-        run: cd api
+        run: |
+          cd api
+          pwd
       - name: install yarn
         run: npm install -g yarn
       - name: Create environment file
