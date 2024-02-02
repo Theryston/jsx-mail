@@ -23,6 +23,14 @@ provider:
   name: aws
   runtime: nodejs18.x
   timeout: 30
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: 
+            - ses:SendEmail
+            - ses:SendRawEmail
+          Resource: '*'
 
 functions:
   main:
