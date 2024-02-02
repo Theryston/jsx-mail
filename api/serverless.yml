@@ -11,6 +11,7 @@ plugins:
 package:
   patterns:
     - '.jsxmail/**'
+    - 'node_modules/.prisma/client/**'
 
 custom:
   serverless-offline:
