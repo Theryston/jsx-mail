@@ -50,11 +50,18 @@ export default function Page() {
   );
 
   const handleSendCode = useCallback(async () => {
+    const isSubmitted = sessionStorage.getItem('isSubmitted');
+    if (isSubmitted) {
+      return;
+    }
+
     setIsLoading(true);
     try {
       await axios.post('/user/security-code', {
         email,
       });
+
+      sessionStorage.setItem('isSubmitted', 'true');
     } catch (error: any) {
       toast.error(error.message);
     } finally {

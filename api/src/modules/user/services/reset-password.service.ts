@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { ResetPasswordDto } from '../user.dto';
 import { PERMISSIONS } from 'src/auth/permissions';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 type ResetPassword = {
 	userId: string;
