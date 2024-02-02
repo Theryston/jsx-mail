@@ -23,6 +23,7 @@ provider:
   name: aws
   runtime: nodejs18.x
   timeout: 30
+  cors: false
 
 functions:
   main:
