@@ -5,12 +5,7 @@ useDotenv: true
 plugins:
   - serverless-offline
   - serverless-dotenv-plugin
-  - serverless-plugin-monorepo
   - serverless-domain-manager
-
-package:
-  patterns:
-    - 'node_modules/.prisma/**'
 
 custom:
   serverless-offline:

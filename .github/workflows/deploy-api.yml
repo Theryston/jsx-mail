@@ -34,5 +34,5 @@ jobs:
           yarn install
           echo "$ENV_FILE" > .env
           yarn prepare:all
-          ls node_modules
+          mv ../node_modules ./node_modules
           yarn deploy:aws

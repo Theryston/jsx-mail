@@ -49,7 +49,6 @@
     "serverless-domain-manager": "^7.3.4",
     "serverless-dotenv-plugin": "^6.0.0",
     "serverless-offline": "^13.3.3",
-    "serverless-plugin-monorepo": "^0.11.0",
     "source-map-support": "^0.5.21",
     "supertest": "^6.3.3",
     "ts-loader": "^9.4.3",
