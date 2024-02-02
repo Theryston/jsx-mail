@@ -31,14 +31,8 @@ functions:
       - http:
           method: ANY
           path: /
-          cors: 
-            origin: '*'
-            headers: '*'
-            allowCredentials: false
+          cors: true
       - http:
           method: ANY
           path: '{proxy+}'
-          cors: 
-            origin: '*'
-            headers: '*'
-            allowCredentials: false
+          cors: true
