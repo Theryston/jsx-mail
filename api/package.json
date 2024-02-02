@@ -12,7 +12,7 @@
     "undeploy:aws": "yarn serverless remove --stage prod --verbose",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
-    "prepare:db": "dotenv -- prisma db push && dotenv -- prisma generate"
+    "prepare:db": "prisma db push && prisma generate"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.504.0",
@@ -40,7 +40,6 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "chokidar": "^3.5.3",
-    "dotenv-cli": "^7.3.0",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
