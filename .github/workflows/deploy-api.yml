@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
       
 jobs:
-  version:
+  DeployAPI:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
