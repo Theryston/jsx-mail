@@ -78,7 +78,7 @@ export default function Page() {
       </Button>
       <Card className="w-11/12 md:w-[400px]">
         <CardHeader className="flex flex-col">
-          <h1 className="text-xl font-bold">Create Account</h1>
+          <h1 className="text-xl font-bold">Sign Up</h1>
         </CardHeader>
         <CardBody>
           <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">

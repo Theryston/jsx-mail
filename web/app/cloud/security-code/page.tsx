@@ -1,7 +1,14 @@
 'use client';
 
 import axios from '@/utils/axios';
-import { Button, Card, CardBody, CardHeader, Input } from '@nextui-org/react';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Input,
+  Link,
+} from '@nextui-org/react';
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -50,6 +57,8 @@ export default function Page() {
   );
 
   const handleSendCode = useCallback(async () => {
+    if (isLoading) return;
+
     const isSubmitted = sessionStorage.getItem('isSubmitted');
     if (isSubmitted) {
       return;
@@ -67,7 +76,7 @@ export default function Page() {
     } finally {
       setIsLoading(false);
     }
-  }, [email]);
+  }, [email, isLoading]);
 
   useEffect(() => {
     if (!searchParams) {
@@ -119,7 +128,10 @@ export default function Page() {
           </p>
         </CardHeader>
         <CardBody>
-          <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
+          <form
+            onSubmit={handleSubmit}
+            className="w-full flex flex-col gap-5 items-center"
+          >
             <Input
               isRequired
               type="text"
@@ -135,6 +147,16 @@ export default function Page() {
             >
               Verify
             </Button>
+            <Link
+              onClick={() => {
+                sessionStorage.removeItem('isSubmitted');
+                handleSendCode();
+              }}
+              href="#"
+              className="text-sm text-center"
+            >
+              Resend code
+            </Link>
           </form>
         </CardBody>
       </Card>
