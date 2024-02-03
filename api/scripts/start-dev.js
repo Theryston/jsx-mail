@@ -29,7 +29,60 @@ async function build() {
   }
 }
 
+async function upDockerCompose() {
+  console.log('Starting docker-compose');
+  await new Promise((resolve, reject) => {
+    exec('docker-compose up -d', (error) => {
+      if (error) {
+        console.log('Error while starting docker-compose', error);
+        reject(error);
+      }
+
+      console.log('Docker-compose started');
+      resolve();
+    });
+  });
+}
+
+async function downDockerCompose() {
+  console.log('Stopping docker-compose');
+  await new Promise((resolve, reject) => {
+    exec('docker-compose down', (error) => {
+      if (error) {
+        console.log('Error while stopping docker-compose', error);
+        reject(error);
+      }
+
+      console.log('Docker-compose stopped');
+      resolve();
+    });
+  });
+}
+
+async function prepareAll() {
+  console.log('Preparing all');
+  await new Promise((resolve, reject) => {
+    exec('yarn prepare:all', (error) => {
+      if (error) {
+        console.log('Error while preparing all', error);
+        reject(error);
+      }
+
+      console.log('Prepared all');
+      resolve();
+    });
+  });
+}
+
+process.on('SIGINT', async () => {
+  await downDockerCompose();
+  process.exit();
+});
+
 async function startDev() {
+  await upDockerCompose();
+  await prepareAll();
+
   const watcher = chokidar.watch(SRC_PATH);
 
   watcher.on('change', build);
