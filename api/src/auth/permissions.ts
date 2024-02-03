@@ -27,4 +27,9 @@ export const PERMISSIONS: {
 		value: 'self:reset-password',
 		description: 'Can reset its own password',
 	},
+	SELF_GET: {
+		title: 'Self Get',
+		value: 'self:get',
+		description: 'Can get its own data',
+	}
 }

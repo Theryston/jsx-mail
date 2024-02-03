@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Put, Request } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Request } from '@nestjs/common';
 import { CreateUserService } from './services/create-user.service';
 import { AuthUserDto, CreateSecurityCodeDto, CreateUserDto, ResetPasswordDto, UseSecurityCodeDto } from './user.dto';
 import { Permissions } from 'src/auth/permissions.decorator';
@@ -43,5 +43,11 @@ export class UserController {
 	@Permissions([PERMISSIONS.SELF_RESET_PASSWORD.value])
 	resetPassword(@Body() data: ResetPasswordDto, @Request() req) {
 		return this.resetPasswordService.execute({ ...data, userId: req.user.id, permissions: req.permissions })
+	}
+
+	@Get('me')
+	@Permissions([PERMISSIONS.SELF_GET.value])
+	getMe(@Request() req) {
+		return req.user
 	}
 }
