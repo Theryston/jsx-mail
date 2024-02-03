@@ -1,6 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { createRouter } from "next-connect";
-import error from "../../utils/error";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { createRouter } from 'next-connect';
+import error from '../../utils/error';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
