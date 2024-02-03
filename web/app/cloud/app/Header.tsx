@@ -14,11 +14,12 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   Avatar,
+  User,
 } from '@nextui-org/react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
-import { useCloudAppContext } from '../context';
+import { useCloudAppContext } from './context';
 import Link from 'next/link';
 import axios from '@/utils/axios';
 import { toast } from 'react-toastify';
@@ -74,6 +75,7 @@ export default function Header() {
       isBordered
       isBlurred
       shouldHideOnScroll
+      maxWidth="full"
     >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle
@@ -92,7 +94,7 @@ export default function Header() {
           <Logo />
         </NavbarBrand>
       </NavbarContent>
-      <NavbarContent className="hidden sm:flex gap-4 w-full" justify="center">
+      <NavbarContent className="hidden sm:flex gap-4" justify="center">
         {itemsNav.map((item) => (
           <NavbarItem key={item.link} isActive={item.isCurrent}>
             <Link
@@ -108,23 +110,34 @@ export default function Header() {
       <NavbarContent as="div" justify="end">
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
-            <Avatar
-              isBordered
-              as="button"
-              className="transition-transform"
-              name={titleCase(user?.name || '')}
-              showFallback={false}
-              size="sm"
-            />
+            <div>
+              <Avatar
+                as="button"
+                className="flex sm:hidden"
+                name={titleCase(user?.name || '')}
+                showFallback={false}
+              />
+              <User
+                name={titleCase(user?.name || '')}
+                description={user?.email}
+                as="button"
+                className="hidden sm:flex"
+              />
+            </div>
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
             <DropdownItem key="profile" className="h-14 gap-2">
-              <p className="font-semibold">{titleCase(user?.name || '')}</p>
-              <p className="font-semibold">{user?.email}</p>
+              <p className="font-semibold">Signed in as</p>
+              <p className="font-semibold">{user?.email || 'Loading...'}</p>
             </DropdownItem>
             <DropdownItem key="settings">
               <Link href="/cloud/app/account/settings" className="w-full block">
                 My Settings
+              </Link>
+            </DropdownItem>
+            <DropdownItem key="billing">
+              <Link href="/cloud/app/account/billing" className="w-full block">
+                Billing
               </Link>
             </DropdownItem>
             <DropdownItem key="sessions">
@@ -164,7 +177,7 @@ function Logo() {
       aria-label="Go to the home page"
       className="flex items-center gap-2"
     >
-      <Image src="/logo.svg" alt="Logo" width={35} height={35} />
+      <Image src="/logo.svg" alt="Logo" width={40} height={40} />
     </Link>
   );
 }

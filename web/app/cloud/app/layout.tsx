@@ -5,7 +5,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <CloudAppContextProvider>
       <Header />
-      {children}
+      <div className="px-6 py-4">{children}</div>
     </CloudAppContextProvider>
   );
 }
