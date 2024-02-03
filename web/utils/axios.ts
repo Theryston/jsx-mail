@@ -7,6 +7,12 @@ const axios = Axios.create({
 
 axios.interceptors.request.use((request) => {
   const token = localStorage.getItem('token');
+  const forceAuth = request.headers['Force-Auth'] === 'true';
+
+  if (!token && forceAuth) {
+    window.location.href = '/cloud/sign-in';
+    throw new Error('Unauthorized');
+  }
 
   if (!token) {
     return request;
