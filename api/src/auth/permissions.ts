@@ -31,5 +31,10 @@ export const PERMISSIONS: {
 		title: 'Self Get',
 		value: 'self:get',
 		description: 'Can get its own data',
+	},
+	SELF_SESSION_DELETE: {
+		title: 'Self Session Delete',
+		value: 'self:session-delete',
+		description: 'Can delete its own session',
 	}
 }

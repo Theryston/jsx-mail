@@ -50,6 +50,9 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
+    request.permissions = session.permissions
+    request.session = session;
+
     const user = await this.prisma.user.findFirst({
       where: {
         id: session.userId,
@@ -59,8 +62,14 @@ export class AuthGuard implements CanActivate {
       },
     });
 
+    if (!user) {
+      return false;
+    }
+
     delete user.password
     delete user.deletedAt
+
+    request.user = user;
 
     const route = context.switchToHttp().getRequest().route.path;
 
@@ -69,20 +78,14 @@ export class AuthGuard implements CanActivate {
     }
 
     if (permissions.every(permission => permission.startsWith('self:') && session.permissions.includes(PERMISSIONS.SELF_ADMIN.value))) {
-      request.user = user;
-      request.permissions = session.permissions
       return true;
     }
 
     if (session.permissions.includes(PERMISSIONS.OTHER_ADMIN.value)) {
-      request.user = user;
-      request.permissions = session.permissions
       return true;
     }
 
     if (permissions.every(permission => session.permissions.includes(permission))) {
-      request.user = user;
-      request.permissions = session.permissions
       return true;
     }
 

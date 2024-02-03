@@ -12,13 +12,10 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {
-  ArrowLeftIcon,
-  EyeClosedIcon,
-  EyeOpenIcon,
-} from '@radix-ui/react-icons';
+import { EyeClosedIcon, EyeOpenIcon } from '@radix-ui/react-icons';
 import axios from '@/utils/axios';
 import handleRedirectUrl from '@/utils/handle-redirect-url';
+import BackButton from '../BackButton';
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
@@ -72,13 +69,7 @@ export default function Page() {
 
   return (
     <main className="h-screen w-full flex justify-center items-center">
-      <Button
-        isIconOnly
-        onClick={() => router.back()}
-        className="absolute top-5 left-5"
-      >
-        <ArrowLeftIcon />
-      </Button>
+      <BackButton />
       <Card className="w-11/12 md:w-[400px]">
         <CardHeader className="flex flex-col">
           <h1 className="text-xl font-bold">Reset password</h1>
