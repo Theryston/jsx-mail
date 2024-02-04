@@ -5,53 +5,25 @@ import {
   Navbar,
   NavbarBrand,
   NavbarContent,
-  NavbarItem,
   DropdownItem,
   DropdownTrigger,
   Dropdown,
   DropdownMenu,
-  NavbarMenuToggle,
-  NavbarMenu,
-  NavbarMenuItem,
   Avatar,
   User,
 } from '@nextui-org/react';
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
 import { useCloudAppContext } from './context';
 import Link from 'next/link';
 import axios from '@/utils/axios';
 import { toast } from 'react-toastify';
 
-type ItemNav = {
-  name: string;
-  link: string;
-  isCurrent: boolean;
-};
-
-const ITEMS_NAV: ItemNav[] = [
-  { name: 'Domains', link: '/cloud/app/domains', isCurrent: false },
-  { name: 'Emails', link: '/cloud/app/emails', isCurrent: false },
-  { name: 'Images', link: '/cloud/app/images', isCurrent: false },
-];
-
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [itemsNav, setItemsNav] = useState<ItemNav[]>(ITEMS_NAV);
-  const pathname = usePathname();
   const { user } = useCloudAppContext();
   const router = useRouter();
-
-  useEffect(() => {
-    const items = ITEMS_NAV.map((item) => {
-      return {
-        ...item,
-        isCurrent: pathname ? pathname.startsWith(item.link) : false,
-      };
-    });
-    setItemsNav(items);
-  }, [pathname]);
 
   const logout = useCallback(async () => {
     const toastId = toast.loading('Logging out...');
@@ -77,36 +49,11 @@ export default function Header() {
       shouldHideOnScroll
       maxWidth="full"
     >
-      <NavbarContent className="sm:hidden" justify="start">
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-        />
-      </NavbarContent>
-
-      <NavbarContent className="sm:hidden pr-3" justify="center">
+      <NavbarContent className="pr-3" justify="center">
         <NavbarBrand>
           <Logo />
         </NavbarBrand>
       </NavbarContent>
-
-      <NavbarContent className="hidden sm:flex" justify="center">
-        <NavbarBrand>
-          <Logo />
-        </NavbarBrand>
-      </NavbarContent>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        {itemsNav.map((item) => (
-          <NavbarItem key={item.link} isActive={item.isCurrent}>
-            <Link
-              className={item.isCurrent ? 'text-primary' : 'text-foreground'}
-              href={item.link}
-            >
-              {item.name}
-            </Link>
-          </NavbarItem>
-        ))}
-      </NavbarContent>
-
       <NavbarContent as="div" justify="end">
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
@@ -151,21 +98,6 @@ export default function Header() {
           </DropdownMenu>
         </Dropdown>
       </NavbarContent>
-
-      <NavbarMenu>
-        {itemsNav.map((item) => (
-          <NavbarMenuItem key={item.link}>
-            <Link
-              className={
-                item.isCurrent ? 'text-primary font-bold' : 'text-foreground'
-              }
-              href={item.link}
-            >
-              {item.name}
-            </Link>
-          </NavbarMenuItem>
-        ))}
-      </NavbarMenu>
     </Navbar>
   );
 }
