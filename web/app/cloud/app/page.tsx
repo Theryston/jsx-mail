@@ -1,3 +1,9 @@
+import Domains from './components/Domains';
+
 export default function Page() {
-  return <div>App Page</div>;
+  return (
+    <div>
+      <Domains />
+    </div>
+  );
 }

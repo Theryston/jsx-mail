@@ -1,4 +1,4 @@
-import Header from './Header';
+import Header from './components/Header';
 import { CloudAppContextProvider } from './context';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {

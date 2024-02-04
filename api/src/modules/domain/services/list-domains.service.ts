@@ -19,6 +19,18 @@ export class ListDomainsService {
 				name: true,
 				userId: true,
 				status: true,
+				dnsRecords: {
+					select: {
+						id: true,
+						name: true,
+						value: true,
+						type: true,
+						ttl: true,
+					}
+				}
+			},
+			orderBy: {
+				createdAt: 'desc'
 			}
 		});
 
@@ -55,21 +67,6 @@ export class ListDomainsService {
 				result.push(domain);
 				continue;
 			} else if (verificationAttributes[domain.name]?.VerificationStatus === 'Pending') {
-				(domain as any).dnsRecords = await this.prisma.dNSRecord.findMany({
-					where: {
-						domainId: domain.id,
-						deletedAt: {
-							isSet: false
-						}
-					},
-					select: {
-						id: true,
-						name: true,
-						value: true,
-						type: true,
-						ttl: true,
-					}
-				});
 				result.push(domain);
 				continue;
 			} else {

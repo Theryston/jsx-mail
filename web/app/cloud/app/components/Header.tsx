@@ -15,7 +15,7 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import { useCloudAppContext } from './context';
+import { useCloudAppContext } from '../context';
 import Link from 'next/link';
 import axios from '@/utils/axios';
 import { toast } from 'react-toastify';
