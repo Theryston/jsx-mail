@@ -36,5 +36,20 @@ export const PERMISSIONS: {
 		title: 'Self Session Delete',
 		value: 'self:session-delete',
 		description: 'Can delete its own session',
-	}
+	},
+	SELF_DOMAIN_CREATE: {
+		title: 'Self Domain Create',
+		value: 'self:domain-create',
+		description: 'Can create a domain for itself',
+	},
+	SELF_DOMAIN_DELETE: {
+		title: 'Self Domain Delete',
+		value: 'self:domain-delete',
+		description: 'Can delete a domain for itself',
+	},
+	SELF_LIST_DOMAINS: {
+		title: 'Self List Domains',
+		value: 'self:list-domains',
+		description: 'Can list domains for itself',
+	},
 }

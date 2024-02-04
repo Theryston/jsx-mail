@@ -13,6 +13,12 @@ enum AccessLevel {
   other
 }
 
+enum DomainStatus {
+  pending
+  verified
+  failed
+}
+
 model User {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
   name              String
@@ -28,6 +34,7 @@ model User {
 
   sessions Session[]
   securityCodes SecurityCode[]
+  domains Domain[]
 
   @@map("users")
 }
@@ -60,4 +67,37 @@ model SecurityCode {
   user User @relation(fields: [userId], references: [id])
 
   @@map("security_codes")
+}
+
+model Domain {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  status            DomainStatus @map("status") @default(pending)
+  userId            String      @map("user_id") @db.ObjectId
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  dnsRecords DNSRecord[]
+
+  @@map("domains")
+}
+
+model DNSRecord {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  domainId          String      @map("domain_id") @db.ObjectId
+  type              String
+  name              String
+  value             String
+  ttl               Int
+  priority          Int?
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  domain Domain @relation(fields: [domainId], references: [id])
+
+  @@map("dns_records")
 }
