@@ -6,23 +6,20 @@ plugins:
   - serverless-offline
   - serverless-dotenv-plugin
   - serverless-plugin-monorepo
-  - serverless-domain-manager
 
 custom:
   serverless-offline:
     useChildProcesses: true
     reloadHandler: true
     httpPort: 3331
-  customDomain:
-    domainName: api.jsxmail.org
-    basePath: ''
-    stage: ${opt:stage, self:provider.stage, "dev"}
-    createRoute53Record: true
 
 provider:
   name: aws
   runtime: nodejs18.x
   timeout: 30
+  httpApi:
+    cors: true
+    disableDefaultEndpoint: true
   apiGateway:
     binaryMediaTypes:
       - 'multipart/form-data'
@@ -37,11 +34,6 @@ functions:
   main:
     handler: dist/main.handler
     events:
-      - http:
-          method: ANY
-          path: /
-          cors: true
-      - http:
-          method: ANY
-          path: '{proxy+}'
-          cors: true
+      - httpApi:
+          method: '*'
+          path: '*'

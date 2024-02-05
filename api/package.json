@@ -50,7 +50,6 @@
     "prettier": "^3.0.0",
     "prisma": "^5.9.0",
     "serverless": "^3.38.0",
-    "serverless-domain-manager": "^7.3.4",
     "serverless-dotenv-plugin": "^6.0.0",
     "serverless-offline": "^13.3.3",
     "serverless-plugin-monorepo": "^0.11.0",
