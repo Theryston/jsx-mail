@@ -44,21 +44,6 @@ async function upDockerCompose() {
   });
 }
 
-async function downDockerCompose() {
-  console.log('Stopping docker-compose');
-  await new Promise((resolve, reject) => {
-    exec('docker-compose down', (error) => {
-      if (error) {
-        console.log('Error while stopping docker-compose', error);
-        reject(error);
-      }
-
-      console.log('Docker-compose stopped');
-      resolve();
-    });
-  });
-}
-
 async function prepareAll() {
   console.log('Preparing all');
   await new Promise((resolve, reject) => {
@@ -73,11 +58,6 @@ async function prepareAll() {
     });
   });
 }
-
-process.on('SIGINT', async () => {
-  await downDockerCompose();
-  process.exit();
-});
 
 async function startDev() {
   await upDockerCompose();
