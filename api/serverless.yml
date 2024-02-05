@@ -30,6 +30,9 @@ provider:
           Action: 
             - ses:SendEmail
             - ses:SendRawEmail
+            - ses:VerifyDomainDkim
+            - ses:GetIdentityVerificationAttributes
+            - ses:DeleteIdentity
           Resource: '*'
 
 functions:
