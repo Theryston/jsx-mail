@@ -15,7 +15,7 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import { useCloudAppContext } from '../context';
+import { useCloudAppContext } from './context';
 import Link from 'next/link';
 import axios from '@/utils/axios';
 import { toast } from 'react-toastify';
@@ -90,6 +90,11 @@ export default function Header() {
             <DropdownItem key="sessions">
               <Link href="/cloud/app/account/sessions" className="w-full block">
                 Sessions
+              </Link>
+            </DropdownItem>
+            <DropdownItem key="domains">
+              <Link href="/cloud/app/domains" className="w-full block">
+                Domains
               </Link>
             </DropdownItem>
             <DropdownItem key="logout" color="danger" onClick={logout}>

@@ -19,7 +19,7 @@
     "framer-motion": "^11.0.3",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.3.0",
-    "next": "13",
+    "next": "^14.1.0",
     "next-connect": "1.0.0-next.4",
     "nextra": "^2.13.2",
     "nextra-theme-docs": "^2.13.2",

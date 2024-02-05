@@ -18,22 +18,7 @@ import { toast } from 'react-toastify';
 import CreationDomainModal from './CreationDomainModal';
 import DNSDomainModal from './DNSDomainModal';
 import DeleteForm from '../DeleteForm';
-
-type DNSRecord = {
-  id: string;
-  name: string;
-  value: string;
-  type: string;
-  ttl: number;
-};
-
-export type Domain = {
-  id: string;
-  name: string;
-  userId: string;
-  status: 'pending' | 'verified' | 'failed';
-  dnsRecords: DNSRecord[];
-};
+import { Domain } from './types';
 
 const statusColors: Record<string, 'warning' | 'success' | 'danger'> = {
   pending: 'warning',
@@ -110,7 +95,11 @@ export default function Domains() {
           Add Domain
         </Button>
       </div>
-      <Table aria-label="List of domains" className="overflow-x-auto">
+      <Table
+        aria-label="List of domains"
+        className="overflow-x-auto"
+        removeWrapper
+      >
         <TableHeader>
           <TableColumn>ID</TableColumn>
           <TableColumn>NAME</TableColumn>

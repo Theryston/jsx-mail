@@ -12,7 +12,7 @@ import {
   TableRow,
   TableCell,
 } from '@nextui-org/react';
-import { Domain } from '.';
+import { Domain } from './types';
 
 type Props = {
   isOpen: boolean;
