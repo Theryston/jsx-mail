@@ -10,6 +10,7 @@ let server: Handler;
 
 async function bootstrap(): Promise<Handler> {
   const app = await NestFactory.create(AppModule);
+  app.enableCors({ origin: '*' });
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new AllExceptionsFilter());
   await app.init();
@@ -26,11 +27,7 @@ export const handler: Handler = async (
 ) => {
   event = await handleMultipart(event);
   server = server ?? (await bootstrap());
-  let response = await server(event, context, callback);
-  response = {
-    ...response, headers: { ...response.headers, 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true }
-  };
-  return response;
+  return server(event, context, callback);
 };
 
 async function handleMultipart(event) {
