@@ -23,16 +23,14 @@ provider:
   name: aws
   runtime: nodejs18.x
   timeout: 30
+  apiGateway:
+    binaryMediaTypes:
+      - 'multipart/form-data'
   iam:
     role:
       statements:
         - Effect: Allow
-          Action: 
-            - ses:SendEmail
-            - ses:SendRawEmail
-            - ses:VerifyDomainDkim
-            - ses:GetIdentityVerificationAttributes
-            - ses:DeleteIdentity
+          Action: '*'
           Resource: '*'
 
 functions:

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { SESClient, GetIdentityVerificationAttributesCommand } from '@aws-sdk/client-ses';
+import { domainSelect } from 'src/utils/public-selects';
 
 @Injectable()
 export class ListDomainsService {
@@ -14,21 +15,7 @@ export class ListDomainsService {
 					isSet: false
 				}
 			},
-			select: {
-				id: true,
-				name: true,
-				userId: true,
-				status: true,
-				dnsRecords: {
-					select: {
-						id: true,
-						name: true,
-						value: true,
-						type: true,
-						ttl: true,
-					}
-				}
-			},
+			select: domainSelect,
 			orderBy: {
 				createdAt: 'desc'
 			}

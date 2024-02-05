@@ -52,4 +52,14 @@ export const PERMISSIONS: {
 		value: 'self:list-domains',
 		description: 'Can list domains for itself',
 	},
+	SELF_FILE_UPLOAD: {
+		title: 'Self File Upload',
+		value: 'self:file-upload',
+		description: 'Can upload files for itself',
+	},
+	SELF_FILE_DELETE: {
+		title: 'Self File Delete',
+		value: 'self:file-delete',
+		description: 'Can delete files for itself',
+	}
 }

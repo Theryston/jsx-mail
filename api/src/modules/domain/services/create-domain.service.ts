@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateDomainDto } from '../domain.dto';
 import { SESClient, VerifyDomainDkimCommand } from '@aws-sdk/client-ses';
 import { PrismaService } from 'src/services/prisma.service';
+import { domainSelect } from 'src/utils/public-selects';
 
 const domainRegex = /^(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
 
@@ -60,21 +61,7 @@ export class CreateDomainService {
 					}
 				}
 			},
-			select: {
-				id: true,
-				name: true,
-				userId: true,
-				status: true,
-				dnsRecords: {
-					select: {
-						id: true,
-						name: true,
-						value: true,
-						type: true,
-						ttl: true,
-					}
-				}
-			}
+			select: domainSelect
 		});
 
 		return domain;
