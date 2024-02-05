@@ -9,10 +9,12 @@ import { UseSecurityCodeService } from './services/use-security-code.service';
 import { ValidateEmailService } from './services/validate-email.service';
 import { AuthUserService } from './services/auth-user.service';
 import { ResetPasswordService } from './services/reset-password.service';
+import { AddBalanceService } from './services/add-balance.service';
+import { GetBalanceService } from './services/get-balance.service';
 
 @Module({
   controllers: [UserController],
-  providers: [CreateUserService, PrismaService, CreateSessionService, CreateSecurityCodeService, UseSecurityCodeService, ValidateEmailService, AuthUserService, ResetPasswordService],
+  providers: [CreateUserService, PrismaService, CreateSessionService, CreateSecurityCodeService, UseSecurityCodeService, ValidateEmailService, AuthUserService, ResetPasswordService, AddBalanceService, GetBalanceService],
   imports: [EmailModule],
 })
 export class UserModule { }

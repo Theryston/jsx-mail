@@ -2,10 +2,12 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { PrismaService } from 'src/services/prisma.service';
 import { CreateSessionService } from './create-session.service';
+import { AddBalanceService } from './add-balance.service';
+import { FREE_BALANCE } from 'src/utils/contants';
 
 @Injectable()
 export class ValidateEmailService {
-	constructor(private readonly prisma: PrismaService, private readonly createSessionService: CreateSessionService) { }
+	constructor(private readonly prisma: PrismaService, private readonly createSessionService: CreateSessionService, private readonly addBalanceService: AddBalanceService) { }
 
 	async execute(userId: string, permissions: string[]) {
 		if (!permissions.includes(PERMISSIONS.SELF_EMAIL_VALIDATE.value)) {
@@ -36,6 +38,13 @@ export class ValidateEmailService {
 			data: {
 				isEmailVerified: true
 			}
+		})
+
+		await this.addBalanceService.execute({
+			amount: FREE_BALANCE,
+			style: 'free',
+			userId: userId,
+			description: 'Earning from email verification'
 		})
 
 		return this.createSessionService.execute({

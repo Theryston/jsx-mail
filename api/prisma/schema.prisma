@@ -19,10 +19,16 @@ enum DomainStatus {
   failed
 }
 
+enum TransactionStyle {
+  free
+  paid
+}
+
 model User {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
   name              String
   email             String      @unique
+  gatewayId         String?     @map("gateway_id")
   isEmailVerified   Boolean     @map("is_email_verified") @default(false)
   accessLevel       AccessLevel @map("access_level") @default(self)
   password          String
@@ -32,12 +38,31 @@ model User {
   updatedAt         DateTime    @map("updated_at") @updatedAt
   deletedAt         DateTime?   @map("deleted_at")
 
+  transactions Transaction[]
   sessions Session[]
   securityCodes SecurityCode[]
   domains Domain[]
   files File[]
 
   @@map("users")
+}
+
+model Transaction {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String      @map("user_id") @db.ObjectId
+  gatewayId         String?     @map("gateway_id")
+  amount            Int         // scale 1/10000
+  addedAmount       Int         @map("added_amount")  // scale 1/10000
+  removedAmount     Int         @map("removed_amount")  // scale 1/10000
+  description       String?
+  style             TransactionStyle
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("transactions")
 }
 
 model Session {

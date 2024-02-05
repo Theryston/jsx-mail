@@ -1,3 +1,4 @@
+import { TransactionStyle } from '@prisma/client';
 import { IsArray, IsEmail, IsEmpty, IsNotEmpty, Length } from 'class-validator';
 
 export class CreateUserDto {
@@ -57,4 +58,18 @@ export class ResetPasswordDto {
 	@IsNotEmpty()
 	@Length(6, 100)
 	newPassword: string;
+}
+
+export class AddBalanceDto {
+	@IsNotEmpty()
+	amount: number
+
+	@IsNotEmpty()
+	userId: string
+
+	@IsNotEmpty()
+	style: TransactionStyle
+
+	@IsEmpty()
+	description?: string
 }

@@ -3,10 +3,11 @@ import { Reflector } from '@nestjs/core';
 import { Permissions } from './permissions.decorator';
 import { PrismaService } from 'src/services/prisma.service';
 import { PERMISSIONS } from './permissions';
+import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector, private readonly prisma: PrismaService) { }
+  constructor(private readonly reflector: Reflector, private readonly prisma: PrismaService, private readonly getBalanceService: GetBalanceService) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const permissions = this.reflector.get(Permissions, context.getHandler());
@@ -66,8 +67,10 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    delete user.password
-    delete user.deletedAt
+    delete user.password;
+    delete user.deletedAt;
+
+    (user as any).balance = await this.getBalanceService.execute(user.id)
 
     request.user = user;
 
