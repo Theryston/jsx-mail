@@ -1,17 +1,20 @@
 'use client';
 
-import { NextUIProvider } from '@nextui-org/react';
+import { NextUIProvider, Spinner } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Suspense } from 'react';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   return (
     <NextUIProvider navigate={router.push}>
-      {children}
-      <ToastContainer closeOnClick theme="dark" />
+      <Suspense fallback={<Spinner />}>
+        {children}
+        <ToastContainer closeOnClick theme="dark" />
+      </Suspense>
     </NextUIProvider>
   );
 }
