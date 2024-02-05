@@ -70,6 +70,6 @@ export class AddBalanceDto {
 	@IsNotEmpty()
 	style: TransactionStyle
 
-	@IsEmpty()
-	description?: string
+	@IsNotEmpty()
+	description: string
 }

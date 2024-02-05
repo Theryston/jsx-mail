@@ -42,7 +42,7 @@ export class ValidateEmailService {
 
 		await this.addBalanceService.execute({
 			amount: FREE_BALANCE,
-			style: 'free',
+			style: 'earn_free',
 			userId: userId,
 			description: 'Earning from email verification'
 		})

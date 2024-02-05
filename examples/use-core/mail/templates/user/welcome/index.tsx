@@ -96,7 +96,7 @@ export default function UserWelcomeTemplate({
               ...products,
               {
                 name: 'Macbook Pro',
-                price: 10000,
+                price: 100000,
                 image: MacbookImg,
                 link: 'https://www.apple.com/macbook-pro-13/',
               },

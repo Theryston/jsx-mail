@@ -9,9 +9,7 @@ export class AddBalanceService {
 	async execute({ amount, userId, style, description }: AddBalanceDto) {
 		await this.prisma.transaction.create({
 			data: {
-				addedAmount: amount,
 				amount,
-				removedAmount: 0,
 				style,
 				userId,
 				description
