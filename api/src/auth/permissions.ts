@@ -61,5 +61,10 @@ export const PERMISSIONS: {
 		title: 'Self File Delete',
 		value: 'self:file-delete',
 		description: 'Can delete files for itself',
+	},
+	SELF_LIST_FILES: {
+		title: 'Self List Files',
+		value: 'self:list-files',
+		description: 'Can list files for itself',
 	}
 }

@@ -5,10 +5,11 @@ import { PrismaService } from 'src/services/prisma.service';
 import { DeleteFileService } from './services/delete-file.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { ListFilesService } from './services/list-files.service';
 
 @Module({
   controllers: [FileController],
-  providers: [UploadFileService, PrismaService, DeleteFileService],
+  providers: [UploadFileService, PrismaService, DeleteFileService, ListFilesService],
   imports: [
     MulterModule.register({
       storage: memoryStorage(),
