@@ -22,7 +22,7 @@ enum DomainStatus {
 enum TransactionStyle {
   earn_free
   earn_paid
-  spend
+  spending_bandwidth
 }
 
 model User {

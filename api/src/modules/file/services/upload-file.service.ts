@@ -6,6 +6,7 @@ import { MAX_FILE_SIZE } from 'src/utils/contants';
 import { fileSelect } from 'src/utils/public-selects';
 import { CustomFile } from 'src/interceptors/file.interceptor';
 import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
+import { friendlyMoney, storageToMoney } from 'src/utils/format-money';
 
 @Injectable()
 export class UploadFileService {
@@ -25,14 +26,16 @@ export class UploadFileService {
 			throw new HttpException('User not found', HttpStatus.NOT_FOUND)
 		}
 
-		const balance = await this.getBalanceService.execute(user.id)
-
-		if (!balance.amount) {
-			throw new HttpException('Insufficient balance', HttpStatus.BAD_REQUEST)
-		}
-
 		if (file.size > MAX_FILE_SIZE) {
 			throw new HttpException('File size is too large', HttpStatus.BAD_REQUEST)
+		}
+
+		const storagePrice = storageToMoney(file.size);
+
+		const balance = await this.getBalanceService.execute(user.id);
+
+		if (balance.amount < storagePrice) {
+			throw new HttpException(`You need at least ${friendlyMoney(storagePrice)} to upload this file`, HttpStatus.BAD_REQUEST)
 		}
 
 		const hash = calculateHash(file.buffer);
