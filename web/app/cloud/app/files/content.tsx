@@ -78,7 +78,11 @@ export function Content({
 
   return (
     <>
-      <Table aria-label="List of files" className="overflow-x-auto">
+      <Table
+        aria-label="List of files"
+        className="overflow-x-auto shadow-2xl"
+        removeWrapper
+      >
         <TableHeader>
           <TableColumn>ID</TableColumn>
           <TableColumn>LINK</TableColumn>
