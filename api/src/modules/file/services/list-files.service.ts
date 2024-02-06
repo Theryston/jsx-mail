@@ -37,6 +37,7 @@ export class ListFilesService {
 
 		return {
 			files,
+			totalPages: Math.ceil(count / take),
 			total: count,
 			hasNext: skip + take < count
 		}
