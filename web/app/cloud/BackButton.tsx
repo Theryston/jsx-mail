@@ -1,5 +1,5 @@
 import { Button } from '@nextui-org/react';
-import { ArrowLeftIcon } from '@radix-ui/react-icons';
+import { HomeIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
 
 export default function BackButton() {
@@ -11,7 +11,7 @@ export default function BackButton() {
       onClick={() => router.push('/')}
       className="absolute top-5 left-5"
     >
-      <ArrowLeftIcon />
+      <HomeIcon />
     </Button>
   );
 }

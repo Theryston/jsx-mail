@@ -110,7 +110,7 @@ export default function Header() {
 function Logo() {
   return (
     <Link
-      href="/cloud/app"
+      href="/"
       aria-label="Go to the home page"
       className="flex items-center gap-2"
     >

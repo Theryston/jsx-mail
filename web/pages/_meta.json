@@ -15,7 +15,7 @@
   },
   "cloud_page": {
     "title": "Cloud",
-    "href": "/cloud/sign-in",
+    "href": "/cloud/app",
     "type": "page",
     "display": "children"
   }
