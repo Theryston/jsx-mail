@@ -16,7 +16,8 @@ custom:
 provider:
   name: aws
   runtime: nodejs18.x
-  timeout: 30
+  timeout: 300
+  memorySize: 1024
   httpApi:
     cors: true
     disableDefaultEndpoint: true
