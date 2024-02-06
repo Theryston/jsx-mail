@@ -4,6 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
+    "install:sharp": "yarn add sharp --ignore-engines",
     "build": "nest build",
     "start:offline": "serverless offline start",
     "prepare:all": "yarn prepare:db",
