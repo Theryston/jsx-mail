@@ -78,11 +78,12 @@ export function Content({
   return (
     <>
       <div className="flex w-full justify-between items-center mb-4 gap-4 flex-wrap">
-        <div>
+        <div className="max-w-xl">
           <h1 className="text-2xl font-bold">Files</h1>
           <p className="text-sm">
-            Here is a list of all your files. These files are automatically sent
-            here by JSX Mail
+            Here is a list of all your files. These files are automatically
+            uploaded by JSX Mail when you import them and use them in your email
+            templates
           </p>
         </div>
         <Button

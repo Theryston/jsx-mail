@@ -11,12 +11,12 @@ import {
   DropdownMenu,
   Avatar,
   User,
+  Link,
 } from '@nextui-org/react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useCloudAppContext } from './context';
-import Link from 'next/link';
 import axios from '@/utils/axios';
 import { toast } from 'react-toastify';
 
@@ -79,30 +79,20 @@ export default function Header() {
               </p>
               <p className="font-semibold">{user.email}</p>
             </DropdownItem>
-            <DropdownItem key="settings">
-              <Link href="/cloud/app/account/settings" className="w-full block">
-                My Settings
-              </Link>
+            <DropdownItem href="/cloud/app/account/settings" key="settings">
+              My Settings
             </DropdownItem>
-            <DropdownItem key="billing">
-              <Link href="/cloud/app/account/billing" className="w-full block">
-                Billing
-              </Link>
+            <DropdownItem href="/cloud/app/account/billing" key="billing">
+              Billing
             </DropdownItem>
-            <DropdownItem key="sessions">
-              <Link href="/cloud/app/account/sessions" className="w-full block">
-                Sessions
-              </Link>
+            <DropdownItem href="/cloud/app/account/sessions" key="sessions">
+              Sessions
             </DropdownItem>
-            <DropdownItem key="files">
-              <Link href="/cloud/app/files" className="w-full block">
-                Files
-              </Link>
+            <DropdownItem href="/cloud/app/files" key="files">
+              Files
             </DropdownItem>
-            <DropdownItem key="domains">
-              <Link href="/cloud/app/domains" className="w-full block">
-                Domains
-              </Link>
+            <DropdownItem href="/cloud/app/domains" key="domains">
+              Domains
             </DropdownItem>
             <DropdownItem key="logout" color="danger" onClick={logout}>
               Log Out
@@ -121,6 +111,7 @@ function Logo() {
       href={pathname === '/cloud/app' ? '/' : '/cloud/app'}
       aria-label="Go to the home page"
       className="flex items-center"
+      color="foreground"
     >
       <div className="flex items-center gap-2">
         <Image width={40} height={31} src="/logo.svg" alt="JSX Mail Logo" />

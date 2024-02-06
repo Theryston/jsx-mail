@@ -86,7 +86,7 @@ export default function Domains({
   return (
     <>
       <div className="flex w-full justify-between items-center mb-4 gap-4 flex-wrap">
-        <div>
+        <div className="max-w-xl">
           <h1 className="text-2xl font-bold">Domains</h1>
           <p className="text-sm">
             Here is a list of all your domains. You can use them to create a
