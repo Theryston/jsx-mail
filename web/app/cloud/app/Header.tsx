@@ -13,7 +13,7 @@ import {
   User,
 } from '@nextui-org/react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useCloudAppContext } from './context';
 import Link from 'next/link';
@@ -73,7 +73,7 @@ export default function Header() {
             </div>
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem key="profile" className="h-14 gap-2">
+            <DropdownItem key="profile" className="h-14 gap-2 cursor-default">
               <p className="font-semibold">
                 Balance: {user.balance.friendlyAmount}
               </p>
@@ -110,13 +110,17 @@ export default function Header() {
 }
 
 function Logo() {
+  const pathname = usePathname();
   return (
     <Link
-      href="/"
+      href={pathname === '/cloud/app' ? '/' : '/cloud/app'}
       aria-label="Go to the home page"
-      className="flex items-center gap-2"
+      className="flex items-center"
     >
-      <Image src="/logo.svg" alt="Logo" width={40} height={40} />
+      <div className="flex items-center gap-2">
+        <Image width={40} height={31} src="/logo.svg" alt="JSX Mail Logo" />
+        <span>JSX Mail</span>
+      </div>
     </Link>
   );
 }
