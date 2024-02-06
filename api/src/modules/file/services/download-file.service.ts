@@ -1,22 +1,16 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
-import sharp from 'sharp';
 import { bandwidthToMoney, friendlyMoney } from 'src/utils/format-money';
 import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
 
-type Data = {
-	fileId: string
-	width?: number
-	height?: number
-}
 
 @Injectable()
 export class DownloadFileService {
 
 	constructor(private readonly prisma: PrismaService, private readonly getBalanceService: GetBalanceService) { }
 
-	async execute({ fileId, width, height }: Data) {
+	async execute(fileId: string) {
 		const file = await this.prisma.file.findFirst({
 			where: {
 				id: fileId,
@@ -28,12 +22,6 @@ export class DownloadFileService {
 
 		if (!file) {
 			throw new HttpException('File not found', HttpStatus.NOT_FOUND)
-		}
-
-		const fileType = file.mimeType.split('/')[0];
-
-		if (fileType !== 'image' && (width || height)) {
-			throw new HttpException('Only images can have a custom size', HttpStatus.BAD_REQUEST)
 		}
 
 		const bandwidthPrice = bandwidthToMoney(file.size);
@@ -56,10 +44,6 @@ export class DownloadFileService {
 		const arrayBytes = await Body.transformToByteArray()
 
 		let buffer = Buffer.from(arrayBytes)
-
-		if (width || height) {
-			buffer = await sharp(buffer).resize({ width, height, fit: 'inside' }).toBuffer();
-		}
 
 		await this.prisma.fileDownload.create({
 			data: {

@@ -27,8 +27,8 @@ export class FileController {
 	}
 
 	@Get(':id')
-	async downloadFile(@Param('id') id: string, @Query() data: any, @Response() res: Res) {
-		const result = await this.downloadFileService.execute({ fileId: id, width: Number(data.width) || undefined, height: Number(data.height) || undefined });
+	async downloadFile(@Param('id') id: string, @Response() res: Res) {
+		const result = await this.downloadFileService.execute(id);
 		return res.set('Content-Type', result.mimeType).send(result.buffer);
 	}
 

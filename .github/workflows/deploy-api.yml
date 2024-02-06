@@ -31,7 +31,7 @@ jobs:
             ENV_FILE: ${{ secrets.ENV_FILE }}
         run: |
           cd api
-          npm install --os=linux --cpu=x64 sharp
+          yarn install
           echo "$ENV_FILE" > .env
           yarn prepare:all
           cp -rf ../node_modules/.prisma ./node_modules
