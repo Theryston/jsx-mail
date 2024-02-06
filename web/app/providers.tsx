@@ -11,7 +11,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <NextUIProvider navigate={router.push}>
-      <Suspense fallback={<Spinner />}>
+      <Suspense
+        fallback={
+          <div className="flex justify-center items-center h-screen w-full">
+            <Spinner />
+          </div>
+        }
+      >
         {children}
         <ToastContainer closeOnClick theme="dark" />
       </Suspense>

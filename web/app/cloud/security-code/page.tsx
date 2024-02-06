@@ -45,7 +45,7 @@ export default function Page() {
           throw new Error('Invalid code');
         }
 
-        localStorage.setItem('token', response.data.token);
+        document.cookie = `token=${response.data.token}; path=/; max-age=604800;`;
 
         router.push(redirect);
       } catch (error: any) {

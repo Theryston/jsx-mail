@@ -14,7 +14,7 @@ export default function Page() {
   useEffect(() => {
     if (!redirect || !token) return;
 
-    localStorage.setItem('token', token);
+    document.cookie = `token=${token}; path=/; max-age=604800;`;
 
     router.push(redirect);
   }, [redirect, token, router]);

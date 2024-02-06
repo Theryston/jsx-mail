@@ -31,7 +31,7 @@ export default function Header() {
     try {
       await axios.delete('/session');
       toast.success('Logged out successfully');
-      localStorage.removeItem('token');
+      document.cookie = 'token=; path=/; max-age=0;';
       router.push('/cloud/sign-in');
     } catch (error: any) {
       toast.error(error.message);

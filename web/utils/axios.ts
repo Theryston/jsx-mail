@@ -6,7 +6,14 @@ const axios = Axios.create({
 });
 
 axios.interceptors.request.use((request) => {
-  const token = localStorage.getItem('token');
+  const token =
+    request.headers['Session-Token'] ||
+    document.cookie
+      ?.split(';')
+      .find((c) => c.trim().startsWith('token='))
+      ?.split('=')[1];
+  delete request.headers['Session-Token'];
+
   const forceAuth = request.headers['Force-Auth'] === 'true';
   delete request.headers['Force-Auth'];
 
@@ -28,8 +35,8 @@ axios.interceptors.response.use(
     return response;
   },
   async (error) => {
-    if (error.response?.status === 403) {
-      localStorage.removeItem('token');
+    if (error.response?.status === 403 && typeof window !== 'undefined') {
+      document.cookie = 'token=; path=/; max-age=0';
       window.location.href = '/cloud/sign-in';
       return;
     }

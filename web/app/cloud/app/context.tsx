@@ -1,13 +1,7 @@
 'use client';
 
 import axios from '@/utils/axios';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 
 type User = {
   id: string;
@@ -30,12 +24,14 @@ const CloudAppContext = createContext({} as CloudAppContextType);
 
 type CloudAppContextProviderProps = {
   children: React.ReactNode;
+  user: User;
 };
 
 export const CloudAppContextProvider = ({
   children,
+  user: userProp,
 }: CloudAppContextProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User>(userProp);
 
   const fetchUser = useCallback(async () => {
     const { data } = await axios.get('/user/me', {
@@ -45,10 +41,6 @@ export const CloudAppContextProvider = ({
     });
     setUser(data);
   }, []);
-
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
 
   return (
     <CloudAppContext.Provider
