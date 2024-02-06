@@ -31,7 +31,6 @@ jobs:
             ENV_FILE: ${{ secrets.ENV_FILE }}
         run: |
           cd api
-          yarn install
           npm install --os=linux --cpu=x64 sharp
           echo "$ENV_FILE" > .env
           yarn prepare:all

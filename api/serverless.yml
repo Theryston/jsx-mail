@@ -5,7 +5,6 @@ useDotenv: true
 plugins:
   - serverless-offline
   - serverless-dotenv-plugin
-  - serverless-plugin-monorepo
 
 custom:
   serverless-offline:
