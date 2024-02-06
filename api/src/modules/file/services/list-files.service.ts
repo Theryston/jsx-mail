@@ -23,7 +23,10 @@ export class ListFilesService {
 			},
 			select: fileSelect,
 			skip,
-			take
+			take,
+			orderBy: {
+				createdAt: 'desc'
+			}
 		});
 
 		const count = await this.prisma.file.count({

@@ -94,6 +94,11 @@ export default function Header() {
                 Sessions
               </Link>
             </DropdownItem>
+            <DropdownItem key="files">
+              <Link href="/cloud/app/files" className="w-full block">
+                Files
+              </Link>
+            </DropdownItem>
             <DropdownItem key="domains">
               <Link href="/cloud/app/domains" className="w-full block">
                 Domains
