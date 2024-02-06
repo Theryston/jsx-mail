@@ -89,6 +89,7 @@ export function UploadFileModal({
                 isLoading={isLoading}
                 fullWidth
                 color="primary"
+                disabled={file === null}
               >
                 Upload
               </Button>
