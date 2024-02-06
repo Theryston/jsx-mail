@@ -19,7 +19,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         }
       >
         {children}
-        <ToastContainer closeOnClick theme="dark" />
+        <ToastContainer closeOnClick theme="dark" position="bottom-right" />
       </Suspense>
     </NextUIProvider>
   );
