@@ -13,6 +13,7 @@ export default async function AppLayout({
     const token = cookies().get('token');
 
     if (!token) {
+      console.log('no token');
       redirect('/cloud/sign-in');
     }
 
@@ -30,6 +31,7 @@ export default async function AppLayout({
       </CloudAppContextProvider>
     );
   } catch (error: any) {
+    console.log('error', error);
     redirect('/cloud/sign-in');
   }
 }
