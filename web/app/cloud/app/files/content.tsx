@@ -21,6 +21,7 @@ import DeleteForm from '../DeleteForm';
 import { toast } from 'react-toastify';
 import { formatSize } from '@/utils/format';
 import { UploadFileModal } from './UploadFileModal';
+import { PlusIcon } from '@radix-ui/react-icons';
 
 export function Content({
   files: initialFiles,
@@ -77,28 +78,7 @@ export function Content({
 
   return (
     <>
-      <div className="flex w-full justify-between items-center mb-4 gap-4 flex-wrap">
-        <div className="max-w-xl">
-          <h1 className="text-2xl font-bold">Files</h1>
-          <p className="text-sm">
-            Here is a list of all your files. These files are automatically
-            uploaded by JSX Mail when you import them and use them in your email
-            templates
-          </p>
-        </div>
-        <Button
-          color="primary"
-          className="max-w-max"
-          onPress={onUploadModalOpen}
-        >
-          Upload File
-        </Button>
-      </div>
-      <Table
-        aria-label="List of files"
-        className="overflow-x-auto min-h-[60vh]"
-        removeWrapper
-      >
+      <Table aria-label="List of files" className="overflow-x-auto">
         <TableHeader>
           <TableColumn>ID</TableColumn>
           <TableColumn>LINK</TableColumn>
@@ -151,6 +131,10 @@ export function Content({
           ))}
         </TableBody>
       </Table>
+      <Button className="max-w-max mt-4 ml-auto" onPress={onUploadModalOpen}>
+        <PlusIcon />
+        Upload File
+      </Button>
       <div className="flex w-full justify-center mt-4">
         <Pagination
           isCompact

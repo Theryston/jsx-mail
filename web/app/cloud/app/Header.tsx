@@ -82,17 +82,8 @@ export default function Header() {
             <DropdownItem href="/cloud/app/account/settings" key="settings">
               My Settings
             </DropdownItem>
-            <DropdownItem href="/cloud/app/account/billing" key="billing">
-              Billing
-            </DropdownItem>
-            <DropdownItem href="/cloud/app/account/sessions" key="sessions">
-              Sessions
-            </DropdownItem>
-            <DropdownItem href="/cloud/app/files" key="files">
-              Files
-            </DropdownItem>
-            <DropdownItem href="/cloud/app/domains" key="domains">
-              Domains
+            <DropdownItem href="/cloud/app/resources" key="resources">
+              Resources
             </DropdownItem>
             <DropdownItem key="logout" color="danger" onClick={logout}>
               Log Out

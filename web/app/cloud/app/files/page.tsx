@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { Content } from './content';
 import { PER_PAGE } from './constants';
 
-export default async function Page() {
+export default async function PageFiles() {
   const token = cookies().get('token');
 
   if (!token) {

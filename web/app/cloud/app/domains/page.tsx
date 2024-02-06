@@ -3,7 +3,7 @@ import Domains from './content';
 import { redirect } from 'next/navigation';
 import axios from '@/utils/axios';
 
-export default async function Page() {
+export default async function DomainPage() {
   const token = cookies().get('token');
 
   if (!token) {
