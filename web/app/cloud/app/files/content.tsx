@@ -24,7 +24,7 @@ import { UploadFileModal } from './UploadFileModal';
 
 export function Content({
   files: initialFiles,
-  totalPages,
+  totalPages: initialTotalPages,
 }: {
   files: File[];
   totalPages: number;
@@ -43,6 +43,7 @@ export function Content({
     onOpenChange: onDeleteModalOpenChange,
   } = useDisclosure();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [totalPages, setTotalPages] = useState(initialTotalPages);
 
   const fetchFiles = useCallback(async (nextPage: number) => {
     setIsLoading(true);
@@ -56,6 +57,7 @@ export function Content({
       });
 
       setFiles(response.data.files);
+      setTotalPages(response.data.totalPages);
     } finally {
       setIsLoading(false);
     }
