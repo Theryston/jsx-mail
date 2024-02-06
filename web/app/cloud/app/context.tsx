@@ -11,12 +11,16 @@ type User = {
   accessLevel: string;
   phone: string | null;
   isPhoneVerified: boolean;
+  balance: {
+    amount: number;
+    friendlyAmount: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 };
 
 type CloudAppContextType = {
-  user: User | null;
+  user: User;
   fetchUser: () => Promise<void>;
 };
 
