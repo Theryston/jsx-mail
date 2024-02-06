@@ -88,7 +88,8 @@ export default function Page() {
               }
               isRequired
               type={isVisible ? 'text' : 'password'}
-              label="Type a password"
+              label="Password"
+              placeholder="*********"
               className="w-full"
               name="password"
             />
@@ -104,7 +105,8 @@ export default function Page() {
               }
               isRequired
               type={isVisible ? 'text' : 'password'}
-              label="Repeat the password"
+              label="Confirm password"
+              placeholder="*********"
               className="w-full"
               name="password2"
             />

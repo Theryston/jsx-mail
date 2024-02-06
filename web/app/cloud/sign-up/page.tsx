@@ -77,14 +77,16 @@ export default function Page() {
               isRequired
               type="text"
               name="name"
-              label="Enter your name"
+              label="Full name"
+              placeholder="Enter your full name"
               className="w-full"
             />
             <Input
               isRequired
               type="email"
               name="email"
-              label="Enter your email"
+              label="Email"
+              placeholder="Enter your email"
               className="w-full"
             />
             <Input
@@ -99,7 +101,8 @@ export default function Page() {
               }
               isRequired
               type={isVisible ? 'text' : 'password'}
-              label="Type a password"
+              label="Password"
+              placeholder="********"
               className="w-full"
               name="password"
             />
@@ -115,7 +118,8 @@ export default function Page() {
               }
               isRequired
               type={isVisible ? 'text' : 'password'}
-              label="Repeat the password"
+              label="Confirm password"
+              placeholder="********"
               className="w-full"
               name="password2"
             />

@@ -146,7 +146,8 @@ export default function Page() {
               isRequired
               type="text"
               name="code"
-              label="Enter the code"
+              label="Security code"
+              placeholder="Enter security code"
               className="w-full text-center"
             />
             <Button

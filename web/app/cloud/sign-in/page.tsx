@@ -79,7 +79,8 @@ export default function Page() {
               isRequired
               type="email"
               name="email"
-              label="Enter your email"
+              label="Email"
+              placeholder="Enter your email"
               className="w-full"
             />
             <Input
@@ -94,7 +95,8 @@ export default function Page() {
               }
               isRequired
               type={isVisible ? 'text' : 'password'}
-              label="Enter your password"
+              label="Password"
+              placeholder="********"
               className="w-full"
               name="password"
             />

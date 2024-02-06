@@ -43,6 +43,10 @@ export default function Page() {
       <Card className="w-11/12 md:w-[400px]">
         <CardHeader className="flex flex-col">
           <h1 className="text-xl font-bold">Password recovery</h1>
+          <p className="text-sm text-gray-500 text-center">
+            Please enter your email below and we will send you a code to reset
+            your password
+          </p>
         </CardHeader>
         <CardBody>
           <form
@@ -53,7 +57,8 @@ export default function Page() {
               isRequired
               type="email"
               name="email"
-              label="Enter your email"
+              label="Email"
+              placeholder="Enter your email"
               className="w-full text-center"
             />
             <Button color="primary" fullWidth type="submit">
