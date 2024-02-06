@@ -44,6 +44,7 @@ model User {
   securityCodes SecurityCode[]
   domains Domain[]
   files File[]
+  downloads FileDownload[]
 
   @@map("users")
 }
@@ -142,5 +143,22 @@ model File {
 
   user User @relation(fields: [userId], references: [id])
 
+  downloads FileDownload[]
+
   @@map("files")
+}
+
+model FileDownload {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  fileId            String      @map("file_id") @db.ObjectId
+  size              Int
+  userId            String      @map("user_id") @db.ObjectId
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  file File @relation(fields: [fileId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("file_downloads")
 }
