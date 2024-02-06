@@ -1,10 +1,10 @@
 import { CURRENCY, MONEY_SCALE, STORAGE_GB_PRICE } from "./contants";
 
-export function friendlyMoney(amount: number) {
-	const usd = amount ? amount / MONEY_SCALE : 0;
-	const decimals = amount ? Math.max(Math.abs(Math.min(Math.floor(Math.log10(usd)), 0)), 2) : 2;
+export function friendlyMoney(amount: number, showAllDecimals = false) {
+	const moneyInScale = amount ? amount / MONEY_SCALE : 0;
+	const decimals = (moneyInScale && showAllDecimals) ? Math.max(Math.abs(Math.min(Math.floor(Math.log10(moneyInScale)), 0)), 2) : 2;
 
-	return usd.toLocaleString('en-US', {
+	return moneyInScale.toLocaleString('en-US', {
 		style: 'currency',
 		currency: CURRENCY,
 		minimumFractionDigits: decimals

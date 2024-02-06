@@ -35,7 +35,7 @@ export class UploadFileService {
 		const balance = await this.getBalanceService.execute(user.id);
 
 		if (balance.amount < storagePrice) {
-			throw new HttpException(`You need at least ${friendlyMoney(storagePrice)} to upload this file`, HttpStatus.BAD_REQUEST)
+			throw new HttpException(`You need at least ${friendlyMoney(storagePrice, true)} to upload this file`, HttpStatus.BAD_REQUEST)
 		}
 
 		const hash = calculateHash(file.buffer);
