@@ -55,7 +55,8 @@ export class DownloadFileService {
 
 		return {
 			buffer,
-			mimeType: file.mimeType
+			mimeType: file.mimeType,
+			filename: file.originalName
 		}
 	}
 }

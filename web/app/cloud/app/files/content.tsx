@@ -114,8 +114,9 @@ export function Content({
               <TableCell>{file.id}</TableCell>
               <TableCell>
                 {(() => {
+                  const fileExtension = file.originalName.split('.').pop();
                   // eslint-disable-next-line turbo/no-undeclared-env-vars
-                  const link = `${process.env.NEXT_PUBLIC_API_URL}/file/${file.id}`;
+                  const link = `${process.env.NEXT_PUBLIC_API_URL}/file/${file.id}.${fileExtension}`;
 
                   return (
                     <Link
