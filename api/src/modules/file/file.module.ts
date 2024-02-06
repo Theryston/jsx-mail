@@ -6,10 +6,11 @@ import { DeleteFileService } from './services/delete-file.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { ListFilesService } from './services/list-files.service';
+import { GetBalanceService } from '../user/services/get-balance.service';
 
 @Module({
   controllers: [FileController],
-  providers: [UploadFileService, PrismaService, DeleteFileService, ListFilesService],
+  providers: [UploadFileService, PrismaService, DeleteFileService, ListFilesService, GetBalanceService],
   imports: [
     MulterModule.register({
       storage: memoryStorage(),
