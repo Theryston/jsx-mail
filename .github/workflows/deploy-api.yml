@@ -32,9 +32,8 @@ jobs:
         run: |
           cd api
           yarn install
-          yarn add sharp --ignore-engines
+          npm install --arch=x64 --platform=linux --target=16x sharp
           echo "$ENV_FILE" > .env
           yarn prepare:all
           cp -rf ../node_modules/.prisma ./node_modules
-          cp -rf ../node_modules/sharp ./node_modules
           yarn deploy:aws
