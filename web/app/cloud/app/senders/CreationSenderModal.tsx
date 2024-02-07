@@ -67,7 +67,7 @@ export default function CreationSenderModal({
       let newNames = [...response.data.map((domain: any) => domain.name)];
 
       if (!newNames.includes('jsxmail.org')) {
-        newNames = ['jsxmail.org', ...newNames];
+        newNames = [...newNames, 'jsxmail.org'];
       }
 
       setDomainsNames(newNames);
