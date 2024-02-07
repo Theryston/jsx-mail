@@ -81,5 +81,10 @@ export const PERMISSIONS: {
 		title: 'Self List Senders',
 		value: 'self:list-senders',
 		description: 'Can list senders for itself',
+	},
+	SELF_SEND_EMAIL: {
+		title: 'Self Send Email',
+		value: 'self:send-email',
+		description: 'Can send emails using your own senders',
 	}
 }

@@ -46,6 +46,7 @@ model User {
   files File[]
   downloads FileDownload[]
   senders Sender[]
+  messages Message[]
 
   @@map("users")
 }
@@ -109,6 +110,7 @@ model Domain {
 
   dnsRecords DNSRecord[]
   senders Sender[]
+  messages Message[]
 
   @@map("domains")
 }
@@ -168,6 +170,7 @@ model FileDownload {
 model Sender {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
   username          String
+  name              String
   email             String
   userId            String      @map("user_id") @db.ObjectId
   domainId          String      @map("domain_id") @db.ObjectId
@@ -178,5 +181,27 @@ model Sender {
   domain Domain @relation(fields: [domainId], references: [id])
   user User @relation(fields: [userId], references: [id])
 
+  messages Message[]
+
   @@map("senders")
+}
+
+model Message {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String      @map("user_id") @db.ObjectId
+  senderId          String      @map("sender_id") @db.ObjectId
+  domainId          String      @map("domain_id") @db.ObjectId
+  subject           String
+  body              String
+  to                String[]
+  sentAt            DateTime?   @map("sent_at")
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+  sender Sender @relation(fields: [senderId], references: [id])
+  domain Domain @relation(fields: [domainId], references: [id])
+
+  @@map("messages")
 }

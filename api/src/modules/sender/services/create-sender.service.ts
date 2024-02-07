@@ -7,7 +7,7 @@ import { senderSelect } from 'src/utils/public-selects';
 export class CreateSenderService {
 	constructor(private readonly prisma: PrismaService) { }
 
-	async execute({ domainName, username }: CreateSenderDto, userId: string) {
+	async execute({ domainName, username, name }: CreateSenderDto, userId: string) {
 		username = username.toLowerCase().trim();
 
 		const domain = await this.prisma.domain.findFirst({
@@ -44,7 +44,8 @@ export class CreateSenderService {
 				username,
 				email,
 				domainId: domain.id,
-				userId
+				userId,
+				name
 			},
 			select: senderSelect
 		})

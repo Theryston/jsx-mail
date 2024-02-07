@@ -28,7 +28,18 @@ export const domainSelect: Prisma.DomainSelect = {
 export const senderSelect: Prisma.SenderSelect = {
 	id: true,
 	username: true,
+	name: true,
 	email: true,
 	domainId: true,
 	userId: true
+}
+
+export const messageSelect: Prisma.MessageSelect = {
+	id: true,
+	subject: true,
+	body: true,
+	senderId: true,
+	userId: true,
+	to: true,
+	sentAt: true
 }
