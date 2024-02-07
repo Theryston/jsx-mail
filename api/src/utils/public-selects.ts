@@ -43,3 +43,11 @@ export const messageSelect: Prisma.MessageSelect = {
 	to: true,
 	sentAt: true
 }
+
+export const sessionSelect: Prisma.SessionSelect = {
+	id: true,
+	createdAt: true,
+	description: true,
+	expiresAt: true,
+	permissions: true,
+}

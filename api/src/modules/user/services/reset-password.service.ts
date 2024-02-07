@@ -3,7 +3,7 @@ import { PrismaService } from 'src/services/prisma.service';
 import { ResetPasswordDto } from '../user.dto';
 import { PERMISSIONS } from 'src/auth/permissions';
 import * as bcrypt from 'bcryptjs';
-import { CreateSessionService } from './create-session.service';
+import { CreateSessionService } from '../../session/services/create-session.service';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
 import { titleCase } from 'src/utils/title-case';
 

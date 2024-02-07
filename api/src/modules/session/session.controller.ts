@@ -1,11 +1,14 @@
-import { Controller, Delete, Req, Query } from '@nestjs/common';
+import { Controller, Delete, Req, Query, Get, Post, Body } from '@nestjs/common';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { Permissions } from 'src/auth/permissions.decorator';
 import { DeleteSessionService } from './services/delete-session.service';
+import { CreateSessionService } from './services/create-session.service';
+import { CreateSessionDto } from './session.dto';
+import { ListSessionsService } from './services/list-sessions.service';
 
 @Controller('session')
 export class SessionController {
-	constructor(private readonly deleteSessionService: DeleteSessionService) { }
+	constructor(private readonly deleteSessionService: DeleteSessionService, private readonly createSessionService: CreateSessionService, private readonly listSessionsService: ListSessionsService) { }
 
 	@Delete()
 	@Permissions([PERMISSIONS.SELF_SESSION_DELETE.value])
@@ -13,5 +16,25 @@ export class SessionController {
 		return this.deleteSessionService.execute(
 			{ sessionId: query.id || request.session.id }
 		)
+	}
+
+	@Get()
+	@Permissions([PERMISSIONS.SELF_LIST_SESSIONS.value])
+	listSessions(@Req() request: any) {
+		return this.listSessionsService.execute(request.user.id)
+	}
+
+	@Get('permissions')
+	getAllPermissions() {
+		return Object.keys(PERMISSIONS).filter(key => PERMISSIONS[key].value.startsWith('self:')).map(key => PERMISSIONS[key])
+	}
+
+	@Post()
+	@Permissions([PERMISSIONS.SELF_SESSION_CREATE.value])
+	createSession(@Body() body: CreateSessionDto, @Req() request: any) {
+		return this.createSessionService.execute({
+			...body,
+			userId: request.user.id
+		})
 	}
 }

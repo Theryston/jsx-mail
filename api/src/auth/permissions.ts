@@ -86,5 +86,15 @@ export const PERMISSIONS: {
 		title: 'Self Send Email',
 		value: 'self:send-email',
 		description: 'Can send emails using your own senders',
+	},
+	SELF_SESSION_CREATE: {
+		title: 'Self Session Create',
+		value: 'self:session-create',
+		description: 'Can create a session for itself',
+	},
+	SELF_LIST_SESSIONS: {
+		title: 'Self List Sessions',
+		value: 'self:list-sessions',
+		description: 'Can list it owns sessions',
 	}
 }

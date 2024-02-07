@@ -1,7 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import { CreateSessionService } from './create-session.service';
+import { CreateSessionService } from '../../session/services/create-session.service';
 import { UseSecurityCodeDto } from '../user.dto';
+import { PERMISSIONS } from 'src/auth/permissions';
 
 @Injectable()
 export class UseSecurityCodeService {
@@ -47,7 +48,7 @@ export class UseSecurityCodeService {
 			userId: user.id,
 			description: 'Session created for use the security code',
 			expirationDate: new Date(new Date().getTime() + 1000 * 60 * 5)
-		});
+		}, [PERMISSIONS.SELF_ADMIN.value]);
 
 		await this.prisma.securityCode.update({
 			where: {

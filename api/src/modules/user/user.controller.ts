@@ -8,6 +8,8 @@ import { UseSecurityCodeService } from './services/use-security-code.service';
 import { ValidateEmailService } from './services/validate-email.service';
 import { AuthUserService } from './services/auth-user.service';
 import { ResetPasswordService } from './services/reset-password.service';
+import { BANDWIDTH_GB_PRICE, PRICE_PER_MESSAGE, STORAGE_GB_PRICE } from 'src/utils/contants';
+import { friendlyMoney } from 'src/utils/format-money';
 
 @Controller('user')
 export class UserController {
@@ -49,5 +51,26 @@ export class UserController {
 	@Permissions([PERMISSIONS.SELF_GET.value])
 	getMe(@Request() req) {
 		return req.user
+	}
+
+	@Get('price')
+	price() {
+		return [
+			{
+				description: 'Price per GB of stored file',
+				amount: STORAGE_GB_PRICE,
+				friendlyAmount: friendlyMoney(STORAGE_GB_PRICE, true)
+			},
+			{
+				description: 'Price per GB of downloaded file',
+				amount: BANDWIDTH_GB_PRICE,
+				friendlyAmount: friendlyMoney(BANDWIDTH_GB_PRICE, true)
+			},
+			{
+				description: 'Price per 1000 messages (emails) sent',
+				amount: PRICE_PER_MESSAGE * 1000,
+				friendlyAmount: friendlyMoney(PRICE_PER_MESSAGE * 1000, true)
+			},
+		]
 	}
 }

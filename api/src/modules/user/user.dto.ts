@@ -1,5 +1,5 @@
 import { TransactionStyle } from '@prisma/client';
-import { IsArray, IsEmail, IsEmpty, IsNotEmpty, Length, Matches } from 'class-validator';
+import { IsEmail, IsNotEmpty, Length, Matches } from 'class-validator';
 
 export class CreateUserDto {
 	@IsNotEmpty()
@@ -14,21 +14,6 @@ export class CreateUserDto {
 	@IsNotEmpty()
 	@Length(6, 100)
 	password: string;
-}
-
-export class CreateSessionDto {
-	@IsNotEmpty()
-	userId: string;
-
-	@IsArray()
-	@IsNotEmpty({ each: true })
-	permissions: string[];
-
-	@IsEmpty()
-	expirationDate?: Date;
-
-	@IsEmpty()
-	description?: string;
 }
 
 export class UseSecurityCodeDto {

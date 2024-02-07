@@ -1,14 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import { CreateSessionDto } from '../user.dto';
 import crypto from 'crypto';
 import { PERMISSIONS } from '../../../auth/permissions';
+import { CreateSessionDto } from '../session.dto';
+
+type CreateSessionData = {
+	userId: string;
+} & CreateSessionDto
 
 @Injectable()
 export class CreateSessionService {
 	constructor(private readonly prisma: PrismaService) { }
 
-	async execute({ userId, expirationDate, permissions, description }: CreateSessionDto) {
+	async execute({ userId, expirationDate, permissions, description }: CreateSessionData, notAllowedPermission = [PERMISSIONS.SELF_EMAIL_VALIDATE.value, PERMISSIONS.SELF_RESET_PASSWORD.value]) {
 		const user = await this.prisma.user.findFirst({
 			where: {
 				id: userId,
@@ -32,13 +36,17 @@ export class CreateSessionService {
 			throw new HttpException('You only can access self permissions', HttpStatus.FORBIDDEN)
 		}
 
+		if (notAllowedPermission.some(p => permissions.includes(p))) {
+			throw new HttpException('You can not use this permissions', HttpStatus.FORBIDDEN)
+		}
+
 		const token = crypto.randomBytes(32).toString('hex');
 
 		const session = await this.prisma.session.create({
 			data: {
 				userId,
 				token,
-				expiresAt: expirationDate,
+				expiresAt: expirationDate ? new Date(expirationDate) : null,
 				permissions,
 				description
 			}
