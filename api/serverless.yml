@@ -52,4 +52,4 @@ functions:
     handler: dist/workers/add-free-balance.handler
     timeout: 900
     events:
-      - schedule: 'rate(1 hour)'
+      - schedule: 'rate(24 hour)'
