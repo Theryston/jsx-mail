@@ -13,7 +13,7 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
     "prepare:db": "prisma db push && prisma generate",
-    "dev:invoke": "yarn build && serverless invoke local --function"
+    "invoke:dev": "yarn build && serverless invoke local --function"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.504.0",
