@@ -1,4 +1,4 @@
-import { Controller, Delete, Req } from '@nestjs/common';
+import { Controller, Delete, Req, Query } from '@nestjs/common';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { Permissions } from 'src/auth/permissions.decorator';
 import { DeleteSessionService } from './services/delete-session.service';
@@ -9,9 +9,9 @@ export class SessionController {
 
 	@Delete()
 	@Permissions([PERMISSIONS.SELF_SESSION_DELETE.value])
-	deleteSession(@Req() request: any) {
+	deleteSession(@Req() request: any, @Query() query: any) {
 		return this.deleteSessionService.execute(
-			{ sessionId: request.session.id }
+			{ sessionId: query.id || request.session.id }
 		)
 	}
 }
