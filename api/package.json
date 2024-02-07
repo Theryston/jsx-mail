@@ -12,7 +12,8 @@
     "undeploy:aws": "yarn serverless remove --stage prod --verbose",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
-    "prepare:db": "prisma db push && prisma generate"
+    "prepare:db": "prisma db push && prisma generate",
+    "dev:invoke": "yarn build && serverless invoke local --function"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.504.0",
@@ -27,6 +28,7 @@
     "busboy": "^1.6.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "moment": "^2.30.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"
   },

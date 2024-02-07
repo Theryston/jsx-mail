@@ -9,7 +9,7 @@ export class AddBalanceService {
 	async execute({ amount, userId, style, description }: AddBalanceDto) {
 		await this.prisma.transaction.create({
 			data: {
-				amount,
+				amount: Math.round(amount),
 				style,
 				userId,
 				description

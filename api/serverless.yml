@@ -16,7 +16,7 @@ custom:
 provider:
   name: aws
   runtime: nodejs18.x
-  timeout: 300
+  timeout: 30
   memorySize: 1024
   httpApi:
     cors: true
@@ -38,3 +38,13 @@ functions:
       - httpApi:
           method: '*'
           path: '*'
+  charge:
+    handler: dist/workers/charge.handler
+    timeout: 900
+    events:
+      - schedule: 'rate(1 hour)'
+  storage-size:
+    handler: dist/workers/storage-size.handler
+    timeout: 900
+    events:
+      - schedule: 'rate(24 hours)'

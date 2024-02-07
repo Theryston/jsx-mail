@@ -22,7 +22,9 @@ enum DomainStatus {
 enum TransactionStyle {
   earn_free
   earn_paid
-  spending_bandwidth
+  message_charge
+  bandwidth_charge
+  storage_charge
 }
 
 model User {
@@ -47,6 +49,7 @@ model User {
   downloads FileDownload[]
   senders Sender[]
   messages Message[]
+  storageSizes StorageSize[]
 
   @@map("users")
 }
@@ -152,9 +155,25 @@ model File {
   @@map("files")
 }
 
+model StorageSize {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String      @map("user_id") @db.ObjectId
+  size              Int
+  chargeAt          DateTime    @map("charge_at")
+  chargedAt         DateTime?   @map("charged_at")
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("storage_sizes")
+}
+
 model FileDownload {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
   fileId            String      @map("file_id") @db.ObjectId
+  hasCharged        Boolean     @default(false) @map("has_charged")
   size              Int
   userId            String      @map("user_id") @db.ObjectId
   createdAt         DateTime    @map("created_at") @default(now())
@@ -191,6 +210,7 @@ model Message {
   userId            String      @map("user_id") @db.ObjectId
   senderId          String      @map("sender_id") @db.ObjectId
   domainId          String      @map("domain_id") @db.ObjectId
+  hasCharged        Boolean     @default(false) @map("has_charged")
   subject           String
   body              String
   to                String[]
