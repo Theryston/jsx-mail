@@ -31,8 +31,8 @@ provider:
           Resource: '*'
 
 functions:
-  main:
-    handler: dist/main.handler
+  api:
+    handler: dist/api.handler
     timeout: 30
     events:
       - httpApi:
