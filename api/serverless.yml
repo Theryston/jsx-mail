@@ -41,7 +41,7 @@ functions:
   charge:
     handler: dist/workers/charge.handler
     events:
-      - schedule: 'rate(1 hour)'
+      - schedule: 'rate(24 hours)'
   storage-size:
     handler: dist/workers/storage-size.handler
     events:
