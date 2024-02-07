@@ -57,19 +57,22 @@ export class UserController {
 	price() {
 		return [
 			{
-				description: 'Price per GB of stored file',
+				title: 'Emails 1000',
+				description: 'The price for 1000 sent emails. This price is calculated daily, taking into account all the messages (emails) you send.',
+				amount: PRICE_PER_MESSAGE * 1000,
+				friendlyAmount: friendlyMoney(PRICE_PER_MESSAGE * 1000, true)
+			},
+			{
+				title: 'Storage GB',
+				description: 'The price for each GB of stored files. This price is calculated monthly based on your daily average storage usage.',
 				amount: STORAGE_GB_PRICE,
 				friendlyAmount: friendlyMoney(STORAGE_GB_PRICE, true)
 			},
 			{
-				description: 'Price per GB of downloaded file',
+				title: 'Bandwidth GB',
+				description: 'The price for each downloaded file byte. This price is calculated daily, considering all the downloaded file bytes',
 				amount: BANDWIDTH_GB_PRICE,
 				friendlyAmount: friendlyMoney(BANDWIDTH_GB_PRICE, true)
-			},
-			{
-				description: 'Price per 1000 messages (emails) sent',
-				amount: PRICE_PER_MESSAGE * 1000,
-				friendlyAmount: friendlyMoney(PRICE_PER_MESSAGE * 1000, true)
 			},
 		]
 	}

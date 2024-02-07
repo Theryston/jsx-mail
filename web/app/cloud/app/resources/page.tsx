@@ -1,7 +1,8 @@
-import { Card, CardBody, CardHeader } from '@nextui-org/react';
 import DomainPage from '../domains/page';
 import PageFiles from '../files/page';
 import SendersPage from '../senders/page';
+import SectionsList from '../SectionsList';
+import SectionItem from '../SectionItem';
 
 export default function Page() {
   return (
@@ -33,29 +34,5 @@ export default function Page() {
         </SectionsList>
       </div>
     </main>
-  );
-}
-
-function SectionsList({ children }: { children: React.ReactNode[] }) {
-  return <ul className="flex flex-col gap-10">{children}</ul>;
-}
-
-function SectionItem({
-  title,
-  description,
-  children,
-}: {
-  title: string;
-  description?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Card>
-      <CardHeader className="flex flex-col justify-center items-start">
-        <h2 className="text-xl font-bold">{title}</h2>
-        {description && <p className="text-gray-500">{description}</p>}
-      </CardHeader>
-      <CardBody>{children}</CardBody>
-    </Card>
   );
 }

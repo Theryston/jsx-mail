@@ -79,8 +79,8 @@ export default function Header() {
               </p>
               <p className="font-semibold">{user.email}</p>
             </DropdownItem>
-            <DropdownItem href="/cloud/app/account/settings" key="settings">
-              My Settings
+            <DropdownItem href="/cloud/app/account" key="account">
+              Account
             </DropdownItem>
             <DropdownItem href="/cloud/app/resources" key="resources">
               Resources
