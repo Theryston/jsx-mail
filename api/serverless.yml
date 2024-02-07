@@ -16,7 +16,7 @@ custom:
 provider:
   name: aws
   runtime: nodejs18.x
-  timeout: 30
+  timeout: 900
   httpApi:
     cors: true
     disableDefaultEndpoint: true
@@ -33,22 +33,20 @@ provider:
 functions:
   main:
     handler: dist/main.handler
+    timeout: 30
     events:
       - httpApi:
           method: '*'
           path: '*'
   charge:
     handler: dist/workers/charge.handler
-    timeout: 900
     events:
       - schedule: 'rate(1 hour)'
   storage-size:
     handler: dist/workers/storage-size.handler
-    timeout: 900
     events:
       - schedule: 'rate(24 hours)'
   add-free-balance:
     handler: dist/workers/add-free-balance.handler
-    timeout: 900
     events:
       - schedule: 'rate(24 hours)'
