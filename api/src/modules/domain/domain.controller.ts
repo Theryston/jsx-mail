@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Delete, Param, Get } from '@nestjs/common';
+import { Body, Controller, Post, Req, Delete, Param, Get, Query } from '@nestjs/common';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { Permissions } from 'src/auth/permissions.decorator';
 import { CreateDomainService } from './services/create-domain.service';
@@ -24,7 +24,7 @@ export class DomainController {
 
 	@Get()
 	@Permissions([PERMISSIONS.SELF_LIST_DOMAINS.value])
-	async list(@Req() req) {
-		return this.listDomainsService.execute(req.user.id);
+	async list(@Req() req, @Query() query: any) {
+		return this.listDomainsService.execute(req.user.id, query?.status);
 	}
 }

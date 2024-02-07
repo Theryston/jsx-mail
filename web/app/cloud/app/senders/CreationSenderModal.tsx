@@ -58,7 +58,11 @@ export default function CreationSenderModal({
 
   const fetchDomains = useCallback(async () => {
     try {
-      const response = await axios.get('/domain');
+      const response = await axios.get('/domain', {
+        params: {
+          status: 'verified',
+        },
+      });
 
       let newNames = [...response.data.map((domain: any) => domain.name)];
 

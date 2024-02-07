@@ -2,19 +2,27 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { SESClient, GetIdentityVerificationAttributesCommand } from '@aws-sdk/client-ses';
 import { domainSelect } from 'src/utils/public-selects';
+import { Prisma, DomainStatus } from '@prisma/client'
 
 @Injectable()
 export class ListDomainsService {
 	constructor(private readonly prisma: PrismaService) { }
 
-	async execute(userId: string) {
+	async execute(userId: string, status?: DomainStatus) {
+
+		const domainWhere: Prisma.DomainFindManyArgs['where'] = {
+			userId,
+			deletedAt: {
+				isSet: false
+			}
+		}
+
+		if (status) {
+			domainWhere.status = status
+		}
+
 		const domains = await this.prisma.domain.findMany({
-			where: {
-				userId,
-				deletedAt: {
-					isSet: false
-				}
-			},
+			where: domainWhere,
 			select: domainSelect,
 			orderBy: {
 				createdAt: 'desc'
