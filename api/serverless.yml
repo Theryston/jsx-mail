@@ -17,7 +17,6 @@ provider:
   name: aws
   runtime: nodejs18.x
   timeout: 30
-  memorySize: 1024
   httpApi:
     cors: true
     disableDefaultEndpoint: true
@@ -52,4 +51,4 @@ functions:
     handler: dist/workers/add-free-balance.handler
     timeout: 900
     events:
-      - schedule: 'rate(24 hour)'
+      - schedule: 'rate(24 hours)'
