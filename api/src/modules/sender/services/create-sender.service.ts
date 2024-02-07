@@ -18,7 +18,7 @@ export class CreateSenderService {
 			}
 		}
 
-		if (domainName === 'jsxmail.org') {
+		if (domainName === process.env.DEFAULT_EMAIL_DOMAIN_NAME) {
 			delete domainWhere.userId
 		}
 
