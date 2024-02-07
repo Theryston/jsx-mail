@@ -8,9 +8,10 @@ import { SessionModule } from './modules/session/session.module';
 import { DomainModule } from './modules/domain/domain.module';
 import { FileModule } from './modules/file/file.module';
 import { GetBalanceService } from './modules/user/services/get-balance.service';
+import { SenderModule } from './modules/sender/sender.module';
 
 @Module({
-  imports: [UserModule, EmailModule, SessionModule, DomainModule, FileModule],
+  imports: [UserModule, EmailModule, SessionModule, DomainModule, FileModule, SenderModule],
   controllers: [],
   providers: [{
     provide: APP_GUARD,

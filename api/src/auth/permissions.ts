@@ -66,5 +66,20 @@ export const PERMISSIONS: {
 		title: 'Self List Files',
 		value: 'self:list-files',
 		description: 'Can list files for itself',
+	},
+	SELF_CREATE_SENDER: {
+		title: 'Self Create Sender',
+		value: 'self:create-sender',
+		description: 'Can create senders for itself',
+	},
+	SELF_DELETE_SENDER: {
+		title: 'Self Delete Sender',
+		value: 'self:delete-sender',
+		description: 'Can delete senders for itself',
+	},
+	SELF_LIST_SENDERS: {
+		title: 'Self List Senders',
+		value: 'self:list-senders',
+		description: 'Can list senders for itself',
 	}
 }

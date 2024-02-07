@@ -24,3 +24,11 @@ export const domainSelect: Prisma.DomainSelect = {
 		}
 	}
 }
+
+export const senderSelect: Prisma.SenderSelect = {
+	id: true,
+	username: true,
+	email: true,
+	domainId: true,
+	userId: true
+}
