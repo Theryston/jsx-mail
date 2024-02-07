@@ -1,4 +1,4 @@
-service: jsxmail-cloud-api
+service: jsxmail
 
 useDotenv: true
 
