@@ -1,6 +1,7 @@
 import { Card, CardBody, CardHeader } from '@nextui-org/react';
 import DomainPage from '../domains/page';
 import PageFiles from '../files/page';
+import SendersPage from '../senders/page';
 
 export default function Page() {
   return (
@@ -16,6 +17,12 @@ export default function Page() {
             description="Here is a list of all your domains. You can use them to create a sender for your emails"
           >
             <DomainPage />
+          </SectionItem>
+          <SectionItem
+            title="Senders"
+            description="Here is a list of all your senders. You can use them to send emails"
+          >
+            <SendersPage />
           </SectionItem>
           <SectionItem
             title="Files"

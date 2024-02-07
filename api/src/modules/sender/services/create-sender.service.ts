@@ -10,14 +10,20 @@ export class CreateSenderService {
 	async execute({ domainName, username, name }: CreateSenderDto, userId: string) {
 		username = username.toLowerCase().trim();
 
-		const domain = await this.prisma.domain.findFirst({
-			where: {
-				name: domainName,
-				userId,
-				deletedAt: {
-					isSet: false
-				}
+		const domainWhere = {
+			name: domainName,
+			userId,
+			deletedAt: {
+				isSet: false
 			}
+		}
+
+		if (domainName === 'jsxmail.org') {
+			delete domainWhere.userId
+		}
+
+		const domain = await this.prisma.domain.findFirst({
+			where: domainWhere
 		});
 
 		if (!domain) {
@@ -36,7 +42,7 @@ export class CreateSenderService {
 		})
 
 		if (senderExists) {
-			throw new HttpException('Sender already exists', HttpStatus.CONFLICT);
+			throw new HttpException('An user has already registered this sender', HttpStatus.CONFLICT);
 		}
 
 		const sender = await this.prisma.sender.create({
