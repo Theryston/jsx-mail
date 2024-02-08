@@ -19,6 +19,7 @@ export default function Page() {
       const { data } = await axios.put('/user/validate-email');
       let redirectUrl: URL | string = new URL(redirect);
       redirectUrl.searchParams.append('token', data.token);
+      redirectUrl.searchParams.append('sessionId', data.sessionId);
       redirectUrl = redirectUrl.toString();
       router.push(redirectUrl);
     } catch (error: any) {

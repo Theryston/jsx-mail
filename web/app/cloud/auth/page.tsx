@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 export default function Page() {
   const [redirect, setRedirect] = useState('' as string);
   const [token, setToken] = useState('' as string);
+  const [sessionId, setSessionId] = useState('' as string);
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -15,13 +16,15 @@ export default function Page() {
     if (!redirect || !token) return;
 
     document.cookie = `token=${token}; path=/; max-age=604800;`;
+    document.cookie = `sessionId=${sessionId}; path=/; max-age=604800;`;
 
     router.push(redirect);
-  }, [redirect, token, router]);
+  }, [redirect, token, router, sessionId]);
 
   useEffect(() => {
     setRedirect(handleRedirectUrl(searchParams));
     setToken(searchParams?.get('token') || '');
+    setSessionId(searchParams?.get('sessionId') || '');
   }, [searchParams]);
 
   return (

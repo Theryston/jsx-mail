@@ -46,6 +46,7 @@ export default function Page() {
         }
 
         document.cookie = `token=${response.data.token}; path=/; max-age=604800;`;
+        document.cookie = `sessionId=${response.data.sessionId}; path=/; max-age=604800;`;
 
         router.push(redirect);
       } catch (error: any) {

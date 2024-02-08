@@ -42,7 +42,7 @@ export default function PricingContent({
   const [selectedValues, setSelectedValues] = useState<SelectedValues>({});
   const [calculationResult, setCalculationResult] = useState({
     here: 0,
-    others: 0,
+    others: 35 * moneyScale,
   });
 
   useEffect(() => {
@@ -95,8 +95,8 @@ export default function PricingContent({
         >
           <div className="flex flex-col gap-6">
             <ul className="flex flex-col gap-3">
-              {pricing.map((price: any) => (
-                <li key={price.id}>
+              {pricing.map((price) => (
+                <li key={price.title}>
                   <Card shadow="none" isBlurred fullWidth>
                     <CardBody>
                       <div className="flex justify-between items-center gap-4 w-full flex-wrap">

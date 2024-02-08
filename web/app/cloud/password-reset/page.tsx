@@ -51,6 +51,7 @@ export default function Page() {
 
         let redirectUrl: URL | string = new URL(redirect);
         redirectUrl.searchParams.append('token', data.token);
+        redirectUrl.searchParams.append('sessionId', data.sessionId);
         redirectUrl = redirectUrl.toString();
 
         if (data.isEmailVerified === false) {

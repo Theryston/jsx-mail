@@ -9,15 +9,31 @@ export class ListSessionsService {
 	async execute(userId: string) {
 		const sessions = await this.prisma.session.findMany({
 			where: {
-				deletedAt: {
-					isSet: false
-				},
-				expiresAt: {
-					gte: new Date()
-				},
-				userId
+				AND: [
+					{
+						deletedAt: {
+							isSet: false
+						},
+						userId
+					},
+					{
+						OR: [
+							{
+								expiresAt: {
+									gte: new Date()
+								}
+							},
+							{
+								expiresAt: null
+							}
+						]
+					}
+				]
 			},
 			select: sessionSelect,
+			orderBy: {
+				createdAt: 'desc'
+			}
 		})
 
 		return sessions

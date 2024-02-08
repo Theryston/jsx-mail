@@ -37,6 +37,7 @@ axios.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 403 && typeof window !== 'undefined') {
       document.cookie = 'token=; path=/; max-age=0';
+      document.cookie = 'sessionId=; path=/; max-age=0';
       window.location.href = '/cloud/sign-in';
       return;
     }
