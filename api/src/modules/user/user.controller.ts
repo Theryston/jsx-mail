@@ -10,10 +10,11 @@ import { AuthUserService } from './services/auth-user.service';
 import { ResetPasswordService } from './services/reset-password.service';
 import { BANDWIDTH_GB_PRICE, FREE_BALANCE, MONEY_SCALE, PRICE_PER_MESSAGE, STORAGE_GB_PRICE } from 'src/utils/contants';
 import { friendlyMoney } from 'src/utils/format-money';
+import { GetFullBalanceService } from './services/get-full-balance.service';
 
 @Controller('user')
 export class UserController {
-	constructor(private readonly createUserService: CreateUserService, private readonly createSecurityCodeService: CreateSecurityCodeService, private readonly useSecurityCodeService: UseSecurityCodeService, private readonly validateEmailService: ValidateEmailService, private readonly authUserService: AuthUserService, private readonly resetPasswordService: ResetPasswordService) { }
+	constructor(private readonly createUserService: CreateUserService, private readonly createSecurityCodeService: CreateSecurityCodeService, private readonly useSecurityCodeService: UseSecurityCodeService, private readonly validateEmailService: ValidateEmailService, private readonly authUserService: AuthUserService, private readonly resetPasswordService: ResetPasswordService, private readonly getFullBalanceService: GetFullBalanceService) { }
 
 	@Post()
 	createUser(@Body() data: CreateUserDto) {
@@ -51,6 +52,12 @@ export class UserController {
 	@Permissions([PERMISSIONS.SELF_GET.value])
 	getMe(@Request() req) {
 		return req.user
+	}
+
+	@Get('balance')
+	@Permissions([PERMISSIONS.SELF_GET_BALANCE.value])
+	getBalance(@Request() req) {
+		return this.getFullBalanceService.execute(req.user.id)
 	}
 
 	@Get('price')

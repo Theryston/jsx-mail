@@ -83,6 +83,9 @@ export default function Header() {
             <DropdownItem href="/cloud/app/account" key="account">
               Account
             </DropdownItem>
+            <DropdownItem href="/cloud/app/billing" key="billing">
+              Billing
+            </DropdownItem>
             <DropdownItem href="/cloud/app/resources" key="resources">
               Resources
             </DropdownItem>

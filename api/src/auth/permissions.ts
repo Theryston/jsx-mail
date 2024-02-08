@@ -96,5 +96,10 @@ export const PERMISSIONS: {
 		title: 'Self List Sessions',
 		value: 'self:list-sessions',
 		description: 'Can list it owns sessions',
+	},
+	SELF_GET_BALANCE: {
+		title: 'Self Get Balance',
+		value: 'self:get-balance',
+		description: 'Can get its own balance',
 	}
 }

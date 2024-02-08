@@ -2,12 +2,16 @@ import { BANDWIDTH_GB_PRICE, CURRENCY, MONEY_SCALE, STORAGE_GB_PRICE } from "./c
 
 export function friendlyMoney(amount: number, showAllDecimals = false) {
 	const moneyInScale = amount ? amount / MONEY_SCALE : 0;
-	const decimals = (moneyInScale && showAllDecimals) ? Math.max(Math.abs(Math.min(Math.floor(Math.log10(moneyInScale)), 0)), 2) : 2;
+	let decimalCount = moneyInScale.toString().split('.')[1]?.length;
+
+	if (!decimalCount || decimalCount < 2) {
+		decimalCount = 2;
+	}
 
 	return moneyInScale.toLocaleString('en-US', {
 		style: 'currency',
 		currency: CURRENCY,
-		minimumFractionDigits: decimals
+		minimumFractionDigits: showAllDecimals ? decimalCount : 2
 	})
 }
 
