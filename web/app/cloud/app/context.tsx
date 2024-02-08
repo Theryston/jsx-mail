@@ -2,22 +2,7 @@
 
 import axios from '@/utils/axios';
 import { createContext, useCallback, useContext, useState } from 'react';
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  isEmailVerified: boolean;
-  accessLevel: string;
-  phone: string | null;
-  isPhoneVerified: boolean;
-  balance: {
-    amount: number;
-    friendlyAmount: string;
-  };
-  createdAt: Date;
-  updatedAt: Date;
-};
+import { User } from './types';
 
 type CloudAppContextType = {
   user: User;
