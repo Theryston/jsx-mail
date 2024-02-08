@@ -9,6 +9,7 @@ import { DomainModule } from './modules/domain/domain.module';
 import { FileModule } from './modules/file/file.module';
 import { GetBalanceService } from './modules/user/services/get-balance.service';
 import { SenderModule } from './modules/sender/sender.module';
+import { StripeService } from './services/stripe.service';
 
 @Module({
   imports: [UserModule, EmailModule, SessionModule, DomainModule, FileModule, SenderModule],
@@ -16,6 +17,6 @@ import { SenderModule } from './modules/sender/sender.module';
   providers: [{
     provide: APP_GUARD,
     useClass: AuthGuard,
-  }, PrismaService, GetBalanceService],
+  }, PrismaService, GetBalanceService, StripeService],
 })
 export class AppModule { }

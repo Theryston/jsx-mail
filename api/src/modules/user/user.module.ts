@@ -13,10 +13,13 @@ import { AddBalanceService } from './services/add-balance.service';
 import { GetBalanceService } from './services/get-balance.service';
 import { GetFullBalanceService } from './services/get-full-balance.service';
 import { ListTransactionsService } from './services/list-transactions.service';
+import { CreateCheckoutService } from './services/create-checkout.service';
+import { StripeService } from 'src/services/stripe.service';
+import { HandleWebhookService } from './services/handle-webhook.service';
 
 @Module({
   controllers: [UserController],
-  providers: [CreateUserService, PrismaService, CreateSessionService, CreateSecurityCodeService, UseSecurityCodeService, ValidateEmailService, AuthUserService, ResetPasswordService, AddBalanceService, GetBalanceService, GetFullBalanceService, ListTransactionsService],
+  providers: [StripeService, CreateUserService, PrismaService, CreateSessionService, CreateSecurityCodeService, UseSecurityCodeService, ValidateEmailService, AuthUserService, ResetPasswordService, AddBalanceService, GetBalanceService, GetFullBalanceService, ListTransactionsService, CreateCheckoutService, HandleWebhookService],
   imports: [EmailModule],
 })
 export class UserModule { }

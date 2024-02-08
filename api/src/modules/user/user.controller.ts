@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Request, Req, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Request, Req, Query, Headers } from '@nestjs/common';
 import { CreateUserService } from './services/create-user.service';
 import { AuthUserDto, CreateSecurityCodeDto, CreateUserDto, ResetPasswordDto, UseSecurityCodeDto } from './user.dto';
 import { Permissions } from 'src/auth/permissions.decorator';
@@ -12,10 +12,13 @@ import { BANDWIDTH_GB_PRICE, FREE_BALANCE, MONEY_SCALE, PRICE_PER_MESSAGE, STORA
 import { friendlyMoney } from 'src/utils/format-money';
 import { GetFullBalanceService } from './services/get-full-balance.service';
 import { ListTransactionsService } from './services/list-transactions.service';
+import { CreateCheckoutService } from './services/create-checkout.service';
+import { StripeService } from 'src/services/stripe.service';
+import { HandleWebhookService } from './services/handle-webhook.service';
 
 @Controller('user')
 export class UserController {
-	constructor(private readonly createUserService: CreateUserService, private readonly createSecurityCodeService: CreateSecurityCodeService, private readonly useSecurityCodeService: UseSecurityCodeService, private readonly validateEmailService: ValidateEmailService, private readonly authUserService: AuthUserService, private readonly resetPasswordService: ResetPasswordService, private readonly getFullBalanceService: GetFullBalanceService, private readonly listTransactionsService: ListTransactionsService) { }
+	constructor(private readonly createUserService: CreateUserService, private readonly createSecurityCodeService: CreateSecurityCodeService, private readonly useSecurityCodeService: UseSecurityCodeService, private readonly validateEmailService: ValidateEmailService, private readonly authUserService: AuthUserService, private readonly resetPasswordService: ResetPasswordService, private readonly getFullBalanceService: GetFullBalanceService, private readonly listTransactionsService: ListTransactionsService, private readonly createCheckoutService: CreateCheckoutService, private readonly stripeService: StripeService, private readonly handleWebhookService: HandleWebhookService) { }
 
 	@Post()
 	createUser(@Body() data: CreateUserDto) {
@@ -68,6 +71,23 @@ export class UserController {
 			take: Number(data.take) || 10,
 			page: Number(data.page) || 1
 		}, req.user.id);
+	}
+
+	@Post('checkout')
+	@Permissions([PERMISSIONS.SELF_CREATE_CHECKOUT.value])
+	createCheckout(@Request() req, @Body() data: any) {
+		return this.createCheckoutService.execute(data.amount, req.user.id)
+	}
+
+	@Post('billing/webhook')
+	validateBilling(@Headers('stripe-signature') signature: string, @Req() req) {
+		const body = this.stripeService.stripe.webhooks.constructEvent(
+			req.rawBody,
+			signature,
+			process.env.STRIPE_WEBHOOK_SECRET
+		);
+
+		return this.handleWebhookService.execute(body);
 	}
 
 	@Get('price')

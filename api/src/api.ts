@@ -5,6 +5,7 @@ import { AllExceptionsFilter } from './all-exceptions.filter';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { parseFormData } from './utils/parse-form-data';
+import rawBodyMiddleware from './rawBodyMiddleware';
 
 let server: Handler;
 
@@ -13,6 +14,7 @@ async function bootstrap(): Promise<Handler> {
   app.enableCors({ origin: '*' });
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new AllExceptionsFilter());
+  app.use(rawBodyMiddleware());
   await app.init();
 
   const expressApp = app.getHttpAdapter().getInstance();

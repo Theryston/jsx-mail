@@ -106,5 +106,10 @@ export const PERMISSIONS: {
 		title: 'Self List Transactions',
 		value: 'self:list-transactions',
 		description: 'Can list it owns transactions',
+	},
+	SELF_CREATE_CHECKOUT: {
+		title: 'Self Create Checkout',
+		value: 'self:create-checkout',
+		description: 'Can create a checkout for itself',
 	}
 }
