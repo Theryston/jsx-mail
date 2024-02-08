@@ -9,7 +9,7 @@ export default function BackButton() {
     <Button
       isIconOnly
       onClick={() => router.push('/')}
-      className="absolute top-5 left-5"
+      className="fixed top-5 left-5 z-50"
     >
       <HomeIcon />
     </Button>

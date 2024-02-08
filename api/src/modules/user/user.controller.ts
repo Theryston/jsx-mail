@@ -8,7 +8,7 @@ import { UseSecurityCodeService } from './services/use-security-code.service';
 import { ValidateEmailService } from './services/validate-email.service';
 import { AuthUserService } from './services/auth-user.service';
 import { ResetPasswordService } from './services/reset-password.service';
-import { BANDWIDTH_GB_PRICE, PRICE_PER_MESSAGE, STORAGE_GB_PRICE } from 'src/utils/contants';
+import { BANDWIDTH_GB_PRICE, FREE_BALANCE, MONEY_SCALE, PRICE_PER_MESSAGE, STORAGE_GB_PRICE } from 'src/utils/contants';
 import { friendlyMoney } from 'src/utils/format-money';
 
 @Controller('user')
@@ -55,25 +55,41 @@ export class UserController {
 
 	@Get('price')
 	price() {
-		return [
-			{
-				title: 'Emails 1000',
-				description: 'The price for 1000 sent emails. This price is calculated daily, taking into account all the messages (emails) you send.',
-				amount: PRICE_PER_MESSAGE * 1000,
-				friendlyAmount: friendlyMoney(PRICE_PER_MESSAGE * 1000, true)
-			},
-			{
-				title: 'Storage GB',
-				description: 'The price for each GB of stored files. This price is calculated monthly based on your daily average storage usage.',
-				amount: STORAGE_GB_PRICE,
-				friendlyAmount: friendlyMoney(STORAGE_GB_PRICE, true)
-			},
-			{
-				title: 'Bandwidth GB',
-				description: 'The price for each downloaded file byte. This price is calculated daily, considering all the downloaded file bytes',
-				amount: BANDWIDTH_GB_PRICE,
-				friendlyAmount: friendlyMoney(BANDWIDTH_GB_PRICE, true)
-			},
-		]
+		return {
+			moneyScale: MONEY_SCALE,
+			freeBalance: FREE_BALANCE,
+			pricing: [
+				{
+					title: 'Emails',
+					unit: '1000',
+					unitName: 'emails',
+					amount: 1000,
+					step: 1000,
+					maxValue: 1000000,
+					price: PRICE_PER_MESSAGE * 1000,
+					friendlyAmount: friendlyMoney(PRICE_PER_MESSAGE * 1000, true)
+				},
+				{
+					title: 'Storage',
+					unit: 'GB',
+					unitName: 'GB',
+					amount: 1,
+					step: 0.1,
+					maxValue: 50,
+					price: STORAGE_GB_PRICE,
+					friendlyAmount: friendlyMoney(STORAGE_GB_PRICE, true)
+				},
+				{
+					title: 'Bandwidth',
+					unit: 'GB',
+					unitName: 'GB',
+					amount: 1,
+					step: 0.1,
+					maxValue: 50,
+					price: BANDWIDTH_GB_PRICE,
+					friendlyAmount: friendlyMoney(BANDWIDTH_GB_PRICE, true)
+				},
+			]
+		}
 	}
 }
