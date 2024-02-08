@@ -101,5 +101,10 @@ export const PERMISSIONS: {
 		title: 'Self Get Balance',
 		value: 'self:get-balance',
 		description: 'Can get its own balance',
+	},
+	SELF_LIST_TRANSACTIONS: {
+		title: 'Self List Transactions',
+		value: 'self:list-transactions',
+		description: 'Can list it owns transactions',
 	}
 }

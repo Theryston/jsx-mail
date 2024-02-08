@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Request } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Request, Req, Query } from '@nestjs/common';
 import { CreateUserService } from './services/create-user.service';
 import { AuthUserDto, CreateSecurityCodeDto, CreateUserDto, ResetPasswordDto, UseSecurityCodeDto } from './user.dto';
 import { Permissions } from 'src/auth/permissions.decorator';
@@ -11,10 +11,11 @@ import { ResetPasswordService } from './services/reset-password.service';
 import { BANDWIDTH_GB_PRICE, FREE_BALANCE, MONEY_SCALE, PRICE_PER_MESSAGE, STORAGE_GB_PRICE } from 'src/utils/contants';
 import { friendlyMoney } from 'src/utils/format-money';
 import { GetFullBalanceService } from './services/get-full-balance.service';
+import { ListTransactionsService } from './services/list-transactions.service';
 
 @Controller('user')
 export class UserController {
-	constructor(private readonly createUserService: CreateUserService, private readonly createSecurityCodeService: CreateSecurityCodeService, private readonly useSecurityCodeService: UseSecurityCodeService, private readonly validateEmailService: ValidateEmailService, private readonly authUserService: AuthUserService, private readonly resetPasswordService: ResetPasswordService, private readonly getFullBalanceService: GetFullBalanceService) { }
+	constructor(private readonly createUserService: CreateUserService, private readonly createSecurityCodeService: CreateSecurityCodeService, private readonly useSecurityCodeService: UseSecurityCodeService, private readonly validateEmailService: ValidateEmailService, private readonly authUserService: AuthUserService, private readonly resetPasswordService: ResetPasswordService, private readonly getFullBalanceService: GetFullBalanceService, private readonly listTransactionsService: ListTransactionsService) { }
 
 	@Post()
 	createUser(@Body() data: CreateUserDto) {
@@ -58,6 +59,15 @@ export class UserController {
 	@Permissions([PERMISSIONS.SELF_GET_BALANCE.value])
 	getBalance(@Request() req) {
 		return this.getFullBalanceService.execute(req.user.id)
+	}
+
+	@Get('transactions')
+	@Permissions([PERMISSIONS.SELF_LIST_TRANSACTIONS.value])
+	listFiles(@Req() req, @Query() data: any) {
+		return this.listTransactionsService.execute({
+			take: Number(data.take) || 10,
+			page: Number(data.page) || 1
+		}, req.user.id);
 	}
 
 	@Get('price')

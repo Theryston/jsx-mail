@@ -51,3 +51,10 @@ export const sessionSelect: Prisma.SessionSelect = {
 	expiresAt: true,
 	permissions: true,
 }
+
+export const transactionSelect: Prisma.TransactionSelect = {
+	id: true,
+	amount: true,
+	description: true,
+	createdAt: true
+}
