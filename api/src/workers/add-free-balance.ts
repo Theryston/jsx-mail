@@ -45,7 +45,7 @@ export const handler = async () => {
 			}
 		})
 
-		let diff = FREE_BALANCE - (balance < 0 ? 0 : balance)
+		let diff = balance < 0 ? 0 : FREE_BALANCE - balance
 
 		if (diff < 0) {
 			diff = 0
