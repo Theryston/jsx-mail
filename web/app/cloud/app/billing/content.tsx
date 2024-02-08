@@ -88,7 +88,7 @@ export default function BillingContent({
         <Card className="min-h-[200px]">
           <CardBody className="flex flex-col justify-center items-center h-full w-full p-0">
             <h2 className="text-2xl font-bold">
-              {balance.CURRENT.friendlyFullAmount}
+              {balance.CURRENT.friendlyAmount}
             </h2>
             <p className="text-gray-500">Current balance</p>
           </CardBody>
@@ -96,7 +96,7 @@ export default function BillingContent({
         <Card className="min-h-[200px]">
           <CardBody className="flex flex-col justify-center items-center h-full w-full p-0">
             <h2 className="text-2xl font-bold">
-              {balance.MONTH_ADDED.friendlyFullAmount}
+              {balance.MONTH_ADDED.friendlyAmount}
             </h2>
             <p className="text-gray-500">Balance added this month</p>
           </CardBody>
