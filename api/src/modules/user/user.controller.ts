@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Put, Request, Req, Query, Headers } from '@nestjs/common';
 import { CreateUserService } from './services/create-user.service';
-import { AuthUserDto, CreateSecurityCodeDto, CreateUserDto, ResetPasswordDto, UseSecurityCodeDto } from './user.dto';
+import { AuthUserDto, CreateCheckoutDto, CreateSecurityCodeDto, CreateUserDto, ResetPasswordDto, UseSecurityCodeDto } from './user.dto';
 import { Permissions } from 'src/auth/permissions.decorator';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { CreateSecurityCodeService } from './services/create-security-code.service';
@@ -75,8 +75,8 @@ export class UserController {
 
 	@Post('checkout')
 	@Permissions([PERMISSIONS.SELF_CREATE_CHECKOUT.value])
-	createCheckout(@Request() req, @Body() data: any) {
-		return this.createCheckoutService.execute(data.amount, req.user.id)
+	createCheckout(@Request() req, @Body() data: CreateCheckoutDto) {
+		return this.createCheckoutService.execute(data, req.user.id)
 	}
 
 	@Post('billing/webhook')

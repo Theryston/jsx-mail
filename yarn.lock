@@ -7376,6 +7376,11 @@ cosmiconfig@^8.2.0:
     parse-json "^5.2.0"
     path-type "^4.0.0"
 
+country-to-currency@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/country-to-currency/-/country-to-currency-1.1.5.tgz#9ba009b0be8e1a667abbcd6e47bca07ec2a7e619"
+  integrity sha512-IrIKgWA/B/gY6CF4JX45N1MixXHmk63eHF+0OjeFctx5OFR+VH5M/EQ0HGFuv8lz+Z1sLfSSFmuyZPfqI/9TYA==
+
 crc-32@^1.2.0:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/crc-32/-/crc-32-1.2.2.tgz#3cad35a934b8bf71f25ca524b6da51fb7eace2ff"

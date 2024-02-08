@@ -9,9 +9,13 @@ import {
   ModalFooter,
   Button,
   Input,
+  Autocomplete,
+  AutocompleteItem,
 } from '@nextui-org/react';
 import { toast } from 'react-toastify';
 import axios from '@/utils/axios';
+import countryToCurrency from 'country-to-currency';
+import { COUNTRIES } from '@/utils/countries';
 
 type Props = {
   isOpen: boolean;
@@ -22,20 +26,24 @@ type Props = {
 export default function AddBalanceModal({ isOpen, onOpenChange }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [amount, setAmount] = useState(10);
+  const [country, setCountry] = useState('');
+  const countries = COUNTRIES.filter((c) =>
+    Object.keys(countryToCurrency).includes(c.code),
+  );
 
   const createCheckout = useCallback(async () => {
     setIsLoading(true);
     try {
       const {
         data: { url },
-      } = await axios.post('/user/checkout', { amount });
+      } = await axios.post('/user/checkout', { amount, country });
       window.location.href = url;
     } catch (error: any) {
       toast.error(error.message);
     } finally {
       setIsLoading(false);
     }
-  }, [amount]);
+  }, [amount, country]);
 
   return (
     <Modal
@@ -73,6 +81,20 @@ export default function AddBalanceModal({ isOpen, onOpenChange }: Props) {
                   onChange={(e) => setAmount(Number(e.target.value))}
                   fullWidth
                 />
+                <Autocomplete
+                  label="Billing country"
+                  placeholder="Select the country of your payment method"
+                  value={country}
+                  onSelectionChange={(value) => {
+                    setCountry(value as string);
+                  }}
+                >
+                  {countries.map((c) => (
+                    <AutocompleteItem key={c.code} value={c.code}>
+                      {c.name}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
               </div>
             </ModalBody>
             <ModalFooter>
@@ -85,7 +107,7 @@ export default function AddBalanceModal({ isOpen, onOpenChange }: Props) {
                 onPress={() => createCheckout()}
                 fullWidth
               >
-                Add
+                Pay
               </Button>
             </ModalFooter>
           </>

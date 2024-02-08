@@ -16,10 +16,11 @@ import { ListTransactionsService } from './services/list-transactions.service';
 import { CreateCheckoutService } from './services/create-checkout.service';
 import { StripeService } from 'src/services/stripe.service';
 import { HandleWebhookService } from './services/handle-webhook.service';
+import { ExchangeMoneyService } from './services/exchange-money.service';
 
 @Module({
   controllers: [UserController],
-  providers: [StripeService, CreateUserService, PrismaService, CreateSessionService, CreateSecurityCodeService, UseSecurityCodeService, ValidateEmailService, AuthUserService, ResetPasswordService, AddBalanceService, GetBalanceService, GetFullBalanceService, ListTransactionsService, CreateCheckoutService, HandleWebhookService],
+  providers: [StripeService, CreateUserService, PrismaService, CreateSessionService, CreateSecurityCodeService, UseSecurityCodeService, ValidateEmailService, AuthUserService, ResetPasswordService, AddBalanceService, GetBalanceService, GetFullBalanceService, ListTransactionsService, CreateCheckoutService, HandleWebhookService, ExchangeMoneyService],
   imports: [EmailModule],
 })
 export class UserModule { }

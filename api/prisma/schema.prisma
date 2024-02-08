@@ -50,6 +50,7 @@ model User {
   senders Sender[]
   messages Message[]
   storageSizes StorageSize[]
+  checkouts Checkout[]
 
   @@map("users")
 }
@@ -224,4 +225,22 @@ model Message {
   domain Domain @relation(fields: [domainId], references: [id])
 
   @@map("messages")
+}
+
+model Checkout {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  gatewayId         String      @map("gateway_id")
+  gatewayUrl        String      @map("gateway_url")
+  localAmount       Int         @map("local_amount")
+  localCurrency     String      @map("local_currency")
+  amount            Int
+  userId            String      @map("user_id") @db.ObjectId
+  completedAt       DateTime?   @map("completed_at")
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("checkouts")
 }

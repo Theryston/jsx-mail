@@ -1,5 +1,5 @@
 import { TransactionStyle } from '@prisma/client';
-import { IsEmail, IsNotEmpty, Length, Matches } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, Length, Matches } from 'class-validator';
 
 export class CreateUserDto {
 	@IsNotEmpty()
@@ -58,4 +58,25 @@ export class AddBalanceDto {
 
 	@IsNotEmpty()
 	description: string
+}
+
+export class CreateCheckoutDto {
+	@IsNotEmpty()
+	@IsNumber()
+	amount: number
+
+	@IsNotEmpty()
+	country: string
+}
+
+export class ExchangeMoneyDto {
+	@IsNotEmpty()
+	@IsNumber()
+	amount: number
+
+	@IsNotEmpty()
+	baseCurrency: string
+
+	@IsNotEmpty()
+	currency: string
 }
