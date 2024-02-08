@@ -12,12 +12,14 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  useDisclosure,
 } from '@nextui-org/react';
 import { Balance } from '../types';
 import { useCallback, useState } from 'react';
 import moment from 'moment';
 import axios from '@/utils/axios';
 import { toast } from 'react-toastify';
+import AddBalanceModal from './AddBalanceModal';
 
 type FullBalance = {
   CURRENT: Balance;
@@ -47,6 +49,11 @@ export default function BillingContent({
   const [transactions, setTransactions] = useState(initialTransactions);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
+  const {
+    isOpen: isAddBalanceModalOpen,
+    onOpen: onAddBalanceModalOpen,
+    onOpenChange: onAddBalanceModalOpenChange,
+  } = useDisclosure();
 
   const fetchTransactions = useCallback(async (nextPage: number) => {
     setIsLoading(true);
@@ -70,7 +77,11 @@ export default function BillingContent({
 
   return (
     <main className="flex flex-col gap-6 mt-4">
-      <Button className="ml-auto" color="primary">
+      <Button
+        className="ml-auto"
+        color="primary"
+        onClick={onAddBalanceModalOpen}
+      >
         Add balance
       </Button>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -102,6 +113,14 @@ export default function BillingContent({
       <Table
         aria-label="List of transactions"
         className="overflow-x-auto"
+        topContent={
+          <div className="flex flex-col w-full">
+            <h2 className="text-xl font-bold">Transactions</h2>
+            <p className="text-gray-500">
+              List of transactions in your account
+            </p>
+          </div>
+        }
         bottomContent={
           <div className="flex w-full justify-center mt-4">
             <Pagination
@@ -147,6 +166,10 @@ export default function BillingContent({
           ))}
         </TableBody>
       </Table>
+      <AddBalanceModal
+        isOpen={isAddBalanceModalOpen}
+        onOpenChange={onAddBalanceModalOpenChange}
+      />
     </main>
   );
 }
