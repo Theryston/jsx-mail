@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
+import { friendlyMoney } from 'src/utils/format-money';
 import { transactionSelect } from 'src/utils/public-selects';
 
 type ListTransactionsData = {
@@ -18,7 +19,7 @@ export class ListTransactionsService {
 
 		const skip = take * (page - 1);
 
-		const transactions = await this.prisma.transaction.findMany({
+		let transactions = await this.prisma.transaction.findMany({
 			where: {
 				userId,
 				deletedAt: {
@@ -32,6 +33,11 @@ export class ListTransactionsService {
 				createdAt: 'desc'
 			}
 		})
+
+		transactions = transactions.map(transaction => ({
+			...transaction,
+			friendlyAmount: friendlyMoney(transaction.amount, true),
+		}))
 
 		const count = await this.prisma.transaction.count({
 			where: {

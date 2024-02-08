@@ -2,6 +2,7 @@ import { PrismaClient, TransactionStyle } from '@prisma/client'
 import { PRICE_PER_MESSAGE } from 'src/utils/contants'
 import { bandwidthToMoney, storageToMoney } from 'src/utils/format-money'
 import moment from "moment"
+import { formatSize } from 'src/utils/format'
 
 const prisma = new PrismaClient()
 
@@ -90,7 +91,7 @@ async function chargeBandwidth() {
 			amount: price,
 			style: 'bandwidth_charge',
 			userId,
-			description: `Charge for ${size} bytes downloaded`
+			description: `Charge for ${formatSize(size)} downloaded`
 		})
 
 		await prisma.fileDownload.updateMany({
@@ -153,7 +154,7 @@ async function chargeStorage() {
 			amount: price,
 			style: 'storage_charge',
 			userId,
-			description: `Charge for an average of ${averageSize} bytes stored`
+			description: `Charge for an average of ${formatSize(averageSize)} stored`
 		})
 
 		await prisma.storageSize.updateMany({
@@ -187,6 +188,10 @@ async function removeBalance({ amount, userId, style, description }: {
 	description: string
 }) {
 	const negativeAmount = Math.round(amount) * -1
+
+	if (negativeAmount === 0) {
+		return
+	}
 
 	await prisma.transaction.create({
 		data: {
