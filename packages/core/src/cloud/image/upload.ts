@@ -5,10 +5,7 @@ import {
   readImage,
 } from '../../utils/file-system';
 import CoreError from '../../utils/error';
-import WEBSITE_URL from '../../utils/website-url';
-import { cleanGlobalVariable, readGlobalVariable } from '../../utils/global';
-import getStorage from '../../utils/storage';
-import { ImageInfo } from '../..';
+import { WEBSITE_URL } from '../../utils/cloud';
 
 export async function cloudUploadImage(
   path: string,
@@ -21,8 +18,6 @@ export async function cloudUploadImage(
   }
 
   const fileSize = getFileSize(path);
-
-  await deleteNotUsedImages();
 
   try {
     const body = {
@@ -53,57 +48,5 @@ export async function cloudUploadImage(
     throw new CoreError('upload_error', {
       error: error.response.data ? error.response.data : error.message,
     });
-  }
-}
-
-async function deleteNotUsedImages() {
-  try {
-    const imagesUsing = readGlobalVariable('images_using');
-
-    if (!imagesUsing || !imagesUsing.length) {
-      return;
-    }
-
-    const storage = getStorage();
-
-    if (!storage) {
-      return;
-    }
-
-    const imagesStr = storage.getItem('images');
-    let localImages = imagesStr ? JSON.parse(imagesStr) : [];
-    let newImages: ImageInfo[] = [];
-
-    const { data: cloudImages } = await axios.get(`${WEBSITE_URL}/api/image`);
-
-    for (const image of cloudImages) {
-      const isUsed = imagesUsing.find((i) => i.id === image.hash);
-
-      if (isUsed) {
-        const localImage = localImages.find(
-          (i: ImageInfo) => i.hash === image.hash,
-        );
-
-        newImages.push(localImage);
-        continue;
-      }
-
-      await axios.delete(`${WEBSITE_URL}/api/image`, {
-        params: {
-          hash: image.hash,
-        },
-      });
-    }
-
-    const imagesNotInCloud = localImages.filter(
-      (i: ImageInfo) => !cloudImages.find((c: any) => c.hash === i.hash),
-    );
-
-    newImages = [...newImages, ...imagesNotInCloud];
-
-    storage.setItem('images', JSON.stringify(newImages));
-    cleanGlobalVariable('images_using');
-  } catch (error: any) {
-    console.error('Error deleting not used images');
   }
 }

@@ -14,7 +14,6 @@ import {
 } from '@nextui-org/react';
 import { toast } from 'react-toastify';
 import axios from '@/utils/axios';
-import countryToCurrency from 'country-to-currency';
 import { COUNTRIES } from '@/utils/countries';
 
 type Props = {
@@ -27,9 +26,6 @@ export default function AddBalanceModal({ isOpen, onOpenChange }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [amount, setAmount] = useState(10);
   const [country, setCountry] = useState('');
-  const countries = COUNTRIES.filter((c) =>
-    Object.keys(countryToCurrency).includes(c.code),
-  );
 
   const createCheckout = useCallback(async () => {
     setIsLoading(true);
@@ -89,7 +85,7 @@ export default function AddBalanceModal({ isOpen, onOpenChange }: Props) {
                     setCountry(value as string);
                   }}
                 >
-                  {countries.map((c) => (
+                  {COUNTRIES.map((c) => (
                     <AutocompleteItem key={c.code} value={c.code}>
                       {c.name}
                     </AutocompleteItem>

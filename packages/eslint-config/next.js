@@ -6,7 +6,6 @@ const project = resolve(process.cwd(), 'tsconfig.json');
 module.exports = {
   extends: [
     'eslint:recommended',
-    'prettier',
     require.resolve('@vercel/style-guide/eslint/next'),
     'eslint-config-turbo',
   ],
@@ -31,10 +30,4 @@ module.exports = {
     'node_modules/',
   ],
   overrides: [{ files: ['*.js?(x)', '*.ts?(x)'] }],
-  rules: {
-    'prettier/prettier': [
-      'error',
-      { useTabs: false, tabWidth: 2, bracketSpacing: true },
-    ],
-  },
 };

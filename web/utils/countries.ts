@@ -1,3 +1,5 @@
+import countryToCurrency from 'country-to-currency';
+
 function getCountries(lang = 'en') {
 	const A = 65;
 	const Z = 90;
@@ -20,4 +22,6 @@ export const COUNTRIES = Object.keys(getCountries())
 		code: key,
 		name: getCountries()[key],
 	}))
-	.sort((a, b) => a.name.localeCompare(b.name));
+	.sort((a, b) => a.name.localeCompare(b.name)).filter((c) =>
+		Object.keys(countryToCurrency).includes(c.code),
+	)

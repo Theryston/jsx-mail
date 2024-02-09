@@ -5,6 +5,5 @@
     }
   ],
   "cSpell.words": ["BACKBLAZE", "jsxmail", "MIMETYPES"],
-  "editor.tabSize": 2,
-  "prettier.endOfLine": "lf"
+  "editor.tabSize": 2
 }
