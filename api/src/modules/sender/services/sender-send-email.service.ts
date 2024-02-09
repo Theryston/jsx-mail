@@ -6,6 +6,7 @@ import { SenderSendEmailDto } from '../sender.dto';
 import { PRICE_PER_MESSAGE } from 'src/utils/contants';
 import { messageSelect } from 'src/utils/public-selects';
 import moment from 'moment';
+import { Sender } from '@prisma/client';
 
 @Injectable()
 export class SenderSendEmailService {
@@ -18,18 +19,34 @@ export class SenderSendEmailService {
 	async execute({ sender: senderEmail, html, subject, to }: SenderSendEmailDto, userId: string) {
 		const todayDay = moment().format('YYYY-MM-DD');
 
-		const sender = await this.prisma.sender.findFirst({
-			where: {
-				email: senderEmail,
-				userId,
-				deletedAt: {
-					isSet: false
+		let sender: Sender | null = null;
+		if (senderEmail) {
+
+			sender = await this.prisma.sender.findFirst({
+				where: {
+					email: senderEmail,
+					userId,
+					deletedAt: {
+						isSet: false
+					}
 				}
-			}
-		});
+			});
+		} else {
+			sender = await this.prisma.sender.findFirst({
+				where: {
+					userId,
+					deletedAt: {
+						isSet: false
+					}
+				},
+				orderBy: {
+					createdAt: 'desc'
+				}
+			});
+		}
 
 		if (!sender) {
-			throw new HttpException('Sender not found', HttpStatus.NOT_FOUND);
+			throw new HttpException('Sender not found, please create one', HttpStatus.NOT_FOUND);
 		}
 
 		const balance = await this.getBalanceService.execute(userId);

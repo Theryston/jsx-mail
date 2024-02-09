@@ -1,4 +1,4 @@
-import { IsNotEmpty, Length, IsEmail, IsArray } from "class-validator";
+import { IsNotEmpty, Length, IsEmail, IsArray, IsOptional } from "class-validator";
 
 export class CreateSenderDto {
 	@IsNotEmpty()
@@ -21,9 +21,9 @@ export class SenderSendEmailDto {
 	@Length(3, 99999)
 	html: string;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@IsEmail()
-	sender: string;
+	sender?: string;
 
 	@IsNotEmpty()
 	@IsNotEmpty({ each: true })

@@ -39,8 +39,8 @@ export const senderSelect: Prisma.SenderSelect = {
 export const messageSelect: Prisma.MessageSelect = {
 	id: true,
 	subject: true,
-	body: true,
 	senderId: true,
+	status: true,
 	userId: true,
 	to: true,
 	sentAt: true
