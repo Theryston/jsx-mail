@@ -62,7 +62,8 @@ export class SenderSendEmailService {
 				id: message.id
 			},
 			data: {
-				sentAt: new Date()
+				sentAt: new Date(),
+				status: 'sent'
 			},
 			select: messageSelect
 		})
