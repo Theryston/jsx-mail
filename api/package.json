@@ -12,7 +12,7 @@
     "undeploy:aws": "yarn serverless remove --stage prod --verbose",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
-    "prepare:db": "prisma db push && prisma generate",
+    "prepare:db": "prisma db push && prisma generate && prisma db seed",
     "invoke:dev": "yarn build && serverless invoke local --function"
   },
   "dependencies": {
@@ -66,5 +66,8 @@
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} src/database/seed.ts"
   }
 }

@@ -50,7 +50,7 @@ export default function DNSDomainModal({
               <TableColumn>NAME</TableColumn>
               <TableColumn>VALUE</TableColumn>
             </TableHeader>
-            <TableBody>
+            <TableBody emptyContent="No records">
               {domain.dnsRecords.map((record) => (
                 <TableRow key={record.id}>
                   <TableCell>{record.type}</TableCell>

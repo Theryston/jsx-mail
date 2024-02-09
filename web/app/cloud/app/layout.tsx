@@ -11,6 +11,10 @@ export default async function AppLayout({
   try {
     const { data: user } = await axios.get('/user/me');
 
+    if (user.errorMessage || user.isError || user.message) {
+      redirect('/cloud/sign-in');
+    }
+
     return (
       <CloudAppContextProvider user={user}>
         <Header />

@@ -46,7 +46,8 @@ export class DeleteDomainService {
 				id: domainId
 			},
 			data: {
-				deletedAt: new Date()
+				deletedAt: new Date(),
+				name: new Date().getDate().toString()
 			}
 		});
 

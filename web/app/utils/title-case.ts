@@ -1,5 +1,5 @@
 export function titleCase(str: string): string {
-	return str
+	return (str || '')
 		.toLowerCase()
 		.split(' ')
 		.map((word) => {

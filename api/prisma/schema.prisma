@@ -112,7 +112,7 @@ model SecurityCode {
 
 model Domain {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
-  name              String
+  name              String      @unique
   status            DomainStatus @map("status") @default(pending)
   userId            String      @map("user_id") @db.ObjectId
   createdAt         DateTime    @map("created_at") @default(now())
