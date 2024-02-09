@@ -6,7 +6,7 @@ import { titleCase } from 'src/utils/title-case';
 
 @Injectable()
 export class CreateSecurityCodeService {
-	constructor(private readonly prisma: PrismaService, private readonly sendEmail: SendEmailService) { }
+	constructor(private readonly prisma: PrismaService, private readonly sendEmailService: SendEmailService) { }
 
 	async execute(data: CreateSecurityCodeDto) {
 		const user = await this.prisma.user.findFirst({
@@ -37,7 +37,7 @@ export class CreateSecurityCodeService {
 			}
 		})
 
-		await this.sendEmail.execute({
+		await this.sendEmailService.execute({
 			from: {
 				name: 'JSX Mail Cloud',
 				email: `jsxmail@${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`
