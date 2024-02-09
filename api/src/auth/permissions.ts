@@ -111,5 +111,10 @@ export const PERMISSIONS: {
 		title: 'Self Create Checkout',
 		value: 'self:create-checkout',
 		description: 'Can create a checkout for itself',
+	},
+	SELF_GET_INSIGHTS: {
+		title: 'Self Get Insights',
+		value: 'self:get-insights',
+		description: 'Can get its own insights',
 	}
 }

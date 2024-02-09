@@ -15,10 +15,11 @@ import { ListTransactionsService } from './services/list-transactions.service';
 import { CreateCheckoutService } from './services/create-checkout.service';
 import { StripeService } from 'src/services/stripe.service';
 import { HandleWebhookService } from './services/handle-webhook.service';
+import { GetInsightsService } from './services/get-insights.service';
 
 @Controller('user')
 export class UserController {
-	constructor(private readonly createUserService: CreateUserService, private readonly createSecurityCodeService: CreateSecurityCodeService, private readonly useSecurityCodeService: UseSecurityCodeService, private readonly validateEmailService: ValidateEmailService, private readonly authUserService: AuthUserService, private readonly resetPasswordService: ResetPasswordService, private readonly getFullBalanceService: GetFullBalanceService, private readonly listTransactionsService: ListTransactionsService, private readonly createCheckoutService: CreateCheckoutService, private readonly stripeService: StripeService, private readonly handleWebhookService: HandleWebhookService) { }
+	constructor(private readonly createUserService: CreateUserService, private readonly createSecurityCodeService: CreateSecurityCodeService, private readonly useSecurityCodeService: UseSecurityCodeService, private readonly validateEmailService: ValidateEmailService, private readonly authUserService: AuthUserService, private readonly resetPasswordService: ResetPasswordService, private readonly getFullBalanceService: GetFullBalanceService, private readonly listTransactionsService: ListTransactionsService, private readonly createCheckoutService: CreateCheckoutService, private readonly stripeService: StripeService, private readonly handleWebhookService: HandleWebhookService, private readonly getInsightsService: GetInsightsService) { }
 
 	@Post()
 	createUser(@Body() data: CreateUserDto) {
@@ -88,6 +89,12 @@ export class UserController {
 		);
 
 		return this.handleWebhookService.execute(body);
+	}
+
+	@Get('insights')
+	@Permissions([PERMISSIONS.SELF_GET_INSIGHTS.value])
+	getInsights(@Request() req) {
+		return this.getInsightsService.execute(req.user.id)
 	}
 
 	@Get('price')

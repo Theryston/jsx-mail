@@ -225,6 +225,7 @@ model Message {
   body              String
   to                String[]
   status            MessageStatus @default(queued)
+  sentDay           String?       @map("sent_day")
   sentAt            DateTime?     @map("sent_at")
   createdAt         DateTime      @map("created_at") @default(now())
   updatedAt         DateTime      @map("updated_at") @updatedAt
