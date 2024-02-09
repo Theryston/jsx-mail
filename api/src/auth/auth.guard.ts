@@ -33,15 +33,16 @@ export class AuthGuard implements CanActivate {
             }
           },
           {
-            OR: [{
-              expiresAt: {
-                gte: new Date()
+            OR: [
+              {
+                expiresAt: {
+                  gte: new Date()
+                }
+              },
+              {
+                expiresAt: null
               }
-            }, {
-              expiresAt: {
-                isSet: false
-              }
-            }]
+            ]
           }
         ]
       }

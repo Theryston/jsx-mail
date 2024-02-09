@@ -53,8 +53,6 @@ export default async function requestLogin(receivedToken?: string) {
 					reject(new Error('No token'));
 				}
 
-				core.setToken(token as string);
-
 				const projectName = path.basename(process.cwd());
 
 				const { data: session } = await core.cloudClient.post('/session', {
@@ -65,6 +63,7 @@ export default async function requestLogin(receivedToken?: string) {
 						Authorization: `Bearer ${token}`,
 					}
 				})
+
 				await core.cloudClient.delete('/session', {
 					headers: {
 						Authorization: `Bearer ${token}`,
