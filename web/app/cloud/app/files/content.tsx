@@ -85,7 +85,7 @@ export function Content({
       >
         <TableHeader>
           <TableColumn>ID</TableColumn>
-          <TableColumn>LINK</TableColumn>
+          <TableColumn>URL</TableColumn>
           <TableColumn>SIZE</TableColumn>
           <TableColumn>NAME</TableColumn>
           <TableColumn>MIME TYPE</TableColumn>
@@ -100,21 +100,13 @@ export function Content({
             <TableRow key={file.id}>
               <TableCell>{file.id}</TableCell>
               <TableCell>
-                {(() => {
-                  const fileExtension = file.originalName.split('.').pop();
-                  // eslint-disable-next-line turbo/no-undeclared-env-vars
-                  const link = `${process.env.NEXT_PUBLIC_API_URL}/file/${file.id}.${fileExtension}`;
-
-                  return (
-                    <Link
-                      href={link}
-                      className="text-blue-500 underline"
-                      target="_blank"
-                    >
-                      {link}
-                    </Link>
-                  );
-                })()}
+                <Link
+                  href={file.url}
+                  className="text-blue-500 underline"
+                  target="_blank"
+                >
+                  {file.url}
+                </Link>
               </TableCell>
               <TableCell>{formatSize(file.size)}</TableCell>
               <TableCell>{file.originalName}</TableCell>

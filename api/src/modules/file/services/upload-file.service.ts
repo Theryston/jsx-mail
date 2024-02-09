@@ -55,8 +55,12 @@ export class UploadFileService {
 			return fileAlreadyExists
 		}
 
-		const ext = file.originalname.split('.').pop();
-		const key = `${user.id}/${hash}.${ext}`
+		if (!file.originalname) {
+			file.originalname = hash
+		}
+
+		let ext = file.originalname.split('.').length > 1 ? file.originalname.split('.').pop() : undefined;
+		const key = `${user.id}/${hash}${ext ? `.${ext}` : ''}`
 
 		const client = new S3Client();
 
@@ -69,6 +73,8 @@ export class UploadFileService {
 
 		await client.send(command);
 
+		const url = `${process.env.API_BASE_URL}/file/${key}`
+
 		const createdFile = await this.prisma.file.create({
 			data: {
 				encoding: file.encoding,
@@ -77,7 +83,8 @@ export class UploadFileService {
 				originalName: file.originalname,
 				size: file.size,
 				userId: user.id,
-				hash
+				hash,
+				url
 			},
 			select: fileSelect
 		})

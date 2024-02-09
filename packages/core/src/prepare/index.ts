@@ -17,7 +17,7 @@ import {
   getTemplateFolder,
   joinPath,
   readFile,
-  readImage,
+  readRawFile,
   transformChildrenFileToPath,
 } from '../utils/file-system';
 import handleErrors from '../utils/handle-errors';
@@ -458,7 +458,7 @@ async function uploadImageToS3(
   const ext = path.split('.').pop();
   const fileName = `${hash}.${ext}`;
 
-  const fileContent = readImage(path);
+  const fileContent = readRawFile(path);
 
   const uploadParams = {
     Bucket: options.awsBucket,

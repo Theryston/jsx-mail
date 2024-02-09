@@ -2,7 +2,7 @@ import { getProps } from '..';
 import { ImageInfo, JSXMailVirtualDOM } from '../../..';
 import calculateHash from '../../../utils/calculate-hash';
 import CoreError from '../../../utils/error';
-import { readImage } from '../../../utils/file-system';
+import { readRawFile } from '../../../utils/file-system';
 import {
   insertGlobalVariableItem,
   readGlobalVariable,
@@ -63,7 +63,7 @@ function handleImage(src: string): ImageInfo {
   const state = readGlobalVariable('state')[0]?.id;
   const onlyTag = readGlobalVariable('onlyTag').find((oT) => oT.id === 'img');
   const storage = getStorage();
-  const fileContent = readImage(src);
+  const fileContent = readRawFile(src);
   const fileHash = calculateHash(fileContent);
 
   let imageInfo: ImageInfo = {} as ImageInfo;

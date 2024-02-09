@@ -10,10 +10,10 @@ export class DownloadFileService {
 
 	constructor(private readonly prisma: PrismaService, private readonly getBalanceService: GetBalanceService) { }
 
-	async execute(fileId: string) {
+	async execute(key: string) {
 		const file = await this.prisma.file.findFirst({
 			where: {
-				id: fileId,
+				key,
 				deletedAt: {
 					isSet: false
 				}

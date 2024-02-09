@@ -153,6 +153,7 @@ model File {
   mimeType          String      @map("mime_type")
   encoding          String
   size              Int
+  url               String
   userId            String      @map("user_id") @db.ObjectId
   createdAt         DateTime    @map("created_at") @default(now())
   updatedAt         DateTime    @map("updated_at") @updatedAt

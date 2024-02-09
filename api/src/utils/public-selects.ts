@@ -6,6 +6,8 @@ export const fileSelect: Prisma.FileSelect = {
 	mimeType: true,
 	originalName: true,
 	size: true,
+	url: true,
+	key: true,
 	hash: true
 }
 

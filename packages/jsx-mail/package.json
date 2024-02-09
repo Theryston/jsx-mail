@@ -37,7 +37,6 @@
     "gluegun": "^5.1.6",
     "json5": "^2.2.3",
     "loading-cli": "^1.1.2",
-    "open": "^10.0.3",
     "socket.io": "^4.7.2"
   },
   "devDependencies": {

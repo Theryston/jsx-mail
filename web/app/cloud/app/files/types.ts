@@ -4,5 +4,7 @@ export type File = {
 	mimeType: string;
 	originalName: string;
 	size: number;
+	key: string;
+	url: string;
 	hash: string;
 };

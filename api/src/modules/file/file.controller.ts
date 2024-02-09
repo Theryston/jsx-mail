@@ -26,13 +26,6 @@ export class FileController {
 		return this.deleteFileService.execute(id, req.user.id);
 	}
 
-	@Get(':id')
-	async downloadFile(@Param('id') id: string, @Response() res: Res) {
-		id = id.split('.')[0];
-		const result = await this.downloadFileService.execute(id);
-		return res.setHeader('Content-Type', result.mimeType).set('Content-Disposition', `attachment; filename="${result.filename}"`).send(result.buffer);
-	}
-
 	@Get()
 	@Permissions([PERMISSIONS.SELF_LIST_FILES.value])
 	listFiles(@Req() req, @Query() data: any) {
@@ -40,5 +33,12 @@ export class FileController {
 			take: Number(data.take) || 10,
 			page: Number(data.page) || 1
 		}, req.user.id);
+	}
+
+	@Get('/*')
+	async downloadFile(@Param() params, @Response() res: Res) {
+		const key = params[0];
+		const result = await this.downloadFileService.execute(key);
+		return res.setHeader('Content-Type', result.mimeType).set('Content-Disposition', `attachment; filename="${result.filename}"`).send(result.buffer);
 	}
 }
