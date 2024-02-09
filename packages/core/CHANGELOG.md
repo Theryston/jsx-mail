@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.1.1
+
+### Patch Changes
+
+- dee4bbf: add file name to header
+
 ## 2.1.0
 
 ### Minor Changes
