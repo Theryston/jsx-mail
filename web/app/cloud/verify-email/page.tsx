@@ -1,7 +1,7 @@
 'use client';
 
-import axios from '@/utils/axios';
-import handleRedirectUrl from '@/utils/handle-redirect-url';
+import axios from '@/app/utils/axios';
+import handleRedirectUrl from '@/app/utils/handle-redirect-url';
 import { Card, CardBody, CardHeader, Spinner } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';

@@ -6,20 +6,17 @@ const axios = Axios.create({
 });
 
 axios.interceptors.request.use((request) => {
-  const token =
-    request.headers['Session-Token'] ||
-    document.cookie
-      ?.split(';')
-      .find((c) => c.trim().startsWith('token='))
+
+  let token: string | undefined = '';
+
+  if (typeof window !== 'undefined') {
+    token = document.cookie
+      .split('; ')
+      .find((cookie) => cookie.startsWith('token='))
       ?.split('=')[1];
-  delete request.headers['Session-Token'];
-
-  const forceAuth = request.headers['Force-Auth'] === 'true';
-  delete request.headers['Force-Auth'];
-
-  if (!token && forceAuth) {
-    window.location.href = '/cloud/sign-in';
-    throw new Error('Unauthorized');
+  } else {
+    const { cookies } = require('next/headers');
+    token = cookies().get('token')?.value;
   }
 
   if (!token) {
@@ -39,7 +36,6 @@ axios.interceptors.response.use(
       document.cookie = 'token=; path=/; max-age=0';
       document.cookie = 'sessionId=; path=/; max-age=0';
       window.location.href = '/cloud/sign-in';
-      return;
     }
 
     const errorData = error.response?.data ? error.response.data : error;

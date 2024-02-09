@@ -13,8 +13,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { EyeClosedIcon, EyeOpenIcon } from '@radix-ui/react-icons';
-import axios from '@/utils/axios';
-import handleRedirectUrl from '@/utils/handle-redirect-url';
+import axios from '@/app/utils/axios';
+import handleRedirectUrl from '@/app/utils/handle-redirect-url';
 import BackButton from '../BackButton';
 
 export default function Page() {

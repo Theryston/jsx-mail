@@ -1,6 +1,6 @@
 'use client';
 
-import { titleCase } from '@/utils/title-case';
+import { titleCase } from '@/app/utils/title-case';
 import { useCloudAppContext } from '../context';
 import { Avatar, Button, Card, CardBody, CardHeader } from '@nextui-org/react';
 import Link from 'next/link';

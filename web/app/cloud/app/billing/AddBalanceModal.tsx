@@ -13,8 +13,8 @@ import {
   AutocompleteItem,
 } from '@nextui-org/react';
 import { toast } from 'react-toastify';
-import axios from '@/utils/axios';
-import { COUNTRIES } from '@/utils/countries';
+import axios from '@/app/utils/axios';
+import { COUNTRIES } from '@/app/utils/countries';
 
 type Props = {
   isOpen: boolean;

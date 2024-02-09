@@ -15,11 +15,11 @@ import {
   useDisclosure,
 } from '@nextui-org/react';
 import Link from 'next/link';
-import axios from '@/utils/axios';
+import axios from '@/app/utils/axios';
 import { PER_PAGE } from './constants';
 import DeleteForm from '../DeleteForm';
 import { toast } from 'react-toastify';
-import { formatSize } from '@/utils/format';
+import { formatSize } from '@/app/utils/format';
 import { UploadFileModal } from './UploadFileModal';
 import { PlusIcon } from '@radix-ui/react-icons';
 

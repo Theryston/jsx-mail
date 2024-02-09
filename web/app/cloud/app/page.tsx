@@ -1,20 +1,8 @@
-import axios from '@/utils/axios';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import axios from '@/app/utils/axios';
 import HomePageContent from './content';
 
 export default async function Page() {
-  const token = cookies().get('token')?.value;
-
-  if (!token) {
-    redirect('/cloud/sign-in');
-  }
-
-  const { data: insights } = await axios.get('/user/insights', {
-    headers: {
-      'Session-Token': token,
-    },
-  });
+  const { data: insights } = await axios.get('/user/insights');
 
   return <HomePageContent insights={insights} />;
 }

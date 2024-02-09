@@ -4,7 +4,7 @@ import { Button, Card, CardBody, useDisclosure } from '@nextui-org/react';
 import { Sender } from './types';
 import { useCallback, useState } from 'react';
 import DeleteForm from '../DeleteForm';
-import axios from '@/utils/axios';
+import axios from '@/app/utils/axios';
 import { toast } from 'react-toastify';
 import { PlusIcon } from '@radix-ui/react-icons';
 import CreationSenderModal from './CreationSenderModal';

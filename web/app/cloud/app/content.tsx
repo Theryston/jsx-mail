@@ -1,9 +1,9 @@
 'use client';
 
-import { formatSize } from '@/utils/format';
+import { formatSize } from '@/app/utils/format';
 import { Card, CardBody, CardHeader } from '@nextui-org/react';
 import { useCloudAppContext } from './context';
-import { titleCase } from '@/utils/title-case';
+import { titleCase } from '@/app/utils/title-case';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,6 +13,7 @@ import {
   LineElement,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { useEffect, useState } from 'react';
 
 ChartJS.register(
   CategoryScale,
@@ -40,6 +41,15 @@ type Props = {
 
 export default function HomePageContent({ insights }: Props) {
   const { user } = useCloudAppContext();
+  const [messagesByDay, setMessagesByDay] = useState<MessagesSentByDay[]>([]);
+
+  useEffect(() => {
+    setMessagesByDay(
+      insights.MESSAGES_SENT_BY_DAY.sort(
+        (a, b) => new Date(a.sentDay).getTime() - new Date(b.sentDay).getTime(),
+      ),
+    );
+  }, [insights.MESSAGES_SENT_BY_DAY]);
 
   return (
     <main>
@@ -91,10 +101,10 @@ export default function HomePageContent({ insights }: Props) {
                 },
               }}
               data={{
-                labels: insights.MESSAGES_SENT_BY_DAY.map((day) => day.sentDay),
+                labels: messagesByDay.map((day) => day.sentDay),
                 datasets: [
                   {
-                    data: insights.MESSAGES_SENT_BY_DAY.map((day) => day.count),
+                    data: messagesByDay.map((day) => day.count),
                     backgroundColor: 'rgb(59 130 246)',
                     showLine: true,
                   },

@@ -16,7 +16,7 @@ import {
   Checkbox,
 } from '@nextui-org/react';
 import { toast } from 'react-toastify';
-import axios from '@/utils/axios';
+import axios from '@/app/utils/axios';
 import moment from 'moment';
 
 type Permission = {

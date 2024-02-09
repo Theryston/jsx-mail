@@ -1,6 +1,6 @@
 'use client';
 
-import { titleCase } from '@/utils/title-case';
+import { titleCase } from '@/app/utils/title-case';
 import {
   Navbar,
   NavbarBrand,
@@ -17,7 +17,7 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useCloudAppContext } from './context';
-import axios from '@/utils/axios';
+import axios from '@/app/utils/axios';
 import { toast } from 'react-toastify';
 
 export default function Header() {

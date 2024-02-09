@@ -1,6 +1,6 @@
 'use client';
 
-import axios from '@/utils/axios';
+import axios from '@/app/utils/axios';
 import { Button, Card, CardBody, Chip, useDisclosure } from '@nextui-org/react';
 import { useCallback, useState } from 'react';
 import { toast } from 'react-toastify';

@@ -17,7 +17,7 @@ import {
 import { Balance } from '../types';
 import { useCallback, useState } from 'react';
 import moment from 'moment';
-import axios from '@/utils/axios';
+import axios from '@/app/utils/axios';
 import { toast } from 'react-toastify';
 import AddBalanceModal from './AddBalanceModal';
 

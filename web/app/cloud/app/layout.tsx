@@ -1,8 +1,7 @@
-import { cookies } from 'next/headers';
 import Header from './Header';
 import { CloudAppContextProvider } from './context';
 import { redirect } from 'next/navigation';
-import axios from '@/utils/axios';
+import axios from '@/app/utils/axios';
 
 export default async function AppLayout({
   children,
@@ -10,18 +9,7 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   try {
-    const token = cookies().get('token');
-
-    if (!token) {
-      redirect('/cloud/sign-in');
-    }
-
-    const { data: user } = await axios.get('/user/me', {
-      headers: {
-        'Force-Auth': 'true',
-        'Session-Token': token.value,
-      },
-    });
+    const { data: user } = await axios.get('/user/me');
 
     return (
       <CloudAppContextProvider user={user}>

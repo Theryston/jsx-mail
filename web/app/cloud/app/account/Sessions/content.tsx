@@ -5,7 +5,7 @@ import SectionsList from '../../SectionsList';
 import SectionItem from '../../SectionItem';
 import { useCallback, useEffect, useState } from 'react';
 import DeleteForm from '../../DeleteForm';
-import axios from '@/utils/axios';
+import axios from '@/app/utils/axios';
 import { toast } from 'react-toastify';
 import moment from 'moment';
 import { PlusIcon } from '@radix-ui/react-icons';

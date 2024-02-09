@@ -1,6 +1,6 @@
 'use client';
 
-import handleRedirectUrl from '@/utils/handle-redirect-url';
+import handleRedirectUrl from '@/app/utils/handle-redirect-url';
 import { Card, CardBody, CardHeader, Spinner } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';

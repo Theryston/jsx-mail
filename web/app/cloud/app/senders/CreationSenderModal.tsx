@@ -13,7 +13,7 @@ import {
   Input,
 } from '@nextui-org/react';
 import { toast } from 'react-toastify';
-import axios from '@/utils/axios';
+import axios from '@/app/utils/axios';
 
 type Props = {
   isOpen: boolean;

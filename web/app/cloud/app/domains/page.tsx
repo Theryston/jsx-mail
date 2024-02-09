@@ -1,20 +1,8 @@
-import { cookies } from 'next/headers';
 import Domains from './content';
-import { redirect } from 'next/navigation';
-import axios from '@/utils/axios';
+import axios from '@/app/utils/axios';
 
 export default async function DomainPage() {
-  const token = cookies().get('token');
-
-  if (!token) {
-    redirect('/cloud/sign-in');
-  }
-
-  const { data } = await axios.get('/domain', {
-    headers: {
-      'Session-Token': token.value,
-    },
-  });
+  const { data } = await axios.get('/domain');
 
   return <Domains domains={data} />;
 }

@@ -1,13 +1,8 @@
-import axios from '@/utils/axios';
-import { cookies } from 'next/headers';
+import axios from '@/app/utils/axios';
 import ContentSessions from './content';
 
 export default async function Sessions() {
-  const { data: sessions } = await axios.get('/session', {
-    headers: {
-      'Session-Token': cookies().get('token')?.value,
-    },
-  });
+  const { data: sessions } = await axios.get('/session');
 
   return <ContentSessions sessions={sessions} />;
 }

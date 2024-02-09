@@ -1,4 +1,4 @@
-import axios from '@/utils/axios';
+import axios from '@/app/utils/axios';
 import PricingContent from './content';
 
 export default async function Pricing() {

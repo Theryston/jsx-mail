@@ -1,6 +1,6 @@
 'use client';
 
-import axios from '@/utils/axios';
+import axios from '@/app/utils/axios';
 import {
   Button,
   Card,
