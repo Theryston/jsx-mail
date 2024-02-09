@@ -14,6 +14,7 @@ const user: Prisma.UserCreateInput = {
 
 const domain: Prisma.DomainCreateInput = {
 	name: 'jsxmail.org',
+	status: 'verified',
 	user: {
 		connect: {
 			email: 'jsxmailorg@gmail.com'
