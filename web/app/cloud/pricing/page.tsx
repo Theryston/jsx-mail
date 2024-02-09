@@ -4,11 +4,7 @@ import PricingContent from './content';
 export default async function Pricing() {
   const {
     data: { moneyScale, pricing, freeBalance },
-  } = await axios.get('/user/price', {
-    headers: {
-      'Session-Token': 'no-auth',
-    },
-  });
+  } = await axios.get('/user/price');
 
   return (
     <PricingContent

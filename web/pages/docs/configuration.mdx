@@ -19,6 +19,8 @@ You have the flexibility to tailor your `jsx-mail.config.js` with various parame
 
 - **`dir`**: Specifies the directory containing your mail templates. Default is `'mail'`.
 
+- **`sender`**: You can specify a sender from [your JSX Mail Cloud resources](/cloud/app/resources) to use for sending emails. This is not required if you don't send emails using JSX Mail, if you send you need to set it or hava at least one sender created in your JSX Mail Cloud.
+
 - **`storage`**: Chooses the storage location for images. Options include `S3` for Amazon S3 storage or `JSX_MAIL_CLOUD` for [JSX Mail's default cloud storage](/docs/cloud). Default is `JSX_MAIL_CLOUD`.
 
 - **AWS Configuration** (Used with `S3` storage option):

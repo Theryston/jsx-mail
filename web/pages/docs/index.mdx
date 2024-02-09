@@ -1,4 +1,4 @@
-import { Steps, FileTree } from 'nextra/components'
+import { Steps, FileTree, Callout } from 'nextra/components'
 
 # JSX Mail Quickstart
 
@@ -17,6 +17,12 @@ Next, let's set up your project with JSX Mail. Start by installing JSX Mail and 
 ```sh copy
 yarn add jsx-mail && yarn jsxm init
 ```
+
+<Callout emoji="🌟">
+- The `yarn jsxm init` command will ask you to log in to JSX Mail Cloud. JSX Mail Cloud is a platform that facilitates the creation of email templates by offering services such as: sending emails, hosting files... [Learn more](/docs/cloud).
+
+- When using JSX Mail in production, whether in your CI/CD pipeline or on a cloud platform, you also need to be logged into a JSX Mail Cloud account. However, the login process differs slightly from when you're on your local machine. Please refer to [this guide](/docs/cloud#production-login) for instructions on how to proceed.
+</Callout>
 
 <FileTree>
   <FileTree.Folder name="jsx-mail-quickstart" defaultOpen>
@@ -42,6 +48,7 @@ yarn add jsx-mail && yarn jsxm init
       </FileTree.Folder>
     </FileTree.Folder>
     <FileTree.Folder name="node_modules" />
+    <FileTree.File name=".gitignore" />
     <FileTree.File name="jsx-mail.config.js" />
     <FileTree.File name="package.json" />
     <FileTree.File name="yarn.lock" />
@@ -464,6 +471,7 @@ This command triggers JSX Mail to handle various tasks such as:
 - Uploading images to the JSX Mail Cloud.
 - Optimizing images for email compatibility.
 - Compiling the email templates.
+- Checking compatibility and possible syntax errors.
 
 ### When to Use the Prepare Command
 
@@ -516,9 +524,9 @@ jsxMail
 - **Template Name and Props:** The function takes the [template name](#template-name) as the first argument and an object of props as the second.
 - **Promise-Based:** It returns a promise, resolving to the HTML content of the rendered template.
 
-### Exploring Default Templates and Components
+## Sending Emails
 
-JSX Mail provides default templates and components as a starting point. You can find these in the `mail` folder, offering insights and examples to guide your template creation.
+In JSX Mail you can also send an email using JSX Mail Cloud. Check [here](/docs/email) for more details.
 
 ## Summary
 
