@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.2.2
+
+### Patch Changes
+
+- f58da9b: add token to query
+
 ## 2.2.1
 
 ### Patch Changes
