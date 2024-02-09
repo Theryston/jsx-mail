@@ -30,21 +30,24 @@
   },
   "dependencies": {
     "@jsx-mail/core": "*",
-    "axios": "^1.6.5",
+    "axios": "^1.6.7",
     "chokidar": "^3.5.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "gluegun": "^5.1.6",
     "json5": "^2.2.3",
     "loading-cli": "^1.1.2",
+    "open": "^10.0.3",
     "socket.io": "^4.7.2"
   },
   "devDependencies": {
     "@jsx-mail/eslint-config": "*",
     "@jsx-mail/typescript-config": "*",
+    "@types/axios": "^0.14.0",
     "@types/eslint": "^8.44.8",
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.2",
+    "@types/open": "^6.2.1",
     "eslint": "^8.55.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.3.2"

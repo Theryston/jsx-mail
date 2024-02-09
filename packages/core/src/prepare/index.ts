@@ -30,10 +30,10 @@ import {
 import handleImagesImport from '../utils/handle-images-import';
 import getStorage from '../utils/storage';
 import { ImageInfo } from '..';
-import { cloudUploadImage } from '../cloud/image/upload';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import path from 'path';
 import { writeFileSync } from 'fs';
+import { uploadFile } from '../cloud/uploadFile';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 handleImagesImport();
 
@@ -392,7 +392,7 @@ async function uploadImage(
   });
 
   const storageType: StorageType = {
-    JSX_MAIL_CLOUD: cloudUploadImage,
+    JSX_MAIL_CLOUD: uploadFile,
     S3: uploadImageToS3,
   };
 
