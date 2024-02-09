@@ -39,6 +39,6 @@ export class FileController {
 	async downloadFile(@Param() params, @Response() res: Res) {
 		const key = params[0];
 		const result = await this.downloadFileService.execute(key);
-		return res.setHeader('Content-Type', result.mimeType).set('Content-Disposition', `attachment; filename="${result.filename}"`).send(result.buffer);
+		return res.setHeader('Content-Type', result.mimeType).send(result.buffer);
 	}
 }
