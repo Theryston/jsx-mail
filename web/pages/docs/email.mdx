@@ -1,42 +1,28 @@
-import { MAX_EMAIL_SENDS_PER_HOUR } from '../../config/contants'
 
-# Email Functionality
+# Sending Emails
 
-JSX Mail is primarily designed for email template creation, not for email dispatch. Nevertheless, to facilitate development testing or the creation of prototypes and small-scale projects, JSX Mail includes a basic email-sending feature.
+JSX Mail has the JSX Mail Cloud very well integrated, which allows you to send millions of emails simply and without worrying about infrastructure or other things.
 
-It's crucial to note that sending emails via JSX Mail is exclusively possible when using an address provisioned from JSX Mail Cloud. These addresses, formatted as `username@jsxmail.org`, are designated solely for sending emails and do not support incoming mail.
+## Senders
 
-Each email account from JSX Mail Cloud is subject to a sending restriction of {MAX_EMAIL_SENDS_PER_HOUR} emails per hour. Should your requirements exceed this threshold, alternatives such as the `nodemailer` library or a professional email service might be more appropriate. Remember, JSX Mail Cloud is best suited for modest-scale applications.
+Senders are email addresses that can be used to send your emails, senders are generally `your_username@your-domain.com`, to send emails with JSX Mail Cloud you need to have at least 1 sender created.
 
-## Creating an Email Account
+### Domains
 
-To set up a free JSX Mail Cloud email account, execute the following command in your terminal. During the process, JSX Mail will prompt you for specific details necessary for account creation. Provide the requested information and await the completion of your account setup.
+To create a sender you can use the default JSX Mail domain (jsxmail.org) or configure a custom domain, to configure a custom domain [login](/cloud/sign-in) then click on the profile photo and then click in the "Resources" section just create your domain and verify it.
 
-```sh
-yarn jsxm mail create
-```
+To check you need to click on "verify" and then enter the DNS records for your domain, after entering wait a few minutes and refresh the page.
 
-## Authentication
+### Creating Senders
 
-Acquiring a token is mandatory to utilize your JSX Mail Cloud email. Generating this token is straightforward. Initiate the process with the command below, and input the username you specified during the account creation step.
+Once you have your domains configured, on the [same page](/cloud/app/resources) in the "Senders" section you can create a sender with your domain, username and sender name
 
-```sh
-yarn jsxm mail auth
-```
-
-The system will send the generated token to the email you entered in the “email for two-factor authentication” field when creating your account. Go to your inbox to find and copy the token.
 
 ## Sending Emails
 
-Before attempting to send an email, ensure you have obtained the necessary token and have stored it as an environment variable named `JSX_MAIL_TOKEN`. Here's an example of how to set the environment variable in a `.env` file:
+Before sending an email, it is good to keep in mind that you must first follow the [JSX Mail Cloud login](/docs/cloud#local-login) process.
 
-```js filename=".env"
-JSX_MAIL_TOKEN="eyJfaWQiOiI2NWFhYjE0OWIxNmJkYTBlZTZ..."
-```
-
-With the token properly configured, you can now employ the `send` function from jsx-mail to dispatch your emails. JSX Mail will automatically retrieve the `JSX_MAIL_TOKEN` value and utilize it to transmit your emails through JSX Mail Cloud, linked to your token.
-
-Here's a sending example:
+Now you can send an email using JSX Mail Cloud. Here below is an example of how to do this:
 
 ```javascript
 const jsxMail = require('jsx-mail');
@@ -44,16 +30,20 @@ const jsxMail = require('jsx-mail');
 await jsxMail.send('your:template:name', { 
   subject: 'Your Email Subject',
   to: ['example@example.com'],
+  sender: 'example@your-domain.com',
   props: { key: 'value' },
 });
 ```
+- The `sender` param is optional and can be used to specify the sender of the email. The senders is from your JSX Mail Cloud account and you can see all your senders on the section "Senders" from [your JSX Mail Cloud resources](/cloud/app/resources).
+	- If you don't specify your sender, it will take the last created sender from your account.
+	- You also can specify your sender from your JSX Mail configuration file, just by setting `defaultSender` on the configuration object. Just like:
 
-## Deleting an Email Account
+  ```javascript filename="jsx-mail.config.js"
+    /** @type {import('jsx-mail').JsxMailConfig} */
+    module.exports = {
+      dir: 'mail',
+      defaultSender: 'example@jsxmail.org',
+    };
+  ```
 
-Should the need arise to eliminate a JSX Mail Cloud email account, the process is uncomplicated but irreversible. To proceed with deletion, use the command below. You will be prompted to input the token associated with the JSX Mail Cloud email account you wish to remove.
-
-```sh
-yarn jsxm mail delete
-```
-
-After that, the email account will be permanently deleted.
+- The `props` param is also optional and can be used to pass props to the template, just if the template requires props.

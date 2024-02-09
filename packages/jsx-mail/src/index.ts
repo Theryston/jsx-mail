@@ -21,7 +21,7 @@ export type JsxMailConfig = {
     // eslint-disable-next-line no-unused-vars
     data: { [key: string]: any },
   ) => void;
-  ignoreCloud?: boolean;
+  defaultSender?: string;
   awsAccessKeyId?: string;
   awsSecretAccessKey?: string;
   awsRegion?: string;

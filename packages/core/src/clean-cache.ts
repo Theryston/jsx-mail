@@ -1,3 +1,5 @@
+import { getToken } from './cloud/get-token';
+import { setToken } from './cloud/set-token';
 import {
   deleteFolder,
   exists,
@@ -12,7 +14,13 @@ export default async function cleanCache() {
   const baseCorePath = getBaseCorePath();
   const storage = getStorage();
 
+  const token = getToken();
+
   storage.clear();
+
+  if (token) {
+    setToken(token);
+  }
 
   const mailAppPath = joinPath(baseCorePath, 'mail-app-built');
   const existsMailApp = await exists(mailAppPath);

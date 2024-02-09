@@ -17,7 +17,7 @@ import {
   getTemplateFolder,
   joinPath,
   readFile,
-  readImage,
+  readRawFile,
   transformChildrenFileToPath,
 } from '../utils/file-system';
 import handleErrors from '../utils/handle-errors';
@@ -30,10 +30,10 @@ import {
 import handleImagesImport from '../utils/handle-images-import';
 import getStorage from '../utils/storage';
 import { ImageInfo } from '..';
-import { cloudUploadImage } from '../cloud/image/upload';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import path from 'path';
 import { writeFileSync } from 'fs';
+import { uploadFile } from '../cloud/uploadFile';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 handleImagesImport();
 
@@ -392,7 +392,7 @@ async function uploadImage(
   });
 
   const storageType: StorageType = {
-    JSX_MAIL_CLOUD: cloudUploadImage,
+    JSX_MAIL_CLOUD: uploadFile,
     S3: uploadImageToS3,
   };
 
@@ -458,7 +458,7 @@ async function uploadImageToS3(
   const ext = path.split('.').pop();
   const fileName = `${hash}.${ext}`;
 
-  const fileContent = readImage(path);
+  const fileContent = readRawFile(path);
 
   const uploadParams = {
     Bucket: options.awsBucket,

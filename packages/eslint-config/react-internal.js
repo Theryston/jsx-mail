@@ -14,11 +14,7 @@ const project = resolve(process.cwd(), 'tsconfig.json');
 
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
-  extends: [
-    'eslint:recommended',
-    'plugin:prettier/recommended',
-    'eslint-config-turbo',
-  ],
+  extends: ['eslint:recommended', 'eslint-config-turbo'],
   plugins: ['only-warn'],
   globals: {
     React: true,
@@ -36,10 +32,4 @@ module.exports = {
   },
   ignorePatterns: ['.*.js', 'node_modules/', 'dist/'],
   overrides: [{ files: ['*.js?(x)', '*.ts?(x)'] }],
-  rules: {
-    'prettier/prettier': [
-      'error',
-      { useTabs: false, tabWidth: 2, bracketSpacing: true },
-    ],
-  },
 };

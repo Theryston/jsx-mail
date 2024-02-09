@@ -25,6 +25,7 @@ coverage
 .next/
 out/
 dist
+.serverless
 
 
 # Debug

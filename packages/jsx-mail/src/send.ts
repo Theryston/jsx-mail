@@ -1,47 +1,46 @@
-import axios from 'axios';
 import render from './render';
+import requestLogin from './request-login';
+import { getJsxMailConfig } from './utils/get-config';
+import core from '@jsx-mail/core';
 
 type Data = {
   subject: string;
   to: string[];
+  sender?: string;
   props?: any;
 };
 
+type Message = {
+  id: string;
+  subject: string;
+  senderId: string;
+  userId: string;
+  to: string[];
+  sentAt?: Date;
+  status: 'queued' | 'sent' | 'failed' | 'delivered' | 'opened' | 'clicked';
+}
+
 export default async function send(templateName: string, data: Data) {
-  // eslint-disable-next-line turbo/no-undeclared-env-vars
-  const jsxMailToken = process.env.JSX_MAIL_TOKEN;
+  await requestLogin()
+  const html = await render(templateName, data);
+  const config = getJsxMailConfig();
+  const sender = data.sender || config.defaultSender;
 
-  if (!jsxMailToken) {
-    throw new Error('The env JSX_MAIL_TOKEN was not found');
+  const { data: message } = await core.cloudClient.post('/sender/send', {
+    subject: data.subject,
+    html,
+    sender,
+    to: data.to
+  })
+
+  const newMessage: Message = {
+    ...message,
+    sentAt: new Date(message.sentAt)
   }
 
-  const html = await render(templateName, data.props);
-
-  try {
-    await axios.post(
-      `https://jsxmail.org/api/mail/send`,
-      {
-        html,
-        subject: data.subject,
-        to: data.to,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${jsxMailToken}`,
-        },
-      },
-    );
-
-    return {
-      message: 'SENT',
-    };
-  } catch (error: any) {
-    let message = error.response?.data?.message || 'Error while sending email';
-
-    if (error.response?.data?.code === 'NOT_EXISTS') {
-      message = `The email from the token does not exists`;
-    }
-
-    throw new Error(message);
+  if (!message.sentAt) {
+    delete newMessage.sentAt
   }
+
+  return newMessage
 }

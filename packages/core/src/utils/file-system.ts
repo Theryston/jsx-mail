@@ -161,7 +161,7 @@ export async function readFile(filePath: string) {
   });
 }
 
-export function readImage(filePath: string) {
+export function readRawFile(filePath: string) {
   return fs.readFileSync(filePath);
 }
 

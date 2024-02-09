@@ -7,6 +7,11 @@ import {
   getBuiltPath,
   getBaseCorePath,
 } from './utils/file-system';
+import client from './cloud/client';
+import { getToken } from './cloud/get-token';
+import { setToken } from './cloud/set-token';
+import { API_URL, WEBSITE_URL } from './utils/cloud';
+import { logout } from './cloud/logout';
 
 const core = {
   render,
@@ -16,6 +21,12 @@ const core = {
   getBuiltPath,
   getBaseCorePath,
   cleanCache,
+  cloudClient: client,
+  getToken,
+  setToken,
+  logout,
+  WEBSITE_URL,
+  API_URL
 };
 
 export type ImageInfo = {

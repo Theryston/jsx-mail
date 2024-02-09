@@ -14,13 +14,7 @@ Ensure TypeScript is installed and configured in your project before initializin
 
 ### TypeScript Configuration Check
 
-When initializing, JSX Mail's CLI will look for a `tsconfig.json` file in your project. If found, JSX Mail will automatically apply the following configurations to integrate seamlessly with TypeScript:
-
-- **JSX Runtime Configuration:** Update `compilerOptions.types` in `tsconfig.json` to include `@jsx-mail/core/dist/jsx-runtime/jsx`. This step integrates JSX Mail's runtime for TypeScript projects.
-
-- **JSX Import Source:** Modify `compilerOptions.jsxImportSource` in `tsconfig.json` to include `@jsx-mail/core/dist`. This change specifies the source for JSX components within JSX Mail.
-
-- **JSX Syntax Support:** Add `react-jsx` to `compilerOptions.jsx` in `tsconfig.json`. This addition ensures that the TypeScript compiler properly interprets JSX syntax used in JSX Mail projects.
+When initializing, JSX Mail's CLI will look for a `tsconfig.json` file in your project. If found, JSX Mail will automatically apply the `tsconfig.json` settings for it works with JSX Mail.
 
 ### Automatic JSX Typing
 
