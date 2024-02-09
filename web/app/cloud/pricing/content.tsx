@@ -148,8 +148,9 @@ export default function PricingContent({
                           <div className="flex justify-between items-center gap-4 w-full flex-wrap">
                             <span>JSX Mail Cloud</span>
                             <span className="text-gray-500">
-                              {(
-                                calculationResult.here / moneyScale
+                              {(calculationResult.here < freeBalance
+                                ? 0
+                                : calculationResult.here / moneyScale
                               ).toLocaleString('en-US', {
                                 style: 'currency',
                                 currency: 'USD',
