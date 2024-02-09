@@ -77,13 +77,20 @@ export default function BillingContent({
 
   return (
     <main className="flex flex-col gap-6 mt-4">
-      <Button
-        className="ml-auto"
-        color="primary"
-        onClick={onAddBalanceModalOpen}
-      >
-        Add balance
-      </Button>
+      <div className="flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">Billing</h1>
+          <p className="text-gray-500">Manage your account balance</p>
+        </div>
+        <Button
+          color="primary"
+          onClick={onAddBalanceModalOpen}
+          className="w-full sm:w-auto"
+        >
+          Add balance
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Card className="min-h-[200px]">
           <CardBody className="flex flex-col justify-center items-center h-full w-full p-0">

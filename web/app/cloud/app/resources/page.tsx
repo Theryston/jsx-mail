@@ -8,7 +8,7 @@ export default function Page() {
   return (
     <main>
       <h1 className="text-3xl font-bold">Resources</h1>
-      <p className="text-gray-500 mt-2">
+      <p className="text-gray-500">
         Here you can find all the resources you need to use JSX Mail.
       </p>
       <div className="mt-6">

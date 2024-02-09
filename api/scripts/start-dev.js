@@ -59,8 +59,24 @@ async function prepareAll() {
   });
 }
 
+async function reinstallDependence() {
+  console.log('Reinstalling dependencies');
+  await new Promise((resolve, reject) => {
+    exec('rm -rf node_modules && yarn', (error) => {
+      if (error) {
+        console.log('Error while reinstalling dependencies', error);
+        reject(error);
+      }
+
+      console.log('Reinstalled dependencies');
+      resolve();
+    });
+  });
+}
+
 async function startDev() {
   await upDockerCompose();
+  await reinstallDependence();
   await prepareAll();
 
   const watcher = chokidar.watch(SRC_PATH);
