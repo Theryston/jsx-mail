@@ -41,12 +41,12 @@ functions:
   charge:
     handler: dist/workers/charge.handler
     events:
-      - schedule: cron(0 0 * * * *)
+      - schedule: rate(24 hours)
   storage-size:
     handler: dist/workers/storage-size.handler
     events:
-      - schedule: cron(0 0 * * * *)
+      - schedule: rate(24 hours)
   add-free-balance:
     handler: dist/workers/add-free-balance.handler
     events:
-      - schedule: cron(0 0 * * * *)
+      - schedule: rate(24 hours)
