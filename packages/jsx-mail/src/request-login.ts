@@ -3,7 +3,6 @@ import { showError } from "./utils/show-error";
 import express from 'express';
 import http from 'http';
 import load from "./utils/load";
-import open from "open";
 import { getCurrentIp } from "./utils/get-current-ip";
 import path from "path";
 
@@ -87,11 +86,13 @@ export default async function requestLogin(receivedToken?: string) {
 			server.listen(PORT);
 
 			const url = `${core.WEBSITE_URL}/cloud/sign-in?redirect=http://localhost:${PORT}/callback`;
-			open(url, { wait: true }).then(() => {
-				load.text = `Please, log in to your account: ${url}`
-			}).catch(() => {
-				server.close();
-				reject(new Error('Failed to open browser'));
+			import('open').then(({ default: open }) => {
+				open(url, { wait: true }).then(() => {
+					load.text = `Please, log in to your account: ${url}`
+				}).catch(() => {
+					server.close();
+					reject(new Error('Failed to open browser'));
+				})
 			})
 		})
 		const newToken = core.getToken();
