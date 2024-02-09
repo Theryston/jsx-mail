@@ -20,8 +20,8 @@ export class FileInterceptor implements NestInterceptor {
     const file: CustomFile = {
       buffer: fileBuffer,
       encoding: body.filename.encoding,
-      mimetype: body.filename.mimeType,
-      originalname: body.filename.filename,
+      mimetype: body._jsxmail_mimetype || body.filename.mimeType,
+      originalname: body._jsxmail_originalname || body.filename.filename,
       size: fileBuffer.length
     }
 

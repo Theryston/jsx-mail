@@ -50,7 +50,10 @@ async function handleMultipart(event) {
       return event
     }
 
-    const fileStr = JSON.stringify(body.file);
+    const fileStr = JSON.stringify({
+      ...body.file,
+      ...body.fields
+    });
 
     event.body = Buffer.from(fileStr);
     return event

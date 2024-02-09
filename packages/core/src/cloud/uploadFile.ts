@@ -1,15 +1,21 @@
 import CoreError from '../utils/error';
-import { readRawFile } from '../utils/file-system';
+import { getFileMimetype, readRawFile } from '../utils/file-system';
 import formData from 'form-data';
 import client from './client';
+import path from 'path';
 
 export async function uploadFile(
-  path: string,
+  filePath: string,
 ): Promise<string> {
   try {
-    const file = readRawFile(path);
+    const file = readRawFile(filePath);
     const form = new formData();
     form.append('file', file);
+    const fileName = path.basename(filePath);
+    const mimeType = getFileMimetype(filePath);
+
+    form.append('_jsxmail_mimetype', mimeType);
+    form.append('_jsxmail_originalname', fileName);
 
     const response = await client.post('/file', form, {
       headers: form.getHeaders(),
