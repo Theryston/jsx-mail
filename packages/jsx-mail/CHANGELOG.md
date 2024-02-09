@@ -1,5 +1,17 @@
 # jsx-mail
 
+## 2.2.0
+
+### Minor Changes
+
+- 0e7f9ee: new JSX Mail Cloud
+
+### Patch Changes
+
+- Updated dependencies [bbed210]
+- Updated dependencies [0e7f9ee]
+  - @jsx-mail/core@2.1.0
+
 ## 2.1.6
 
 ### Patch Changes
