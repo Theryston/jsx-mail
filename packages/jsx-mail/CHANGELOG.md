@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.2.1
+
+### Patch Changes
+
+- ff615c3: add import of open
+
 ## 2.2.0
 
 ### Minor Changes

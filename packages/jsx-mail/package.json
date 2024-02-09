@@ -1,6 +1,6 @@
 {
   "name": "jsx-mail",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Building the future of email with JSX syntax",
   "main": "dist/index.js",
   "types": "dist/types/index.d.ts",
