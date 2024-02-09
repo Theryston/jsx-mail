@@ -30,7 +30,11 @@ export default async function requestLogin(receivedToken?: string) {
 	if (receivedToken) {
 		try {
 			core.setToken(receivedToken);
-			await core.cloudClient.get('/user/me')
+			await core.cloudClient.get('/user/me', {
+				headers: {
+					Authorization: `Bearer ${receivedToken}`,
+				}
+			})
 			load.succeed(`Login successful! Token: ${receivedToken}`);
 			return
 		} catch (error) {
