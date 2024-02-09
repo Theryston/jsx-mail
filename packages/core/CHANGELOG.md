@@ -1,5 +1,15 @@
 # @jsx-mail/core
 
+## 2.1.0
+
+### Minor Changes
+
+- 0e7f9ee: new JSX Mail Cloud
+
+### Patch Changes
+
+- bbed210: add jsx mail prod urls
+
 ## 2.0.15
 
 ### Patch Changes
