@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.1.2
+
+### Patch Changes
+
+- 5ea4aab: using the original path to get the original file name for jsx mail cloud
+
 ## 2.1.1
 
 ### Patch Changes
