@@ -33,6 +33,7 @@ export type ImageInfo = {
   path: string;
   url: string;
   status: 'pending_upload' | 'uploaded' | 'error';
+  originalPath: string;
   error?: any;
   hash: string;
 };

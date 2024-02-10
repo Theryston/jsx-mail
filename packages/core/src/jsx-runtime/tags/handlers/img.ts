@@ -82,6 +82,7 @@ function handleImage(src: string): ImageInfo {
       status: 'pending_upload',
       hash: fileHash,
       path: src,
+      originalPath: src,
     };
 
     images.push(imageInfo);

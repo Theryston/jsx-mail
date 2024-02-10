@@ -3,15 +3,14 @@ import { getFileMimetype, readRawFile } from '../utils/file-system';
 import formData from 'form-data';
 import client from './client';
 import path from 'path';
+import { StorageData } from '../prepare';
 
-export async function uploadFile(
-  filePath: string,
-): Promise<string> {
+export async function uploadFile({ path: filePath, originalPath }: StorageData): Promise<string> {
   try {
     const file = readRawFile(filePath);
     const form = new formData();
     form.append('file', file);
-    const fileName = path.basename(filePath);
+    const fileName = path.basename(originalPath);
     const mimeType = getFileMimetype(filePath);
 
     form.append('_jsxmail_mimetype', mimeType);

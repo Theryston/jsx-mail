@@ -41,15 +41,16 @@ type CompileFilePath = 'jsx' | 'tsx' | 'js' | 'ts';
 
 const COMPILE_FILES_EXT: CompileFilePath[] = ['jsx', 'tsx', 'js', 'ts'];
 
+export type StorageData = {
+  path: string;
+  hash: string;
+  originalPath: string;
+  options: AllOptions
+};
+
 type StorageType = {
-  [key: string]: (
-    // eslint-disable-next-line no-unused-vars
-    path: string,
-    // eslint-disable-next-line no-unused-vars
-    hash: string,
-    // eslint-disable-next-line no-unused-vars
-    options: AllOptions,
-  ) => Promise<string>;
+  // eslint-disable-next-line no-unused-vars
+  [key: string]: (data: StorageData) => Promise<string>;
 };
 
 type ProcessName =
@@ -264,6 +265,7 @@ async function prepareImages(
       const imageUrl = await uploadImage(
         {
           ...image,
+          originalPath: image.path,
           path: newPath,
         },
         onProcessChange,
@@ -396,17 +398,18 @@ async function uploadImage(
     S3: uploadImageToS3,
   };
 
-  const uploadImage = storageType[options.storage];
+  const uploader = storageType[options.storage];
 
-  if (!uploadImage) {
+  if (!uploader) {
     throw new CoreError('invalid_storage_type');
   }
 
-  const url = await uploadImage(
-    imagesToUpload.path,
-    imagesToUpload.hash,
+  const url = await uploader({
+    path: imagesToUpload.path,
+    hash: imagesToUpload.hash,
+    originalPath: imagesToUpload.originalPath,
     options,
-  );
+  });
 
   return url;
 }
@@ -426,11 +429,7 @@ function handleLocalImage(imagesToUpload: ImageInfo): string {
   return url;
 }
 
-async function uploadImageToS3(
-  path: string,
-  hash: string,
-  options: AllOptions,
-): Promise<string> {
+async function uploadImageToS3({ path, hash, options }: StorageData): Promise<string> {
   if (!options.awsAccessKeyId) {
     throw new CoreError('aws_access_key_id_not_found');
   }
