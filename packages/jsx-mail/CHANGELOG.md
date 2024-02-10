@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.2.3
+
+### Patch Changes
+
+- ad25a6d: update render function to use data.props instead of data in send.ts
+
 ## 2.2.2
 
 ### Patch Changes
