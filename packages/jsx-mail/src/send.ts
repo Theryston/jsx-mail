@@ -22,7 +22,7 @@ type Message = {
 
 export default async function send(templateName: string, data: Data) {
   await requestLogin()
-  const html = await render(templateName, data);
+  const html = await render(templateName, data.props);
   const config = getJsxMailConfig();
   const sender = data.sender || config.defaultSender;
 
