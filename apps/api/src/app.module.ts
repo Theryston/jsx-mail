@@ -31,4 +31,4 @@ import { StripeService } from './services/stripe.service';
     StripeService,
   ],
 })
-export class AppModule {}
+export class AppModule { }

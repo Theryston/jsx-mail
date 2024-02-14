@@ -8,6 +8,7 @@ import {
   Req,
   Query,
   Headers,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserService } from './services/create-user.service';
 import {
@@ -55,7 +56,7 @@ export class UserController {
     private readonly stripeService: StripeService,
     private readonly handleWebhookService: HandleWebhookService,
     private readonly getInsightsService: GetInsightsService,
-  ) {}
+  ) { }
 
   @Post()
   createUser(@Body() data: CreateUserDto) {

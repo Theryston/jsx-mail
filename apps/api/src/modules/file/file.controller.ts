@@ -1,22 +1,20 @@
 import {
   Controller,
   Post,
-  UseInterceptors,
   Req,
   Delete,
   Param,
   Get,
   Query,
-  Response,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
-import { Response as Res } from 'express';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { Permissions } from 'src/auth/permissions.decorator';
 import { UploadFileService } from './services/upload-file.service';
 import { DeleteFileService } from './services/delete-file.service';
-import { FileInterceptor } from 'src/interceptors/file.interceptor';
 import { ListFilesService } from './services/list-files.service';
-import { DownloadFileService } from './services/download-file.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('file')
 export class FileController {
@@ -24,14 +22,13 @@ export class FileController {
     private readonly uploadFileService: UploadFileService,
     private readonly deleteFileService: DeleteFileService,
     private readonly listFilesService: ListFilesService,
-    private readonly downloadFileService: DownloadFileService,
-  ) {}
+  ) { }
 
   @Post()
   @Permissions([PERMISSIONS.SELF_FILE_UPLOAD.value])
-  @UseInterceptors(FileInterceptor)
-  uploadFile(@Req() req) {
-    return this.uploadFileService.execute(req.file, req.user.id);
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFile(@Req() req, @UploadedFile() file: Express.Multer.File) {
+    return this.uploadFileService.execute(file, req.user.id);
   }
 
   @Delete(':id')
@@ -50,12 +47,5 @@ export class FileController {
       },
       req.user.id,
     );
-  }
-
-  @Get('/*')
-  async downloadFile(@Param() params, @Response() res: Res) {
-    const key = params[0];
-    const result = await this.downloadFileService.execute(key);
-    return res.setHeader('Content-Type', result.mimeType).send(result.buffer);
   }
 }

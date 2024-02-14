@@ -7,7 +7,6 @@ import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { ListFilesService } from './services/list-files.service';
 import { GetBalanceService } from '../user/services/get-balance.service';
-import { DownloadFileService } from './services/download-file.service';
 
 @Module({
   controllers: [FileController],
@@ -17,7 +16,6 @@ import { DownloadFileService } from './services/download-file.service';
     DeleteFileService,
     ListFilesService,
     GetBalanceService,
-    DownloadFileService,
   ],
   imports: [
     MulterModule.register({
@@ -25,4 +23,4 @@ import { DownloadFileService } from './services/download-file.service';
     }),
   ],
 })
-export class FileModule {}
+export class FileModule { }

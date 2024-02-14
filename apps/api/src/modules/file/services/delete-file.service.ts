@@ -1,10 +1,10 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import B2 from 'backblaze-b2';
 
 @Injectable()
 export class DeleteFileService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async execute(fileId: string, userId: string) {
     const user = await this.prisma.user.findFirst({
@@ -34,14 +34,19 @@ export class DeleteFileService {
       throw new HttpException('File not found', HttpStatus.NOT_FOUND);
     }
 
-    const client = new S3Client();
+    if (file.externalId) {
+      const b2 = new B2({
+        applicationKeyId: process.env.BACKBLAZE_APPLICATION_KEY_ID,
+        applicationKey: process.env.BACKBLAZE_APPLICATION_KEY,
+      });
 
-    const command = new DeleteObjectCommand({
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: file.key,
-    });
+      await b2.authorize();
 
-    await client.send(command);
+      await b2.deleteFileVersion({
+        fileName: file.key,
+        fileId: file.externalId,
+      })
+    }
 
     await this.prisma.file.update({
       where: {
