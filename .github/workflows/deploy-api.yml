@@ -17,21 +17,24 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: setup node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 20
-      - name: install yarn
-        run: npm install -g yarn
-      - name: Configure AWS credentials
-        run: aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} && aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} && aws configure set default.region ${{ secrets.AWS_DEFAULT_REGION }}
+      - name: install bun
+        uses: oven-sh/setup-bun@v1
+      - name: Install fly
+        uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Prepare and Deploy API
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
           cd apps/api
-          yarn install
           echo "$ENV_FILE" > .env
-          yarn prepare:all
-          cp -rf ../node_modules/.prisma ./node_modules
-          yarn deploy:aws
+          echo "$AWS_ACCESS_KEY_ID" > .aws/credentials
+          echo "$AWS_SECRET_ACCESS_KEY" > .aws/credentials
+          echo "$AWS_DEFAULT_REGION" > .aws/config
+          bun install
+          bun run prepare:all
+          bun run build
+          flyctl deploy --remote-only

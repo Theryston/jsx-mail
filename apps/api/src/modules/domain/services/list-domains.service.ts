@@ -9,7 +9,7 @@ import { Prisma, DomainStatus } from '@prisma/client';
 
 @Injectable()
 export class ListDomainsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async execute(userId: string, status?: DomainStatus) {
     const domainWhere: Prisma.DomainFindManyArgs['where'] = {
