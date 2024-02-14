@@ -5,10 +5,11 @@
   "license": "MIT",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
-    "start:dev": "bun prepare:all && bun nest start --watch",
+    "start:dev": "bun docker:up:dev && bun prepare:all && bun nest start --watch",
     "start:prod": "bun src/main.ts",
     "lint": "eslint \"{src}/**/*.ts\" --fix",
     "prepare:all": "bun run prepare:db",
+    "docker:up:dev": "docker-compose up -d --build",
     "prepare:db": "prisma db push && prisma generate && prisma db seed"
   },
   "dependencies": {
