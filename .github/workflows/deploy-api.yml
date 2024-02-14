@@ -38,4 +38,5 @@ jobs:
           bun install
           bun run prepare:all
           bun run build
+          cp -rf ../../node_modules/ node_modules
           flyctl deploy --remote-only
