@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          path: apps/api
+          path: app-pages
       - name: install bun
         uses: oven-sh/setup-bun@v1
       - name: Install fly
@@ -30,7 +30,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
-          cd apps/api
+          cp -rf app-pages/apps/api/. ./api
+          cd api
           echo "$ENV_FILE" > .env
           mkdir -p .aws
           echo "$AWS_ACCESS_KEY_ID" > .aws/credentials
