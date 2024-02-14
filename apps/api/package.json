@@ -6,8 +6,7 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
     "start:dev": "bun docker:up:dev && bun prepare:all && bun run src/main.ts --watch",
-    "build": "nest build",
-    "start": "bun run dist/main.js",
+    "start": "bun run src/main.ts",
     "lint": "eslint \"{src}/**/*.ts\" --fix",
     "prepare:all": "bun run prepare:db",
     "docker:up:dev": "docker-compose up -d --build",
@@ -27,7 +26,6 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "country-to-currency": "^1.1.5",
-    "dotenv": "^16.4.4",
     "moment": "^2.30.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",

@@ -39,5 +39,4 @@ jobs:
           echo "$AWS_DEFAULT_REGION" > .aws/config
           bun install
           bun run prepare:all
-          bun run build
           flyctl deploy --remote-only
