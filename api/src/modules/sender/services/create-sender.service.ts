@@ -5,57 +5,63 @@ import { senderSelect } from 'src/utils/public-selects';
 
 @Injectable()
 export class CreateSenderService {
-	constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-	async execute({ domainName, username, name }: CreateSenderDto, userId: string) {
-		username = username.toLowerCase().trim();
+  async execute(
+    { domainName, username, name }: CreateSenderDto,
+    userId: string,
+  ) {
+    username = username.toLowerCase().trim();
 
-		const domainWhere = {
-			name: domainName,
-			userId,
-			deletedAt: {
-				isSet: false
-			}
-		}
+    const domainWhere = {
+      name: domainName,
+      userId,
+      deletedAt: {
+        isSet: false,
+      },
+    };
 
-		if (domainName === process.env.DEFAULT_EMAIL_DOMAIN_NAME) {
-			delete domainWhere.userId
-		}
+    if (domainName === process.env.DEFAULT_EMAIL_DOMAIN_NAME) {
+      delete domainWhere.userId;
+    }
 
-		const domain = await this.prisma.domain.findFirst({
-			where: domainWhere
-		});
+    const domain = await this.prisma.domain.findFirst({
+      where: domainWhere,
+    });
 
-		if (!domain) {
-			throw new HttpException('Domain not found', HttpStatus.NOT_FOUND);
-		}
+    if (!domain) {
+      throw new HttpException('Domain not found', HttpStatus.NOT_FOUND);
+    }
 
-		const email = `${username}@${domain.name}`
+    const email = `${username}@${domain.name}`;
 
-		const senderExists = await this.prisma.sender.findFirst({
-			where: {
-				email,
-				deletedAt: {
-					isSet: false
-				}
-			}
-		})
+    const senderExists = await this.prisma.sender.findFirst({
+      where: {
+        email,
+        deletedAt: {
+          isSet: false,
+        },
+      },
+    });
 
-		if (senderExists) {
-			throw new HttpException('An user has already registered this sender', HttpStatus.CONFLICT);
-		}
+    if (senderExists) {
+      throw new HttpException(
+        'An user has already registered this sender',
+        HttpStatus.CONFLICT,
+      );
+    }
 
-		const sender = await this.prisma.sender.create({
-			data: {
-				username,
-				email,
-				domainId: domain.id,
-				userId,
-				name
-			},
-			select: senderSelect
-		})
+    const sender = await this.prisma.sender.create({
+      data: {
+        username,
+        email,
+        domainId: domain.id,
+        userId,
+        name,
+      },
+      select: senderSelect,
+    });
 
-		return sender
-	}
+    return sender;
+  }
 }

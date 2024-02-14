@@ -7,6 +7,11 @@ import { ListDomainsService } from './services/list-domains.service';
 
 @Module({
   controllers: [DomainController],
-  providers: [CreateDomainService, PrismaService, DeleteDomainService, ListDomainsService]
+  providers: [
+    CreateDomainService,
+    PrismaService,
+    DeleteDomainService,
+    ListDomainsService,
+  ],
 })
-export class DomainModule { }
+export class DomainModule {}

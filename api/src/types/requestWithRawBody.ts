@@ -1,8 +1,7 @@
-
 import { Request } from 'express';
 
 interface RequestWithRawBody extends Request {
-	rawBody: Buffer;
+  rawBody: Buffer;
 }
 
 export default RequestWithRawBody;

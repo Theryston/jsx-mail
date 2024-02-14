@@ -6,73 +6,98 @@ import { CreateSessionDto } from '../session.dto';
 import moment from 'moment';
 
 type CreateSessionData = {
-	userId: string;
-} & CreateSessionDto
+  userId: string;
+} & CreateSessionDto;
 
 @Injectable()
 export class CreateSessionService {
-	constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-	async execute({ userId, expirationDate, permissions, description }: CreateSessionData, notAllowedPermission = [PERMISSIONS.SELF_EMAIL_VALIDATE.value, PERMISSIONS.SELF_RESET_PASSWORD.value]) {
-		if (!permissions || !permissions.length) {
-			throw new HttpException('Please add permissions', HttpStatus.BAD_REQUEST)
-		}
+  async execute(
+    { userId, expirationDate, permissions, description }: CreateSessionData,
+    notAllowedPermission = [
+      PERMISSIONS.SELF_EMAIL_VALIDATE.value,
+      PERMISSIONS.SELF_RESET_PASSWORD.value,
+    ],
+  ) {
+    if (!permissions || !permissions.length) {
+      throw new HttpException('Please add permissions', HttpStatus.BAD_REQUEST);
+    }
 
-		const notValidPermissions = permissions.some(permission => !Object.keys(PERMISSIONS).map(k => PERMISSIONS[k].value).includes(permission))
+    const notValidPermissions = permissions.some(
+      (permission) =>
+        !Object.keys(PERMISSIONS)
+          .map((k) => PERMISSIONS[k].value)
+          .includes(permission),
+    );
 
-		if (notValidPermissions) {
-			throw new HttpException('Invalid permissions', HttpStatus.BAD_REQUEST)
-		}
+    if (notValidPermissions) {
+      throw new HttpException('Invalid permissions', HttpStatus.BAD_REQUEST);
+    }
 
-		const notAllowedPermissions = notAllowedPermission.filter(p => permissions.includes(p))
+    const notAllowedPermissions = notAllowedPermission.filter((p) =>
+      permissions.includes(p),
+    );
 
-		if (notAllowedPermissions.length) {
-			throw new HttpException(`You can't access ${notAllowedPermissions.join(', ')}`, HttpStatus.BAD_REQUEST)
-		}
+    if (notAllowedPermissions.length) {
+      throw new HttpException(
+        `You can't access ${notAllowedPermissions.join(', ')}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-		if (!userId) {
-			throw new HttpException('User id is required', HttpStatus.BAD_REQUEST)
-		}
+    if (!userId) {
+      throw new HttpException('User id is required', HttpStatus.BAD_REQUEST);
+    }
 
-		const expiration = expirationDate ? moment(expirationDate) : undefined;
+    const expiration = expirationDate ? moment(expirationDate) : undefined;
 
-		if (expiration && expiration.isBefore(moment())) {
-			throw new HttpException('The expiration date must be in the future', HttpStatus.BAD_REQUEST)
-		}
+    if (expiration && expiration.isBefore(moment())) {
+      throw new HttpException(
+        'The expiration date must be in the future',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-		const user = await this.prisma.user.findFirst({
-			where: {
-				id: userId,
-				deletedAt: {
-					isSet: false
-				}
-			}
-		});
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: userId,
+        deletedAt: {
+          isSet: false,
+        },
+      },
+    });
 
-		if (!user) {
-			throw new HttpException('User not found', HttpStatus.NOT_FOUND)
-		}
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
 
-		if (user.accessLevel !== 'other' && permissions.some(p => !p.startsWith('self:'))) {
-			throw new HttpException('You only can access self permissions', HttpStatus.FORBIDDEN)
-		}
+    if (
+      user.accessLevel !== 'other' &&
+      permissions.some((p) => !p.startsWith('self:'))
+    ) {
+      throw new HttpException(
+        'You only can access self permissions',
+        HttpStatus.FORBIDDEN,
+      );
+    }
 
-		const token = crypto.randomBytes(32).toString('hex');
+    const token = crypto.randomBytes(32).toString('hex');
 
-		const session = await this.prisma.session.create({
-			data: {
-				userId,
-				token,
-				expiresAt: expiration ? expiration.toDate() : null,
-				permissions,
-				description
-			}
-		})
+    const session = await this.prisma.session.create({
+      data: {
+        userId,
+        token,
+        expiresAt: expiration ? expiration.toDate() : null,
+        permissions,
+        description,
+      },
+    });
 
-		return {
-			token,
-			sessionId: session.id,
-			expiresAt: session.expiresAt || 'never'
-		}
-	}
+    return {
+      token,
+      sessionId: session.id,
+      expiresAt: session.expiresAt || 'never',
+    };
+  }
 }

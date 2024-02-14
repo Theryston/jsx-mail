@@ -1,82 +1,90 @@
 import { TransactionStyle } from '@prisma/client';
-import { IsEmail, IsNotEmpty, IsNumber, Length, Matches } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  Length,
+  Matches,
+} from 'class-validator';
 
 export class CreateUserDto {
-	@IsNotEmpty()
-	@Length(3, 100)
-	@Matches(/^[a-zA-Z]+(?:\s[a-zA-Z]+)+$/, { message: 'Please enter a valid full name' })
-	name: string;
+  @IsNotEmpty()
+  @Length(3, 100)
+  @Matches(/^[a-zA-Z]+(?:\s[a-zA-Z]+)+$/, {
+    message: 'Please enter a valid full name',
+  })
+  name: string;
 
-	@IsNotEmpty()
-	@IsEmail()
-	email: string;
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 
-	@IsNotEmpty()
-	@Length(6, 100)
-	password: string;
+  @IsNotEmpty()
+  @Length(6, 100)
+  password: string;
 }
 
 export class UseSecurityCodeDto {
-	@IsNotEmpty()
-	@Length(6, 6)
-	securityCode: string;
+  @IsNotEmpty()
+  @Length(6, 6)
+  securityCode: string;
 
-	@IsNotEmpty()
-	permission: string;
+  @IsNotEmpty()
+  permission: string;
 }
 
 export class CreateSecurityCodeDto {
-	@IsNotEmpty()
-	@IsEmail()
-	email: string;
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 }
 
 export class AuthUserDto {
-	@IsNotEmpty()
-	@IsEmail()
-	email: string;
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 
-	@IsNotEmpty()
-	password: string;
+  @IsNotEmpty()
+  password: string;
 }
 
 export class ResetPasswordDto {
-	@IsNotEmpty()
-	@Length(6, 100)
-	newPassword: string;
+  @IsNotEmpty()
+  @Length(6, 100)
+  newPassword: string;
 }
 
 export class AddBalanceDto {
-	@IsNotEmpty()
-	amount: number
+  @IsNotEmpty()
+  amount: number;
 
-	@IsNotEmpty()
-	userId: string
+  @IsNotEmpty()
+  userId: string;
 
-	@IsNotEmpty()
-	style: TransactionStyle
+  @IsNotEmpty()
+  style: TransactionStyle;
 
-	@IsNotEmpty()
-	description: string
+  @IsNotEmpty()
+  description: string;
 }
 
 export class CreateCheckoutDto {
-	@IsNotEmpty()
-	@IsNumber()
-	amount: number
+  @IsNotEmpty()
+  @IsNumber()
+  amount: number;
 
-	@IsNotEmpty()
-	country: string
+  @IsNotEmpty()
+  country: string;
 }
 
 export class ExchangeMoneyDto {
-	@IsNotEmpty()
-	@IsNumber()
-	amount: number
+  @IsNotEmpty()
+  @IsNumber()
+  amount: number;
 
-	@IsNotEmpty()
-	baseCurrency: string
+  @IsNotEmpty()
+  baseCurrency: string;
 
-	@IsNotEmpty()
-	currency: string
+  @IsNotEmpty()
+  currency: string;
 }

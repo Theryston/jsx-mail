@@ -11,11 +11,18 @@ import { DownloadFileService } from './services/download-file.service';
 
 @Module({
   controllers: [FileController],
-  providers: [UploadFileService, PrismaService, DeleteFileService, ListFilesService, GetBalanceService, DownloadFileService],
+  providers: [
+    UploadFileService,
+    PrismaService,
+    DeleteFileService,
+    ListFilesService,
+    GetBalanceService,
+    DownloadFileService,
+  ],
   imports: [
     MulterModule.register({
       storage: memoryStorage(),
-    })
-  ]
+    }),
+  ],
 })
-export class FileModule { }
+export class FileModule {}

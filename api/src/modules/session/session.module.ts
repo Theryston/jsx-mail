@@ -7,6 +7,11 @@ import { ListSessionsService } from './services/list-sessions.service';
 
 @Module({
   controllers: [SessionController],
-  providers: [DeleteSessionService, PrismaService, CreateSessionService, ListSessionsService]
+  providers: [
+    DeleteSessionService,
+    PrismaService,
+    CreateSessionService,
+    ListSessionsService,
+  ],
 })
-export class SessionModule { }
+export class SessionModule {}

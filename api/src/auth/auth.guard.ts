@@ -7,7 +7,11 @@ import { GetBalanceService } from 'src/modules/user/services/get-balance.service
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector, private readonly prisma: PrismaService, private readonly getBalanceService: GetBalanceService) { }
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly prisma: PrismaService,
+    private readonly getBalanceService: GetBalanceService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const permissions = this.reflector.get(Permissions, context.getHandler());
@@ -29,38 +33,38 @@ export class AuthGuard implements CanActivate {
           {
             token,
             deletedAt: {
-              isSet: false
-            }
+              isSet: false,
+            },
           },
           {
             OR: [
               {
                 expiresAt: {
-                  gte: new Date()
-                }
+                  gte: new Date(),
+                },
               },
               {
-                expiresAt: null
-              }
-            ]
-          }
-        ]
-      }
+                expiresAt: null,
+              },
+            ],
+          },
+        ],
+      },
     });
 
     if (!session) {
       return false;
     }
 
-    request.permissions = session.permissions
+    request.permissions = session.permissions;
     request.session = session;
 
     const user = await this.prisma.user.findFirst({
       where: {
         id: session.userId,
         deletedAt: {
-          isSet: false
-        }
+          isSet: false,
+        },
       },
     });
 
@@ -71,7 +75,7 @@ export class AuthGuard implements CanActivate {
     delete user.password;
     delete user.deletedAt;
 
-    (user as any).balance = await this.getBalanceService.execute(user.id)
+    (user as any).balance = await this.getBalanceService.execute(user.id);
 
     request.user = user;
 
@@ -81,7 +85,13 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    if (permissions.every(permission => permission.startsWith('self:') && session.permissions.includes(PERMISSIONS.SELF_ADMIN.value))) {
+    if (
+      permissions.every(
+        (permission) =>
+          permission.startsWith('self:') &&
+          session.permissions.includes(PERMISSIONS.SELF_ADMIN.value),
+      )
+    ) {
       return true;
     }
 
@@ -89,7 +99,11 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    if (permissions.every(permission => session.permissions.includes(permission))) {
+    if (
+      permissions.every((permission) =>
+        session.permissions.includes(permission),
+      )
+    ) {
       return true;
     }
 

@@ -10,6 +10,14 @@ import { SendEmailService } from '../email/services/send-email.service';
 
 @Module({
   controllers: [SenderController],
-  providers: [CreateSenderService, PrismaService, DeleteSenderService, ListSendersService, SenderSendEmailService, GetBalanceService, SendEmailService]
+  providers: [
+    CreateSenderService,
+    PrismaService,
+    DeleteSenderService,
+    ListSendersService,
+    SenderSendEmailService,
+    GetBalanceService,
+    SendEmailService,
+  ],
 })
-export class SenderModule { }
+export class SenderModule {}

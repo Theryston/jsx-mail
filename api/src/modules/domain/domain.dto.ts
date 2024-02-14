@@ -1,7 +1,7 @@
-import { IsNotEmpty, Length } from "class-validator";
+import { IsNotEmpty, Length } from 'class-validator';
 
 export class CreateDomainDto {
-	@IsNotEmpty()
-	@Length(3, 255)
-	name: string;
+  @IsNotEmpty()
+  @Length(3, 255)
+  name: string;
 }

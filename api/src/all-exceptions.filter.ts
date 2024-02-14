@@ -19,20 +19,23 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
     if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
-      console.log(`[INTERNAL_EXCEPTION] ${exception}`)
+      console.log(`[INTERNAL_EXCEPTION] ${exception}`);
     }
 
-    const exceptionResponse = exception instanceof HttpException ? exception.getResponse() : {}
+    const exceptionResponse =
+      exception instanceof HttpException ? exception.getResponse() : {};
 
     let error: any =
       exception instanceof HttpException
-        ? typeof exceptionResponse === 'string' ? { message: exceptionResponse } : exceptionResponse
+        ? typeof exceptionResponse === 'string'
+          ? { message: exceptionResponse }
+          : exceptionResponse
         : { message: 'Internal server error' };
 
-    delete error.error
+    delete error.error;
 
     if (Array.isArray(error.message)) {
-      error.message = error.message.join(', ')
+      error.message = error.message.join(', ');
     }
 
     response.status(status).json({

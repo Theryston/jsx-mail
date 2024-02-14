@@ -1,18 +1,18 @@
-import { IsNotEmpty, IsArray, IsOptional } from "class-validator";
+import { IsNotEmpty, IsArray, IsOptional } from 'class-validator';
 
 export class DeleteSessionDto {
-	@IsNotEmpty()
-	sessionId: string;
+  @IsNotEmpty()
+  sessionId: string;
 }
 
 export class CreateSessionDto {
-	@IsArray()
-	@IsNotEmpty({ each: true })
-	permissions: string[];
+  @IsArray()
+  @IsNotEmpty({ each: true })
+  permissions: string[];
 
-	@IsNotEmpty()
-	description: string;
+  @IsNotEmpty()
+  description: string;
 
-	@IsOptional()
-	expirationDate?: Date;
+  @IsOptional()
+  expirationDate?: Date;
 }

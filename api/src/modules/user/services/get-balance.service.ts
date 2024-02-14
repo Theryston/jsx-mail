@@ -4,27 +4,27 @@ import { friendlyMoney } from 'src/utils/format-money';
 
 @Injectable()
 export class GetBalanceService {
-	constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-	async execute(userId: string) {
-		const result = await this.prisma.transaction.aggregate({
-			where: {
-				userId,
-				deletedAt: {
-					isSet: false
-				}
-			},
-			_sum: {
-				amount: true
-			}
-		})
+  async execute(userId: string) {
+    const result = await this.prisma.transaction.aggregate({
+      where: {
+        userId,
+        deletedAt: {
+          isSet: false,
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
 
-		const amount = result._sum.amount || 0
+    const amount = result._sum.amount || 0;
 
-		return {
-			amount,
-			friendlyFullAmount: friendlyMoney(amount, true),
-			friendlyAmount: friendlyMoney(amount)
-		}
-	}
+    return {
+      amount,
+      friendlyFullAmount: friendlyMoney(amount, true),
+      friendlyAmount: friendlyMoney(amount),
+    };
+  }
 }

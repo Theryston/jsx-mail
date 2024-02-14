@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import calculateHash from 'src/utils/calculate-hash';
 import { MAX_FILE_SIZE } from 'src/utils/contants';
 import { fileSelect } from 'src/utils/public-selects';
@@ -10,85 +10,94 @@ import { friendlyMoney, storageToMoney } from 'src/utils/format-money';
 
 @Injectable()
 export class UploadFileService {
-	constructor(private readonly prisma: PrismaService, private readonly getBalanceService: GetBalanceService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly getBalanceService: GetBalanceService,
+  ) {}
 
-	async execute(file: CustomFile, userId: string) {
-		const user = await this.prisma.user.findFirst({
-			where: {
-				id: userId,
-				deletedAt: {
-					isSet: false
-				}
-			}
-		})
+  async execute(file: CustomFile, userId: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: userId,
+        deletedAt: {
+          isSet: false,
+        },
+      },
+    });
 
-		if (!user) {
-			throw new HttpException('User not found', HttpStatus.NOT_FOUND)
-		}
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
 
-		if (file.size > MAX_FILE_SIZE) {
-			throw new HttpException('File size is too large', HttpStatus.BAD_REQUEST)
-		}
+    if (file.size > MAX_FILE_SIZE) {
+      throw new HttpException('File size is too large', HttpStatus.BAD_REQUEST);
+    }
 
-		const storagePrice = storageToMoney(file.size);
+    const storagePrice = storageToMoney(file.size);
 
-		const balance = await this.getBalanceService.execute(user.id);
+    const balance = await this.getBalanceService.execute(user.id);
 
-		if (balance.amount < storagePrice) {
-			throw new HttpException(`You need at least ${friendlyMoney(storagePrice, true)} to upload this file`, HttpStatus.BAD_REQUEST)
-		}
+    if (balance.amount < storagePrice) {
+      throw new HttpException(
+        `You need at least ${friendlyMoney(storagePrice, true)} to upload this file`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-		const hash = calculateHash(file.buffer);
+    const hash = calculateHash(file.buffer);
 
-		const fileAlreadyExists = await this.prisma.file.findFirst({
-			where: {
-				hash,
-				userId: user.id,
-				deletedAt: {
-					isSet: false
-				}
-			},
-			select: fileSelect
-		})
+    const fileAlreadyExists = await this.prisma.file.findFirst({
+      where: {
+        hash,
+        userId: user.id,
+        deletedAt: {
+          isSet: false,
+        },
+      },
+      select: fileSelect,
+    });
 
-		if (fileAlreadyExists) {
-			return fileAlreadyExists
-		}
+    if (fileAlreadyExists) {
+      return fileAlreadyExists;
+    }
 
-		if (!file.originalname) {
-			file.originalname = hash
-		}
+    if (!file.originalname) {
+      file.originalname = hash;
+    }
 
-		let ext = file.originalname.split('.').length > 1 ? file.originalname.split('.').pop() : undefined;
-		const key = `${user.id}/${hash}${ext ? `.${ext}` : ''}`
+    let ext =
+      file.originalname.split('.').length > 1
+        ? file.originalname.split('.').pop()
+        : undefined;
+    const key = `${user.id}/${hash}${ext ? `.${ext}` : ''}`;
 
-		const client = new S3Client();
+    const client = new S3Client();
 
-		const command = new PutObjectCommand({
-			Bucket: process.env.AWS_BUCKET_NAME,
-			Key: key,
-			Body: file.buffer,
-			ContentType: file.mimetype
-		})
+    const command = new PutObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: key,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    });
 
-		await client.send(command);
+    await client.send(command);
 
-		const url = `${process.env.API_BASE_URL}/file/${key}`
+    const url = `${process.env.API_BASE_URL}/file/${key}`;
 
-		const createdFile = await this.prisma.file.create({
-			data: {
-				encoding: file.encoding,
-				key,
-				mimeType: file.mimetype,
-				originalName: file.originalname,
-				size: file.size,
-				userId: user.id,
-				hash,
-				url
-			},
-			select: fileSelect
-		})
+    const createdFile = await this.prisma.file.create({
+      data: {
+        encoding: file.encoding,
+        key,
+        mimeType: file.mimetype,
+        originalName: file.originalname,
+        size: file.size,
+        userId: user.id,
+        hash,
+        url,
+      },
+      select: fileSelect,
+    });
 
-		return createdFile
-	}
+    return createdFile;
+  }
 }

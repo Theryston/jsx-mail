@@ -10,85 +10,90 @@ import { Sender } from '@prisma/client';
 
 @Injectable()
 export class SenderSendEmailService {
-	constructor(
-		private readonly prisma: PrismaService,
-		private readonly getBalanceService: GetBalanceService,
-		private readonly sendEmailService: SendEmailService
-	) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly getBalanceService: GetBalanceService,
+    private readonly sendEmailService: SendEmailService,
+  ) {}
 
-	async execute({ sender: senderEmail, html, subject, to }: SenderSendEmailDto, userId: string) {
-		const todayDay = moment().format('YYYY-MM-DD');
+  async execute(
+    { sender: senderEmail, html, subject, to }: SenderSendEmailDto,
+    userId: string,
+  ) {
+    const todayDay = moment().format('YYYY-MM-DD');
 
-		let sender: Sender | null = null;
-		if (senderEmail) {
+    let sender: Sender | null = null;
+    if (senderEmail) {
+      sender = await this.prisma.sender.findFirst({
+        where: {
+          email: senderEmail,
+          userId,
+          deletedAt: {
+            isSet: false,
+          },
+        },
+      });
+    } else {
+      sender = await this.prisma.sender.findFirst({
+        where: {
+          userId,
+          deletedAt: {
+            isSet: false,
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    }
 
-			sender = await this.prisma.sender.findFirst({
-				where: {
-					email: senderEmail,
-					userId,
-					deletedAt: {
-						isSet: false
-					}
-				}
-			});
-		} else {
-			sender = await this.prisma.sender.findFirst({
-				where: {
-					userId,
-					deletedAt: {
-						isSet: false
-					}
-				},
-				orderBy: {
-					createdAt: 'desc'
-				}
-			});
-		}
+    if (!sender) {
+      throw new HttpException(
+        'Sender not found, please create one',
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
-		if (!sender) {
-			throw new HttpException('Sender not found, please create one', HttpStatus.NOT_FOUND);
-		}
+    const balance = await this.getBalanceService.execute(userId);
 
-		const balance = await this.getBalanceService.execute(userId);
+    if (balance.amount < PRICE_PER_MESSAGE) {
+      throw new HttpException('Insufficient balance', HttpStatus.BAD_REQUEST);
+    }
 
-		if (balance.amount < PRICE_PER_MESSAGE) {
-			throw new HttpException('Insufficient balance', HttpStatus.BAD_REQUEST);
-		}
+    let message = await this.prisma.message.create({
+      data: {
+        body: html,
+        subject,
+        to,
+        domainId: sender.domainId,
+        senderId: sender.id,
+        userId,
+      },
+      select: messageSelect,
+    });
 
-		let message = await this.prisma.message.create({
-			data: {
-				body: html,
-				subject,
-				to,
-				domainId: sender.domainId,
-				senderId: sender.id,
-				userId,
-			},
-			select: messageSelect
-		})
+    await this.sendEmailService.execute({
+      from: {
+        name: sender.name,
+        email: sender.email,
+      },
+      html,
+      subject,
+      to,
+    });
 
-		await this.sendEmailService.execute({
-			from: {
-				name: sender.name,
-				email: sender.email
-			},
-			html,
-			subject,
-			to
-		})
+    message = await this.prisma.message.update({
+      where: {
+        id: message.id,
+      },
+      data: {
+        sentAt: new Date(),
+        sentDay: todayDay,
+        status: 'sent',
+      },
+      select: messageSelect,
+    });
 
-		message = await this.prisma.message.update({
-			where: {
-				id: message.id
-			},
-			data: {
-				sentAt: new Date(),
-				sentDay: todayDay,
-				status: 'sent'
-			},
-			select: messageSelect
-		})
-
-		return message
-	}
+    return message;
+  }
 }
