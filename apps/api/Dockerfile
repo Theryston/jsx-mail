@@ -5,7 +5,6 @@ WORKDIR /app
 
 COPY . /app
 
-RUN 
 # Install AWS CLI
 RUN apt-get update && \
     apt-get install -y unzip && \
