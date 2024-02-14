@@ -187,6 +187,7 @@ model FileDownload {
   fileId            String      @map("file_id") @db.ObjectId
   hasCharged        Boolean     @default(false) @map("has_charged")
   size              Int
+  downloadedTime    BigInt      @map("downloaded_time")
   userId            String      @map("user_id") @db.ObjectId
   createdAt         DateTime    @map("created_at") @default(now())
   updatedAt         DateTime    @map("updated_at") @updatedAt
