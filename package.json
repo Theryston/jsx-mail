@@ -13,11 +13,9 @@
     "prettier": "^3.1.0",
     "turbo": "latest"
   },
-  "packageManager": "yarn@1.22.21",
   "workspaces": [
     "packages/*",
-    "web",
-    "api"
+    "apps/*"
   ],
   "dependencies": {
     "@changesets/cli": "^2.27.1"

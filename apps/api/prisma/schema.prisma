@@ -1,0 +1,259 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+enum AccessLevel {
+  self
+  other
+}
+
+enum DomainStatus {
+  pending
+  verified
+  failed
+}
+
+enum TransactionStyle {
+  earn_free
+  earn_paid
+  message_charge
+  bandwidth_charge
+  storage_charge
+}
+
+enum MessageStatus {
+  queued
+  sent
+  failed
+  delivered
+  opened
+  clicked
+}
+
+model User {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  email             String      @unique
+  gatewayId         String?     @map("gateway_id")
+  isEmailVerified   Boolean     @map("is_email_verified") @default(false)
+  accessLevel       AccessLevel @map("access_level") @default(self)
+  password          String
+  phone             String?
+  isPhoneVerified   Boolean     @map("is_phone_verified") @default(false)
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  transactions Transaction[]
+  sessions Session[]
+  securityCodes SecurityCode[]
+  domains Domain[]
+  files File[]
+  downloads FileDownload[]
+  senders Sender[]
+  messages Message[]
+  storageSizes StorageSize[]
+  checkouts Checkout[]
+
+  @@map("users")
+}
+
+model Transaction {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String      @map("user_id") @db.ObjectId
+  gatewayId         String?     @map("gateway_id")
+  amount            Int
+  description       String
+  style             TransactionStyle
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("transactions")
+}
+
+model Session {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String      @map("user_id") @db.ObjectId
+  token             String
+  description       String?
+  permissions       String[]
+  expiresAt         DateTime?   @map("expires_at")
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("sessions")
+}
+
+model SecurityCode {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String      @map("user_id") @db.ObjectId
+  code              String
+  expiresAt         DateTime    @map("expires_at")
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("security_codes")
+}
+
+model Domain {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  name              String      @unique
+  status            DomainStatus @map("status") @default(pending)
+  userId            String      @map("user_id") @db.ObjectId
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  dnsRecords DNSRecord[]
+  senders Sender[]
+  messages Message[]
+
+  @@map("domains")
+}
+
+model DNSRecord {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  domainId          String      @map("domain_id") @db.ObjectId
+  type              String
+  name              String
+  value             String
+  ttl               Int
+  priority          Int?
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  domain Domain @relation(fields: [domainId], references: [id])
+
+  @@map("dns_records")
+}
+
+model File {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  originalName      String      @map("original_name")
+  key               String
+  hash              String
+  mimeType          String      @map("mime_type")
+  externalId        String?     @map("external_id")
+  encoding          String
+  size              Int
+  url               String
+  userId            String      @map("user_id") @db.ObjectId
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  downloads FileDownload[]
+
+  @@map("files")
+}
+
+model StorageSize {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String      @map("user_id") @db.ObjectId
+  size              Int
+  chargeAt          DateTime    @map("charge_at")
+  chargedAt         DateTime?   @map("charged_at")
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("storage_sizes")
+}
+
+model FileDownload {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  fileId            String      @map("file_id") @db.ObjectId
+  hasCharged        Boolean     @default(false) @map("has_charged")
+  size              Int
+  downloadedTime    BigInt      @map("downloaded_time")
+  userId            String      @map("user_id") @db.ObjectId
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  file File @relation(fields: [fileId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("file_downloads")
+}
+
+model Sender {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  username          String
+  name              String
+  email             String
+  userId            String      @map("user_id") @db.ObjectId
+  domainId          String      @map("domain_id") @db.ObjectId
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  domain Domain @relation(fields: [domainId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  messages Message[]
+
+  @@map("senders")
+}
+
+model Message {
+  id                String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String        @map("user_id") @db.ObjectId
+  senderId          String        @map("sender_id") @db.ObjectId
+  domainId          String        @map("domain_id") @db.ObjectId
+  hasCharged        Boolean       @default(false) @map("has_charged")
+  subject           String
+  body              String
+  to                String[]
+  status            MessageStatus @default(queued)
+  sentDay           String?       @map("sent_day")
+  sentAt            DateTime?     @map("sent_at")
+  createdAt         DateTime      @map("created_at") @default(now())
+  updatedAt         DateTime      @map("updated_at") @updatedAt
+  deletedAt         DateTime?     @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+  sender Sender @relation(fields: [senderId], references: [id])
+  domain Domain @relation(fields: [domainId], references: [id])
+
+  @@map("messages")
+}
+
+model Checkout {
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  gatewayId         String      @map("gateway_id")
+  gatewayUrl        String      @map("gateway_url")
+  localAmount       Int         @map("local_amount")
+  localCurrency     String      @map("local_currency")
+  amount            Int
+  userId            String      @map("user_id") @db.ObjectId
+  completedAt       DateTime?   @map("completed_at")
+  createdAt         DateTime    @map("created_at") @default(now())
+  updatedAt         DateTime    @map("updated_at") @updatedAt
+  deletedAt         DateTime?   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("checkouts")
+}
