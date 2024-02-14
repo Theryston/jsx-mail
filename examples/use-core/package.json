@@ -10,9 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@jsx-mail/core": "*",
-    "@jsx-mail/eslint-config": "*",
-    "@jsx-mail/typescript-config": "*",
+    "@jsx-mail/core": "workspace:*",
+    "@jsx-mail/eslint-config": "workspace:*",
+    "@jsx-mail/typescript-config": "workspace:*",
     "@types/eslint": "^8.44.7",
     "@types/node": "^20.5.2",
     "eslint": "^8.53.0",

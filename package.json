@@ -8,8 +8,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "@jsx-mail/eslint-config": "*",
-    "@jsx-mail/typescript-config": "*",
+    "@jsx-mail/eslint-config": "workspace:*",
+    "@jsx-mail/typescript-config": "workspace:*",
     "prettier": "^3.1.0",
     "turbo": "latest"
   },

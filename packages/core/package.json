@@ -24,8 +24,8 @@
     "copy-jsx-types": "cp ./src/jsx-runtime/jsx.d.ts ./dist/jsx-runtime/jsx.d.ts"
   },
   "devDependencies": {
-    "@jsx-mail/eslint-config": "*",
-    "@jsx-mail/typescript-config": "*",
+    "@jsx-mail/eslint-config": "workspace:*",
+    "@jsx-mail/typescript-config": "workspace:*",
     "@types/eslint": "^8.44.7",
     "@types/imagemin": "^8.0.5",
     "@types/imagemin-pngquant": "^8.0.0",
