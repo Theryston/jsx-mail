@@ -5,18 +5,6 @@ WORKDIR /app
 
 COPY . /app
 
-# Install AWS CLI
-RUN apt-get update && \
-    apt-get install -y unzip && \
-		curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
-		unzip awscliv2.zip && \
-		./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
-
-# Clean up
-RUN apt-get remove -y unzip && \
-    rm -rf awscliv2.zip aws
-
-# Configure AWS CLI
 RUN mkdir -p ~/.aws && \
     echo "[default]" > ~/.aws/config && \
 		echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.aws/config && \
