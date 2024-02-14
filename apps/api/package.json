@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "private": true,
   "license": "MIT",
-  "type": "module",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
     "start:dev": "bun docker:up:dev && bun prepare:all && bun nest start --watch",
