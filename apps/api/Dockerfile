@@ -5,6 +5,8 @@ WORKDIR /app
 
 COPY . /app
 
+RUN bun install -g @nestjs/cli
+
 EXPOSE 3331
 
 CMD ["bun", "run", "start"]
