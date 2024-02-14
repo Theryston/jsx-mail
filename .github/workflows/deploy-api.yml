@@ -35,7 +35,7 @@ jobs:
           echo "$AWS_ACCESS_KEY_ID" > .aws/credentials
           echo "$AWS_SECRET_ACCESS_KEY" > .aws/credentials
           echo "$AWS_DEFAULT_REGION" > .aws/config
-          bun install
+          bun install --production
           bun run prepare:all
           bun run build
           cp -rf ../../node_modules/ node_modules
