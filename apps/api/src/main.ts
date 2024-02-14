@@ -14,4 +14,4 @@ async function bootstrap() {
   await app.listen(3331);
 }
 
-bootstrap();
+await bootstrap();
