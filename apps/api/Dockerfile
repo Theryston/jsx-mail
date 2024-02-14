@@ -5,6 +5,25 @@ WORKDIR /app
 
 COPY . /app
 
+RUN 
+# Install AWS CLI
+RUN apt-get update && \
+    apt-get install -y unzip && \
+    curl "https://d1vvhvl2y92vvt.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    sudo ./aws/install
+
+# Clean up
+RUN apt-get remove -y unzip && \
+    rm -rf awscliv2.zip aws
+
+# Configure AWS CLI
+RUN mkdir -p ~/.aws && \
+    echo "[default]" > ~/.aws/config && \
+		echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> ~/.aws/config && \
+		echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> ~/.aws/config && \
+		echo "AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" >> ~/.aws/config
+
 EXPOSE 3331
 
 CMD ["bun", "run", "start"]
