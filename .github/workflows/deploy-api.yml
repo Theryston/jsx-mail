@@ -31,6 +31,7 @@ jobs:
         run: |
           cd apps/api
           echo "$ENV_FILE" > .env
+          mkdir -p .aws
           echo "$AWS_ACCESS_KEY_ID" > .aws/credentials
           echo "$AWS_SECRET_ACCESS_KEY" > .aws/credentials
           echo "$AWS_DEFAULT_REGION" > .aws/config
