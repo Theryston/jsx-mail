@@ -9,7 +9,6 @@ export class ImportFileDownloadsService {
 	constructor(private readonly prisma: PrismaService) { }
 
 	@Cron(CronExpression.EVERY_HOUR)
-	// @Cron(CronExpression.EVERY_10_SECONDS)
 	async execute() {
 		console.log(`[IMPORT_FILE_DOWNLOADS] started at: ${new Date()}`);
 		const today = moment().format('MM-DD-YY');
