@@ -8,9 +8,9 @@ COPY . /app
 # Install AWS CLI
 RUN apt-get update && \
     apt-get install -y unzip && \
-    curl "https://d1vvhvl2y92vvt.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
-    unzip awscliv2.zip && \
-    sudo ./aws/install
+		curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+		unzip awscliv2.zip && \
+		sudo ./aws/install
 
 # Clean up
 RUN apt-get remove -y unzip && \
