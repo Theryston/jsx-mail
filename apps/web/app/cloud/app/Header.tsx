@@ -11,7 +11,6 @@ import {
   DropdownMenu,
   Avatar,
   User,
-  Link,
 } from '@nextui-org/react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
@@ -19,6 +18,7 @@ import { useCallback, useState } from 'react';
 import { useCloudAppContext } from './context';
 import axios from '@/app/utils/axios';
 import { toast } from 'react-toastify';
+import Link from 'next/link';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -80,14 +80,29 @@ export default function Header() {
               </p>
               <p className="font-semibold">{user.email}</p>
             </DropdownItem>
-            <DropdownItem href="/cloud/app/account" key="account">
-              Account
+            <DropdownItem key="account">
+              <Link
+                href="/cloud/app/account"
+                className="w-full text-white text-small block"
+              >
+                Account
+              </Link>
             </DropdownItem>
-            <DropdownItem href="/cloud/app/billing" key="billing">
-              Billing
+            <DropdownItem key="billing">
+              <Link
+                href="/cloud/app/billing"
+                className="w-full text-white text-small block"
+              >
+                Billing
+              </Link>
             </DropdownItem>
-            <DropdownItem href="/cloud/app/resources" key="resources">
-              Resources
+            <DropdownItem key="resources">
+              <Link
+                href="/cloud/app/resources"
+                className="w-full text-white text-small block"
+              >
+                Resources
+              </Link>
             </DropdownItem>
             <DropdownItem key="logout" color="danger" onClick={logout}>
               Log Out
@@ -106,7 +121,6 @@ function Logo() {
       href={pathname === '/cloud/app' ? '/' : '/cloud/app'}
       aria-label="Go to the home page"
       className="flex items-center"
-      color="foreground"
     >
       <div className="flex items-center gap-2">
         <Image width={40} height={31} src="/logo.svg" alt="JSX Mail Logo" />
