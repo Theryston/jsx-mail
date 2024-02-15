@@ -15,6 +15,18 @@ export class UploadFileService {
   ) { }
 
   async execute(file: Express.Multer.File, userId: string) {
+    if (!file.originalname) {
+      throw new HttpException('File name is required', HttpStatus.BAD_REQUEST);
+    }
+
+    if (!file.buffer) {
+      throw new HttpException('File buffer is required', HttpStatus.BAD_REQUEST);
+    }
+
+    if (!file.mimetype) {
+      throw new HttpException('File mimetype is required', HttpStatus.BAD_REQUEST);
+    }
+
     const user = await this.prisma.user.findFirst({
       where: {
         id: userId,
@@ -60,7 +72,12 @@ export class UploadFileService {
       return fileAlreadyExists;
     }
 
-    const key = `${user.id}/${file.originalname}`;
+    let ext =
+      file.originalname.split('.').length > 1
+        ? file.originalname.split('.').pop()
+        : undefined;
+
+    const key = `${user.id}/${new Date().getTime()}.${ext ? ext : file.mimetype.split('/')[1]}`;
 
     const b2 = new B2({
       applicationKeyId: process.env.BACKBLAZE_APPLICATION_KEY_ID,
