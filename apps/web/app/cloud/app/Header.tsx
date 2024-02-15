@@ -54,7 +54,7 @@ export default function Header() {
       toast.success('Logged out successfully');
       document.cookie = 'token=; path=/; max-age=0;';
       document.cookie = 'sessionId=; path=/; max-age=0;';
-      router.push('/cloud/sign-in');
+      window.location.href = '/cloud/sign-in';
     } catch (error: any) {
       toast.error(error.message);
     } finally {
