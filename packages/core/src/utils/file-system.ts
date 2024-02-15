@@ -203,7 +203,7 @@ export async function transformChildrenFileToPath(folderPath: string) {
 }
 
 export function getFileMimetype(filePath: string) {
-  return mime.lookup(filePath);
+  return mime.lookup(filePath) || undefined;
 }
 
 export async function createFileWithFolder(

@@ -9,12 +9,15 @@ export async function uploadFile({ path: filePath, originalPath }: StorageData):
   try {
     const file = readRawFile(filePath);
     const form = new formData();
-    form.append('file', file);
+
     const fileName = path.basename(originalPath);
     const mimeType = getFileMimetype(filePath);
 
-    form.append('_jsxmail_mimetype', mimeType);
-    form.append('_jsxmail_originalname', fileName);
+    form.append('file', file, {
+      filename: fileName,
+      contentType: mimeType,
+    });
+
 
     const response = await client.post('/file', form, {
       headers: form.getHeaders(),
