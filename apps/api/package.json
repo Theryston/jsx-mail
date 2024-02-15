@@ -6,7 +6,8 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
     "start:dev": "bun docker:up:dev && bun prepare:all && nest start --watch",
-    "start": "nest start",
+    "build": "nest build",
+    "start": "node dist/main",
     "lint": "eslint \"{src}/**/*.ts\" --fix",
     "prepare:all": "bun run prepare:db",
     "docker:up:dev": "docker-compose up -d --build",

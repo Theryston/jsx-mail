@@ -1,4 +1,4 @@
-FROM oven/bun
+FROM node:18
 
 RUN mkdir -p app
 WORKDIR /app
@@ -28,4 +28,4 @@ RUN --mount=type=secret,id=AWS_ACCESS_KEY_ID \
 
 EXPOSE 3331
 
-CMD ["bun", "run", "start"]
+CMD ["yarn", "start"]
