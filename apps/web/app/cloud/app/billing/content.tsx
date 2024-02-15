@@ -20,6 +20,8 @@ import moment from 'moment';
 import axios from '@/app/utils/axios';
 import { toast } from 'react-toastify';
 import AddBalanceModal from './AddBalanceModal';
+import SectionsList from '../SectionsList';
+import SectionItem from '../SectionItem';
 
 type FullBalance = {
   CURRENT: Balance;
@@ -117,18 +119,47 @@ export default function BillingContent({
           </CardBody>
         </Card>
       </div>
-      <Table
-        aria-label="List of transactions"
-        className="overflow-x-auto"
-        topContent={
-          <div className="flex flex-col w-full">
-            <h2 className="text-xl font-bold">Transactions</h2>
-            <p className="text-gray-500">
-              List of transactions in your account
-            </p>
-          </div>
-        }
-        bottomContent={
+      <SectionsList>
+        <SectionItem
+          title="Transactions"
+          description="List of transactions in your account"
+        >
+          <Table
+            aria-label="List of transactions"
+            className="overflow-x-auto shadow-2xl"
+            removeWrapper
+          >
+            <TableHeader>
+              <TableColumn>ID</TableColumn>
+              <TableColumn>Description</TableColumn>
+              <TableColumn>Amount</TableColumn>
+              <TableColumn>Date</TableColumn>
+            </TableHeader>
+            <TableBody
+              isLoading={isLoading}
+              loadingContent={<Spinner />}
+              emptyContent="No transaction found"
+            >
+              {transactions.map((transaction) => (
+                <TableRow key={transaction.id}>
+                  <TableCell>{transaction.id}</TableCell>
+                  <TableCell>{transaction.description}</TableCell>
+                  <TableCell
+                    className={
+                      transaction.amount < 0 ? 'text-red-500' : 'text-green-500'
+                    }
+                  >
+                    {transaction.friendlyAmount}
+                  </TableCell>
+                  <TableCell>
+                    {moment(transaction.createdAt).format(
+                      'DD/MM/YYYY HH:mm:ss',
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
           <div className="flex w-full justify-center mt-4">
             <Pagination
               isCompact
@@ -142,37 +173,8 @@ export default function BillingContent({
               }}
             />
           </div>
-        }
-      >
-        <TableHeader>
-          <TableColumn>ID</TableColumn>
-          <TableColumn>Description</TableColumn>
-          <TableColumn>Amount</TableColumn>
-          <TableColumn>Date</TableColumn>
-        </TableHeader>
-        <TableBody
-          isLoading={isLoading}
-          loadingContent={<Spinner />}
-          emptyContent="No transaction found"
-        >
-          {transactions.map((transaction) => (
-            <TableRow key={transaction.id}>
-              <TableCell>{transaction.id}</TableCell>
-              <TableCell>{transaction.description}</TableCell>
-              <TableCell
-                className={
-                  transaction.amount < 0 ? 'text-red-500' : 'text-green-500'
-                }
-              >
-                {transaction.friendlyAmount}
-              </TableCell>
-              <TableCell>
-                {moment(transaction.createdAt).format('DD/MM/YYYY HH:mm:ss')}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+        </SectionItem>
+      </SectionsList>
       <AddBalanceModal
         isOpen={isAddBalanceModalOpen}
         onOpenChange={onAddBalanceModalOpenChange}
