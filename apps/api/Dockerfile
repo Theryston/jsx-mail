@@ -1,5 +1,4 @@
-FROM ubuntu:latest
-FROM oven/bun as bun
+FROM oven/bun
 
 RUN mkdir -p app
 WORKDIR /app
