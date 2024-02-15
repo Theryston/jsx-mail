@@ -33,10 +33,10 @@ jobs:
           cp -rf app-pages/apps/api/. ./api
           cd api
           echo "$ENV_FILE" > .env
-          echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> .env
-          echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> .env
-          echo "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION" >> .env
           mkdir -p .aws
           bun install
           bun run prepare:all
-          flyctl deploy --remote-only
+          flyctl deploy --remote-only \
+          --build-secret AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+          --build-secret AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+          --build-secret AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
