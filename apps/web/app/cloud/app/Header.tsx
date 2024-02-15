@@ -25,6 +25,27 @@ export default function Header() {
   const { user } = useCloudAppContext();
   const router = useRouter();
 
+  const items = [
+    {
+      label: 'Account',
+      href: '/cloud/app/account',
+    },
+    {
+      label: 'Billing',
+      href: '/cloud/app/billing',
+    },
+    {
+      label: 'Resources',
+      href: '/cloud/app/resources',
+    },
+    {
+      label: 'Sign out',
+      onClick: () => {
+        logout();
+      },
+    },
+  ];
+
   const logout = useCallback(async () => {
     const toastId = toast.loading('Logging out...');
 
@@ -80,33 +101,34 @@ export default function Header() {
               </p>
               <p className="font-semibold">{user.email}</p>
             </DropdownItem>
-            <DropdownItem key="account">
-              <Link
-                href="/cloud/app/account"
-                className="w-full text-white text-small block"
-              >
-                Account
-              </Link>
-            </DropdownItem>
-            <DropdownItem key="billing">
-              <Link
-                href="/cloud/app/billing"
-                className="w-full text-white text-small block"
-              >
-                Billing
-              </Link>
-            </DropdownItem>
-            <DropdownItem key="resources">
-              <Link
-                href="/cloud/app/resources"
-                className="w-full text-white text-small block"
-              >
-                Resources
-              </Link>
-            </DropdownItem>
-            <DropdownItem key="logout" color="danger" onClick={logout}>
-              Log Out
-            </DropdownItem>
+            {
+              items.map((item) => (
+                <DropdownItem
+                  key={item.label}
+                  color={item.label === 'Sign out' ? 'danger' : 'default'}
+                >
+                  {item.onClick ? (
+                    <Link
+                      href="#"
+                      onClick={item.onClick}
+                      className="w-full text-small block"
+                    >
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <Link
+                      href={item.href as string}
+                      onMouseEnter={() => {
+                        router.prefetch(item.href as string);
+                      }}
+                      className="w-full text-white text-small block"
+                    >
+                      {item.label}
+                    </Link>
+                  )}
+                </DropdownItem>
+              )) as any
+            }
           </DropdownMenu>
         </Dropdown>
       </NavbarContent>
