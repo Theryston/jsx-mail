@@ -118,9 +118,6 @@ export default function Header() {
                   ) : (
                     <Link
                       href={item.href as string}
-                      onMouseEnter={() => {
-                        router.prefetch(item.href as string);
-                      }}
                       className="w-full text-white text-small block"
                     >
                       {item.label}
