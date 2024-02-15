@@ -29,6 +29,7 @@ export class AddFreeBalanceService {
 				deletedAt: {
 					isSet: false,
 				},
+				isEmailVerified: true,
 				transactions: {
 					none: {
 						createdAt: {
