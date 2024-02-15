@@ -10,8 +10,3 @@ force_https = true
 auto_stop_machines = false
 min_machines_running = 1
 processes = ['app']
-
-[[vm]]
-memory = '1gb'
-cpu_kind = 'shared'
-cpus = 1
