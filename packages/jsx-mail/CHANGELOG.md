@@ -1,5 +1,13 @@
 # jsx-mail
 
+## 2.2.4
+
+### Patch Changes
+
+- 9357b9c: new file upload name and content type
+- Updated dependencies [9357b9c]
+  - @jsx-mail/core@2.1.3
+
 ## 2.2.3
 
 ### Patch Changes
