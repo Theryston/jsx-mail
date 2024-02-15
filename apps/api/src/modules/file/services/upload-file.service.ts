@@ -60,15 +60,7 @@ export class UploadFileService {
       return fileAlreadyExists;
     }
 
-    if (!file.originalname) {
-      file.originalname = hash;
-    }
-
-    let ext =
-      file.originalname.split('.').length > 1
-        ? file.originalname.split('.').pop()
-        : undefined;
-    const key = `${user.id}/${hash}${ext ? `.${ext}` : ''}`;
+    const key = `${user.id}/${file.originalname}`;
 
     const b2 = new B2({
       applicationKeyId: process.env.BACKBLAZE_APPLICATION_KEY_ID,
