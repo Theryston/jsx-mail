@@ -3,11 +3,11 @@ on:
   push:
     branches:
       - main
-    paths: 
+    paths:
       - '.changeset/**'
       - '.github/workflows/release.yml'
   workflow_dispatch:
-      
+
 jobs:
   version:
     timeout-minutes: 15
@@ -17,23 +17,19 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: setup node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18
-      - name: install yarn
-        run: npm install -g yarn
+      - name: install bun
+        uses: oven-sh/setup-bun@v1
       - name: install dependencies
-        run: yarn
+        run: bun install
       - name: build
-        run: yarn build
+        run: cd packages/core && bun run build && cd .. && cd jsx-mail && bun run build
       - name: create and publish versions
         uses: changesets/action@v1
         with:
-          version: yarn changeset version
+          version: bun changeset version
           commit: 'chore: update versions'
           title: 'chore: update versions'
-          publish: yarn changeset publish
+          publish: bun changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
