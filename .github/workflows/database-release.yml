@@ -42,7 +42,7 @@ jobs:
           cp -rf jsx-mail/packages/database database
           cp -rf jsx-mail/.git database/.git
           cd database
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=$GITHUB_TOKEN" >> .npmrc
           echo "@jsx-mail:registry=https://npm.pkg.github.com" >> .npmrc
           echo "$ENV_FILE" > .env
           yarn install
