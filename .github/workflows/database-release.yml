@@ -37,7 +37,7 @@ jobs:
       - name: Authenticate with GitHub Package Registry
         run: |
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
-          echo "@jsx-mail:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "@theryston:registry=https://npm.pkg.github.com" >> ~/.npmrc
 
       - name: Prepare and release
         env:
