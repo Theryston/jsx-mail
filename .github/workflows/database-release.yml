@@ -36,7 +36,6 @@ jobs:
 
       - name: Authenticate with GitHub Package Registry
         run: |
-          mkdir -p ~/.npm
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
           echo "@jsx-mail:registry=https://npm.pkg.github.com" >> ~/.npmrc
 
