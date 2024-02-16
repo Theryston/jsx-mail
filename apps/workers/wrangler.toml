@@ -1,0 +1,6 @@
+name = "jsxmail-workers"
+main = "src/index.ts"
+compatibility_date = "2022-10-10"
+
+[triggers]
+crons = ["* * * * *"]
