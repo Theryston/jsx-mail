@@ -34,6 +34,12 @@ jobs:
         with:
           node-version: 'lts/*'
 
+      - name: Authenticate with GitHub Package Registry
+        run: |
+          mkdir -p ~/.npm
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+          echo "@jsx-mail:registry=https://npm.pkg.github.com" >> ~/.npmrc
+
       - name: Prepare and release
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
@@ -46,6 +52,4 @@ jobs:
           yarn install
           yarn run build
           yarn run prepare:db
-          echo "//npm.pkg.github.com/:_authToken=\"$GITHUB_TOKEN\"" >> .npmrc
-          echo "@jsx-mail:registry=https://npm.pkg.github.com" >> .npmrc
           yarn release
