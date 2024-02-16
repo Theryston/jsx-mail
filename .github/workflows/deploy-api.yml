@@ -36,6 +36,7 @@ jobs:
           echo "$ENV_FILE" > .env
           bun install
           bun run build
+          cp -rf ../../node_modules ./
           flyctl deploy --remote-only \
           --build-secret AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
           --build-secret AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
