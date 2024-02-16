@@ -31,7 +31,7 @@ jobs:
         run: |
           cd apps/api
           echo "$ENV_FILE" > .env
-          bun install --verbose
+          bun install
           bun run prepare:all
           bun run build
           flyctl deploy --remote-only \
