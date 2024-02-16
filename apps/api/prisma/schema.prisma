@@ -151,7 +151,6 @@ model File {
   key               String
   hash              String
   mimeType          String      @map("mime_type")
-  externalId        String?     @map("external_id")
   encoding          String
   size              Int
   url               String

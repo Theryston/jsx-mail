@@ -7,6 +7,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { ListFilesService } from './services/list-files.service';
 import { GetBalanceService } from '../user/services/get-balance.service';
+import { S3ClientService } from './services/s3-client.service';
 
 @Module({
   controllers: [FileController],
@@ -16,6 +17,7 @@ import { GetBalanceService } from '../user/services/get-balance.service';
     DeleteFileService,
     ListFilesService,
     GetBalanceService,
+    S3ClientService,
   ],
   imports: [
     MulterModule.register({
