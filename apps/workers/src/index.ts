@@ -14,6 +14,7 @@ const WORKERS_TO_RUN = [
 ]
 
 async function handler(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<Response> {
+	console.log('[WORKER] started at: ', new Date());
 	const promises = [];
 
 	for (const route of WORKERS_TO_RUN) {
@@ -27,6 +28,5 @@ async function handler(event: ScheduledEvent, env: Env, ctx: ExecutionContext): 
 	}
 
 	await Promise.all(promises);
-
-	return new Response('Done', { status: 200 });
+	console.log('[WORKER] ended at: ', new Date());
 }
