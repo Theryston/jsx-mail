@@ -39,6 +39,7 @@ jobs:
       - name: Prepare and release
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd packages/database
           echo "$ENV_FILE" > .env
