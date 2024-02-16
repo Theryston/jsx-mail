@@ -33,7 +33,7 @@ jobs:
           cp -rf app-pages/apps/api/. ./api
           cd api
           echo "$ENV_FILE" > .env
-          bun install
+          bun install --verbose
           bun run prepare:all
           bun run build
           flyctl deploy --remote-only \
