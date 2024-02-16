@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from 'src/services/prisma.service';
 import moment from 'moment';
 
 @Injectable()
 export class StorageSizeService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async execute() {
-    console.log(`[STORAGE-SIZE] started at: ${new Date()}`);
+    console.log(`[STORAGE_SIZE] started at: ${new Date()}`);
     const filesUsers = await this.prisma.file.groupBy({
       where: {
         deletedAt: {
@@ -21,6 +19,8 @@ export class StorageSizeService {
         size: true,
       },
     });
+
+    const usersRecorded = [];
 
     for (const {
       userId,
@@ -43,7 +43,7 @@ export class StorageSizeService {
       });
 
       if (hasStorage) {
-        console.log(`[STORAGE-SIZE] ${userId} - ${size} - skip`);
+        console.log(`[STORAGE_SIZE] ${userId} - ${size} - skip`);
         continue;
       }
 
@@ -62,9 +62,19 @@ export class StorageSizeService {
         },
       });
 
-      console.log(`[STORAGE-SIZE] ${userId} - ${size}`);
+      usersRecorded.push({
+        userId,
+        size,
+      })
+
+      console.log(`[STORAGE_SIZE] ${userId} - ${size}`);
     }
 
-    console.log(`[STORAGE-SIZE] ended at: ${new Date()}`);
+    console.log(`[STORAGE_SIZE] ended at: ${new Date()}`);
+
+    return {
+      message: 'Worker STORAGE_SIZE finished!',
+      result: usersRecorded,
+    }
   }
 }

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { TransactionStyle } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
 import { PRICE_PER_MESSAGE } from 'src/utils/constants';
@@ -9,13 +8,14 @@ import moment from 'moment';
 
 @Injectable()
 export class ChargeService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async execute() {
     console.log(`[CHARGE] started at: ${new Date()}`);
-    await Promise.all([this.chargeMessage(), this.chargeStorage()]);
+    const results = await Promise.all([this.chargeMessage(), this.chargeStorage()]);
     console.log(`[CHARGE] ended at: ${new Date()}`);
+
+    return results;
   }
 
   async chargeMessage() {
@@ -34,6 +34,8 @@ export class ChargeService {
         id: true,
       },
     });
+
+    const usersCharged = [];
 
     for (const {
       userId,
@@ -65,6 +67,12 @@ export class ChargeService {
           },
         });
 
+        usersCharged.push({
+          userId,
+          messagesAmount,
+          price,
+        })
+
         console.log(`[CHARGE_MESSAGE] ${userId} - ${price}`);
       } catch (error) {
         console.log(`[CHARGE_MESSAGE] ${JSON.stringify(error)}`);
@@ -72,6 +80,11 @@ export class ChargeService {
     }
 
     console.log(`[CHARGE_MESSAGE] ended at: ${new Date()}`);
+
+    return {
+      message: 'Worker CHARGE_MESSAGE finished!',
+      result: usersCharged,
+    }
   }
 
   async chargeStorage() {
@@ -99,6 +112,8 @@ export class ChargeService {
         size: true,
       },
     });
+
+    const usersCharged = [];
 
     for (const {
       userId,
@@ -139,10 +154,21 @@ export class ChargeService {
         },
       });
 
+      usersCharged.push({
+        userId,
+        averageSize,
+        price,
+      })
+
       console.log(`[CHARGE_STORAGE] ${userId} - ${price}`);
     }
 
     console.log(`[CHARGE_STORAGE] ended at: ${new Date()}`);
+
+    return {
+      message: 'Worker CHARGE_STORAGE finished!',
+      result: usersCharged,
+    }
   }
 
   async removeBalance({

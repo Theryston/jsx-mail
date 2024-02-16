@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import moment from 'moment';
 import { PrismaService } from 'src/services/prisma.service';
 import { FREE_BALANCE } from 'src/utils/constants';
 
 @Injectable()
 export class AddFreeBalanceService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async execute() {
     console.log('[ADD_FREE_BALANCE] started at: ', new Date());
 
@@ -40,6 +38,8 @@ export class AddFreeBalanceService {
       },
     });
 
+    const balancesAdded = [];
+
     for (const user of usersToAddBalance) {
       const {
         _sum: { amount: balance },
@@ -70,9 +70,19 @@ export class AddFreeBalanceService {
         },
       });
 
+      balancesAdded.push({
+        userId: user.id,
+        amount: diff,
+      });
+
       console.log(`[ADD_FREE_BALANCE] ${user.id} added ${diff} free balance`);
     }
 
     console.log('[ADD_FREE_BALANCE] ended at: ', new Date());
+
+    return {
+      message: 'Worker ADD_FREE_BALANCE finished!',
+      result: balancesAdded,
+    };
   }
 }

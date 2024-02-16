@@ -3,6 +3,7 @@ import { AddFreeBalanceService } from './services/add-free-balance.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { StorageSizeService } from './services/storage-size.service';
 import { ChargeService } from './services/charge.service';
+import { WorkerController } from './worker.controller';
 
 @Module({
   providers: [
@@ -11,5 +12,6 @@ import { ChargeService } from './services/charge.service';
     StorageSizeService,
     ChargeService,
   ],
+  controllers: [WorkerController],
 })
-export class WorkerModule {}
+export class WorkerModule { }

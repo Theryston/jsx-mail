@@ -10,7 +10,6 @@ import { FileModule } from './modules/file/file.module';
 import { GetBalanceService } from './modules/user/services/get-balance.service';
 import { SenderModule } from './modules/sender/sender.module';
 import { StripeService } from './services/stripe.service';
-import { ScheduleModule } from '@nestjs/schedule';
 import { WorkerModule } from './modules/worker/worker.module';
 
 @Module({
@@ -21,7 +20,6 @@ import { WorkerModule } from './modules/worker/worker.module';
     DomainModule,
     FileModule,
     SenderModule,
-    ScheduleModule.forRoot(),
     WorkerModule,
   ],
   controllers: [],
@@ -35,4 +33,4 @@ import { WorkerModule } from './modules/worker/worker.module';
     StripeService,
   ],
 })
-export class AppModule {}
+export class AppModule { }

@@ -117,4 +117,9 @@ export const PERMISSIONS: {
     value: 'self:get-insights',
     description: 'Can get its own insights',
   },
+  OTHER_RUN_WORKERS: {
+    title: 'Other Run Workers',
+    value: 'other:run-workers',
+    description: 'Can run workers',
+  }
 };
