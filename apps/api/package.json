@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
-    "start:dev": "bun docker:up:dev && bun prepare:all && nest start --watch",
+    "start:dev": "bun docker:up:dev && nest start --watch",
     "build": "nest build",
     "start": "node dist/main.js",
     "lint": "eslint \"{src}/**/*.ts\" --fix",

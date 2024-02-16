@@ -37,8 +37,6 @@ jobs:
           bun install
           bun run build
           cp -rf ../../node_modules ./
-          mkdir -p ./node_modules/@jsx-mail
-          cp -rf ../../packages/database ./node_modules/@jsx-mail
           flyctl deploy --remote-only \
           --build-secret AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
           --build-secret AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
