@@ -22,6 +22,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          path: jsx-mail
 
       - name: Install bun
         uses: oven-sh/setup-bun@v1
@@ -31,17 +34,15 @@ jobs:
         with:
           node-version: 'lts/*'
 
-      - name: Authenticate with GitHub Package Registry
-        run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
-          echo "@jsx-mail:registry=https://npm.pkg.github.com" >> .npmrc
-
       - name: Prepare and release
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd packages/database
+          cp -rf jsx-mail/packages/database database
+          cd database
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+          echo "@jsx-mail:registry=https://npm.pkg.github.com" >> .npmrc
           echo "$ENV_FILE" > .env
           yarn install
           yarn run build
