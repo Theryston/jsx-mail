@@ -5,15 +5,20 @@
   "version": "0.0.0",
   "scripts": {
     "prepare:db": "prisma db push && prisma generate && prisma db seed",
-    "postinstall": "bun run prepare:db && bun build index.ts --outdir=."
+    "build": "bun build index.ts --outdir=.",
+    "release": "semantic-release"
   },
   "dependencies": {
     "@prisma/client": "^5.9.1"
   },
   "devDependencies": {
-    "prisma": "^5.9.0"
+    "prisma": "^5.9.0",
+    "semantic-release": "^23.0.2"
   },
   "prisma": {
     "seed": "bun run seed/index.ts"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

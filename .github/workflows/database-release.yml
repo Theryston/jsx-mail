@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/database/**'
+      - '.github/workflows/database-release.yml'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Authenticate with GitHub Package Registry
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> bunfig.toml
+          echo "@jsx-mail:registry=https://npm.pkg.github.com" >> bunfig.toml
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+          echo "@jsx-mail:registry=https://npm.pkg.github.com" >> .npmrc
+
+      - name: Prepare and release
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+        run: |
+          cd packages/database
+          echo "$ENV_FILE" > .env
+          bun install
+          bun run build
+          bun run prepare:db
+          bun run release
+          cd ../../
+
+          git config user.name github-actions
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .
+          git commit -m "chore: release database"
+          git push
