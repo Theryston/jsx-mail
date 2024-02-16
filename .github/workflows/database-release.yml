@@ -43,9 +43,9 @@ jobs:
         run: |
           cd packages/database
           echo "$ENV_FILE" > .env
-          bun install
-          bun run build
-          bun run prepare:db
+          yarn install
+          yarn run build
+          yarn run prepare:db
           yarn release
           cd ../../
 
