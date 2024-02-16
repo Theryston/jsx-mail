@@ -4,7 +4,8 @@ export interface Env {
 }
 
 export default {
-	scheduled: handler
+	scheduled: handler,
+	fetch: handler
 };
 
 const WORKERS_TO_RUN = [
@@ -29,4 +30,6 @@ async function handler(event: ScheduledEvent, env: Env, ctx: ExecutionContext): 
 
 	await Promise.all(promises);
 	console.log('[WORKER] ended at: ', new Date());
+
+	return new Response('OK');
 }
