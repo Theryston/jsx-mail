@@ -6,7 +6,7 @@ import {
   GATEWAY_SCALE,
   MINIMUM_ADD_BALANCE,
   MONEY_SCALE,
-} from 'src/utils/contants';
+} from 'src/utils/constants';
 import { friendlyMoney } from 'src/utils/format-money';
 import { User } from '@prisma/client';
 import { CreateCheckoutDto } from '../user.dto';

@@ -20,4 +20,4 @@ import { SendEmailService } from '../email/services/send-email.service';
     SendEmailService,
   ],
 })
-export class SenderModule { }
+export class SenderModule {}

@@ -4,7 +4,10 @@ import { S3ClientService } from './s3-client.service';
 
 @Injectable()
 export class DeleteFileService {
-  constructor(private readonly prisma: PrismaService, private readonly s3ClientService: S3ClientService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly s3ClientService: S3ClientService,
+  ) {}
 
   async execute(fileId: string, userId: string) {
     const file = await this.prisma.file.findFirst({

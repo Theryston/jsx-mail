@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import calculateHash from 'src/utils/calculate-hash';
-import { MAX_FILE_SIZE } from 'src/utils/contants';
+import { MAX_FILE_SIZE } from 'src/utils/constants';
 import { fileSelect } from 'src/utils/public-selects';
 import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
 import { friendlyMoney, storageToMoney } from 'src/utils/format-money';
@@ -12,8 +12,8 @@ export class UploadFileService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly getBalanceService: GetBalanceService,
-    private readonly s3ClientService: S3ClientService
-  ) { }
+    private readonly s3ClientService: S3ClientService,
+  ) {}
 
   async execute(file: Express.Multer.File, userId: string) {
     if (!file.originalname) {
@@ -21,11 +21,17 @@ export class UploadFileService {
     }
 
     if (!file.buffer) {
-      throw new HttpException('File buffer is required', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'File buffer is required',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     if (!file.mimetype) {
-      throw new HttpException('File mimetype is required', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'File mimetype is required',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const user = await this.prisma.user.findFirst({
@@ -84,7 +90,7 @@ export class UploadFileService {
       key,
       body: file.buffer,
       mimetype: file.mimetype,
-    })
+    });
 
     const createdFile = await this.prisma.file.create({
       data: {

@@ -22,7 +22,7 @@ export class FileController {
     private readonly uploadFileService: UploadFileService,
     private readonly deleteFileService: DeleteFileService,
     private readonly listFilesService: ListFilesService,
-  ) { }
+  ) {}
 
   @Post()
   @Permissions([PERMISSIONS.SELF_FILE_UPLOAD.value])

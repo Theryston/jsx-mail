@@ -23,8 +23,7 @@ async function main() {
 }
 
 try {
-  await main()
+  await main();
 } finally {
   await prisma.$disconnect();
 }
-

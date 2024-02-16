@@ -3,7 +3,7 @@ import { SendEmailService } from 'src/modules/email/services/send-email.service'
 import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { SenderSendEmailDto } from '../sender.dto';
-import { PRICE_PER_MESSAGE } from 'src/utils/contants';
+import { PRICE_PER_MESSAGE } from 'src/utils/constants';
 import { messageSelect } from 'src/utils/public-selects';
 import moment from 'moment';
 import { Sender } from '@prisma/client';

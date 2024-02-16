@@ -1,8 +1,4 @@
-import {
-  CURRENCY,
-  MONEY_SCALE,
-  STORAGE_GB_PRICE,
-} from './contants';
+import { CURRENCY, MONEY_SCALE, STORAGE_GB_PRICE } from './constants';
 
 export function friendlyMoney(amount: number, showAllDecimals = false) {
   const moneyInScale = amount ? amount / MONEY_SCALE : 0;

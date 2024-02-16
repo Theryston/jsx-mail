@@ -2,78 +2,77 @@ import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import moment from 'moment';
 import { PrismaService } from 'src/services/prisma.service';
-import { FREE_BALANCE } from 'src/utils/contants';
+import { FREE_BALANCE } from 'src/utils/constants';
 
 @Injectable()
 export class AddFreeBalanceService {
-	constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async execute() {
+    console.log('[ADD_FREE_BALANCE] started at: ', new Date());
 
-	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-	async execute() {
-		console.log('[ADD_FREE_BALANCE] started at: ', new Date());
+    const oneMonthAgo = moment()
+      .subtract(1, 'month')
+      .add(1, 'day')
+      .set({
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      })
+      .toDate();
 
-		const oneMonthAgo = moment()
-			.subtract(1, 'month')
-			.add(1, 'day')
-			.set({
-				hour: 0,
-				minute: 0,
-				second: 0,
-				millisecond: 0,
-			})
-			.toDate();
+    const usersToAddBalance = await this.prisma.user.findMany({
+      where: {
+        deletedAt: {
+          isSet: false,
+        },
+        isEmailVerified: true,
+        transactions: {
+          none: {
+            createdAt: {
+              gte: oneMonthAgo,
+            },
+            style: 'earn_free',
+          },
+        },
+      },
+    });
 
-		const usersToAddBalance = await this.prisma.user.findMany({
-			where: {
-				deletedAt: {
-					isSet: false,
-				},
-				isEmailVerified: true,
-				transactions: {
-					none: {
-						createdAt: {
-							gte: oneMonthAgo,
-						},
-						style: 'earn_free',
-					},
-				},
-			},
-		});
+    for (const user of usersToAddBalance) {
+      const {
+        _sum: { amount: balance },
+      } = await this.prisma.transaction.aggregate({
+        where: {
+          userId: user.id,
+          deletedAt: {
+            isSet: false,
+          },
+        },
+        _sum: {
+          amount: true,
+        },
+      });
 
-		for (const user of usersToAddBalance) {
-			const {
-				_sum: { amount: balance },
-			} = await this.prisma.transaction.aggregate({
-				where: {
-					userId: user.id,
-					deletedAt: {
-						isSet: false,
-					},
-				},
-				_sum: {
-					amount: true,
-				},
-			});
+      let diff = balance < 0 ? 0 : FREE_BALANCE - balance;
 
-			let diff = balance < 0 ? 0 : FREE_BALANCE - balance;
+      if (diff < 0) {
+        diff = 0;
+      }
 
-			if (diff < 0) {
-				diff = 0;
-			}
+      await this.prisma.transaction.create({
+        data: {
+          amount: diff,
+          style: 'earn_free',
+          userId: user.id,
+          description: 'Earning from free balance',
+        },
+      });
 
-			await this.prisma.transaction.create({
-				data: {
-					amount: diff,
-					style: 'earn_free',
-					userId: user.id,
-					description: 'Earning from free balance',
-				},
-			});
+      console.log(`[ADD_FREE_BALANCE] ${user.id} added ${diff} free balance`);
+    }
 
-			console.log(`[ADD_FREE_BALANCE] ${user.id} added ${diff} free balance`);
-		}
-
-		console.log('[ADD_FREE_BALANCE] ended at: ', new Date());
-	}
+    console.log('[ADD_FREE_BALANCE] ended at: ', new Date());
+  }
 }

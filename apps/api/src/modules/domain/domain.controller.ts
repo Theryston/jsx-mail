@@ -21,7 +21,7 @@ export class DomainController {
     private readonly createDomainService: CreateDomainService,
     private readonly deleteDomainService: DeleteDomainService,
     private readonly listDomainsService: ListDomainsService,
-  ) { }
+  ) {}
 
   @Post()
   @Permissions([PERMISSIONS.SELF_DOMAIN_CREATE.value])

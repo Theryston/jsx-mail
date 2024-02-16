@@ -25,4 +25,4 @@ import { S3ClientService } from './services/s3-client.service';
     }),
   ],
 })
-export class FileModule { }
+export class FileModule {}

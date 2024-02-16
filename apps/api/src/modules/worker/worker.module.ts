@@ -5,6 +5,11 @@ import { StorageSizeService } from './services/storage-size.service';
 import { ChargeService } from './services/charge.service';
 
 @Module({
-	providers: [AddFreeBalanceService, PrismaService, StorageSizeService, ChargeService]
+  providers: [
+    AddFreeBalanceService,
+    PrismaService,
+    StorageSizeService,
+    ChargeService,
+  ],
 })
-export class WorkerModule { }
+export class WorkerModule {}

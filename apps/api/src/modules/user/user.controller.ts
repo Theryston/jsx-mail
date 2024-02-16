@@ -31,7 +31,7 @@ import {
   MONEY_SCALE,
   PRICE_PER_MESSAGE,
   STORAGE_GB_PRICE,
-} from 'src/utils/contants';
+} from 'src/utils/constants';
 import { friendlyMoney } from 'src/utils/format-money';
 import { GetFullBalanceService } from './services/get-full-balance.service';
 import { ListTransactionsService } from './services/list-transactions.service';
@@ -55,7 +55,7 @@ export class UserController {
     private readonly stripeService: StripeService,
     private readonly handleWebhookService: HandleWebhookService,
     private readonly getInsightsService: GetInsightsService,
-  ) { }
+  ) {}
 
   @Post()
   createUser(@Body() data: CreateUserDto) {
@@ -165,7 +165,7 @@ export class UserController {
           maxValue: 1000,
           price: STORAGE_GB_PRICE,
           friendlyAmount: friendlyMoney(STORAGE_GB_PRICE, true),
-        }
+        },
       ],
     };
   }

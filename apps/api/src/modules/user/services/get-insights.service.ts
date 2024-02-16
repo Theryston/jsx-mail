@@ -4,7 +4,7 @@ import { PrismaService } from 'src/services/prisma.service';
 
 @Injectable()
 export class GetInsightsService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async execute(userId: string) {
     const monthStart = moment().startOf('month');

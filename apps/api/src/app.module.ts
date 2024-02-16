@@ -35,4 +35,4 @@ import { WorkerModule } from './modules/worker/worker.module';
     StripeService,
   ],
 })
-export class AppModule { }
+export class AppModule {}
