@@ -5,7 +5,9 @@ export interface Env {
 
 export default {
 	scheduled: handler,
-	fetch: handler
+	fetch: () => {
+		return new Response('You can not access this endpoint', { status: 403 });
+	}
 };
 
 const WORKERS_TO_RUN = [
