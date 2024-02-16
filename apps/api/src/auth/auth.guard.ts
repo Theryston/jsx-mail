@@ -11,19 +11,19 @@ export class AuthGuard implements CanActivate {
     private readonly reflector: Reflector,
     private readonly prisma: PrismaService,
     private readonly getBalanceService: GetBalanceService,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const permissions = this.reflector.get(Permissions, context.getHandler());
 
-    if (!permissions) {
-      return true;
-    }
-
     const request = context.switchToHttp().getRequest();
     const token = request.headers.authorization?.split(' ')[1];
 
-    if (!token) {
+    if (!token && !permissions) {
+      return true;
+    }
+
+    if (!token && permissions) {
       return false;
     }
 
@@ -52,7 +52,11 @@ export class AuthGuard implements CanActivate {
       },
     });
 
-    if (!session) {
+    if (!session && !permissions) {
+      return true;
+    }
+
+    if (!session && permissions) {
       return false;
     }
 
@@ -83,6 +87,10 @@ export class AuthGuard implements CanActivate {
 
     if (!user.isEmailVerified && route !== '/user/validate-email') {
       return false;
+    }
+
+    if (!permissions) {
+      return true;
     }
 
     if (
