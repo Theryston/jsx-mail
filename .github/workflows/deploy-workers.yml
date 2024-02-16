@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy Workers
 
 on:
   push:
@@ -15,8 +15,13 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          workingDirectory: apps/workers
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
+      - name: Deploy Workers
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          cd apps/workers
+          bun install
+          bun run build
+          bun run deploy
