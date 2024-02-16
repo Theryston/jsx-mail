@@ -20,6 +20,7 @@
     "seed": "bun run seed/index.ts"
   },
   "publishConfig": {
-    "access": "restricted"
-  }
+    "access": "public"
+  },
+  "private": false
 }
