@@ -1,11 +1,11 @@
 {
   "name": "@jsx-mail/database",
-  "main": "./index.ts",
+  "main": "./index.js",
   "types": "./index.ts",
   "version": "0.0.0",
   "scripts": {
     "prepare:db": "prisma db push && prisma generate && prisma db seed",
-    "postinstall": "bun run prepare:db"
+    "postinstall": "bun run prepare:db && bun build index.ts --outdir=."
   },
   "dependencies": {
     "@prisma/client": "^5.9.1"
