@@ -26,6 +26,11 @@ jobs:
       - name: Install bun
         uses: oven-sh/setup-bun@v1
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 'lts/*'
+
       - name: Authenticate with GitHub Package Registry
         run: |
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
@@ -40,7 +45,7 @@ jobs:
           bun install
           bun run build
           bun run prepare:db
-          bun run release
+          yarn release
           cd ../../
 
           git config user.name github-actions
