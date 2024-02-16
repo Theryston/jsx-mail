@@ -29,6 +29,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
+          cd packages/database
+          echo "$ENV_FILE" > .env
+          cd ../../
           cd apps/api
           echo "$ENV_FILE" > .env
           bun install
