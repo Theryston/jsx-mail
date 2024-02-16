@@ -17,7 +17,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          path: app-pages
       - name: install bun
         uses: oven-sh/setup-bun@v1
       - name: Install fly
@@ -30,8 +29,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
-          cp -rf app-pages/apps/api/. ./api
-          cd api
+          cd apps/api
           echo "$ENV_FILE" > .env
           bun install --verbose
           bun run prepare:all
