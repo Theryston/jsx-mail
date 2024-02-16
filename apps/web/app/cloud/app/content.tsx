@@ -31,7 +31,6 @@ type MessagesSentByDay = {
 type Insight = {
   MESSAGES_SENT: number;
   STORAGE: number;
-  DOWNLOAD: number;
   MESSAGES_SENT_BY_DAY: MessagesSentByDay[];
 };
 
@@ -57,7 +56,7 @@ export default function HomePageContent({ insights }: Props) {
         Hello {titleCase(user.name).split(' ')[0]},
       </h1>
       <p className="text-gray-500">Welcome to your dashboard</p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
         <Card className="min-h-[200px]">
           <CardBody className="flex flex-col justify-center items-center h-full w-full p-0">
             <h2 className="text-2xl font-bold">{insights.MESSAGES_SENT}</h2>
@@ -70,14 +69,6 @@ export default function HomePageContent({ insights }: Props) {
               {formatSize(insights.STORAGE)}
             </h2>
             <p className="text-gray-500">Storage used</p>
-          </CardBody>
-        </Card>
-        <Card className="min-h-[200px]">
-          <CardBody className="flex flex-col justify-center items-center h-full w-full p-0">
-            <h2 className="text-2xl font-bold">
-              {formatSize(insights.DOWNLOAD)}
-            </h2>
-            <p className="text-gray-500">Current month download</p>
           </CardBody>
         </Card>
       </div>

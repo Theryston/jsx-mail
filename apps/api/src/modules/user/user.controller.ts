@@ -27,7 +27,6 @@ import { ValidateEmailService } from './services/validate-email.service';
 import { AuthUserService } from './services/auth-user.service';
 import { ResetPasswordService } from './services/reset-password.service';
 import {
-  BANDWIDTH_GB_PRICE,
   FREE_BALANCE,
   MONEY_SCALE,
   PRICE_PER_MESSAGE,
@@ -162,21 +161,11 @@ export class UserController {
           unit: 'GB',
           unitName: 'GB',
           amount: 1,
-          step: 0.1,
-          maxValue: 50,
+          step: 1,
+          maxValue: 1000,
           price: STORAGE_GB_PRICE,
           friendlyAmount: friendlyMoney(STORAGE_GB_PRICE, true),
-        },
-        {
-          title: 'Bandwidth',
-          unit: 'GB',
-          unitName: 'GB',
-          amount: 1,
-          step: 0.1,
-          maxValue: 50,
-          price: BANDWIDTH_GB_PRICE,
-          friendlyAmount: friendlyMoney(BANDWIDTH_GB_PRICE, true),
-        },
+        }
       ],
     };
   }

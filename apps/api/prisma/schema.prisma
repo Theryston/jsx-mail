@@ -23,7 +23,6 @@ enum TransactionStyle {
   earn_free
   earn_paid
   message_charge
-  bandwidth_charge
   storage_charge
 }
 
@@ -55,7 +54,6 @@ model User {
   securityCodes SecurityCode[]
   domains Domain[]
   files File[]
-  downloads FileDownload[]
   senders Sender[]
   messages Message[]
   storageSizes StorageSize[]
@@ -161,8 +159,6 @@ model File {
 
   user User @relation(fields: [userId], references: [id])
 
-  downloads FileDownload[]
-
   @@map("files")
 }
 
@@ -179,23 +175,6 @@ model StorageSize {
   user User @relation(fields: [userId], references: [id])
 
   @@map("storage_sizes")
-}
-
-model FileDownload {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
-  fileId            String      @map("file_id") @db.ObjectId
-  hasCharged        Boolean     @default(false) @map("has_charged")
-  size              Int
-  downloadedTime    BigInt      @map("downloaded_time")
-  userId            String      @map("user_id") @db.ObjectId
-  createdAt         DateTime    @map("created_at") @default(now())
-  updatedAt         DateTime    @map("updated_at") @updatedAt
-  deletedAt         DateTime?   @map("deleted_at")
-
-  file File @relation(fields: [fileId], references: [id])
-  user User @relation(fields: [userId], references: [id])
-
-  @@map("file_downloads")
 }
 
 model Sender {

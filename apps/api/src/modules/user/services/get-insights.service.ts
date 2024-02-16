@@ -4,7 +4,7 @@ import { PrismaService } from 'src/services/prisma.service';
 
 @Injectable()
 export class GetInsightsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async execute(userId: string) {
     const monthStart = moment().startOf('month');
@@ -55,22 +55,6 @@ export class GetInsightsService {
         size: true,
       },
     });
-    const {
-      _sum: { size: download },
-    } = await this.prisma.fileDownload.aggregate({
-      where: {
-        deletedAt: {
-          isSet: false,
-        },
-        createdAt: {
-          gte: monthStart.toDate(),
-        },
-        userId,
-      },
-      _sum: {
-        size: true,
-      },
-    });
 
     return {
       MESSAGES_SENT: messagesSent || 0,
@@ -79,7 +63,6 @@ export class GetInsightsService {
         count: m._count.id || 0,
       })),
       STORAGE: storage || 0,
-      DOWNLOAD: download || 0,
     };
   }
 }

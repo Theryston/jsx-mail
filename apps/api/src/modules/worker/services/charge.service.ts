@@ -4,7 +4,7 @@ import { TransactionStyle } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
 import { PRICE_PER_MESSAGE } from 'src/utils/contants';
 import { formatSize } from 'src/utils/format';
-import { bandwidthToMoney, storageToMoney } from 'src/utils/format-money';
+import { storageToMoney } from 'src/utils/format-money';
 import moment from 'moment';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class ChargeService {
 	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
 	async execute() {
 		console.log(`[CHARGE] started at: ${new Date()}`);
-		await Promise.all([this.chargeMessage(), this.chargeBandwidth(), this.chargeStorage()]);
+		await Promise.all([this.chargeMessage(), this.chargeStorage()]);
 		console.log(`[CHARGE] ended at: ${new Date()}`);
 	}
 
@@ -72,52 +72,6 @@ export class ChargeService {
 		}
 
 		console.log(`[CHARGE_MESSAGE] ended at: ${new Date()}`);
-	}
-
-	async chargeBandwidth() {
-		const fileDownloads = await this.prisma.fileDownload.groupBy({
-			by: ['userId'],
-			where: {
-				hasCharged: false,
-				deletedAt: {
-					isSet: false,
-				},
-			},
-			_sum: {
-				size: true,
-			},
-		});
-
-		for (const {
-			userId,
-			_sum: { size },
-		} of fileDownloads) {
-			const price = bandwidthToMoney(size);
-
-			await this.removeBalance({
-				amount: price,
-				style: 'bandwidth_charge',
-				userId,
-				description: `Charge for ${formatSize(size)} downloaded`,
-			});
-
-			await this.prisma.fileDownload.updateMany({
-				where: {
-					userId,
-					hasCharged: false,
-					deletedAt: {
-						isSet: false,
-					},
-				},
-				data: {
-					hasCharged: true,
-				},
-			});
-
-			console.log(`[CHARGE_BANDWIDTH] ${userId} - ${price}`);
-		}
-
-		console.log(`[CHARGE_BANDWIDTH] ended at: ${new Date()}`);
 	}
 
 	async chargeStorage() {

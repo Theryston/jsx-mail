@@ -1,5 +1,4 @@
 import {
-  BANDWIDTH_GB_PRICE,
   CURRENCY,
   MONEY_SCALE,
   STORAGE_GB_PRICE,
@@ -23,9 +22,4 @@ export function friendlyMoney(amount: number, showAllDecimals = false) {
 export function storageToMoney(bytes: number) {
   const sizeGb = bytes / (1024 * 1024 * 1024);
   return Math.round(sizeGb * STORAGE_GB_PRICE);
-}
-
-export function bandwidthToMoney(bytes: number) {
-  const sizeGb = bytes / (1024 * 1024 * 1024);
-  return Math.round(sizeGb * BANDWIDTH_GB_PRICE);
 }
