@@ -19,13 +19,13 @@ RUN ./aws/install
 RUN apt-get remove -y curl
 RUN apt-get remove -y unzip
 
-RUN --mount=type=secret,id=AWS_ACCESS_KEY_ID \
-		--mount=type=secret,id=AWS_SECRET_ACCESS_KEY \
-		--mount=type=secret,id=AWS_DEFAULT_REGION \
-		aws configure set aws_access_key_id $(cat /run/secrets/AWS_ACCESS_KEY_ID) && \
-		aws configure set aws_secret_access_key $(cat /run/secrets/AWS_SECRET_ACCESS_KEY) && \
-		aws configure set region $(cat /run/secrets/AWS_DEFAULT_REGION)
+# RUN --mount=type=secret,id=AWS_ACCESS_KEY_ID \
+# 		--mount=type=secret,id=AWS_SECRET_ACCESS_KEY \
+# 		--mount=type=secret,id=AWS_DEFAULT_REGION \
+# 		aws configure set aws_access_key_id $(cat /run/secrets/AWS_ACCESS_KEY_ID) && \
+# 		aws configure set aws_secret_access_key $(cat /run/secrets/AWS_SECRET_ACCESS_KEY) && \
+# 		aws configure set region $(cat /run/secrets/AWS_DEFAULT_REGION)
 
 EXPOSE 3331
 
-CMD ["yarn", "start"]
+CMD ["pnpm", "start"]

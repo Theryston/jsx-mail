@@ -15,12 +15,12 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@v4
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v1
+      - name: install pnpm
+        uses: pnpm/action-setup@v3
       - name: Deploy Edge API
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           cd apps/edge-api
-          bun install
-          bun run deploy
+          pnpm install
+          pnpm run deploy

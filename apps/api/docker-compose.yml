@@ -1,5 +1,4 @@
 version: '3.8'
-name: jsxmail-api
 
 services:
   # This config is for MongoDB v4

@@ -17,19 +17,19 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: install bun
-        uses: oven-sh/setup-bun@v1
+      - name: install pnpm
+        uses: pnpm/action-setup@v3
       - name: install dependencies
-        run: bun install
+        run: pnpm install
       - name: build
-        run: cd packages/core && bun run build && cd .. && cd jsx-mail && bun run build
+        run: cd packages/core && pnpm run build && cd .. && cd jsx-mail && pnpm run build
       - name: create and publish versions
         uses: changesets/action@v1
         with:
-          version: bun changeset version
+          version: pnpm changeset version
           commit: 'chore: update versions'
           title: 'chore: update versions'
-          publish: bun changeset publish
+          publish: pnpm changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

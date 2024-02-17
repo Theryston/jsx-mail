@@ -22,8 +22,6 @@ async function main() {
   }
 }
 
-try {
-  await main();
-} finally {
+main().finally(async () => {
   await prisma.$disconnect();
-}
+})
