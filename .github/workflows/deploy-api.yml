@@ -17,11 +17,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          path: app-pages
       - name: install pnpm
         uses: pnpm/action-setup@v3
-        with:
-          run_install: false
       - name: Install fly
         uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Prepare and Deploy API
@@ -32,7 +29,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
-          cp -rf app-pages/apps/api/. ./api
+          mkdir -p api
+          cp -rf apps/api/* api
           cd api
           echo "$ENV_FILE" > .env
           pnpm install
