@@ -20,6 +20,8 @@ jobs:
           path: app-pages
       - name: install pnpm
         uses: pnpm/action-setup@v3
+        with:
+          run_install: false
       - name: Install fly
         uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Prepare and Deploy API
