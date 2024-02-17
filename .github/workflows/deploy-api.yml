@@ -13,15 +13,11 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
-      - name: checkout code repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: install pnpm
-        uses: pnpm/action-setup@v3
-      - name: Install fly
-        uses: superfly/flyctl-actions/setup-flyctl@master
-      - name: Prepare and Deploy API
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Build docker image and deploy
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
