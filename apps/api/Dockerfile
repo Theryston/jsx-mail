@@ -1,4 +1,8 @@
-FROM node:18
+FROM node:20-slim
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
 RUN mkdir -p app
 WORKDIR /app
@@ -6,19 +10,20 @@ WORKDIR /app
 COPY . /app
 
 # Install dependencies
-RUN apt-get update
-RUN apt-get install -y curl
-RUN apt-get install -y unzip
+RUN apt update
+RUN apt install -y curl
+RUN apt install -y unzip
 
 # Install AWS
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 RUN unzip awscliv2.zip
 RUN ./aws/install
 
-# Remove dependencies
-RUN apt-get remove -y curl
-RUN apt-get remove -y unzip
+# # Remove dependencies
+RUN apt remove -y curl
+RUN apt remove -y unzip
 
+# Configure AWS
 RUN --mount=type=secret,id=AWS_ACCESS_KEY_ID \
 		--mount=type=secret,id=AWS_SECRET_ACCESS_KEY \
 		--mount=type=secret,id=AWS_DEFAULT_REGION \
