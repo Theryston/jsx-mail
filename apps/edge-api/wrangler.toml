@@ -1,0 +1,12 @@
+name = "jsxmail-edge"
+main = "src/index.ts"
+compatibility_date = "2022-10-10"
+
+[triggers]
+crons = ["0 0 * * *"]
+
+[vars]
+BASE_API_URL = "https://jsxmail-api.fly.dev"
+
+# [secrets]
+# JSXMAIL_API_TOKEN = "..."

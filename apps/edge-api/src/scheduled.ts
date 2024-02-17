@@ -1,22 +1,10 @@
-export interface Env {
-	BASE_API_URL: string;
-	JSXMAIL_API_TOKEN: string;
-}
-
-export default {
-	scheduled: handler,
-	fetch: () => {
-		return new Response('You can not access this endpoint', { status: 403 });
-	}
-};
-
 const WORKERS_TO_RUN = [
 	'add-free-balance',
 	'charge',
 	'storage-size'
 ]
 
-async function handler(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<Response> {
+export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
 	console.log('[WORKER] started at: ', new Date());
 	const promises = [];
 
@@ -32,6 +20,4 @@ async function handler(event: ScheduledEvent, env: Env, ctx: ExecutionContext): 
 
 	await Promise.all(promises);
 	console.log('[WORKER] ended at: ', new Date());
-
-	return new Response('OK');
 }

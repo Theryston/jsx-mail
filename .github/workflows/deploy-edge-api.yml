@@ -1,12 +1,12 @@
-name: Deploy Workers
+name: Deploy Edge API
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'apps/workers/**'
-      - '.github/workflows/deploy-workers.yml'
+      - 'apps/edge-api/**'
+      - '.github/workflows/deploy-edge-api.yml'
   workflow_dispatch:
 
 jobs:
@@ -17,10 +17,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install Bun
         uses: oven-sh/setup-bun@v1
-      - name: Deploy Workers
+      - name: Deploy Edge API
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          cd apps/workers
+          cd apps/edge-api
           bun install
           bun run deploy
