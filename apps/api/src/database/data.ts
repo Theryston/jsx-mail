@@ -1,13 +1,9 @@
 import { Prisma } from '@prisma/client';
-import * as bcrypt from 'bcryptjs';
-
-const salt = bcrypt.genSaltSync(10);
-const hashPassword = bcrypt.hashSync(process.env.ADMIN_PASSWORD, salt);
 
 const user: Prisma.UserCreateInput = {
   email: 'jsxmailorg@gmail.com',
   name: 'JSX Mail',
-  password: hashPassword,
+  password: process.env.HASHED_ADMIN_PASSWORD as string,
   isEmailVerified: true,
   accessLevel: 'other',
 };
