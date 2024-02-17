@@ -32,8 +32,6 @@ RUN --mount=type=secret,id=AWS_ACCESS_KEY_ID \
 		aws configure set region $(cat /run/secrets/AWS_DEFAULT_REGION)
 
 # Build
-RUN --mount=type=secret,id=ENV_FILE \
-		echo $(cat /run/secrets/ENV_FILE) > .env
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run prepare:all
 RUN pnpm build
