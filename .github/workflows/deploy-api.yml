@@ -29,15 +29,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
-          mkdir -p api
-          cp -rf apps/api/* api
-          cp -rf ./.npmrc api
-          cd api
-          echo "$ENV_FILE" > .env
-          pnpm install
-          pnpm run prepare:all
-          pnpm run build
           flyctl deploy --remote-only \
+          --build-arg ENV_FILE="$ENV_FILE" \
           --build-secret AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
           --build-secret AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
           --build-secret AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION

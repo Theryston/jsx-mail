@@ -13,13 +13,14 @@ COPY . /app
 RUN apt update
 RUN apt install -y curl
 RUN apt install -y unzip
+RUN pnpm install
 
 # Install AWS
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 RUN unzip awscliv2.zip
 RUN ./aws/install
 
-# # Remove dependencies
+# Remove not used dependencies
 RUN apt remove -y curl
 RUN apt remove -y unzip
 
@@ -30,6 +31,12 @@ RUN --mount=type=secret,id=AWS_ACCESS_KEY_ID \
 		aws configure set aws_access_key_id $(cat /run/secrets/AWS_ACCESS_KEY_ID) && \
 		aws configure set aws_secret_access_key $(cat /run/secrets/AWS_SECRET_ACCESS_KEY) && \
 		aws configure set region $(cat /run/secrets/AWS_DEFAULT_REGION)
+
+# Build
+RUN --mount=type=secret,id=ENV_FILE \
+		echo $(cat /run/secrets/ENV_FILE) > .env
+RUN pnpm run prepare:all
+RUN pnpm build
 
 EXPOSE 3331
 
