@@ -1,6 +1,7 @@
 {
   "name": "jsx-mail",
   "private": true,
+  "packageManager": "pnpm@7.5.0",
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
