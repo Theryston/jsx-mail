@@ -34,7 +34,7 @@ RUN --mount=type=secret,id=AWS_ACCESS_KEY_ID \
 # Build
 RUN --mount=type=secret,id=ENV_FILE \
 		echo $(cat /run/secrets/ENV_FILE) > .env
-RUN pnpm install
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run prepare:all
 RUN pnpm build
 
