@@ -12,7 +12,7 @@ const cliPath = path.resolve(distPath, 'cli');
 async function compileAndRun() {
   const load = loading('Compiling...').start();
 
-  const compileCommand = 'yarn build';
+  const compileCommand = 'pnpm build';
 
   const compile = exec(compileCommand, { cwd: basePath });
 
