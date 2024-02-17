@@ -14,10 +14,6 @@
     "prettier": "^3.1.0",
     "turbo": "latest"
   },
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
   "dependencies": {
     "@changesets/cli": "^2.27.1"
   }
