@@ -13,7 +13,6 @@ COPY . /app
 RUN apt update
 RUN apt install -y curl
 RUN apt install -y unzip
-RUN pnpm install
 
 # Install AWS
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -35,6 +34,7 @@ RUN --mount=type=secret,id=AWS_ACCESS_KEY_ID \
 # Build
 RUN --mount=type=secret,id=ENV_FILE \
 		echo $(cat /run/secrets/ENV_FILE) > .env
+RUN pnpm install
 RUN pnpm run prepare:all
 RUN pnpm build
 
