@@ -22,7 +22,7 @@ router.all("*", async (request: Request, env: Env) => {
 			cacheTtlByStatus: {
 				'200-299': ONE_HOUR,
 			},
-			cacheEverything: true,
+			// cacheEverything: true,
 		}
 	});
 
