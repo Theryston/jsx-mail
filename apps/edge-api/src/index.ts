@@ -2,11 +2,13 @@ import { OpenAPIRouter } from "@cloudflare/itty-router-openapi";
 import { EdgeExample } from "endpoints/EdgeExample";
 import { scheduled } from "scheduled";
 
+const ONE_HOUR = 60 * 60 * 1000;
+
 export const router = OpenAPIRouter();
 
 router.get("/edge", EdgeExample);
 
-router.all("*", (request: Request, env: Env) => {
+router.all("*", async (request: Request, env: Env) => {
 	const url = new URL(request.url);
 	const path = url.pathname;
 	const searchParams = url.searchParams.toString();
@@ -15,10 +17,28 @@ router.all("*", (request: Request, env: Env) => {
 
 	console.log(`[PROXY] ${request.method} ${apiUrl}`);
 
-	return fetch(apiUrl, request)
+	const cacheObject = {
+		cacheTtl: ONE_HOUR,
+		cacheEverything: true,
+	}
+
+	const useCache = request.method === 'GET';
+
+	const newRequest = new Request(request, {
+		cf: useCache ? cacheObject : undefined
+	});
+
+	let response: any = await fetch(apiUrl, newRequest)
+	response = new Response(response.body, response)
+
+	if (useCache) {
+		response.headers.set("Cache-Control", `max-age=${ONE_HOUR}`);
+	}
+
+	return response
 });
 
 export default {
 	fetch: router.handle,
 	scheduled
-};
+} as ExportedHandler<Env>;
