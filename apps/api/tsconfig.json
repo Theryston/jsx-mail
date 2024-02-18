@@ -19,5 +19,5 @@
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true
   },
-  "exclude": ["src/database", "node_modules"]
+  "exclude": ["prisma/seed", "node_modules"]
 }
