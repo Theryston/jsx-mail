@@ -19,9 +19,7 @@ router.all("*", async (request: Request, env: Env) => {
 
 	const newRequest = new Request(request, {
 		cf: {
-			cacheTtlByStatus: {
-				'200-299': ONE_HOUR,
-			},
+			cacheTtl: ONE_HOUR,
 			cacheEverything: true,
 		}
 	});
