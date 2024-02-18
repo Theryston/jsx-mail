@@ -17,24 +17,17 @@ router.all("*", async (request: Request, env: Env) => {
 
 	console.log(`[PROXY] ${request.method} ${apiUrl}`);
 
-	const cacheObject = {
-		cacheTtl: ONE_HOUR,
-		cacheEverything: true,
-	}
-
-	// const useCache = request.method === 'GET';
-	const useCache = false;
-
 	const newRequest = new Request(request, {
-		cf: useCache ? cacheObject : undefined
+		cf: {
+			cacheTtl: ONE_HOUR,
+			cacheEverything: true,
+		}
 	});
 
 	let response: any = await fetch(apiUrl, newRequest)
 	response = new Response(response.body, response)
 
-	if (useCache) {
-		response.headers.set("Cache-Control", `max-age=${ONE_HOUR}`);
-	}
+	response.headers.set("Cache-Control", `max-age=${ONE_HOUR}`);
 
 	return response
 });
