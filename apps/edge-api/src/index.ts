@@ -22,7 +22,8 @@ router.all("*", async (request: Request, env: Env) => {
 		cacheEverything: true,
 	}
 
-	const useCache = request.method === 'GET';
+	// const useCache = request.method === 'GET';
+	const useCache = false;
 
 	const newRequest = new Request(request, {
 		cf: useCache ? cacheObject : undefined
