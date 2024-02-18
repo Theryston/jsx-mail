@@ -164,6 +164,9 @@ importers:
       '@nextui-org/react':
         specifier: ^2.2.9
         version: 2.2.9(@types/react@18.2.56)(framer-motion@11.0.5)(react-dom@18.2.0)(react@18.2.0)(tailwind-variants@0.2.0)(tailwindcss@3.4.1)
+      '@nextui-org/theme':
+        specifier: '*'
+        version: 2.1.17(tailwindcss@3.4.1)
       '@radix-ui/react-icons':
         specifier: ^1.3.0
         version: 1.3.0(react@18.2.0)

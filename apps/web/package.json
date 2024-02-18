@@ -31,6 +31,7 @@
     "react-dom": "^18.2.0",
     "react-toastify": "^10.0.4",
     "request-ip": "3.3.0",
+    "@nextui-org/theme": "^2.1.17",
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
