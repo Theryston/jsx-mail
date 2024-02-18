@@ -14,7 +14,7 @@ router.all("*", async (request: Request, env: Env, ctx: ExecutionContext) => {
 	const searchParams = url.searchParams.toString();
 
 	const cache = caches.default;
-	const cacheKey = new Request(url.toString(), request);
+	const cacheKey = new Request(url.toString() + searchParams + request.method + request.headers.get('Authorization'));
 
 	let response: any = await cache.match(cacheKey);
 
