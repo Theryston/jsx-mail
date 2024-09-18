@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
-      - name: checkout code repository
+      - name: checkout code all repository
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
