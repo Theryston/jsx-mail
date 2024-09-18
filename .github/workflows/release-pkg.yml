@@ -5,7 +5,7 @@ on:
       - main
     paths:
       - '.changeset/**'
-      - '.github/workflows/release.yml'
+      - '.github/workflows/release-pkg.yml'
   workflow_dispatch:
 
 jobs:
