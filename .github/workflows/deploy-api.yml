@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: build image
-        run: cd apps/api
-          docker build . -t jsxmail-api
-          docker rm -f jsxmail-api || true
+        run: cd apps/api &&
+          docker build . -t jsxmail-api &&
+          docker rm -f jsxmail-api || true &&
           docker run -d --name jsxmail-api -p 3331:3331 jsxmail-api
