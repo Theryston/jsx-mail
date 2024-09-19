@@ -45,7 +45,7 @@ export type StorageData = {
   path: string;
   hash: string;
   originalPath: string;
-  options: AllOptions
+  options: AllOptions;
 };
 
 type StorageType = {
@@ -71,7 +71,7 @@ type AllOptions = {
     data: { [key: string]: any },
   ) => void;
   ignoreCloud: boolean;
-  storage: 'JSX_MAIL_CLOUD' | 'S3';
+  storage: 'JSX_MAIL_CLOUD' | 'S3' | 'LOCAL';
   awsAccessKeyId: string;
   awsSecretAccessKey: string;
   awsRegion: string;
@@ -377,6 +377,13 @@ async function optimizeImage(
   return optimizedImagePath;
 }
 
+async function localImageUpload({ path, hash }: StorageData): Promise<string> {
+  const imageExt = path.split('.').pop();
+  const imageFileName = `${hash}.${imageExt}`;
+  const corePath = getBaseCorePath();
+  return `${joinPath(corePath, 'optimized-images', imageFileName)}`;
+}
+
 async function uploadImage(
   imagesToUpload: ImageInfo,
   onProcessChange: AllOptions['onProcessChange'],
@@ -384,9 +391,7 @@ async function uploadImage(
   ignoreCloud: boolean,
   options: AllOptions,
 ): Promise<string> {
-  if (ignoreCloud) {
-    return handleLocalImage(imagesToUpload);
-  }
+  if (ignoreCloud) return handleLocalImage(imagesToUpload);
 
   onProcessChange('uploading_image', {
     ...imagesToUpload,
@@ -396,6 +401,7 @@ async function uploadImage(
   const storageType: StorageType = {
     JSX_MAIL_CLOUD: uploadFile,
     S3: uploadImageToS3,
+    LOCAL: localImageUpload,
   };
 
   const uploader = storageType[options.storage];
@@ -429,7 +435,11 @@ function handleLocalImage(imagesToUpload: ImageInfo): string {
   return url;
 }
 
-async function uploadImageToS3({ path, hash, options }: StorageData): Promise<string> {
+async function uploadImageToS3({
+  path,
+  hash,
+  options,
+}: StorageData): Promise<string> {
   if (!options.awsAccessKeyId) {
     throw new CoreError('aws_access_key_id_not_found');
   }

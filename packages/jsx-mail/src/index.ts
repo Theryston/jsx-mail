@@ -14,7 +14,7 @@ type ProcessName =
 
 export type JsxMailConfig = {
   dir: string;
-  storage?: 'JSX_MAIL_CLOUD' | 'S3';
+  storage?: 'JSX_MAIL_CLOUD' | 'S3' | 'LOCAL';
   onProcessChange?: (
     // eslint-disable-next-line no-unused-vars
     processName: ProcessName,
