@@ -31,5 +31,8 @@
   },
   "core": {
     "title": "Core"
+  },
+  "zip": {
+    "title": "Zip your template"
   }
 }

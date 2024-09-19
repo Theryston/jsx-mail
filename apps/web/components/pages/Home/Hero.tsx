@@ -47,14 +47,9 @@ export function Hero() {
             </Link>
           </CTAButton>
           <CTAButton outline>
-            <a
-              className="block py-3"
-              href="https://github.com/Theryston/jsx-mail"
-              rel="noreferrer"
-              target="_blank"
-            >
-              GitHub
-            </a>
+            <Link className="block py-3" href="/cloud/app">
+              Cloud
+            </Link>
           </CTAButton>
         </div>
       </FadeIn>

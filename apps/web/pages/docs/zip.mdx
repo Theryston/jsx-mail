@@ -1,0 +1,23 @@
+# Zip your JSX Mail template
+
+This guide shows you how turn a template into a zip file for sharing or any thing else.
+
+Just open the terminal and type the following command:
+
+```sh copy
+yarn jsxm zip {{templateName}} --out="{{outPath}}" ...{{props}}
+```
+
+- **Template Name:** The first argument is the [name of the template](/docs/#template-name) you wish to render.
+- **Output Path:** The second argument is the path where the zip file should be saved. It should always ends with `.zip`.
+- **Props:** The third argument is a list of properties that should be passed to the `jsx-mail` package. If you don't want to pass any properties, just leave this argument empty.
+
+## Examples
+
+```sh copy
+yarn jsxm zip my-first --out="./my-first.zip"
+```
+
+```sh copy
+yarn jsxm zip my-first --out="./my-first.zip" --name="Theryston"
+```
