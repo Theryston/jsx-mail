@@ -9,25 +9,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  DeployAPI:
-    timeout-minutes: 15
-    runs-on: ubuntu-latest
+  build:
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v3
-      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: build image
+        run: docker build . -t jsxmail-api
 
-      - name: Build docker image and deploy
-        env:
-          ENV_FILE: ${{ secrets.ENV_FILE }}
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-        run: |
-          cd apps/api
-          echo "$ENV_FILE" > .env
-          flyctl deploy --remote-only \
-          --build-secret AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-          --build-secret AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-          --build-secret AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: delete container if exists
+        run: docker rm -f jsxmail-api || true
+      - name: run container
+        run: docker run -d --name jsxmail-api -p 3331:3331 jsxmail-api

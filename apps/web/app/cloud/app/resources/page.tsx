@@ -13,18 +13,20 @@ export default function Page() {
       </p>
       <div className="mt-6">
         <SectionsList>
-          <SectionItem
-            title="Domains"
-            description="Here is a list of all your domains. You can use them to create a sender for your emails"
-          >
-            <DomainPage />
-          </SectionItem>
-          <SectionItem
-            title="Senders"
-            description="Here is a list of all your senders. You can use them to send emails"
-          >
-            <SendersPage />
-          </SectionItem>
+          <div className="flex gap-6">
+            <SectionItem
+              title="Domains"
+              description="Here is a list of all your domains. You can use them to create a sender for your emails"
+            >
+              <DomainPage />
+            </SectionItem>
+            <SectionItem
+              title="Senders"
+              description="Here is a list of all your senders. You can use them to send emails"
+            >
+              <SendersPage />
+            </SectionItem>
+          </div>
           <SectionItem
             title="Files"
             description="Here is a list of all your files. These files are automatically uploaded by JSX Mail when you import them and use them in your email templates"

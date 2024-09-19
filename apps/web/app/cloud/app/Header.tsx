@@ -14,16 +14,13 @@ import {
 } from '@nextui-org/react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useCloudAppContext } from './context';
-import axios from '@/app/utils/axios';
-import { toast } from 'react-toastify';
 import Link from 'next/link';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user } = useCloudAppContext();
-  const router = useRouter();
 
   const items = [
     {
@@ -38,29 +35,7 @@ export default function Header() {
       label: 'Resources',
       href: '/cloud/app/resources',
     },
-    {
-      label: 'Sign out',
-      onClick: () => {
-        logout();
-      },
-    },
   ];
-
-  const logout = useCallback(async () => {
-    const toastId = toast.loading('Logging out...');
-
-    try {
-      await axios.delete('/session');
-      toast.success('Logged out successfully');
-      document.cookie = 'token=; path=/; max-age=0;';
-      document.cookie = 'sessionId=; path=/; max-age=0;';
-      window.location.href = '/cloud/sign-in';
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      toast.dismiss(toastId);
-    }
-  }, [router]);
 
   return (
     <Navbar
@@ -103,26 +78,13 @@ export default function Header() {
             </DropdownItem>
             {
               items.map((item) => (
-                <DropdownItem
-                  key={item.label}
-                  color={item.label === 'Sign out' ? 'danger' : 'default'}
-                >
-                  {item.onClick ? (
-                    <Link
-                      href="#"
-                      onClick={item.onClick}
-                      className="w-full text-small block"
-                    >
-                      {item.label}
-                    </Link>
-                  ) : (
-                    <Link
-                      href={item.href as string}
-                      className="w-full text-white text-small block"
-                    >
-                      {item.label}
-                    </Link>
-                  )}
+                <DropdownItem key={item.label} color="default">
+                  <Link
+                    href={item.href as string}
+                    className="w-full text-white text-small block"
+                  >
+                    {item.label}
+                  </Link>
                 </DropdownItem>
               )) as any
             }

@@ -1,10 +1,7 @@
 import { OpenAPIRouter } from "@cloudflare/itty-router-openapi";
-import { EdgeExample } from "endpoints/EdgeExample";
 import { scheduled } from "scheduled";
 
 export const router = OpenAPIRouter();
-
-router.get("/edge", EdgeExample);
 
 router.all("*", (request: Request, env: Env) => {
 	const url = new URL(request.url);

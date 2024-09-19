@@ -11,11 +11,10 @@ export class S3ClientService {
 
   constructor() {
     this.client = new S3Client({
-      region: process.env.S3_REGION,
-      endpoint: process.env.S3_ENDPOINT,
+      region: process.env.AWS_REGION,
       credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY_ID,
-        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       },
     });
   }
@@ -34,6 +33,7 @@ export class S3ClientService {
       Key: key,
       Body: body,
       ContentType: mimetype,
+      ACL: 'public-read',
     });
 
     await this.client.send(command);

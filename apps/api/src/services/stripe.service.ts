@@ -7,11 +7,7 @@ export class StripeService {
 
   constructor() {
     const stripeSecretKey = process.env.STRIPE_SECRET;
-    const stripeKey = process.env.STRIPE_KEY;
-
-    if (!stripeSecretKey || !stripeKey) {
-      throw new Error('Stripe secret key or stripeKey not found');
-    }
+    if (!stripeSecretKey) throw new Error('Stripe secret key not found');
 
     const stripe = new Stripe(stripeSecretKey, {
       typescript: true,

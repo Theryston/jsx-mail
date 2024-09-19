@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import moment from 'moment';
 import { PlusIcon } from '@radix-ui/react-icons';
 import CreationSessionModal from './CreationSessionModal';
+import { useRouter } from 'next/navigation';
 
 type Session = {
   id: string;
@@ -24,7 +25,7 @@ type Props = {
 };
 
 export default function ContentSessions({ sessions: initialSessions }: Props) {
-  const [sessions, setSessions] = useState(initialSessions);
+  const [sessions, setSessions] = useState<Session[]>([]);
   const {
     isOpen: isDeleteModalOpen,
     onOpen: onDeleteModalOpen,
@@ -37,14 +38,60 @@ export default function ContentSessions({ sessions: initialSessions }: Props) {
   } = useDisclosure();
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const router = useRouter();
+
+  const logout = useCallback(async () => {
+    const toastId = toast.loading('Logging out...');
+
+    try {
+      await axios.delete('/session');
+      toast.success('Logged out successfully');
+      document.cookie = 'token=; path=/; max-age=0;';
+      document.cookie = 'sessionId=; path=/; max-age=0;';
+      window.location.href = '/cloud/sign-in';
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      toast.dismiss(toastId);
+    }
+  }, [router]);
 
   const requestSessionDelete = useCallback(
     (id: string) => {
+      if (currentSessionId === id) {
+        logout();
+        return;
+      }
+
       setSelectedSession(sessions.find((session) => session.id === id) || null);
       onDeleteModalOpen();
     },
-    [sessions, onDeleteModalOpen],
+    [sessions, onDeleteModalOpen, currentSessionId, logout],
   );
+
+  useEffect(() => {
+    setSessions((prev) => {
+      const currentSession = prev.find(
+        (session) => session.id === currentSessionId,
+      );
+
+      let allSessions = [...prev];
+
+      if (currentSession) {
+        allSessions = allSessions.filter(
+          (session) => session.id !== currentSession.id,
+        );
+
+        allSessions = [currentSession, ...allSessions];
+      }
+
+      return allSessions;
+    });
+  }, [currentSessionId]);
+
+  useEffect(() => {
+    setSessions(initialSessions);
+  }, [initialSessions]);
 
   const fetchSessions = useCallback(async () => {
     try {
@@ -122,16 +169,16 @@ export default function ContentSessions({ sessions: initialSessions }: Props) {
                         )}
                       </div>
                       <div className="flex gap-3">
-                        {session.id !== currentSessionId && (
-                          <Button
-                            onClick={() => requestSessionDelete(session.id)}
-                            size="sm"
-                            color="danger"
-                            variant="flat"
-                          >
-                            Delete
-                          </Button>
-                        )}
+                        <Button
+                          onClick={() => requestSessionDelete(session.id)}
+                          size="sm"
+                          color="danger"
+                          variant="flat"
+                        >
+                          {session.id === currentSessionId
+                            ? 'Logout'
+                            : 'Delete'}
+                        </Button>
                       </div>
                     </div>
                   </CardBody>

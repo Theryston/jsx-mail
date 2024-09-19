@@ -6,7 +6,7 @@ compatibility_date = "2022-10-10"
 crons = ["0 0 * * *"]
 
 [vars]
-BASE_API_URL = "https://jsxmail-api.fly.dev"
+BASE_API_URL = "https://api.jsxmail.org"
 
 # [secrets]
 # JSXMAIL_API_TOKEN = "..."
