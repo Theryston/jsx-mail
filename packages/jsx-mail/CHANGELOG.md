@@ -1,5 +1,13 @@
 # jsx-mail
 
+## 2.2.5
+
+### Patch Changes
+
+- 0626a03: fixing removed package version
+- Updated dependencies [0626a03]
+  - @jsx-mail/core@2.1.4
+
 ## 2.2.4
 
 ### Patch Changes
