@@ -9,18 +9,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  BuildAndDeploy:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
       - name: build image
-        run: docker build . -t jsxmail-api
-
-  deploy:
-    runs-on: self-hosted
-    needs: build
-    steps:
-      - name: delete container if exists
-        run: docker rm -f jsxmail-api || true
-      - name: run container
-        run: docker run -d --name jsxmail-api -p 3331:3331 jsxmail-api
+        run: cd apps/api
+          docker build . -t jsxmail-api
+          docker rm -f jsxmail-api || true
+          docker run -d --name jsxmail-api -p 3331:3331 jsxmail-api
