@@ -5,7 +5,10 @@ import client from './client';
 import path from 'path';
 import { StorageData } from '../prepare';
 
-export async function uploadFile({ path: filePath, originalPath }: StorageData): Promise<string> {
+export async function uploadFile({
+  path: filePath,
+  originalPath,
+}: StorageData): Promise<string> {
   try {
     const file = readRawFile(filePath);
     const form = new formData();
@@ -18,15 +21,15 @@ export async function uploadFile({ path: filePath, originalPath }: StorageData):
       contentType: mimeType,
     });
 
-
     const response = await client.post('/file', form, {
       headers: form.getHeaders(),
     });
 
-    return response.data.url
+    return response.data.url;
   } catch (error: any) {
     throw new CoreError('upload_error', {
       error: error.response.data ? error.response.data : error.message,
+      isForbidden: error?.response?.status === 403,
     });
   }
 }

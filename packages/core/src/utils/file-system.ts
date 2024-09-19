@@ -44,7 +44,7 @@ export function getBuiltPath() {
 }
 
 export async function createFolder(pathDir: string) {
-  await fs.promises.mkdir(pathDir);
+  await fs.promises.mkdir(pathDir, { recursive: true });
 }
 
 export async function exists(pathExists: string) {
@@ -276,4 +276,11 @@ export function clearModuleFromCache(modulePath: string) {
 
   clearChildren(require.cache[resolvedPath]);
   delete require.cache[resolvedPath];
+}
+
+export function getImagesFolder(): string[] {
+  const coreBasePath = getBaseCorePath();
+  const imagesPath = joinPath(coreBasePath, 'optimized-images');
+  const files = fs.readdirSync(imagesPath);
+  return files;
 }

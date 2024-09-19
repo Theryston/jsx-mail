@@ -55,9 +55,12 @@ function onProcessChange(progressName: ProcessName, data: any) {
   }
 }
 
-export async function prepare(ignoreCloud?: boolean) {
+export async function prepare(
+  ignoreCloud?: boolean,
+  customConfig?: JsxMailConfig,
+) {
   const mailAppPath = getMailAppPath();
-  const config = getJsxMailConfig();
+  const config = customConfig || getJsxMailConfig();
 
   let awsEnvs;
   if (config.storage === 'S3') {

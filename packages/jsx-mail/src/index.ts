@@ -21,6 +21,7 @@ export type JsxMailConfig = {
     // eslint-disable-next-line no-unused-vars
     data: { [key: string]: any },
   ) => void;
+  baseImagePath?: string;
   defaultSender?: string;
   awsAccessKeyId?: string;
   awsSecretAccessKey?: string;

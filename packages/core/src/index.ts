@@ -6,6 +6,7 @@ import {
   getAllTemplates,
   getBuiltPath,
   getBaseCorePath,
+  getImagesFolder,
 } from './utils/file-system';
 import client from './cloud/client';
 import { getToken } from './cloud/get-token';
@@ -26,7 +27,8 @@ const core = {
   setToken,
   logout,
   WEBSITE_URL,
-  API_URL
+  API_URL,
+  getImagesFolder,
 };
 
 export type ImageInfo = {

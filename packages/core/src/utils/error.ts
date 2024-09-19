@@ -178,6 +178,10 @@ export const ERRORS: IError[] = [
     name: 'prop_flex_not_supported',
     message: 'Only one section div can be flex',
   },
+  {
+    name: 'base_image_path_not_found',
+    message: 'When you add the storage as LOCAL you must enter a baseImagePath',
+  },
 ];
 
 export default class CoreError implements IError {

@@ -34,6 +34,7 @@ import path from 'path';
 import { writeFileSync } from 'fs';
 import { uploadFile } from '../cloud/uploadFile';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { copyFile } from 'fs/promises';
 
 handleImagesImport();
 
@@ -72,6 +73,8 @@ type AllOptions = {
   ) => void;
   ignoreCloud: boolean;
   storage: 'JSX_MAIL_CLOUD' | 'S3' | 'LOCAL';
+  ignoreMovingImages: boolean;
+  baseImagePath: string;
   awsAccessKeyId: string;
   awsSecretAccessKey: string;
   awsRegion: string;
@@ -377,11 +380,25 @@ async function optimizeImage(
   return optimizedImagePath;
 }
 
-async function localImageUpload({ path, hash }: StorageData): Promise<string> {
+async function localImageUpload({
+  path,
+  hash,
+  options,
+}: StorageData): Promise<string> {
   const imageExt = path.split('.').pop();
   const imageFileName = `${hash}.${imageExt}`;
-  const corePath = getBaseCorePath();
-  return `${joinPath(corePath, 'optimized-images', imageFileName)}`;
+
+  if (!options.baseImagePath) throw new CoreError('base_image_path_not_found');
+
+  const newPath = joinPath(options.baseImagePath, imageFileName);
+
+  if (!options.ignoreMovingImages) {
+    const existsBaseImagePath = await exists(options.baseImagePath);
+    if (!existsBaseImagePath) await createFolder(options.baseImagePath);
+    await copyFile(path, newPath);
+  }
+
+  return newPath;
 }
 
 async function uploadImage(
@@ -569,9 +586,7 @@ function getComponent(
 
 function getOptions(options: Options | undefined): AllOptions {
   const newOptions: AllOptions = {
-    onProcessChange: () => {
-      return;
-    },
+    onProcessChange: () => {},
     ignoreCloud: false,
     storage: 'JSX_MAIL_CLOUD',
     awsAccessKeyId: '',
@@ -579,6 +594,8 @@ function getOptions(options: Options | undefined): AllOptions {
     awsRegion: '',
     awsBucket: '',
     awsFolder: '',
+    baseImagePath: '',
+    ignoreMovingImages: false,
     ...options,
   };
 
