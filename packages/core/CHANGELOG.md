@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.2.0
+
+### Minor Changes
+
+- 4f547d7: allow zip command and not required jsx mail cloud login
+
 ## 2.1.4
 
 ### Patch Changes
