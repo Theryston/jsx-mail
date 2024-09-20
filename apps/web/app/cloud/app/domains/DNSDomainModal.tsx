@@ -29,7 +29,7 @@ export default function DNSDomainModal({
   if (!domain) return null;
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="full">
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl">
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">
           <h1 className="text-xl font-bold">Domain DNS Records</h1>

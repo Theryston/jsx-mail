@@ -13,6 +13,11 @@ export class ListSendersService {
         deletedAt: {
           isSet: false,
         },
+        domain: {
+          deletedAt: {
+            isSet: false,
+          },
+        },
       },
       select: senderSelect,
     });
