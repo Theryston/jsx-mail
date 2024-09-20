@@ -79,6 +79,32 @@ export class ListDomainsService {
       }
 
       if (isVerified) {
+        const allDomains = await this.prisma.domain.findMany({
+          select: { name: true },
+          where: {
+            status: 'verified',
+            deletedAt: {
+              isSet: false,
+            },
+          },
+        });
+
+        await mgmtClient.communicationServices.beginCreateOrUpdate(
+          process.env.AZURE_RESOURCE_GROUP_NAME as string,
+          process.env.AZURE_EMAIL_SERVICE_NAME as string,
+          {
+            dataLocation: 'United States',
+            location: 'global',
+            linkedDomains: [
+              `/subscriptions/${process.env.AZURE_SUBSCRIPTION_ID}/resourceGroups/${process.env.AZURE_RESOURCE_GROUP_NAME}/providers/Microsoft.Communication/emailServices/${process.env.AZURE_EMAIL_SERVICE_NAME}/domains/${domain.name}`,
+              ...allDomains.map(
+                (d) =>
+                  `/subscriptions/${process.env.AZURE_SUBSCRIPTION_ID}/resourceGroups/${process.env.AZURE_RESOURCE_GROUP_NAME}/providers/Microsoft.Communication/emailServices/${process.env.AZURE_EMAIL_SERVICE_NAME}/domains/${d.name}`,
+              ),
+            ],
+          },
+        );
+
         await this.prisma.domain.update({
           where: {
             id: domain.id,
