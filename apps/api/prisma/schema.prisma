@@ -39,11 +39,12 @@ model User {
   id                String      @id @default(auto()) @map("_id") @db.ObjectId
   name              String
   email             String      @unique
+  phone             String?
+  birthdate         DateTime?
   gatewayId         String?     @map("gateway_id")
   isEmailVerified   Boolean     @map("is_email_verified") @default(false)
   accessLevel       AccessLevel @map("access_level") @default(self)
   password          String
-  phone             String?
   isPhoneVerified   Boolean     @map("is_phone_verified") @default(false)
   createdAt         DateTime    @map("created_at") @default(now())
   updatedAt         DateTime    @map("updated_at") @updatedAt

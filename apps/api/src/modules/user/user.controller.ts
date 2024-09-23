@@ -8,7 +8,6 @@ import {
   Req,
   Query,
   Headers,
-  UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserService } from './services/create-user.service';
 import {
@@ -39,6 +38,7 @@ import { CreateCheckoutService } from './services/create-checkout.service';
 import { StripeService } from 'src/services/stripe.service';
 import { HandleWebhookService } from './services/handle-webhook.service';
 import { GetInsightsService } from './services/get-insights.service';
+import { UpdateUserService } from './services/update-user.service';
 
 @Controller('user')
 export class UserController {
@@ -55,7 +55,17 @@ export class UserController {
     private readonly stripeService: StripeService,
     private readonly handleWebhookService: HandleWebhookService,
     private readonly getInsightsService: GetInsightsService,
+    private readonly updateUserService: UpdateUserService,
   ) {}
+
+  @Put()
+  @Permissions([PERMISSIONS.SELF_UPDATE.value])
+  updateUser(@Request() req) {
+    return this.updateUserService.execute({
+      ...req.body,
+      userId: req.user.id,
+    });
+  }
 
   @Post()
   createUser(@Body() data: CreateUserDto) {

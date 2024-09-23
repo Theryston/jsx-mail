@@ -121,5 +121,10 @@ export const PERMISSIONS: {
     title: 'Other Run Workers',
     value: 'other:run-workers',
     description: 'Can run workers',
-  }
+  },
+  SELF_UPDATE: {
+    title: 'Self Update',
+    value: 'self:update',
+    description: 'Can update itself',
+  },
 };

@@ -1,8 +1,11 @@
 import { TransactionStyle } from '@prisma/client';
 import {
+  IsDate,
   IsEmail,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
+  IsPhoneNumber,
   Length,
   Matches,
 } from 'class-validator';
@@ -87,4 +90,21 @@ export class ExchangeMoneyDto {
 
   @IsNotEmpty()
   currency: string;
+}
+
+export class UpdateUserDto {
+  @IsNotEmpty()
+  @Length(3, 100)
+  @Matches(/^[a-zA-Z]+(?:\s[a-zA-Z]+)+$/, {
+    message: 'Please enter a valid full name',
+  })
+  name: string;
+
+  @IsOptional()
+  @IsPhoneNumber()
+  phone?: string;
+
+  @IsOptional()
+  @IsDate()
+  birthdate?: Date;
 }

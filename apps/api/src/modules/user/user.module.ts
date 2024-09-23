@@ -19,6 +19,7 @@ import { HandleWebhookService } from './services/handle-webhook.service';
 import { ExchangeMoneyService } from './services/exchange-money.service';
 import { GetInsightsService } from './services/get-insights.service';
 import { SessionModule } from '../session/session.module';
+import { UpdateUserService } from './services/update-user.service';
 
 @Module({
   controllers: [UserController],
@@ -40,6 +41,7 @@ import { SessionModule } from '../session/session.module';
     HandleWebhookService,
     ExchangeMoneyService,
     GetInsightsService,
+    UpdateUserService,
   ],
   imports: [EmailModule, SessionModule],
 })
