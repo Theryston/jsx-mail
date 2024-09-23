@@ -2,6 +2,7 @@ import Header from './Header';
 import { CloudAppContextProvider } from './context';
 import { redirect } from 'next/navigation';
 import axios from '@/app/utils/axios';
+import Sidebar from './Sidebar';
 
 export default async function AppLayout({
   children,
@@ -18,7 +19,12 @@ export default async function AppLayout({
     return (
       <CloudAppContextProvider user={user}>
         <Header />
-        <div className="px-6 py-4">{children}</div>
+        <div className="px-12 py-12 w-full flex gap-12">
+          <div className="relative">
+            <Sidebar />
+          </div>
+          <div className="w-[calc(100%-23rem)]">{children}</div>
+        </div>
       </CloudAppContextProvider>
     );
   } catch (error: any) {

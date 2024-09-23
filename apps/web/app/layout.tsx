@@ -1,9 +1,13 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Space_Grotesk } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 import { Providers } from './providers';
+import clsx from 'clsx';
 
-const font = Space_Grotesk({ subsets: ['latin'] });
+const font = Poppins({
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  subsets: ['latin'],
+});
 
 export const metadata: Metadata = {
   title: 'JSX Mail',

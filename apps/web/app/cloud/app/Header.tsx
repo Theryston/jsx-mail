@@ -1,112 +1,38 @@
 'use client';
 
 import { titleCase } from '@/app/utils/title-case';
-import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  DropdownItem,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  Avatar,
-  User,
-} from '@nextui-org/react';
-import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { useCloudAppContext } from './context';
 import Link from 'next/link';
+import Logo from './Logo';
+import { EmojiHappy } from 'iconsax-react';
+import clsx from 'clsx';
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user } = useCloudAppContext();
-
-  const items = [
-    {
-      label: 'Account',
-      href: '/cloud/app/account',
-    },
-    {
-      label: 'Billing',
-      href: '/cloud/app/billing',
-    },
-    {
-      label: 'Resources',
-      href: '/cloud/app/resources',
-    },
-  ];
+  const sizeClassnames = 'h-16 w-full';
 
   return (
-    <Navbar
-      onMenuOpenChange={setIsMenuOpen}
-      isMenuOpen={isMenuOpen}
-      isBordered
-      isBlurred
-      shouldHideOnScroll
-      maxWidth="full"
-    >
-      <NavbarContent className="pr-3" justify="center">
-        <NavbarBrand>
-          <Logo />
-        </NavbarBrand>
-      </NavbarContent>
-      <NavbarContent as="div" justify="end">
-        <Dropdown placement="bottom-end">
-          <DropdownTrigger>
-            <div>
-              <Avatar
-                as="button"
-                className="flex sm:hidden"
-                name={titleCase(user.name)}
-                showFallback={false}
-              />
-              <User
-                name={titleCase(user.name)}
-                description={user.email}
-                as="button"
-                className="hidden sm:flex"
-              />
-            </div>
-          </DropdownTrigger>
-          <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem key="profile" className="h-14 gap-2 cursor-default">
-              <p className="font-semibold">
-                Balance: {user.balance.friendlyAmount}
-              </p>
-              <p className="font-semibold">{user.email}</p>
-            </DropdownItem>
-            {
-              items.map((item) => (
-                <DropdownItem key={item.label} color="default">
-                  <Link
-                    href={item.href as string}
-                    className="w-full text-white text-small block"
-                  >
-                    {item.label}
-                  </Link>
-                </DropdownItem>
-              )) as any
-            }
-          </DropdownMenu>
-        </Dropdown>
-      </NavbarContent>
-    </Navbar>
-  );
-}
-
-function Logo() {
-  const pathname = usePathname();
-  return (
-    <Link
-      href={pathname === '/cloud/app' ? '/' : '/cloud/app'}
-      aria-label="Go to the home page"
-      className="flex items-center"
-    >
-      <div className="flex items-center gap-2">
-        <Image width={40} height={31} src="/logo.svg" alt="JSX Mail Logo" />
-        <span>JSX Mail</span>
+    <div className={clsx(sizeClassnames, 'relative')}>
+      <div
+        className={clsx(
+          sizeClassnames,
+          'fixed flex justify-between items-center pl-10 border-b border-b-zinc-700 bg-black z-10',
+        )}
+      >
+        <Logo variant="full" />
+        <Link
+          className="h-full w-60 border-l border-l-zinc-700 flex justify-center items-center gap-3 hover:bg-zinc-900"
+          href="/cloud/app/account"
+        >
+          <EmojiHappy variant="Bold" size="1.75rem" />
+          <div className="flex flex-col justify-center items-start gap-1">
+            <p className="text-sm leading-3 text-white font-medium m-0">
+              {titleCase(user.name)}
+            </p>
+            <p className="text-xs leading-3 text-zinc-500 m-0">{user.email}</p>
+          </div>
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 }

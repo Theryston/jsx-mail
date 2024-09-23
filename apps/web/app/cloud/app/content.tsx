@@ -51,7 +51,7 @@ export default function HomePageContent({ insights }: Props) {
   }, [insights.MESSAGES_SENT_BY_DAY]);
 
   return (
-    <main>
+    <main className="w-full">
       <h1 className="text-3xl font-bold">
         Hello {titleCase(user.name).split(' ')[0]},
       </h1>
