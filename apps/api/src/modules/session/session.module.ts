@@ -13,5 +13,6 @@ import { ListSessionsService } from './services/list-sessions.service';
     CreateSessionService,
     ListSessionsService,
   ],
+  exports: [ListSessionsService],
 })
 export class SessionModule {}

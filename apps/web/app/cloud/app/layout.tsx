@@ -23,7 +23,9 @@ export default async function AppLayout({
           <div className="relative">
             <Sidebar />
           </div>
-          <div className="w-[calc(100%-23rem)]">{children}</div>
+          <div className="w-[calc(100%-23rem)] flex flex-col gap-6">
+            {children}
+          </div>
         </div>
       </CloudAppContextProvider>
     );
