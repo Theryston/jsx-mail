@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 
 const user: Prisma.UserCreateInput = {
   email: 'jsxmailorg@gmail.com',
-  name: 'JSX Mail',
+  name: 'jsx mail',
   password: process.env.HASHED_ADMIN_PASSWORD as string,
   isEmailVerified: true,
   accessLevel: 'other',
