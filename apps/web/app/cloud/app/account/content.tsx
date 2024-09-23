@@ -13,6 +13,7 @@ import Link from 'next/link';
 import axios from '@/app/utils/axios';
 import { toast } from 'react-toastify';
 import Sessions, { Session } from './Sessions';
+import { titleCase } from '@/app/utils/title-case';
 
 const userSchema = z.object({
   name: z.string().min(3).max(100),
@@ -90,21 +91,12 @@ export default function AccountContent({ sessions }: Props) {
           label="Name"
           size="sm"
           {...register('name')}
-          defaultValue={user?.name}
+          defaultValue={titleCase(user?.name)}
           classNames={{
             inputWrapper: 'bg-zinc-900 hover:bg-zinc-800',
           }}
           errorMessage={errors.name?.message}
           isInvalid={!!errors.name?.message}
-        />
-        <Input
-          label="Email"
-          size="sm"
-          defaultValue={user?.email}
-          disabled
-          classNames={{
-            inputWrapper: 'bg-zinc-900 hover:bg-zinc-800',
-          }}
         />
         <PhoneInput
           name="phone"
@@ -138,13 +130,24 @@ export default function AccountContent({ sessions }: Props) {
           value={realTimeBirthdate}
         />
         <Input
+          label="Email"
+          size="sm"
+          defaultValue={user?.email}
+          title="This field is not editable."
+          disabled
+          classNames={{
+            inputWrapper: 'bg-zinc-900 hover:bg-zinc-800 opacity-70',
+          }}
+        />
+        <Input
           label="Password"
           type="text"
           size="sm"
           value="********"
           disabled
+          title="This field is not editable."
           classNames={{
-            inputWrapper: 'bg-zinc-900 hover:bg-zinc-800',
+            inputWrapper: 'bg-zinc-900 hover:bg-zinc-800 opacity-70',
           }}
           description={
             <Link href="/cloud/password-recovery" className="text-xs">
