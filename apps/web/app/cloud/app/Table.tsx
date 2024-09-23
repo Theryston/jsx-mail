@@ -1,4 +1,5 @@
-import clsx from 'clsx';
+import { Tooltip } from '@nextui-org/react';
+import { isValidElement } from 'react';
 
 type Props = {
   columns: React.ReactNode[];
@@ -9,16 +10,16 @@ export default function Table({ columns, rows }: Props) {
   const gridStyle = {
     display: 'grid',
     gridTemplateColumns: `repeat(${columns.length}, 1fr)`,
-    gap: '0.5rem',
+    gap: '1.5rem',
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col gap-6">
       <div style={gridStyle} className="w-full">
         {columns.map((column, index) => (
           <div
             key={index}
-            className="font-semibold text-sm text-blue-300 h-12 flex items-center"
+            className="font-semibold text-sm text-blue-300 flex items-center"
           >
             {column}
           </div>
@@ -30,9 +31,13 @@ export default function Table({ columns, rows }: Props) {
           {row.map((cell, index) => (
             <div
               key={index}
-              className="h-12 font-normal text-xs overflow-hidden whitespace-nowrap text-ellipsis flex items-center"
+              className="font-normal text-xs overflow-hidden whitespace-nowrap text-ellipsis flex items-center"
             >
-              {cell}
+              {isValidElement(cell) ? (
+                cell
+              ) : (
+                <Tooltip content={cell}>{cell}</Tooltip>
+              )}
             </div>
           ))}
         </div>
