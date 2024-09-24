@@ -35,6 +35,7 @@ export const senderSelect: Prisma.SenderSelect = {
   email: true,
   domainId: true,
   userId: true,
+  createdAt: true,
 };
 
 export const messageSelect: Prisma.MessageSelect = {

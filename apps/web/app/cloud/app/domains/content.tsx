@@ -69,7 +69,7 @@ export default function Domains({
     <>
       <div className="flex w-full justify-between items-center">
         <h1 className="text-2xl">
-          <span className="font-bold">Your</span> billing & transactions
+          <span className="font-bold">Your</span> domains
         </h1>
         <Button
           size="sm"
