@@ -14,6 +14,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (!width || typeof window === 'undefined') return;
+
     if (width > 1000) {
       setShowContent(true);
     } else {
