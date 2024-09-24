@@ -182,7 +182,7 @@ export class UserController {
         },
         {
           title: 'Storage',
-          unit: 'GB',
+          unit: '1',
           unitName: 'GB',
           amount: 1,
           step: 1,
