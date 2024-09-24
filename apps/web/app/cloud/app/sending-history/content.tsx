@@ -48,19 +48,21 @@ export function SendingHistoryContent({
       <div>
         {!isLoading ? (
           <Table
-            columns={['ID', 'From', 'To', 'Sent at']}
+            columns={['ID', 'From', 'To', 'Subject', 'Sent at']}
             rows={messages.map((message) => [
               message.id,
               message.sender.email,
               message.to,
+              message.subject,
               new Date(message.sentAt).toLocaleString(),
             ])}
           />
         ) : (
           <div className="w-full flex items-center justify-center">
             <Table
-              columns={['ID', 'From', 'To', 'Sent at']}
+              columns={['ID', 'From', 'To', 'Subject', 'Sent at']}
               rows={Array.from({ length: 6 }).map((_, index) => [
+                <Skeleton className="rounded-xl h-10 w-full" key={index} />,
                 <Skeleton className="rounded-xl h-10 w-full" key={index} />,
                 <Skeleton className="rounded-xl h-10 w-full" key={index} />,
                 <Skeleton className="rounded-xl h-10 w-full" key={index} />,
