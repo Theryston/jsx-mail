@@ -145,6 +145,7 @@ export function Content({
           />
         </div>
       )}
+
       <DeleteForm
         confirmKey={selectedFile?.id ?? ''}
         id={selectedFile?.id ?? ''}

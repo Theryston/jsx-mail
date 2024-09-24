@@ -20,6 +20,7 @@ import { ExchangeMoneyService } from './services/exchange-money.service';
 import { GetInsightsService } from './services/get-insights.service';
 import { SessionModule } from '../session/session.module';
 import { UpdateUserService } from './services/update-user.service';
+import { ListMessagesService } from './services/list-messages.service';
 
 @Module({
   controllers: [UserController],
@@ -42,6 +43,7 @@ import { UpdateUserService } from './services/update-user.service';
     ExchangeMoneyService,
     GetInsightsService,
     UpdateUserService,
+    ListMessagesService,
   ],
   imports: [EmailModule, SessionModule],
 })

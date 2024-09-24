@@ -39,6 +39,7 @@ import { StripeService } from 'src/services/stripe.service';
 import { HandleWebhookService } from './services/handle-webhook.service';
 import { GetInsightsService } from './services/get-insights.service';
 import { UpdateUserService } from './services/update-user.service';
+import { ListMessagesService } from './services/list-messages.service';
 
 @Controller('user')
 export class UserController {
@@ -56,6 +57,7 @@ export class UserController {
     private readonly handleWebhookService: HandleWebhookService,
     private readonly getInsightsService: GetInsightsService,
     private readonly updateUserService: UpdateUserService,
+    private readonly listMessagesService: ListMessagesService,
   ) {}
 
   @Put()
@@ -119,6 +121,18 @@ export class UserController {
   @Permissions([PERMISSIONS.SELF_LIST_TRANSACTIONS.value])
   listFiles(@Req() req, @Query() data: any) {
     return this.listTransactionsService.execute(
+      {
+        take: Number(data.take) || 10,
+        page: Number(data.page) || 1,
+      },
+      req.user.id,
+    );
+  }
+
+  @Get('messages')
+  @Permissions([PERMISSIONS.SELF_LIST_MESSAGES.value])
+  listMessages(@Req() req, @Query() data: any) {
+    return this.listMessagesService.execute(
       {
         take: Number(data.take) || 10,
         page: Number(data.page) || 1,
