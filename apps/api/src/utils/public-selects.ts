@@ -16,6 +16,7 @@ export const domainSelect: Prisma.DomainSelect = {
   name: true,
   userId: true,
   status: true,
+  createdAt: true,
   dnsRecords: {
     select: {
       id: true,

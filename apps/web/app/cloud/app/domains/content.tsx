@@ -1,20 +1,16 @@
 'use client';
 
 import axios from '@/app/utils/axios';
-import { Button, Card, CardBody, Chip, useDisclosure } from '@nextui-org/react';
+import { Button, useDisclosure } from '@nextui-org/react';
 import { useCallback, useState } from 'react';
 import { toast } from 'react-toastify';
 import DNSDomainModal from './DNSDomainModal';
 import DeleteForm from '../DeleteForm';
 import { Domain } from './types';
 import CreationDomainModal from './CreationDomainModal';
-import { PlusIcon } from '@radix-ui/react-icons';
-
-const statusColors: Record<string, 'warning' | 'success' | 'danger'> = {
-  pending: 'warning',
-  verified: 'success',
-  failed: 'danger',
-};
+import { Add } from 'iconsax-react';
+import Table from '../Table';
+import moment from 'moment';
 
 export default function Domains({
   domains: initialDomains,
@@ -71,58 +67,49 @@ export default function Domains({
 
   return (
     <>
-      <ul className="flex flex-col gap-3">
-        {!domains.length && (
-          <li className="text-center text-gray-500">No domains found</li>
-        )}
-        {domains.map((domain) => (
-          <li key={domain.id}>
-            <Card shadow="none" isBlurred fullWidth>
-              <CardBody>
-                <div className="flex justify-between items-center gap-4 w-full flex-wrap">
-                  <div className="flex gap-2">
-                    <span>{domain.name}</span>
-                    <Chip
-                      color={statusColors[domain.status]}
-                      variant="flat"
-                      size="sm"
-                    >
-                      {domain.status}
-                    </Chip>
-                  </div>
-                  <div className="flex gap-3">
-                    <Button
-                      onClick={() => {
-                        setSelectedDomain(domain);
-                        onDNSModalOpen();
-                      }}
-                      size="sm"
-                      color={
-                        domain.status === 'pending' ? 'success' : 'primary'
-                      }
-                      variant="flat"
-                    >
-                      {domain.status === 'pending' ? 'Verify' : 'View DNS'}
-                    </Button>
-                    <Button
-                      onClick={() => requestDomainDelete(domain.id)}
-                      size="sm"
-                      color="danger"
-                      variant="flat"
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
-          </li>
-        ))}
-      </ul>
-      <Button className="max-w-max mt-4 ml-auto" onClick={onCreationModalOpen}>
-        <PlusIcon />
-        New domain
-      </Button>
+      <div className="flex w-full justify-between items-center">
+        <h1 className="text-2xl">
+          <span className="font-bold">Your</span> billing & transactions
+        </h1>
+        <Button
+          size="sm"
+          isIconOnly
+          color="primary"
+          onClick={onCreationModalOpen}
+        >
+          <Add />
+        </Button>
+      </div>
+      <Table
+        columns={['ID', 'Name', 'Status', 'Created at', <></>]}
+        rows={domains.map((domain) => [
+          domain.id,
+          domain.name,
+          domain.status,
+          moment(domain.createdAt).format('DD/MM/YYYY'),
+          <div className="flex gap-3">
+            <Button
+              onClick={() => {
+                setSelectedDomain(domain);
+                onDNSModalOpen();
+              }}
+              size="sm"
+              color={domain.status === 'pending' ? 'success' : 'primary'}
+              variant="flat"
+            >
+              {domain.status === 'pending' ? 'Verify' : 'View DNS'}
+            </Button>
+            <Button
+              onClick={() => requestDomainDelete(domain.id)}
+              size="sm"
+              color="danger"
+              variant="flat"
+            >
+              Delete
+            </Button>
+          </div>,
+        ])}
+      />
       <DNSDomainModal
         isOpen={isDNSModalOpen}
         onOpenChange={(value) => {
