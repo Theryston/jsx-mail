@@ -8,6 +8,7 @@ import {
   Send,
   DocumentSketch,
   MessageTick,
+  Document,
 } from 'iconsax-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -48,6 +49,12 @@ export default function Sidebar() {
       href: '/cloud/app/sending-history',
       icon: <MessageTick variant="Bold" size="1.5rem" />,
     },
+    {
+      label: 'Documentation',
+      href: '/docs',
+      icon: <Document variant="Bold" size="1.5rem" />,
+      isExternal: true,
+    },
   ];
 
   return (
@@ -69,6 +76,8 @@ export default function Sidebar() {
                 'text-primary font-bold': pathname === item.href,
               },
             )}
+            target={item.isExternal ? '_blank' : undefined}
+            rel={item.isExternal ? 'noopener noreferrer' : undefined}
           >
             {item.icon} {item.label}
           </Link>
