@@ -2,26 +2,16 @@
 
 import { useCallback, useState } from 'react';
 import { File } from './types';
-import {
-  Button,
-  Pagination,
-  Spinner,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-  useDisclosure,
-} from '@nextui-org/react';
-import Link from 'next/link';
+import { Button, Pagination, Skeleton, useDisclosure } from '@nextui-org/react';
 import axios from '@/app/utils/axios';
 import { PER_PAGE } from './constants';
 import DeleteForm from '../DeleteForm';
 import { toast } from 'react-toastify';
 import { formatSize } from '@/app/utils/format';
 import { UploadFileModal } from './UploadFileModal';
-import { PlusIcon } from '@radix-ui/react-icons';
+import { Add } from 'iconsax-react';
+import Table from '../Table';
+import moment from 'moment';
 
 export function Content({
   files: initialFiles,
@@ -78,43 +68,44 @@ export function Content({
 
   return (
     <>
-      <Table
-        aria-label="List of files"
-        className="overflow-x-auto shadow-2xl"
-        removeWrapper
-      >
-        <TableHeader>
-          <TableColumn>ID</TableColumn>
-          <TableColumn>URL</TableColumn>
-          <TableColumn>SIZE</TableColumn>
-          <TableColumn>NAME</TableColumn>
-          <TableColumn>MIME TYPE</TableColumn>
-          <TableColumn>ACTIONS</TableColumn>
-        </TableHeader>
-        <TableBody
-          isLoading={isLoading}
-          loadingContent={<Spinner />}
-          emptyContent="No file found"
+      <div className="flex w-full justify-between items-center">
+        <h1 className="text-2xl">
+          <span className="font-bold">Your</span> files
+        </h1>
+        <Button
+          size="sm"
+          isIconOnly
+          color="primary"
+          onClick={onUploadModalOpen}
         >
-          {files.map((file) => (
-            <TableRow key={file.id}>
-              <TableCell>{file.id}</TableCell>
-              <TableCell>
-                <Link
-                  href={file.url}
-                  className="text-blue-500 underline"
-                  target="_blank"
+          <Add />
+        </Button>
+      </div>
+
+      <div>
+        {!isLoading ? (
+          <Table
+            columns={['ID', 'Name', 'Size', 'Created at', <></>]}
+            rows={files.map((file) => [
+              file.id,
+              file.originalName,
+              formatSize(file.size),
+              moment(file.createdAt).format('DD/MM/YYYY'),
+              <div className="flex gap-3">
+                <Button
+                  size="sm"
+                  color="primary"
+                  variant="flat"
+                  onClick={() => {
+                    window.open(file.url, '_blank');
+                  }}
                 >
-                  {file.url}
-                </Link>
-              </TableCell>
-              <TableCell>{formatSize(file.size)}</TableCell>
-              <TableCell>{file.originalName}</TableCell>
-              <TableCell>{file.mimeType}</TableCell>
-              <TableCell>
+                  Download
+                </Button>
                 <Button
                   color="danger"
-                  variant="light"
+                  variant="flat"
+                  size="sm"
                   onPress={() => {
                     setSelectedFile(file);
                     onDeleteModalOpen();
@@ -122,28 +113,38 @@ export function Content({
                 >
                   Delete
                 </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Button className="max-w-max mt-4 ml-auto" onPress={onUploadModalOpen}>
-        <PlusIcon />
-        Upload File
-      </Button>
-      <div className="flex w-full justify-center mt-4">
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          page={page}
-          total={totalPages}
-          onChange={(nextPage) => {
-            setPage(nextPage);
-            fetchFiles(nextPage);
-          }}
-        />
+              </div>,
+            ])}
+          />
+        ) : (
+          <div className="w-full flex items-center justify-center">
+            <Table
+              columns={['ID', 'Name', 'Size', 'Created at', <></>]}
+              rows={Array.from({ length: 6 }).map((_, index) => [
+                <Skeleton className="rounded-xl h-10 w-full" key={index} />,
+                <Skeleton className="rounded-xl h-10 w-full" key={index} />,
+                <Skeleton className="rounded-xl h-10 w-full" key={index} />,
+                <Skeleton className="rounded-xl h-10 w-full" key={index} />,
+                <Skeleton className="rounded-xl h-10 w-full" key={index} />,
+              ])}
+            />
+          </div>
+        )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex gap-2 items-center">
+          <Pagination
+            size="sm"
+            page={page}
+            total={totalPages}
+            onChange={(nextPage) => {
+              setPage(nextPage);
+              fetchFiles(nextPage);
+            }}
+          />
+        </div>
+      )}
       <DeleteForm
         confirmKey={selectedFile?.id ?? ''}
         id={selectedFile?.id ?? ''}

@@ -140,6 +140,7 @@ export default function BillingContent({
           </div>
         )}
       </div>
+
       {totalPages > 1 && (
         <div className="flex gap-2 items-center">
           <Pagination

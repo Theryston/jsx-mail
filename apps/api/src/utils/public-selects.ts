@@ -9,6 +9,7 @@ export const fileSelect: Prisma.FileSelect = {
   url: true,
   key: true,
   hash: true,
+  createdAt: true,
 };
 
 export const domainSelect: Prisma.DomainSelect = {
