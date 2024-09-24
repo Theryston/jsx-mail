@@ -19,7 +19,7 @@ export default function Header() {
           'fixed flex justify-between items-center pl-10 border-b border-b-zinc-700 bg-black z-10',
         )}
       >
-        <Logo variant="full" />
+        <Logo variant="cloud" />
         <Link
           className="h-full w-60 border-l border-l-zinc-700 flex justify-center items-center gap-3 hover:bg-zinc-900"
           href="/cloud/app/account"

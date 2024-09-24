@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 type Props = {
-  variant?: 'normal' | 'full';
+  variant?: 'normal' | 'cloud';
 };
 
 export default function Logo({ variant = 'normal' }: Props) {
@@ -18,9 +18,9 @@ export default function Logo({ variant = 'normal' }: Props) {
       className="flex items-center"
     >
       <Image
-        width={variant === 'full' ? 155 : 40}
-        height={variant === 'full' ? 24 : 40}
-        src={variant === 'full' ? '/logo-full.svg' : '/logo.svg'}
+        width={155}
+        height={24}
+        src={variant === 'cloud' ? '/logo-cloud.svg' : '/logo.svg'}
         alt="JSX Mail Cloud"
         className="object-contain w-44"
       />

@@ -37,16 +37,13 @@ const config: DocsThemeConfig = {
     backToTop: true,
   },
   logo: (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-      }}
-    >
-      <Image width={40} height={31} src="/logo.svg" alt="JSX Mail Logo" />
-      <span>JSX Mail</span>
-    </div>
+    <Image
+      width={128}
+      height={24}
+      src="/logo.svg"
+      alt="JSX Mail Logo"
+      className="object-contain w-32"
+    />
   ),
   head: function Head() {
     return (
