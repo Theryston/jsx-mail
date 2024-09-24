@@ -67,6 +67,11 @@ export const PERMISSIONS: {
     value: 'self:list-files',
     description: 'Can list files for itself',
   },
+  SELF_LIST_MESSAGES: {
+    title: 'Self List Messages',
+    value: 'self:list-messages',
+    description: 'Can list messages for itself',
+  },
   SELF_CREATE_SENDER: {
     title: 'Self Create Sender',
     value: 'self:create-sender',
@@ -121,5 +126,10 @@ export const PERMISSIONS: {
     title: 'Other Run Workers',
     value: 'other:run-workers',
     description: 'Can run workers',
-  }
+  },
+  SELF_UPDATE: {
+    title: 'Self Update',
+    value: 'self:update',
+    description: 'Can update itself',
+  },
 };

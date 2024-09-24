@@ -20,11 +20,18 @@ export const CloudAppContextProvider = ({
   children,
   user: userProp,
 }: CloudAppContextProviderProps) => {
-  const [user, setUser] = useState<User>(userProp);
+  const [user, setUser] = useState<User>({
+    ...userProp,
+    birthdate: userProp.birthdate ? new Date(userProp.birthdate) : null,
+  });
 
   const fetchUser = useCallback(async () => {
     const { data } = await axios.get('/user/me');
-    setUser(data);
+
+    setUser({
+      ...data,
+      birthdate: data.birthdate ? new Date(data.birthdate) : null,
+    });
   }, []);
 
   return (

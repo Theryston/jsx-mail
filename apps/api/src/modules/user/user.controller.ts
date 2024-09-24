@@ -8,7 +8,6 @@ import {
   Req,
   Query,
   Headers,
-  UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserService } from './services/create-user.service';
 import {
@@ -39,6 +38,8 @@ import { CreateCheckoutService } from './services/create-checkout.service';
 import { StripeService } from 'src/services/stripe.service';
 import { HandleWebhookService } from './services/handle-webhook.service';
 import { GetInsightsService } from './services/get-insights.service';
+import { UpdateUserService } from './services/update-user.service';
+import { ListMessagesService } from './services/list-messages.service';
 
 @Controller('user')
 export class UserController {
@@ -55,7 +56,18 @@ export class UserController {
     private readonly stripeService: StripeService,
     private readonly handleWebhookService: HandleWebhookService,
     private readonly getInsightsService: GetInsightsService,
+    private readonly updateUserService: UpdateUserService,
+    private readonly listMessagesService: ListMessagesService,
   ) {}
+
+  @Put()
+  @Permissions([PERMISSIONS.SELF_UPDATE.value])
+  updateUser(@Request() req) {
+    return this.updateUserService.execute({
+      ...req.body,
+      userId: req.user.id,
+    });
+  }
 
   @Post()
   createUser(@Body() data: CreateUserDto) {
@@ -117,6 +129,18 @@ export class UserController {
     );
   }
 
+  @Get('messages')
+  @Permissions([PERMISSIONS.SELF_LIST_MESSAGES.value])
+  listMessages(@Req() req, @Query() data: any) {
+    return this.listMessagesService.execute(
+      {
+        take: Number(data.take) || 10,
+        page: Number(data.page) || 1,
+      },
+      req.user.id,
+    );
+  }
+
   @Post('checkout')
   @Permissions([PERMISSIONS.SELF_CREATE_CHECKOUT.value])
   createCheckout(@Request() req, @Body() data: CreateCheckoutDto) {
@@ -158,7 +182,7 @@ export class UserController {
         },
         {
           title: 'Storage',
-          unit: 'GB',
+          unit: '1',
           unitName: 'GB',
           amount: 1,
           step: 1,

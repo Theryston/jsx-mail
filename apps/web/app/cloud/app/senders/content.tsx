@@ -6,8 +6,10 @@ import { useCallback, useState } from 'react';
 import DeleteForm from '../DeleteForm';
 import axios from '@/app/utils/axios';
 import { toast } from 'react-toastify';
-import { PlusIcon } from '@radix-ui/react-icons';
+import { Add } from 'iconsax-react';
 import CreationSenderModal from './CreationSenderModal';
+import Table from '../Table';
+import moment from 'moment';
 
 export default function Content({
   senders: initialSenders,
@@ -61,34 +63,36 @@ export default function Content({
 
   return (
     <>
-      <ul className="flex flex-col gap-3">
-        {!senders.length && (
-          <li className="text-center text-gray-500">No senders found</li>
-        )}
-        {senders.map((sender) => (
-          <li key={sender.id}>
-            <Card shadow="none" isBlurred fullWidth>
-              <CardBody>
-                <div className="flex justify-between items-center gap-4 w-full flex-wrap">
-                  <span>{sender.email}</span>
-                  <Button
-                    onClick={() => requestSenderDelete(sender.id)}
-                    size="sm"
-                    color="danger"
-                    variant="flat"
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </CardBody>
-            </Card>
-          </li>
-        ))}
-      </ul>
-      <Button className="max-w-max mt-4 ml-auto" onClick={onCreationModalOpen}>
-        <PlusIcon />
-        New Sender
-      </Button>
+      <div className="flex w-full justify-between items-center">
+        <h1 className="text-2xl">
+          <span className="font-bold">Your</span> senders
+        </h1>
+        <Button
+          size="sm"
+          isIconOnly
+          color="primary"
+          onClick={onCreationModalOpen}
+        >
+          <Add />
+        </Button>
+      </div>
+      <Table
+        columns={['ID', 'Name', 'Email', 'Created at', <></>]}
+        rows={senders.map((sender) => [
+          sender.id,
+          sender.name,
+          sender.email,
+          moment(sender.createdAt).format('MMMM Do YYYY, h:mm:ss a'),
+          <Button
+            onClick={() => requestSenderDelete(sender.id)}
+            size="sm"
+            color="danger"
+            variant="flat"
+          >
+            Delete
+          </Button>,
+        ])}
+      />
       <CreationSenderModal
         isOpen={isCreationModalOpen}
         onOpenChange={onCreationModalOpenChange}

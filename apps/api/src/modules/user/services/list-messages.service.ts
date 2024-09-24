@@ -1,29 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import { friendlyMoney } from 'src/utils/format-money';
-import { transactionSelect } from 'src/utils/public-selects';
+import { messageSelect } from 'src/utils/public-selects';
 
-type ListTransactionsData = {
+type ListMessagesData = {
   take: number;
   page: number;
 };
 
 @Injectable()
-export class ListTransactionsService {
+export class ListMessagesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute({ take, page }: ListTransactionsData, userId: string) {
+  async execute({ take, page }: ListMessagesData, userId: string) {
     if (take > 100) take = 100;
     const skip = take * (page - 1);
 
-    let transactions = await this.prisma.transaction.findMany({
+    let messages = await this.prisma.message.findMany({
       where: {
         userId,
+        status: 'sent',
         deletedAt: {
           isSet: false,
         },
       },
-      select: transactionSelect,
+      select: {
+        ...messageSelect,
+        sender: {
+          select: {
+            email: true,
+          },
+        },
+      },
       skip,
       take,
       orderBy: {
@@ -31,14 +38,10 @@ export class ListTransactionsService {
       },
     });
 
-    transactions = transactions.map((transaction) => ({
-      ...transaction,
-      friendlyAmount: friendlyMoney(transaction.amount, true),
-    }));
-
-    const count = await this.prisma.transaction.count({
+    const count = await this.prisma.message.count({
       where: {
         userId,
+        status: 'sent',
         deletedAt: {
           isSet: false,
         },
@@ -46,7 +49,7 @@ export class ListTransactionsService {
     });
 
     return {
-      transactions,
+      messages,
       totalPages: Math.ceil(count / take),
       total: count,
       hasNext: skip + take < count,

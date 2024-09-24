@@ -1,17 +1,9 @@
 'use client';
 
 import {
-  Button,
-  Card,
-  CardBody,
   Pagination,
+  Skeleton,
   Spinner,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
   useDisclosure,
 } from '@nextui-org/react';
 import { Balance } from '../types';
@@ -22,6 +14,9 @@ import { toast } from 'react-toastify';
 import AddBalanceModal from './AddBalanceModal';
 import SectionsList from '../SectionsList';
 import SectionItem from '../SectionItem';
+import Card from '../Card';
+import { AddCircle } from 'iconsax-react';
+import Table from '../Table';
 
 type FullBalance = {
   CURRENT: Balance;
@@ -78,107 +73,194 @@ export default function BillingContent({
   }, []);
 
   return (
-    <main className="flex flex-col gap-6 mt-4">
-      <div className="flex justify-between items-center flex-wrap gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">Billing</h1>
-          <p className="text-gray-500">Manage your account balance</p>
-        </div>
-        <Button
-          color="primary"
-          onClick={onAddBalanceModalOpen}
-          className="w-full sm:w-auto"
-        >
-          Add balance
-        </Button>
+    <>
+      <h1 className="text-2xl">
+        <span className="font-bold">Your</span> billing & transactions
+      </h1>
+      <div className="grid grid-cols-4 gap-6">
+        <Card height="8rem">
+          <div className="w-full h-full flex flex-col justify-between">
+            <p className="text-xs font-medium">Your balance</p>
+            <p className="text-3xl font-bold text-primary">
+              {balance.CURRENT.friendlyAmount}
+            </p>
+          </div>
+        </Card>
+        <Card height="8rem">
+          <div className="w-full h-full flex flex-col justify-between">
+            <p className="text-xs font-medium">Balance added</p>
+            <p className="text-3xl font-bold text-primary">
+              {balance.MONTH_ADDED.friendlyAmount}
+            </p>
+          </div>
+        </Card>
+        <Card height="8rem">
+          <div className="w-full h-full flex flex-col justify-between">
+            <p className="text-xs font-medium">Balance charged</p>
+            <p className="text-3xl font-bold text-danger">
+              {balance.MONTH_CHARGED.friendlyAmount}
+            </p>
+          </div>
+        </Card>
+        <Card height="8rem">
+          <div
+            className="w-full h-full flex flex-col justify-center items-center text-primary cursor-pointer gap-1"
+            onClick={onAddBalanceModalOpen}
+          >
+            <AddCircle variant="Bold" size="3rem" />
+            <span className="text-xs font-medium text-zinc-400 leading-3">
+              Add Money
+            </span>
+          </div>
+        </Card>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <Card className="min-h-[200px]">
-          <CardBody className="flex flex-col justify-center items-center h-full w-full p-0">
-            <h2 className="text-2xl font-bold">
-              {balance.CURRENT.friendlyAmount}
-            </h2>
-            <p className="text-gray-500">Current balance</p>
-          </CardBody>
-        </Card>
-        <Card className="min-h-[200px]">
-          <CardBody className="flex flex-col justify-center items-center h-full w-full p-0">
-            <h2 className="text-2xl font-bold">
-              {balance.MONTH_ADDED.friendlyAmount}
-            </h2>
-            <p className="text-gray-500">Balance added this month</p>
-          </CardBody>
-        </Card>
-        <Card className="min-h-[200px]">
-          <CardBody className="flex flex-col justify-center items-center h-full w-full p-0">
-            <h2 className="text-2xl font-bold">
-              {balance.MONTH_CHARGED.friendlyFullAmount}
-            </h2>
-            <p className="text-gray-500">Balance charged this month</p>
-          </CardBody>
-        </Card>
-      </div>
-      <SectionsList>
-        <SectionItem
-          title="Transactions"
-          description="List of transactions in your account"
-        >
+      <div>
+        {!isLoading ? (
           <Table
-            aria-label="List of transactions"
-            className="overflow-x-auto shadow-2xl"
-            removeWrapper
-          >
-            <TableHeader>
-              <TableColumn>ID</TableColumn>
-              <TableColumn>Description</TableColumn>
-              <TableColumn>Amount</TableColumn>
-              <TableColumn>Date</TableColumn>
-            </TableHeader>
-            <TableBody
-              isLoading={isLoading}
-              loadingContent={<Spinner />}
-              emptyContent="No transaction found"
-            >
-              {transactions.map((transaction) => (
-                <TableRow key={transaction.id}>
-                  <TableCell>{transaction.id}</TableCell>
-                  <TableCell>{transaction.description}</TableCell>
-                  <TableCell
-                    className={
-                      transaction.amount < 0 ? 'text-red-500' : 'text-green-500'
-                    }
-                  >
-                    {transaction.friendlyAmount}
-                  </TableCell>
-                  <TableCell>
-                    {moment(transaction.createdAt).format(
-                      'DD/MM/YYYY HH:mm:ss',
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <div className="flex w-full justify-center mt-4">
-            <Pagination
-              isCompact
-              showControls
-              showShadow
-              page={page}
-              total={totalPages}
-              onChange={(nextPage) => {
-                setPage(nextPage);
-                fetchTransactions(nextPage);
-              }}
+            columns={['ID', 'Description', 'Amount', 'Created at']}
+            rows={transactions.map((transaction) => [
+              transaction.id,
+              transaction.description,
+              transaction.friendlyAmount,
+              moment(transaction.createdAt).format('DD/MM/YYYY'),
+            ])}
+          />
+        ) : (
+          <div className="w-full flex items-center justify-center">
+            <Table
+              columns={['ID', 'Description', 'Amount', 'Created at']}
+              rows={Array.from({ length: 6 }).map((_, index) => [
+                <Skeleton className="rounded-xl h-10 w-full" key={index} />,
+                <Skeleton className="rounded-xl h-10 w-full" key={index} />,
+                <Skeleton className="rounded-xl h-10 w-full" key={index} />,
+                <Skeleton className="rounded-xl h-10 w-full" key={index} />,
+              ])}
             />
           </div>
-        </SectionItem>
-      </SectionsList>
+        )}
+      </div>
+
+      {totalPages > 1 && (
+        <div className="flex gap-2 items-center">
+          <Pagination
+            size="sm"
+            page={page}
+            total={totalPages}
+            onChange={(nextPage) => {
+              setPage(nextPage);
+              fetchTransactions(nextPage);
+            }}
+          />
+        </div>
+      )}
+
       <AddBalanceModal
         isOpen={isAddBalanceModalOpen}
         onOpenChange={onAddBalanceModalOpenChange}
       />
-    </main>
+    </>
+    // <main className="flex flex-col gap-6 mt-4">
+    //   <div className="flex justify-between items-center flex-wrap gap-4">
+    //     <div>
+    //       <h1 className="text-3xl font-bold">Billing</h1>
+    //       <p className="text-gray-500">Manage your account balance</p>
+    //     </div>
+    //     <Button
+    //       color="primary"
+    //       onClick={onAddBalanceModalOpen}
+    //       className="w-full sm:w-auto"
+    //     >
+    //       Add balance
+    //     </Button>
+    //   </div>
+
+    //   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+    //     <Card className="min-h-[200px]">
+    //       <CardBody className="flex flex-col justify-center items-center h-full w-full p-0">
+    //         <h2 className="text-2xl font-bold">
+    //           {balance.CURRENT.friendlyAmount}
+    //         </h2>
+    //         <p className="text-gray-500">Current balance</p>
+    //       </CardBody>
+    //     </Card>
+    //     <Card className="min-h-[200px]">
+    //       <CardBody className="flex flex-col justify-center items-center h-full w-full p-0">
+    //         <h2 className="text-2xl font-bold">
+    //           {balance.MONTH_ADDED.friendlyAmount}
+    //         </h2>
+    //         <p className="text-gray-500">Balance added this month</p>
+    //       </CardBody>
+    //     </Card>
+    //     <Card className="min-h-[200px]">
+    //       <CardBody className="flex flex-col justify-center items-center h-full w-full p-0">
+    //         <h2 className="text-2xl font-bold">
+    //           {balance.MONTH_CHARGED.friendlyFullAmount}
+    //         </h2>
+    //         <p className="text-gray-500">Balance charged this month</p>
+    //       </CardBody>
+    //     </Card>
+    //   </div>
+    //   <SectionsList>
+    //     <SectionItem
+    //       title="Transactions"
+    //       description="List of transactions in your account"
+    //     >
+    //       <Table
+    //         aria-label="List of transactions"
+    //         className="overflow-x-auto shadow-2xl"
+    //         removeWrapper
+    //       >
+    //         <TableHeader>
+    //           <TableColumn>ID</TableColumn>
+    //           <TableColumn>Description</TableColumn>
+    //           <TableColumn>Amount</TableColumn>
+    //           <TableColumn>Date</TableColumn>
+    //         </TableHeader>
+    //         <TableBody
+    //           isLoading={isLoading}
+    //           loadingContent={<Spinner />}
+    //           emptyContent="No transaction found"
+    //         >
+    //           {transactions.map((transaction) => (
+    //             <TableRow key={transaction.id}>
+    //               <TableCell>{transaction.id}</TableCell>
+    //               <TableCell>{transaction.description}</TableCell>
+    //               <TableCell
+    //                 className={
+    //                   transaction.amount < 0 ? 'text-red-500' : 'text-green-500'
+    //                 }
+    //               >
+    //                 {transaction.friendlyAmount}
+    //               </TableCell>
+    //               <TableCell>
+    //                 {moment(transaction.createdAt).format(
+    //                   'DD/MM/YYYY HH:mm:ss',
+    //                 )}
+    //               </TableCell>
+    //             </TableRow>
+    //           ))}
+    //         </TableBody>
+    //       </Table>
+    //       <div className="flex w-full justify-center mt-4">
+    //         <Pagination
+    //           isCompact
+    //           showControls
+    //           showShadow
+    //           page={page}
+    //           total={totalPages}
+    //           onChange={(nextPage) => {
+    //             setPage(nextPage);
+    //             fetchTransactions(nextPage);
+    //           }}
+    //         />
+    //       </div>
+    //     </SectionItem>
+    //   </SectionsList>
+    //   <AddBalanceModal
+    //     isOpen={isAddBalanceModalOpen}
+    //     onOpenChange={onAddBalanceModalOpenChange}
+    //   />
+    // </main>
   );
 }

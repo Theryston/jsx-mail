@@ -9,6 +9,7 @@ export const fileSelect: Prisma.FileSelect = {
   url: true,
   key: true,
   hash: true,
+  createdAt: true,
 };
 
 export const domainSelect: Prisma.DomainSelect = {
@@ -16,6 +17,7 @@ export const domainSelect: Prisma.DomainSelect = {
   name: true,
   userId: true,
   status: true,
+  createdAt: true,
   dnsRecords: {
     select: {
       id: true,
@@ -34,15 +36,16 @@ export const senderSelect: Prisma.SenderSelect = {
   email: true,
   domainId: true,
   userId: true,
+  createdAt: true,
 };
 
 export const messageSelect: Prisma.MessageSelect = {
   id: true,
+  to: true,
   subject: true,
   senderId: true,
   status: true,
   userId: true,
-  to: true,
   sentAt: true,
 };
 

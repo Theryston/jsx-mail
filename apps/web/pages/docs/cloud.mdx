@@ -1,4 +1,5 @@
-import { Callout } from 'nextra/components'
+import { Callout } from 'nextra/components';
+import Pricing from '../../components/Pricing';
 
 # Cloud
 
@@ -12,7 +13,7 @@ You can access JSX Mail Cloud by [clicking here](/cloud/app)
 
 ## Pricing
 
-JSX Mail is usually up to 100x cheaper than other email sending services, plus you have a fully integrated experience with JSX Mail and incredible features. [See more about prices](/cloud/pricing)
+<Pricing />
 
 ## Platform Login
 
@@ -43,7 +44,11 @@ yarn jsxm login --token {{YOUR_TOKEN}}
 ```
 
 <Callout emoji="🌟">
-If you don't have a secure way to pass your token through the command line as shown above, you can just set the `__JSX_MAIL_TOKEN` environment variable (in an .env file for example) and run the `yarn jsxm login` command without passing the `--token {{YOUR_TOKE}}` that JSX Mail will automatically load the variable `__JSX_MAIL_TOKEN`
+  If you don't have a secure way to pass your token through the command line as
+  shown above, you can just set the `__JSX_MAIL_TOKEN` environment variable (in
+  an .env file for example) and run the `yarn jsxm login` command without
+  passing the `--token {{ YOUR_TOKE }}` that JSX Mail will automatically load
+  the variable `__JSX_MAIL_TOKEN`
 </Callout>
 
 ## Log out
@@ -67,7 +72,9 @@ JSX Mail Cloud currently supports image uploads, eliminating the need for extern
 You can send your emails directly using the JSX Mail, its so easy and cheaper to do, just [learn more](/docs/email)
 
 ## Upcoming Features: Fonts
+
 Stay tuned for the upcoming addition of font hosting in JSX Mail Cloud.
 
 ## Conclusion
+
 JSX Mail Cloud offers a user-friendly and efficient approach to managing your project's digital assets. Its integration with JSX Mail means you can focus on your project's development while JSX Mail Cloud handles the rest. Get started with just a command and experience the simplicity of JSX Mail Cloud.

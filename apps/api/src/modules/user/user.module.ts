@@ -18,6 +18,9 @@ import { StripeService } from 'src/services/stripe.service';
 import { HandleWebhookService } from './services/handle-webhook.service';
 import { ExchangeMoneyService } from './services/exchange-money.service';
 import { GetInsightsService } from './services/get-insights.service';
+import { SessionModule } from '../session/session.module';
+import { UpdateUserService } from './services/update-user.service';
+import { ListMessagesService } from './services/list-messages.service';
 
 @Module({
   controllers: [UserController],
@@ -39,7 +42,9 @@ import { GetInsightsService } from './services/get-insights.service';
     HandleWebhookService,
     ExchangeMoneyService,
     GetInsightsService,
+    UpdateUserService,
+    ListMessagesService,
   ],
-  imports: [EmailModule],
+  imports: [EmailModule, SessionModule],
 })
 export class UserModule {}
