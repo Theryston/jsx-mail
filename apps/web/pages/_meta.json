@@ -18,5 +18,11 @@
     "href": "/cloud/app",
     "type": "page",
     "display": "children"
+  },
+  "cloud_pricing": {
+    "title": "Pricing",
+    "href": "/docs/cloud#pricing",
+    "type": "page",
+    "display": "children"
   }
 }
