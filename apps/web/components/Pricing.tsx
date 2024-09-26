@@ -128,7 +128,7 @@ export default function Pricing() {
             </span>
           </li>
           <li className="flex justify-between items-center w-full">
-            <span>Other services</span>
+            <span>Other companies</span>
             <span className="text-gray-500">
               {(calculationResult.others / moneyScale).toLocaleString('en-US', {
                 style: 'currency',
