@@ -14,7 +14,6 @@ import {
 import { Line } from 'react-chartjs-2';
 import { useEffect, useState } from 'react';
 import Card from './Card';
-import { Spinner } from '@nextui-org/react';
 import useSWR from 'swr';
 import fetcher from '@/app/utils/fetcher';
 
@@ -57,81 +56,73 @@ export default function HomePageContent() {
 
   return (
     <>
-      {isLoading ? (
-        <div className="h-full flex justify-center items-center">
-          <Spinner />
-        </div>
-      ) : (
-        <>
-          <h1 className="text-2xl">
-            <span className="font-bold">Welcome,</span> {titleCase(user.name)}
-          </h1>
-          <div className="grid grid-cols-4 gap-6">
-            <Card height="8rem">
-              <div className="w-full h-full flex flex-col justify-between">
-                <p className="text-xs font-medium">Your balance</p>
-                <p className="text-3xl font-bold text-primary">
-                  {insights?.BALANCE}
-                </p>
-              </div>
-            </Card>
-            <Card height="8rem">
-              <div className="w-full h-full flex flex-col justify-between">
-                <p className="text-xs font-medium">Email sent this month</p>
-                <p className="text-3xl font-bold text-primary">
-                  {formatNumber(insights?.MESSAGES_SENT || 0)}
-                </p>
-              </div>
-            </Card>
-            <Card height="8rem">
-              <div className="w-full h-full flex flex-col justify-between">
-                <p className="text-xs font-medium">Current Storage</p>
-                <p className="text-3xl font-bold text-primary">
-                  {formatSize(insights?.STORAGE || 0)}
-                </p>
-              </div>
-            </Card>
-            <Card height="8rem">
-              <div className="w-full h-full flex flex-col justify-between">
-                <p className="text-xs font-medium">Sessions</p>
-                <p className="text-3xl font-bold text-primary">
-                  {formatNumber(insights?.SESSIONS || 0)}
-                </p>
-              </div>
-            </Card>
+      <h1 className="text-2xl">
+        <span className="font-bold">Welcome,</span> {titleCase(user.name)}
+      </h1>
+      <div className="grid grid-cols-4 gap-6">
+        <Card height="8rem" isLoading={isLoading}>
+          <div className="w-full h-full flex flex-col justify-between">
+            <p className="text-xs font-medium">Your balance</p>
+            <p className="text-3xl font-bold text-primary">
+              {insights?.BALANCE}
+            </p>
           </div>
-          <Card>
-            <div className="w-full h-full flex flex-col justify-between">
-              <p className="text-xs font-medium">Messages sent by day</p>
-              <div className="w-full md:h-[31vh] 2xl:h-[42vh]">
-                <Line
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                      y: {
-                        ticks: {
-                          stepSize: 1,
-                        },
-                      },
+        </Card>
+        <Card height="8rem" isLoading={isLoading}>
+          <div className="w-full h-full flex flex-col justify-between">
+            <p className="text-xs font-medium">Email sent this month</p>
+            <p className="text-3xl font-bold text-primary">
+              {formatNumber(insights?.MESSAGES_SENT || 0)}
+            </p>
+          </div>
+        </Card>
+        <Card height="8rem" isLoading={isLoading}>
+          <div className="w-full h-full flex flex-col justify-between">
+            <p className="text-xs font-medium">Current Storage</p>
+            <p className="text-3xl font-bold text-primary">
+              {formatSize(insights?.STORAGE || 0)}
+            </p>
+          </div>
+        </Card>
+        <Card height="8rem" isLoading={isLoading}>
+          <div className="w-full h-full flex flex-col justify-between">
+            <p className="text-xs font-medium">Sessions</p>
+            <p className="text-3xl font-bold text-primary">
+              {formatNumber(insights?.SESSIONS || 0)}
+            </p>
+          </div>
+        </Card>
+      </div>
+      <Card className="w-full md:h-[39vh] 2xl:h-[48vh]" isLoading={isLoading}>
+        <div className="w-full h-full flex flex-col justify-between">
+          <p className="text-xs font-medium">Messages sent by day</p>
+          <div className="w-full md:h-[31vh] 2xl:h-[42vh]">
+            <Line
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  y: {
+                    ticks: {
+                      stepSize: 1,
                     },
-                  }}
-                  data={{
-                    labels: messagesByDay.map((day) => day.sentDay),
-                    datasets: [
-                      {
-                        data: messagesByDay.map((day) => day.count),
-                        backgroundColor: 'rgb(59 130 246)',
-                        showLine: true,
-                      },
-                    ],
-                  }}
-                />
-              </div>
-            </div>
-          </Card>
-        </>
-      )}
+                  },
+                },
+              }}
+              data={{
+                labels: messagesByDay.map((day) => day.sentDay),
+                datasets: [
+                  {
+                    data: messagesByDay.map((day) => day.count),
+                    backgroundColor: 'rgb(59 130 246)',
+                    showLine: true,
+                  },
+                ],
+              }}
+            />
+          </div>
+        </div>
+      </Card>
     </>
   );
 }
