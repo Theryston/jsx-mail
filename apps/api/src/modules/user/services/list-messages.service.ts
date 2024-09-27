@@ -15,14 +15,15 @@ export class ListMessagesService {
     if (take > 100) take = 100;
     const skip = take * (page - 1);
 
-    let messages = await this.prisma.message.findMany({
-      where: {
-        userId,
-        status: 'sent',
-        deletedAt: {
-          isSet: false,
-        },
+    const where = {
+      userId,
+      deletedAt: {
+        isSet: false,
       },
+    };
+
+    let messages = await this.prisma.message.findMany({
+      where,
       select: {
         ...messageSelect,
         sender: {
@@ -38,21 +39,13 @@ export class ListMessagesService {
       },
     });
 
-    const count = await this.prisma.message.count({
-      where: {
-        userId,
-        status: 'sent',
-        deletedAt: {
-          isSet: false,
-        },
-      },
-    });
+    const count = await this.prisma.message.count({ where });
 
     return {
       messages,
-      totalPages: Math.ceil(count / take),
       total: count,
       hasNext: skip + take < count,
+      totalPages: Math.ceil(count / take),
     };
   }
 }

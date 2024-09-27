@@ -29,13 +29,14 @@ export default function SendingHistoryContent() {
       <div>
         <Table
           isLoading={isLoading}
-          columns={['ID', 'From', 'To', 'Subject', 'Sent at']}
+          columns={['ID', 'From', 'To', 'Subject', 'Status', 'Sent at']}
           rows={
             messagesPagination?.messages.map((message) => [
               message.id,
               message.sender.email,
               message.to,
               message.subject,
+              message.status,
               new Date(message.sentAt).toLocaleString(),
             ]) || []
           }
