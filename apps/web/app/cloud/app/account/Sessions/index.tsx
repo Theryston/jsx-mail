@@ -19,11 +19,7 @@ export type Session = {
   permissions: string[];
 };
 
-type Props = {
-  sessions: Session[];
-};
-
-export default function Sessions({ sessions: initialSessions }: Props) {
+export default function Sessions() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const {
     isOpen: isDeleteModalOpen,
@@ -38,6 +34,7 @@ export default function Sessions({ sessions: initialSessions }: Props) {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
 
   const logout = useCallback(async () => {
     const toastId = toast.loading('Logging out...');
@@ -88,17 +85,15 @@ export default function Sessions({ sessions: initialSessions }: Props) {
     });
   }, [currentSessionId]);
 
-  useEffect(() => {
-    setSessions(initialSessions);
-  }, [initialSessions]);
-
   const fetchSessions = useCallback(async () => {
     try {
+      setIsLoading(true);
       const response = await axios.get('/session');
-
       setSessions(response.data);
     } catch (error: any) {
       toast.error(error.message);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -123,9 +118,14 @@ export default function Sessions({ sessions: initialSessions }: Props) {
     setCurrentSessionId(sessionId || null);
   }, []);
 
+  useEffect(() => {
+    fetchSessions();
+  }, [fetchSessions]);
+
   return (
     <>
       <Table
+        isLoading={isLoading}
         columns={[
           'ID',
           'Permissions',
