@@ -2,7 +2,7 @@
 
 import axios from '@/app/utils/axios';
 import { Button, useDisclosure } from '@nextui-org/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'react-toastify';
 import DNSDomainModal from './DNSDomainModal';
 import DeleteForm from '../DeleteForm';
@@ -11,6 +11,8 @@ import CreationDomainModal from './CreationDomainModal';
 import { Add } from 'iconsax-react';
 import Table from '../Table';
 import moment from 'moment';
+import useSWR from 'swr';
+import fetcher from '@/app/utils/fetcher';
 
 export default function Domains() {
   const {
@@ -23,31 +25,21 @@ export default function Domains() {
     onOpen: onDeleteModalOpen,
     onOpenChange: onDeleteModalOpenChange,
   } = useDisclosure();
-  const [isLoading, setIsLoading] = useState(true);
-  const [domains, setDomains] = useState<Domain[]>([]);
   const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
   const {
     isOpen: isCreationModalOpen,
     onOpen: onCreationModalOpen,
     onOpenChange: onCreationModalOpenChange,
   } = useDisclosure();
-
-  const fetchDomains = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await axios.get('/domain');
-
-      setDomains(response.data);
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const {
+    data: domains,
+    mutate,
+    isLoading,
+  } = useSWR<Domain[]>('/domain', fetcher);
 
   const requestDomainDelete = useCallback(
     (id: string) => {
-      setSelectedDomain(domains.find((domain) => domain.id === id) || null);
+      setSelectedDomain(domains?.find((domain) => domain.id === id) || null);
       onDeleteModalOpen();
     },
     [domains, onDeleteModalOpen],
@@ -57,17 +49,13 @@ export default function Domains() {
     async (id: string) => {
       try {
         await axios.delete(`/domain/${id}`);
-        await fetchDomains();
+        await mutate();
       } catch (error: any) {
         toast.error(error.message);
       }
     },
-    [fetchDomains],
+    [mutate],
   );
-
-  useEffect(() => {
-    fetchDomains();
-  }, [fetchDomains]);
 
   return (
     <>
@@ -87,33 +75,35 @@ export default function Domains() {
       <Table
         isLoading={isLoading}
         columns={['ID', 'Name', 'Status', 'Created at', <></>]}
-        rows={domains.map((domain) => [
-          domain.id,
-          domain.name,
-          domain.status,
-          moment(domain.createdAt).format('DD/MM/YYYY'),
-          <div className="flex gap-3">
-            <Button
-              onClick={() => {
-                setSelectedDomain(domain);
-                onDNSModalOpen();
-              }}
-              size="sm"
-              color={domain.status === 'pending' ? 'success' : 'primary'}
-              variant="flat"
-            >
-              {domain.status === 'pending' ? 'Verify' : 'View DNS'}
-            </Button>
-            <Button
-              onClick={() => requestDomainDelete(domain.id)}
-              size="sm"
-              color="danger"
-              variant="flat"
-            >
-              Delete
-            </Button>
-          </div>,
-        ])}
+        rows={
+          domains?.map((domain) => [
+            domain.id,
+            domain.name,
+            domain.status,
+            moment(domain.createdAt).format('DD/MM/YYYY'),
+            <div className="flex gap-3">
+              <Button
+                onClick={() => {
+                  setSelectedDomain(domain);
+                  onDNSModalOpen();
+                }}
+                size="sm"
+                color={domain.status === 'pending' ? 'success' : 'primary'}
+                variant="flat"
+              >
+                {domain.status === 'pending' ? 'Verify' : 'View DNS'}
+              </Button>
+              <Button
+                onClick={() => requestDomainDelete(domain.id)}
+                size="sm"
+                color="danger"
+                variant="flat"
+              >
+                Delete
+              </Button>
+            </div>,
+          ]) || []
+        }
       />
       <DNSDomainModal
         isOpen={isDNSModalOpen}
@@ -133,7 +123,9 @@ export default function Domains() {
       <CreationDomainModal
         isOpen={isCreationModalOpen}
         onOpenChange={onCreationModalOpenChange}
-        fetchDomains={async () => fetchDomains()}
+        fetchDomains={async () => {
+          await mutate();
+        }}
       />
     </>
   );

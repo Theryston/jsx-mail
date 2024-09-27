@@ -1,8 +1,8 @@
 'use client';
 
-import { Button, Card, CardBody, useDisclosure } from '@nextui-org/react';
+import { Button, useDisclosure } from '@nextui-org/react';
 import { Sender } from './types';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import DeleteForm from '../DeleteForm';
 import axios from '@/app/utils/axios';
 import { toast } from 'react-toastify';
@@ -10,10 +10,10 @@ import { Add } from 'iconsax-react';
 import CreationSenderModal from './CreationSenderModal';
 import Table from '../Table';
 import moment from 'moment';
+import useSWR from 'swr';
+import fetcher from '@/app/utils/fetcher';
 
 export default function Content() {
-  const [senders, setSenders] = useState<Sender[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedSender, setSelectedSender] = useState<Sender | null>(null);
   const {
     isOpen: isDeleteModalOpen,
@@ -25,23 +25,15 @@ export default function Content() {
     onOpen: onCreationModalOpen,
     onOpenChange: onCreationModalOpenChange,
   } = useDisclosure();
-
-  const fetchSenders = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await axios.get('/sender');
-
-      setSenders(response.data);
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const {
+    data: senders,
+    mutate,
+    isLoading,
+  } = useSWR<Sender[]>('/sender', fetcher);
 
   const requestSenderDelete = useCallback(
     (id: string) => {
-      const sender = senders.find((sender) => sender.id === id) || null;
+      const sender = senders?.find((sender) => sender.id === id) || null;
 
       setSelectedSender(sender);
       onDeleteModalOpen();
@@ -53,17 +45,13 @@ export default function Content() {
     async (id: string) => {
       try {
         await axios.delete(`/sender/${id}`);
-        await fetchSenders();
+        await mutate();
       } catch (error: any) {
         toast.error(error.message);
       }
     },
-    [fetchSenders],
+    [mutate],
   );
-
-  useEffect(() => {
-    fetchSenders();
-  }, [fetchSenders]);
 
   return (
     <>
@@ -83,25 +71,29 @@ export default function Content() {
       <Table
         isLoading={isLoading}
         columns={['ID', 'Name', 'Email', 'Created at', <></>]}
-        rows={senders.map((sender) => [
-          sender.id,
-          sender.name,
-          sender.email,
-          moment(sender.createdAt).format('MMMM Do YYYY, h:mm:ss a'),
-          <Button
-            onClick={() => requestSenderDelete(sender.id)}
-            size="sm"
-            color="danger"
-            variant="flat"
-          >
-            Delete
-          </Button>,
-        ])}
+        rows={
+          senders?.map((sender) => [
+            sender.id,
+            sender.name,
+            sender.email,
+            moment(sender.createdAt).format('MMMM Do YYYY, h:mm:ss a'),
+            <Button
+              onClick={() => requestSenderDelete(sender.id)}
+              size="sm"
+              color="danger"
+              variant="flat"
+            >
+              Delete
+            </Button>,
+          ]) || []
+        }
       />
       <CreationSenderModal
         isOpen={isCreationModalOpen}
         onOpenChange={onCreationModalOpenChange}
-        fetchSenders={async () => fetchSenders()}
+        fetchSenders={async () => {
+          await mutate();
+        }}
       />
       <DeleteForm
         confirmKey={selectedSender?.email || ''}

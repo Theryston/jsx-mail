@@ -17,3 +17,7 @@ export type User = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type Pagination = {
+  totalPages: number;
+};

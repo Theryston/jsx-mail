@@ -12,11 +12,11 @@ import {
   LineElement,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Card from './Card';
 import { Spinner } from '@nextui-org/react';
-import axios from '@/app/utils/axios';
-import { toast } from 'react-toastify';
+import useSWR from 'swr';
+import fetcher from '@/app/utils/fetcher';
 
 ChartJS.register(
   CategoryScale,
@@ -40,22 +40,12 @@ type Insight = {
 };
 
 export default function HomePageContent() {
-  const [insights, setInsights] = useState<Insight | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const { user } = useCloudAppContext();
+  const { data: insights, isLoading } = useSWR<Insight>(
+    '/user/insights',
+    fetcher,
+  );
   const [messagesByDay, setMessagesByDay] = useState<MessagesSentByDay[]>([]);
-
-  const fetchInsights = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const { data } = await axios.get('/user/insights');
-      setInsights(data);
-    } catch (error) {
-      toast.error('Failed to fetch insights');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
     setMessagesByDay(
@@ -64,10 +54,6 @@ export default function HomePageContent() {
       ) || [],
     );
   }, [insights]);
-
-  useEffect(() => {
-    fetchInsights();
-  }, [fetchInsights]);
 
   return (
     <>

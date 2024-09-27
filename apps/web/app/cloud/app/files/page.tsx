@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { File } from './types';
-import { Button, Pagination, Skeleton, useDisclosure } from '@nextui-org/react';
+import { useCallback, useState } from 'react';
+import type { File } from './types';
+import type { Pagination as PaginationType } from '../types';
+import { Button, Pagination, useDisclosure } from '@nextui-org/react';
 import axios from '@/app/utils/axios';
 import { PER_PAGE } from './constants';
 import DeleteForm from '../DeleteForm';
@@ -12,10 +13,14 @@ import { UploadFileModal } from './UploadFileModal';
 import { Add } from 'iconsax-react';
 import Table from '../Table';
 import moment from 'moment';
+import useSWR from 'swr';
+import fetcher from '@/app/utils/fetcher';
+
+type FilesPagination = PaginationType & {
+  files: File[];
+};
 
 export default function Content() {
-  const [files, setFiles] = useState<File[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const {
     isOpen: isUploadModalOpen,
@@ -28,41 +33,23 @@ export default function Content() {
     onOpenChange: onDeleteModalOpenChange,
   } = useDisclosure();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [totalPages, setTotalPages] = useState(0);
-
-  const fetchFiles = useCallback(async (nextPage: number) => {
-    setIsLoading(true);
-
-    try {
-      const response = await axios.get('/file', {
-        params: {
-          page: nextPage,
-          take: PER_PAGE,
-        },
-      });
-
-      setFiles(response.data.files);
-      setTotalPages(response.data.totalPages);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const {
+    data: filesPagination,
+    mutate,
+    isLoading,
+  } = useSWR<FilesPagination>(`/file?page=${page}&take=${PER_PAGE}`, fetcher);
 
   const deleteFile = useCallback(
     async (id: string) => {
       try {
         await axios.delete(`/file/${id}`);
-        await fetchFiles(page);
+        await mutate();
       } catch (error: any) {
         toast.error(error.message);
       }
     },
-    [fetchFiles, page],
+    [mutate],
   );
-
-  useEffect(() => {
-    fetchFiles(1);
-  }, [fetchFiles]);
 
   return (
     <>
@@ -84,48 +71,47 @@ export default function Content() {
         <Table
           isLoading={isLoading}
           columns={['ID', 'Name', 'Size', 'Created at', <></>]}
-          rows={files.map((file) => [
-            file.id,
-            file.originalName,
-            formatSize(file.size),
-            moment(file.createdAt).format('DD/MM/YYYY'),
-            <div className="flex gap-3">
-              <Button
-                size="sm"
-                color="primary"
-                variant="flat"
-                onClick={() => {
-                  window.open(file.url, '_blank');
-                }}
-              >
-                Download
-              </Button>
-              <Button
-                color="danger"
-                variant="flat"
-                size="sm"
-                onPress={() => {
-                  setSelectedFile(file);
-                  onDeleteModalOpen();
-                }}
-              >
-                Delete
-              </Button>
-            </div>,
-          ])}
+          rows={
+            filesPagination?.files.map((file) => [
+              file.id,
+              file.originalName,
+              formatSize(file.size),
+              moment(file.createdAt).format('DD/MM/YYYY'),
+              <div className="flex gap-3">
+                <Button
+                  size="sm"
+                  color="primary"
+                  variant="flat"
+                  onClick={() => {
+                    window.open(file.url, '_blank');
+                  }}
+                >
+                  Download
+                </Button>
+                <Button
+                  color="danger"
+                  variant="flat"
+                  size="sm"
+                  onPress={() => {
+                    setSelectedFile(file);
+                    onDeleteModalOpen();
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>,
+            ]) || []
+          }
         />
       </div>
 
-      {totalPages > 1 && (
+      {(filesPagination?.totalPages || 0) > 1 && (
         <div className="flex gap-2 items-center">
           <Pagination
             size="sm"
             page={page}
-            total={totalPages}
-            onChange={(nextPage) => {
-              setPage(nextPage);
-              fetchFiles(nextPage);
-            }}
+            total={filesPagination?.totalPages || 0}
+            onChange={(nextPage) => setPage(nextPage)}
           />
         </div>
       )}
@@ -143,10 +129,7 @@ export default function Content() {
       <UploadFileModal
         isOpen={isUploadModalOpen}
         onOpenChange={onUploadModalOpenChange}
-        fetchFiles={async () => {
-          setPage(1);
-          await fetchFiles(page);
-        }}
+        fetchFiles={async () => setPage(1)}
       />
     </>
   );

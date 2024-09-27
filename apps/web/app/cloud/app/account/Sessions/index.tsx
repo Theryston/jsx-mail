@@ -9,7 +9,8 @@ import moment from 'moment';
 import CreationSessionModal from './CreationSessionModal';
 import { useRouter } from 'next/navigation';
 import Table from '../../Table';
-import { AddSquare } from 'iconsax-react';
+import fetcher from '@/app/utils/fetcher';
+import useSWR from 'swr';
 
 export type Session = {
   id: string;
@@ -20,7 +21,6 @@ export type Session = {
 };
 
 export default function Sessions() {
-  const [sessions, setSessions] = useState<Session[]>([]);
   const {
     isOpen: isDeleteModalOpen,
     onOpen: onDeleteModalOpen,
@@ -34,7 +34,11 @@ export default function Sessions() {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    data: sessions,
+    isLoading,
+    mutate,
+  } = useSWR<Session[]>('/session', fetcher);
 
   const logout = useCallback(async () => {
     const toastId = toast.loading('Logging out...');
@@ -59,54 +63,24 @@ export default function Sessions() {
         return;
       }
 
-      setSelectedSession(sessions.find((session) => session.id === id) || null);
+      setSelectedSession(
+        sessions?.find((session) => session.id === id) || null,
+      );
       onDeleteModalOpen();
     },
     [sessions, onDeleteModalOpen, currentSessionId, logout],
   );
 
-  useEffect(() => {
-    setSessions((prev) => {
-      const currentSession = prev.find(
-        (session) => session.id === currentSessionId,
-      );
-
-      let allSessions = [...prev];
-
-      if (currentSession) {
-        allSessions = allSessions.filter(
-          (session) => session.id !== currentSession.id,
-        );
-
-        allSessions = [currentSession, ...allSessions];
-      }
-
-      return allSessions;
-    });
-  }, [currentSessionId]);
-
-  const fetchSessions = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await axios.get('/session');
-      setSessions(response.data);
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
   const deleteSession = useCallback(
     async (id: string) => {
       try {
         await axios.delete(`/session?id=${id}`);
-        await fetchSessions();
+        await mutate();
       } catch (error: any) {
         toast.error(error.message);
       }
     },
-    [fetchSessions],
+    [mutate],
   );
 
   useEffect(() => {
@@ -117,10 +91,6 @@ export default function Sessions() {
 
     setCurrentSessionId(sessionId || null);
   }, []);
-
-  useEffect(() => {
-    fetchSessions();
-  }, [fetchSessions]);
 
   return (
     <>
@@ -142,24 +112,26 @@ export default function Sessions() {
             Create
           </Button>,
         ]}
-        rows={sessions.map((s) => [
-          s.id,
-          s.permissions.join(', '),
-          s.description,
-          moment(s.createdAt).format('DD/MM/YYYY HH:mm:ss'),
-          s.expiresAt
-            ? moment(s.expiresAt).format('DD/MM/YYYY HH:mm:ss')
-            : 'Never',
-          <Button
-            onClick={() => requestSessionDelete(s.id)}
-            size="sm"
-            color="danger"
-            variant="flat"
-            className="w-16"
-          >
-            {s.id === currentSessionId ? 'Logout' : 'Delete'}
-          </Button>,
-        ])}
+        rows={
+          sessions?.map((s) => [
+            s.id,
+            s.permissions.join(', '),
+            s.description,
+            moment(s.createdAt).format('DD/MM/YYYY HH:mm:ss'),
+            s.expiresAt
+              ? moment(s.expiresAt).format('DD/MM/YYYY HH:mm:ss')
+              : 'Never',
+            <Button
+              onClick={() => requestSessionDelete(s.id)}
+              size="sm"
+              color="danger"
+              variant="flat"
+              className="w-16"
+            >
+              {s.id === currentSessionId ? 'Logout' : 'Delete'}
+            </Button>,
+          ]) || []
+        }
       />
       <DeleteForm
         confirmKey={selectedSession?.id || ''}
@@ -171,7 +143,9 @@ export default function Sessions() {
       <CreationSessionModal
         isOpen={isCreationModalOpen}
         onOpenChange={onCreationModalOpenChange}
-        fetchSessions={fetchSessions}
+        fetchSessions={async () => {
+          await mutate();
+        }}
       />
     </>
   );

@@ -1,22 +1,15 @@
 'use client';
 
-import {
-  Pagination,
-  Skeleton,
-  Spinner,
-  useDisclosure,
-} from '@nextui-org/react';
-import { Balance } from '../types';
-import { useCallback, useEffect, useState } from 'react';
+import { Pagination, Spinner, useDisclosure } from '@nextui-org/react';
+import type { Balance, Pagination as PaginationType } from '../types';
+import { useState } from 'react';
 import moment from 'moment';
-import axios from '@/app/utils/axios';
-import { toast } from 'react-toastify';
 import AddBalanceModal from './AddBalanceModal';
-import SectionsList from '../SectionsList';
-import SectionItem from '../SectionItem';
 import Card from '../Card';
 import { AddCircle } from 'iconsax-react';
 import Table from '../Table';
+import useSWR from 'swr';
+import fetcher from '@/app/utils/fetcher';
 
 type FullBalance = {
   CURRENT: Balance;
@@ -32,56 +25,26 @@ type Transaction = {
   createdAt: string;
 };
 
+type TransactionsPagination = PaginationType & {
+  transactions: Transaction[];
+};
+
 export default function BillingContent() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [balance, setBalance] = useState<FullBalance | null>(null);
-  const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isTransactionsLoading, setIsTransactionsLoading] = useState(true);
+  const { data: balance, isLoading } = useSWR<FullBalance>(
+    '/user/balance',
+    fetcher,
+  );
   const [page, setPage] = useState(1);
+  const { data: transactionsPagination, isLoading: isTransactionsLoading } =
+    useSWR<TransactionsPagination>(
+      `/user/transactions?page=${page}&take=10`,
+      fetcher,
+    );
   const {
     isOpen: isAddBalanceModalOpen,
     onOpen: onAddBalanceModalOpen,
     onOpenChange: onAddBalanceModalOpenChange,
   } = useDisclosure();
-
-  const fetchTransactions = useCallback(async (nextPage: number) => {
-    setIsTransactionsLoading(true);
-    try {
-      const {
-        data: { transactions, totalPages: dbTotalPages },
-      } = await axios.get('/user/transactions', {
-        params: {
-          page: nextPage,
-          take: 10,
-        },
-      });
-
-      setTransactions(transactions);
-      setTotalPages(dbTotalPages);
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setIsTransactionsLoading(false);
-    }
-  }, []);
-
-  const fetchBalance = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const { data: dbBalance } = await axios.get('/user/balance');
-      setBalance(dbBalance);
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchTransactions(1);
-    fetchBalance();
-  }, [fetchTransactions, fetchBalance]);
 
   return (
     <>
@@ -136,23 +99,24 @@ export default function BillingContent() {
           <Table
             isLoading={isTransactionsLoading}
             columns={['ID', 'Description', 'Amount', 'Created at']}
-            rows={transactions.map((transaction) => [
-              transaction.id,
-              transaction.description,
-              transaction.friendlyAmount,
-              moment(transaction.createdAt).format('DD/MM/YYYY'),
-            ])}
+            rows={
+              transactionsPagination?.transactions.map((transaction) => [
+                transaction.id,
+                transaction.description,
+                transaction.friendlyAmount,
+                moment(transaction.createdAt).format('DD/MM/YYYY'),
+              ]) || []
+            }
           />
 
-          {totalPages > 1 && (
+          {(transactionsPagination?.totalPages || 0) > 1 && (
             <div className="flex gap-2 items-center">
               <Pagination
                 size="sm"
                 page={page}
-                total={totalPages}
+                total={transactionsPagination?.totalPages || 0}
                 onChange={(nextPage) => {
                   setPage(nextPage);
-                  fetchTransactions(nextPage);
                 }}
               />
             </div>
