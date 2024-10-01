@@ -68,6 +68,7 @@ export class SenderSendEmailService {
         domainId: sender.domainId,
         senderId: sender.id,
         userId,
+        createdDay: moment().format('YYYY-MM-DD'),
       },
       select: messageSelect,
     });

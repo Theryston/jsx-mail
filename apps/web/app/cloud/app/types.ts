@@ -26,4 +26,5 @@ export type Status = {
   value: string;
   label: string;
   description: string;
+  color: string;
 };

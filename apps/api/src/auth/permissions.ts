@@ -132,4 +132,9 @@ export const PERMISSIONS: {
     value: 'self:update',
     description: 'Can update itself',
   },
+  SELF_MESSAGES_INSIGHT: {
+    title: 'Self Messages Insight',
+    value: 'self:messages-insight',
+    description: 'Can get messages insights',
+  },
 };

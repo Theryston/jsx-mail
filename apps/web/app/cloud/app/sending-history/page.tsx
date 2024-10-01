@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { PER_PAGE } from './constants';
 import {
   Button,
+  Chip,
   Input,
   Pagination,
   Popover,
@@ -12,6 +13,7 @@ import {
   RangeCalendar,
   Select,
   SelectItem,
+  Tooltip,
 } from '@nextui-org/react';
 import Table from '../Table';
 import type { Message } from './types';
@@ -26,9 +28,39 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Sender } from '../senders/types';
+import Card from '../Card';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  Tooltip as TooltipChart,
+  PointElement,
+  LineElement,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  TooltipChart,
+);
 
 type MessagesPagination = PaginationType & {
   messages: Message[];
+};
+
+type MessageInsights = {
+  status: string;
+  days: number;
+  color: string;
+};
+
+type MessageInsightsResponse = {
+  DAYS: string[];
+  STATUSES: string[];
+  MESSAGES: MessageInsights[];
 };
 
 export default function SendingHistoryContent() {
@@ -55,17 +87,36 @@ export default function SendingHistoryContent() {
       : [],
   );
 
-  const searchParamsRequest = new URLSearchParams();
-  searchParamsRequest.set('page', page.toString());
-  searchParamsRequest.set('take', PER_PAGE.toString());
-  searchParamsRequest.set('startDate', startDate.format('YYYY-MM-DD'));
-  searchParamsRequest.set('endDate', endDate.format('YYYY-MM-DD'));
-  searchParamsRequest.set('statuses', JSON.stringify(statuses));
-  if (fromEmail) searchParamsRequest.set('fromEmail', fromEmail);
-  if (toEmail) searchParamsRequest.set('toEmail', toEmail);
+  const searchParamsGetMessages = new URLSearchParams();
+  searchParamsGetMessages.set('page', page.toString());
+  searchParamsGetMessages.set('take', PER_PAGE.toString());
+  searchParamsGetMessages.set('startDate', startDate.format('YYYY-MM-DD'));
+  searchParamsGetMessages.set('endDate', endDate.format('YYYY-MM-DD'));
+  searchParamsGetMessages.set('statuses', JSON.stringify(statuses));
+  if (fromEmail) searchParamsGetMessages.set('fromEmail', fromEmail);
+  if (toEmail) searchParamsGetMessages.set('toEmail', toEmail);
 
   const { data: messagesPagination, isLoading } = useSWR<MessagesPagination>(
-    `/user/messages?${searchParamsRequest.toString()}`,
+    `/user/messages?${searchParamsGetMessages.toString()}`,
+    fetcher,
+  );
+
+  const searchParamsMessagesInsights = new URLSearchParams();
+  searchParamsMessagesInsights.set('startDate', startDate.format('YYYY-MM-DD'));
+  searchParamsMessagesInsights.set('endDate', endDate.format('YYYY-MM-DD'));
+  if (fromEmail) searchParamsMessagesInsights.set('fromEmail', fromEmail);
+  if (toEmail) searchParamsMessagesInsights.set('toEmail', toEmail);
+  if (statuses.length > 0)
+    searchParamsMessagesInsights.set('statuses', JSON.stringify(statuses));
+
+  const { data: messagesInsights, isLoading: isLoadingInsights } =
+    useSWR<MessageInsightsResponse>(
+      `/user/messages/insights?${searchParamsMessagesInsights.toString()}`,
+      fetcher,
+    );
+
+  const { data: allStatuses } = useSWR<Status[]>(
+    '/user/messages/status',
     fetcher,
   );
 
@@ -113,22 +164,63 @@ export default function SendingHistoryContent() {
         />
       </div>
 
-      <div>
-        <Table
-          isLoading={isLoading}
-          columns={['ID', 'Sender', 'To', 'Subject', 'Status', 'Sent at']}
-          rows={
-            messagesPagination?.messages.map((message) => [
-              message.id,
-              message.sender.email,
-              message.to,
-              message.subject,
-              message.status,
-              moment(message.sentAt).format('DD MMM YY'),
-            ]) || []
-          }
+      <Card className="w-full h-[52vh]" isLoading={isLoadingInsights}>
+        <Line
+          width="100%"
+          options={{
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                ticks: {
+                  stepSize: 1,
+                },
+              },
+            },
+          }}
+          data={{
+            labels: messagesInsights?.DAYS || [],
+            datasets:
+              messagesInsights?.MESSAGES?.map((message) => ({
+                label: message.status,
+                data: message.days || [],
+                backgroundColor: message.color,
+                showLine: true,
+              })) || [],
+          }}
         />
-      </div>
+      </Card>
+
+      <Table
+        isLoading={isLoading}
+        columns={['ID', 'Sender', 'To', 'Subject', 'Status', 'Sent at']}
+        rows={
+          messagesPagination?.messages.map((message) => [
+            message.id,
+            message.sender.email,
+            message.to,
+            message.subject,
+            <Tooltip
+              content={
+                allStatuses?.find((s) => s.value === message.status)
+                  ?.description
+              }
+            >
+              <Chip
+                size="sm"
+                style={{
+                  backgroundColor: allStatuses?.find(
+                    (s) => s.value === message.status,
+                  )?.color,
+                }}
+              >
+                {allStatuses?.find((s) => s.value === message.status)?.label}
+              </Chip>
+            </Tooltip>,
+            moment(message.sentAt).format('DD MMM YY'),
+          ]) || []
+        }
+      />
 
       {(messagesPagination?.totalPages || 0) > 1 && (
         <div className="flex gap-2 items-center">

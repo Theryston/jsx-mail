@@ -17,6 +17,7 @@ import {
   CreateSecurityCodeDto,
   CreateUserDto,
   ListMessagesDto,
+  MessagesInsightsDto,
   ResetPasswordDto,
   UseSecurityCodeDto,
 } from './user.dto';
@@ -42,6 +43,8 @@ import { HandleWebhookService } from './services/handle-webhook.service';
 import { GetInsightsService } from './services/get-insights.service';
 import { UpdateUserService } from './services/update-user.service';
 import { ListMessagesService } from './services/list-messages.service';
+import { MessagesInsightsService } from './services/messages-insights.service';
+import { MESSAGES_STATUS } from '../../utils/constants';
 
 @Controller('user')
 export class UserController {
@@ -60,6 +63,7 @@ export class UserController {
     private readonly getInsightsService: GetInsightsService,
     private readonly updateUserService: UpdateUserService,
     private readonly listMessagesService: ListMessagesService,
+    private readonly messagesInsightsService: MessagesInsightsService,
   ) {}
 
   @Put()
@@ -140,45 +144,18 @@ export class UserController {
     return this.listMessagesService.execute(data, req.user.id);
   }
 
+  @Get('messages/insights')
+  @Permissions([PERMISSIONS.SELF_MESSAGES_INSIGHT.value])
+  getMessagesInsights(
+    @Req() req,
+    @Query(new ValidationPipe({ transform: true })) data: MessagesInsightsDto,
+  ) {
+    return this.messagesInsightsService.execute(data, req.user.id);
+  }
+
   @Get('messages/status')
   listStatusMessages(@Req() req) {
-    return [
-      {
-        value: 'queued',
-        label: 'Queued',
-        description: 'The message is waiting to be sent',
-      },
-      {
-        value: 'sent',
-        label: 'Sent',
-        description: 'Messages that have been sent',
-      },
-      {
-        value: 'bonce',
-        label: 'Bonce',
-        description: 'The message was marked as spam',
-      },
-      {
-        value: 'failed',
-        label: 'Failed',
-        description: 'There was an error sending the message',
-      },
-      {
-        value: 'delivered',
-        label: 'Delivered',
-        description: 'The message was delivered successfully',
-      },
-      {
-        value: 'opened',
-        label: 'Opened',
-        description: 'The recipient opened the message',
-      },
-      {
-        value: 'clicked',
-        label: 'Clicked',
-        description: 'The recipient clicked the link in the message',
-      },
-    ];
+    return MESSAGES_STATUS;
   }
 
   @Post('checkout')

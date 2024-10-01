@@ -16,7 +16,7 @@ export default function Header() {
       <div
         className={clsx(
           sizeClassnames,
-          'fixed flex justify-between items-center pl-10 border-b border-b-zinc-700 bg-black z-10',
+          'fixed flex justify-between items-center pl-10 border-b border-b-zinc-700 bg-black z-50',
         )}
       >
         <Logo variant="cloud" />

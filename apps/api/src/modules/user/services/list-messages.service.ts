@@ -2,48 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { messageSelect } from 'src/utils/public-selects';
 import { ListMessagesDto } from '../user.dto';
-import { Prisma } from '@prisma/client';
+import { getFilterWhereMessages } from '../utils';
 
 @Injectable()
 export class ListMessagesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(
-    {
+  async execute(params: ListMessagesDto, userId: string) {
+    const {
+      skip,
       take,
+      where,
       page,
       startDate,
       endDate,
       fromEmail,
       toEmail,
-      statuses: statusesParam,
-    }: ListMessagesDto,
-    userId: string,
-  ) {
-    let statuses: string[] = statusesParam ? JSON.parse(statusesParam) : [];
-
-    const skip = take * (page - 1);
-    let where: Prisma.MessageWhereInput = {
-      userId,
-      deletedAt: {
-        isSet: false,
-      },
-    };
-
-    if (endDate)
-      where.createdAt = { ...(where.createdAt as any), lte: endDate } as any;
-    if (startDate)
-      where.createdAt = { ...(where.createdAt as any), gte: startDate } as any;
-
-    if (fromEmail) where.sender = { ...where.sender, email: fromEmail } as any;
-    if (toEmail)
-      where.to = {
-        ...where.to,
-        equals: [...((where.to?.equals || []) as any), toEmail],
-      } as any;
-
-    if (statuses.length)
-      where.status = { ...(where.status as any), in: statuses as any } as any;
+      statuses,
+    } = getFilterWhereMessages(params, userId);
 
     let messages = await this.prisma.message.findMany({
       where,

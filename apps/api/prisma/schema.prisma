@@ -210,6 +210,7 @@ model Message {
   status            MessageStatus @default(queued)
   sentDay           String?       @map("sent_day")
   sentAt            DateTime?     @map("sent_at")
+  createdDay        String        @map("created_day")
   createdAt         DateTime      @map("created_at") @default(now())
   updatedAt         DateTime      @map("updated_at") @updatedAt
   deletedAt         DateTime?     @map("deleted_at")

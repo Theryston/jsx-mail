@@ -117,30 +117,17 @@ export class UpdateUserDto {
   birthdate?: Date;
 }
 
-export class ListMessagesDto {
-  @IsNotEmpty()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(1)
-  @Max(100)
-  take: number;
-
-  @IsNotEmpty()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(1)
-  page: number;
-
+export class MessagesInsightsDto {
   @IsOptional()
   @Type(() => Date)
   @IsDate()
-  @MaxDate(moment().toDate())
+  @MaxDate(new Date())
   endDate?: Date;
 
   @IsOptional()
   @Type(() => Date)
   @IsDate()
-  @MaxDate(moment().subtract(1, 'days').toDate())
+  @MaxDate(new Date())
   startDate?: Date;
 
   @IsOptional()
@@ -154,4 +141,19 @@ export class ListMessagesDto {
   @IsOptional()
   @IsString()
   statuses?: string;
+}
+
+export class ListMessagesDto extends MessagesInsightsDto {
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  @Max(100)
+  take: number;
+
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  page: number;
 }

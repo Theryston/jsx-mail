@@ -21,6 +21,7 @@ import { GetInsightsService } from './services/get-insights.service';
 import { SessionModule } from '../session/session.module';
 import { UpdateUserService } from './services/update-user.service';
 import { ListMessagesService } from './services/list-messages.service';
+import { MessagesInsightsService } from './services/messages-insights.service';
 
 @Module({
   controllers: [UserController],
@@ -44,6 +45,7 @@ import { ListMessagesService } from './services/list-messages.service';
     GetInsightsService,
     UpdateUserService,
     ListMessagesService,
+    MessagesInsightsService,
   ],
   imports: [EmailModule, SessionModule],
 })
