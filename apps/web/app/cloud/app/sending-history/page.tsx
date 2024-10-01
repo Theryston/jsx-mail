@@ -147,7 +147,7 @@ export default function SendingHistoryContent() {
 const filtersSchema = z.object({
   fromEmail: z.string().optional(),
   toEmail: z.string().optional(),
-  statuses: z.string().optional(),
+  statuses: z.any().optional(),
 });
 
 type Filters = z.infer<typeof filtersSchema>;
@@ -187,7 +187,11 @@ function AllFilters({
 
   const onSubmit = useCallback(
     (data: Filters) => {
-      const statusesParts = data.statuses?.split(',').filter((s) => s) || [];
+      const statusesParts =
+        typeof data.statuses === 'string'
+          ? data.statuses?.split(',').filter((s) => s) || []
+          : [];
+
       (data as any).statuses = statusesParts || [];
 
       if (data.fromEmail && !isEmail(data.fromEmail)) {
@@ -269,7 +273,7 @@ function AllFilters({
               selectionMode="multiple"
               defaultSelectedKeys={propsStatuses}
               isInvalid={!!errors.statuses}
-              description={errors.statuses?.message}
+              description={errors.statuses?.message as string}
               {...register('statuses')}
             >
               {(item) => (
