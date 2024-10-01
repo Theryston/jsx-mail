@@ -164,7 +164,7 @@ export default function SendingHistoryContent() {
         />
       </div>
 
-      <Card className="w-full h-[52vh]" isLoading={isLoadingInsights}>
+      <Card className="w-full" height="52vh" isLoading={isLoadingInsights}>
         <Line
           width="100%"
           options={{
