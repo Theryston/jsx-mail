@@ -12,16 +12,16 @@ export default function Table({
   columns,
   rows,
   isLoading,
-  mockCountOnLoading,
+  mockCountOnLoading = 10,
 }: Props) {
   const gridStyle = {
     display: 'grid',
     gridTemplateColumns: `repeat(${columns.length}, 1fr)`,
-    gap: '1.5rem',
+    gap: isLoading ? '0.75rem' : '1.5rem',
   };
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <div className="w-full flex flex-col" style={{ gap: gridStyle.gap }}>
       <div style={gridStyle} className="w-full">
         {columns.map((column, index) => (
           <div
@@ -34,14 +34,14 @@ export default function Table({
       </div>
 
       {isLoading &&
-        Array.from({ length: mockCountOnLoading || 5 }).map((_, index) => (
+        Array.from({ length: mockCountOnLoading }).map((_, index) => (
           <div key={index} style={gridStyle} className="w-full">
             {Array.from({ length: columns.length }).map((_, subIndex) => (
               <div
                 key={subIndex}
                 className="font-normal text-xs overflow-hidden whitespace-nowrap text-ellipsis flex items-center"
               >
-                <Skeleton className="rounded-xl h-10 w-full" />
+                <Skeleton className="h-8 w-full rounded-md" />
               </div>
             ))}
           </div>
