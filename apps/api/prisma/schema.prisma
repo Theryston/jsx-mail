@@ -29,6 +29,7 @@ enum TransactionStyle {
 enum MessageStatus {
   queued
   sent
+  bonce
   failed
   delivered
   opened

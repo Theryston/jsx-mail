@@ -1,14 +1,22 @@
 import { TransactionStyle } from '@prisma/client';
+import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsDate,
   IsEmail,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsPhoneNumber,
+  IsString,
   Length,
   Matches,
+  Max,
+  MaxDate,
+  Min,
+  MinDate,
 } from 'class-validator';
+import moment from 'moment';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -107,4 +115,43 @@ export class UpdateUserDto {
   @IsOptional()
   @IsDate()
   birthdate?: Date;
+}
+
+export class ListMessagesDto {
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  @Max(100)
+  take: number;
+
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  page: number;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @MaxDate(moment().toDate())
+  endDate?: Date;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @MaxDate(moment().subtract(1, 'days').toDate())
+  startDate?: Date;
+
+  @IsOptional()
+  @IsEmail()
+  fromEmail?: string;
+
+  @IsOptional()
+  @IsEmail()
+  toEmail?: string;
+
+  @IsOptional()
+  @IsString()
+  statuses?: string;
 }

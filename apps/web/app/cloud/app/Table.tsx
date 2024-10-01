@@ -64,6 +64,12 @@ export default function Table({
             ))}
           </div>
         ))}
+
+      {!isLoading && rows.length === 0 && (
+        <div className="w-full flex items-center justify-center">
+          <p className="text-xs font-normal text-zinc-500">No data</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
   Req,
   Query,
   Headers,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateUserService } from './services/create-user.service';
 import {
@@ -15,6 +16,7 @@ import {
   CreateCheckoutDto,
   CreateSecurityCodeDto,
   CreateUserDto,
+  ListMessagesDto,
   ResetPasswordDto,
   UseSecurityCodeDto,
 } from './user.dto';
@@ -131,14 +133,52 @@ export class UserController {
 
   @Get('messages')
   @Permissions([PERMISSIONS.SELF_LIST_MESSAGES.value])
-  listMessages(@Req() req, @Query() data: any) {
-    return this.listMessagesService.execute(
+  listMessages(
+    @Req() req,
+    @Query(new ValidationPipe({ transform: true })) data: ListMessagesDto,
+  ) {
+    return this.listMessagesService.execute(data, req.user.id);
+  }
+
+  @Get('messages/status')
+  listStatusMessages(@Req() req) {
+    return [
       {
-        take: Number(data.take) || 10,
-        page: Number(data.page) || 1,
+        value: 'queued',
+        label: 'Queued',
+        description: 'The message is waiting to be sent',
       },
-      req.user.id,
-    );
+      {
+        value: 'sent',
+        label: 'Sent',
+        description: 'Messages that have been sent',
+      },
+      {
+        value: 'bonce',
+        label: 'Bonce',
+        description: 'The message was marked as spam',
+      },
+      {
+        value: 'failed',
+        label: 'Failed',
+        description: 'There was an error sending the message',
+      },
+      {
+        value: 'delivered',
+        label: 'Delivered',
+        description: 'The message was delivered successfully',
+      },
+      {
+        value: 'opened',
+        label: 'Opened',
+        description: 'The recipient opened the message',
+      },
+      {
+        value: 'clicked',
+        label: 'Clicked',
+        description: 'The recipient clicked the link in the message',
+      },
+    ];
   }
 
   @Post('checkout')

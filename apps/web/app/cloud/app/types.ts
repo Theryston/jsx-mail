@@ -21,3 +21,9 @@ export type User = {
 export type Pagination = {
   totalPages: number;
 };
+
+export type Status = {
+  value: string;
+  label: string;
+  description: string;
+};
