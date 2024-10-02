@@ -20,8 +20,6 @@ export class SenderSendEmailService {
     { sender: senderEmail, html, subject, to }: SenderSendEmailDto,
     userId: string,
   ) {
-    const todayDay = moment().format('YYYY-MM-DD');
-
     let sender: Sender | null = null;
     if (senderEmail) {
       sender = await this.prisma.sender.findFirst({
@@ -81,18 +79,7 @@ export class SenderSendEmailService {
       html,
       subject,
       to,
-    });
-
-    message = await this.prisma.message.update({
-      where: {
-        id: message.id,
-      },
-      data: {
-        sentAt: new Date(),
-        sentDay: todayDay,
-        status: 'sent',
-      },
-      select: messageSelect,
+      messageId: message.id,
     });
 
     return message;

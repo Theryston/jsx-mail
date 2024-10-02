@@ -7,8 +7,14 @@ import { ListSendersService } from './services/list-senders.service';
 import { SenderSendEmailService } from './services/sender-send-email.service';
 import { GetBalanceService } from '../user/services/get-balance.service';
 import { SendEmailService } from '../email/services/send-email.service';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
+  imports: [
+    BullModule.registerQueue({
+      name: 'email',
+    }),
+  ],
   controllers: [SenderController],
   providers: [
     CreateSenderService,

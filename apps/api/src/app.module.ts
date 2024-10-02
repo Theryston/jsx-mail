@@ -11,9 +11,19 @@ import { GetBalanceService } from './modules/user/services/get-balance.service';
 import { SenderModule } from './modules/sender/sender.module';
 import { StripeService } from './services/stripe.service';
 import { WorkerModule } from './modules/worker/worker.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   imports: [
+    BullModule.forRoot({
+      connection: {
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+        username: process.env.REDIS_USERNAME,
+        password: process.env.REDIS_PASSWORD,
+        tls: process.env.REDIS_TLS === 'true' ? {} : undefined,
+      },
+    }),
     UserModule,
     EmailModule,
     SessionModule,
@@ -33,4 +43,4 @@ import { WorkerModule } from './modules/worker/worker.module';
     StripeService,
   ],
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,4 +1,10 @@
-import { IsArray, IsNotEmpty, Length } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class FromDto {
   @IsNotEmpty()
@@ -26,4 +32,8 @@ export class SendEmailDto {
   @IsNotEmpty({ each: true })
   @IsArray()
   to: string[];
+
+  @IsOptional()
+  @IsString()
+  messageId?: string;
 }

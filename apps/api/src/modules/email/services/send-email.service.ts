@@ -1,35 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { SendEmailDto } from '../email.dto';
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class SendEmailService {
-  async execute({ subject, html, from, to }: SendEmailDto) {
-    const clientSES = new SESClient({
-      region: process.env.AWS_REGION,
-      credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      },
-    });
+  constructor(@InjectQueue('email') private readonly sendEmailQueue: Queue) {}
 
-    const command = new SendEmailCommand({
-      Source: `"${from.name}" <${from.email}>`,
-      Destination: {
-        ToAddresses: to,
-      },
-      Message: {
-        Subject: {
-          Data: subject,
-        },
-        Body: {
-          Html: {
-            Data: html,
-          },
-        },
-      },
-    });
-
-    return await clientSES.send(command);
+  async execute(data: SendEmailDto) {
+    await this.sendEmailQueue.add('send-email', data, { attempts: 3 });
+    const newData = { ...data };
+    delete newData.html;
+    console.log(
+      `[SEND_EMAIL_SERVICE] added job to queue: ${JSON.stringify(newData)}`,
+    );
   }
 }
