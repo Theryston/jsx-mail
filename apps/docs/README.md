@@ -2,6 +2,12 @@
 
 ## TODO
 
+- [ ] change the support link to "FAQ"
+
+- [x] /introduction
+- [ ] /what-and-why
+- [ ] /FAQ
+
 **framework:**
 
 - [x] /framework/learning/getting-started
