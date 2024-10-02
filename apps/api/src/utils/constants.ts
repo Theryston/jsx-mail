@@ -24,7 +24,8 @@ export const MESSAGES_STATUS = [
   {
     value: 'bonce',
     label: 'Bonce',
-    description: 'The message was marked as spam',
+    description:
+      "A hard bounce that the recipient's mail server permanently rejected the email.",
     color: 'rgb(239 68 68)',
   },
   {
@@ -32,6 +33,31 @@ export const MESSAGES_STATUS = [
     label: 'Failed',
     description: 'There was an error sending the message',
     color: 'rgb(239 68 68)',
+  },
+  {
+    value: 'reject',
+    label: 'Reject',
+    description:
+      "JSX Mail Cloud accepted the email, but determined that it contained a virus and didn't attempt to deliver it to the recipient's mail server.",
+    color: 'rgb(239 68 68)',
+  },
+  {
+    value: 'complaint',
+    label: 'Complaint',
+    description:
+      "The email was successfully delivered to the recipient's mail server, but the recipient marked it as spam.",
+  },
+  {
+    value: 'delivery_delayed',
+    label: 'Delivery Delayed',
+    description:
+      "The email couldn't be delivered to the recipient's mail server because a temporary issue occurred. Delivery delays can occur, for example, when the recipient's inbox is full, or when the receiving email server experiences a transient issue.",
+  },
+  {
+    value: 'subscription',
+    label: 'Subscription',
+    description:
+      'he email was successfully delivered, but the recipient unsubscribed.',
   },
   {
     value: 'delivered',

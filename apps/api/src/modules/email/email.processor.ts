@@ -3,7 +3,6 @@ import { Job } from 'bullmq';
 import { SendEmailDto } from './email.dto';
 import { SendEmailCommand, SESClient } from '@aws-sdk/client-ses';
 import { PrismaService } from 'src/services/prisma.service';
-import moment from 'moment';
 
 @Processor('email')
 export class EmailProcessor extends WorkerHost {
@@ -65,9 +64,6 @@ export class EmailProcessor extends WorkerHost {
           id: messageId,
         },
         data: {
-          status: 'sent',
-          sentAt: new Date(),
-          sentDay: moment().format('YYYY-MM-DD'),
           externalId: response.MessageId,
         },
       });

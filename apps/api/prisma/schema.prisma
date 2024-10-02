@@ -31,7 +31,11 @@ enum MessageStatus {
   sent
   bonce
   failed
+  reject
+  complaint
   delivered
+  delivery_delay
+  subscription
   opened
   clicked
 }

@@ -3,6 +3,8 @@ import { SendEmailService } from './services/send-email.service';
 import { BullModule } from '@nestjs/bullmq';
 import { EmailProcessor } from './email.processor';
 import { PrismaService } from 'src/services/prisma.service';
+import { EmailController } from './email.controller';
+import { EmailWebhookService } from './services/email-webhook.service';
 
 @Module({
   imports: [
@@ -10,7 +12,8 @@ import { PrismaService } from 'src/services/prisma.service';
       name: 'email',
     }),
   ],
-  providers: [PrismaService, SendEmailService, EmailProcessor],
+  providers: [PrismaService, SendEmailService, EmailProcessor, EmailWebhookService],
   exports: [SendEmailService],
+  controllers: [EmailController],
 })
 export class EmailModule {}
