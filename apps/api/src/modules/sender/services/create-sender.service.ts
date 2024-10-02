@@ -2,8 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateSenderDto } from '../sender.dto';
 import { PrismaService } from 'src/services/prisma.service';
 import { senderSelect } from 'src/utils/public-selects';
-import { CommunicationServiceManagementClient } from '@azure/arm-communication';
-import azureCredential from '../../../config/azure-credential';
 
 @Injectable()
 export class CreateSenderService {
@@ -52,22 +50,6 @@ export class CreateSenderService {
         HttpStatus.CONFLICT,
       );
     }
-
-    const mgmtClient = new CommunicationServiceManagementClient(
-      azureCredential,
-      process.env.AZURE_SUBSCRIPTION_ID as string,
-    );
-
-    await mgmtClient.senderUsernames.createOrUpdate(
-      process.env.AZURE_RESOURCE_GROUP_NAME as string,
-      process.env.AZURE_EMAIL_SERVICE_NAME as string,
-      domain.name,
-      username,
-      {
-        username,
-        displayName: name,
-      },
-    );
 
     const sender = await this.prisma.sender.create({
       data: {

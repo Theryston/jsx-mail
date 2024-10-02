@@ -5,7 +5,7 @@ export const CURRENCY = 'USD';
 export const FREE_BALANCE = 1 * MONEY_SCALE; // $1.00
 export const MINIMUM_ADD_BALANCE = 1 * MONEY_SCALE; // $1.00
 export const STORAGE_GB_PRICE = 0.025 * MONEY_SCALE; // $0.025
-export const PRICE_PER_MESSAGE = 0.0005 * MONEY_SCALE; // $0.0005
+export const PRICE_PER_MESSAGE = 0.0002 * MONEY_SCALE; // $0.0002
 
 export const MESSAGES_STATUS = [
   {
@@ -17,7 +17,8 @@ export const MESSAGES_STATUS = [
   {
     value: 'sent',
     label: 'Sent',
-    description: 'The message was sent (not delivered yet just sent to the recipient)',
+    description:
+      'The message was sent (not delivered yet just sent to the recipient)',
     color: 'rgb(168 85 247)',
   },
   {

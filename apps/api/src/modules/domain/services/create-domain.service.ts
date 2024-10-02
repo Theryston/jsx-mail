@@ -1,12 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateDomainDto } from '../domain.dto';
+import { SESClient, VerifyDomainDkimCommand } from '@aws-sdk/client-ses';
 import { PrismaService } from 'src/services/prisma.service';
 import { domainSelect } from 'src/utils/public-selects';
-import {
-  CommunicationServiceManagementClient,
-  KnownDomainManagement,
-} from '@azure/arm-communication';
-import azureCredential from '../../../config/azure-credential';
 
 const domainRegex = /^(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
 
@@ -39,33 +35,26 @@ export class CreateDomainService {
       );
     }
 
-    const mgmtClient = new CommunicationServiceManagementClient(
-      azureCredential,
-      process.env.AZURE_SUBSCRIPTION_ID as string,
-    );
+    const client = new SESClient();
 
-    const domain = await mgmtClient.domains.beginCreateOrUpdateAndWait(
-      process.env.AZURE_RESOURCE_GROUP_NAME as string,
-      process.env.AZURE_EMAIL_SERVICE_NAME as string,
-      name,
-      {
-        location: 'global',
-        domainManagement: KnownDomainManagement.CustomerManaged,
-      },
-    );
+    const command = new VerifyDomainDkimCommand({
+      Domain: name,
+    });
 
-    if (!domain.verificationRecords) {
-      throw new HttpException(
-        'Domain verification failed',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    const sesResult = await client.send(command);
 
-    const DNSRecords = Object.keys(domain.verificationRecords).map(
-      (key) => domain.verificationRecords[key],
-    );
+    const dkimTokens = sesResult.DkimTokens;
 
-    const domainDb = await this.prisma.domain.create({
+    const DNSRecords = dkimTokens.map((token) => {
+      return {
+        name: `${token}._domainkey.${name}`,
+        value: `${token}.dkim.amazonses.com`,
+        type: 'CNAME',
+        ttl: 1800,
+      };
+    });
+
+    const domain = await this.prisma.domain.create({
       data: {
         name,
         userId,
@@ -74,22 +63,10 @@ export class CreateDomainService {
             data: DNSRecords,
           },
         },
-        senders: {
-          create: {
-            name: 'DoNotReply',
-            username: 'DoNotReply',
-            email: `DoNotReply@${name}`,
-            user: {
-              connect: {
-                id: userId,
-              },
-            },
-          },
-        },
       },
       select: domainSelect,
     });
 
-    return domainDb;
+    return domain;
   }
 }

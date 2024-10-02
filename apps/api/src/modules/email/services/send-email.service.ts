@@ -1,29 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { SendEmailDto } from '../email.dto';
-import { EmailClient } from '@azure/communication-email';
+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 
 @Injectable()
 export class SendEmailService {
   async execute({ subject, html, from, to }: SendEmailDto) {
-    const emailClient = new EmailClient(
-      process.env.AZURE_SERVICE_ENDPOINT as string,
-    );
-
-    const poller = await emailClient.beginSend({
-      senderAddress: from.email,
-      content: {
-        subject,
-        html,
-      },
-      recipients: {
-        to: to.map((t) => ({
-          address: t,
-        })),
+    const clientSES = new SESClient({
+      region: process.env.AWS_REGION,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       },
     });
 
-    if (!poller.getOperationState().isStarted) {
-      throw 'Poller was not started.';
-    }
+    const command = new SendEmailCommand({
+      Source: `"${from.name}" <${from.email}>`,
+      Destination: {
+        ToAddresses: to,
+      },
+      Message: {
+        Subject: {
+          Data: subject,
+        },
+        Body: {
+          Html: {
+            Data: html,
+          },
+        },
+      },
+    });
+
+    return await clientSES.send(command);
   }
 }
