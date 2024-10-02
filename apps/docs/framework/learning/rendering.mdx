@@ -1,0 +1,84 @@
+---
+title: Rendering
+description: Learn how to render your templates.
+icon: "gear"
+---
+
+Before rendering your email templates with JSX Mail, it's essential to prepare your project. This preparation step ensures everything is set up correctly for rendering, including image uploads and template compilation.
+
+For this example, we will use the JSX Mail Cloud with the CLI to host the assets and even send the email. If you _don't_ want to use the JSX Mail Cloud, you can [run the project locally](/framework/local) or even [zip your template](/cli/zip)
+
+## Log into Cloud
+
+To log into your JSX Mail Cloud Account just type:
+
+```sh
+yarn jsxm login
+```
+
+When using JSX Mail in production, whether in your CI/CD pipeline or on a
+cloud platform, you also can log into a JSX Mail Cloud account. However, the
+login process differs slightly from when you're on your local machine. Please
+refer to [this guide](/cli/login#production) for instructions on how to proceed.
+
+## Preparing
+
+The `jsxm prepare` command is a crucial step in this process. To execute it, first, stop the preview server and run the following command in your terminal:
+
+```sh
+yarn jsxm prepare
+```
+
+This command triggers JSX Mail to handle various tasks such as:
+
+- Uploading images to the JSX Mail Cloud.
+- Optimizing images for email compatibility.
+- Compiling the email templates.
+- Checking compatibility and possible syntax errors.
+
+Here are some guidelines about when to use the `jsxm prepare` command:
+
+- **Frequency:** Run the `jsxm prepare` command whenever there are changes in your project, like adding new images, templates, or components.
+- **Preview Page:** For the preview page, there's no need to manually run this command. The preview functionality automatically prepares your templates.
+- **Continuous Integration (CI):** Integrate this command into your CI pipeline. It should be executed after installing dependencies but before deploying your project.
+
+Here's an example of how to include it in your `package.json` file:
+
+```json
+{
+  "scripts": {
+    "build": "your-build-command && jsxm prepare"
+  }
+}
+```
+
+Learn more about the `jsxm prepare` command [here](/cli/prepare).
+
+## Rendering
+
+Rendering templates in JSX Mail can be accomplished through two primary methods: using the Command Line Interface (CLI) or employing the `render` function provided by the `jsx-mail` package. Both options are designed to be straightforward and efficient.
+
+First let's render a template using the CLI:
+
+```sh copy
+yarn jsxm render "my-first" --out="my-first.html" --name="Theryston"
+```
+
+- **Template Name:** The first argument is the [name of the template](/framework/learning/templates#template-name) you wish to render.
+- **Output File:** Specify the output file with the `--out` option.
+- **Props:** Pass template props using `--{prop-name}={prop-value}`.
+
+This method is quick and suitable for simple rendering tasks or testing.
+
+And for more integrated scenarios, use the `render` function in your code:
+
+```js my-first.js
+const jsxMail = require("jsx-mail");
+
+jsxMail
+  .render("my-first", { name: "Theryston" })
+  .then((html) => console.log(html));
+```
+
+- **Template Name and Props:** The function takes the [template name](/framework/learning/templates#template-name) as the first argument and an object of props as the second.
+- **Promise-Based:** It returns a promise, resolving to the HTML content of the rendered template.

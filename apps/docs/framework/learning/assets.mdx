@@ -1,0 +1,34 @@
+---
+title: Assets
+description: Learn how to use assets in your email.
+icon: "image"
+---
+
+In JSX Mail, incorporating assets (like images) into your emails is a straightforward process. The platform handles images efficiently, simplifying their integration into your templates or components.
+
+For organized management of your assets, it's recommended to create an `assets` folder within the `mail` directory. This folder is where you should store your image files.
+
+## Adding Images
+
+To add an image to your email, follow these steps:
+
+1. Place the image in the `assets` folder.
+2. Import the image and pass it as an `src` prop to the `img` tag.
+
+```jsx mail/templates/my-first.jsx
+import IconPng from "../assets/icon.png";
+
+export const props = {
+  name: String("Theryston"),
+};
+
+export default function MyFirst({ name }) {
+  return <img src={IconPng} alt="I'm an Icon" />;
+}
+```
+
+## Image Optimization and Hosting
+
+- **Optimization:** JSX Mail automatically optimizes images for email use.
+- **Hosting:** The images are uploaded to [JSX Mail Cloud](/cloud) for seamless integration into your emails.
+- **Local Preview:** When previewing your template on the local machine, the images are loaded directly from your computer.

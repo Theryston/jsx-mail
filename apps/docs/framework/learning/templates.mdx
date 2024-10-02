@@ -1,0 +1,164 @@
+---
+title: Templates
+description: "Here you will learn about templates in JSX Mail"
+icon: "file-code"
+---
+
+Templates are the core of your email project. They are the starting point for building your email.
+
+All files with the extensions `.js`, `.ts`, `.jsx`, or `.tsx` located in the `templates` folder are recognized as templates for crafting your emails.
+
+Each template must include a `default` export. This export is a function invoked to return your email template. It should return a JSX component, which JSX Mail will later render.
+
+To better grasp this concept, let's walk through the creation of a basic template:
+
+```jsx mail/templates/my-first.jsx
+export default function MyFirst() {
+  return <h1>Hello!</h1>;
+}
+```
+
+Upon navigating to the preview page, you'll find a new template listed as `my-first`. This name is derived from the file name, excluding its extension. Selecting this template displays its content.
+
+Templates can be enhanced with additional features like props, styles, or even a pre-render function. Let's delve into these advanced aspects later in this page.
+
+## Template Name
+
+The template's name is derived directly from its file name, excluding the file extension. For instance, in the given example, the template is named `my-first`.
+
+To further organize your templates, you can utilize contexts. Any folder within the `mail/templates` directory is treated as a context. This feature allows for efficient categorization of templates. For example, you might create a `users` folder to store all user-related templates. In this scenario, the template's name would be formatted as `users:my-first`.
+
+For more complex organization involving multiple folders, use a colon (`:`) to separate each folder's name in the template's name. For example, if you have a `users` folder and another named `products`, the template name could be `users:products:my-first`, reflecting the nested folder structure. This approach ensures a clear and structured naming system for your templates.
+
+## Props
+
+Props are a powerful feature in JSX Mail, allowing you to customize templates for various email contexts. By passing different values through props, you can reuse the same template structure while changing its content dynamically.
+
+To define props for your template, export a `props` object. This object should specify the types of the props. You then pass these props into the template function. Here's an example in JSX:
+
+```jsx mail/templates/my-first.jsx
+export const props = {
+  name: String(),
+};
+
+export default function MyFirst({ name }) {
+  return <h1>Hello {name}</h1>;
+}
+```
+
+For TypeScript users, the process is similar, with a slight modification to ensure type safety:
+
+```tsx mail/templates/my-first.tsx
+export const props = {
+  name: String(),
+};
+
+export default function MyFirst({ name }: typeof props) {
+  return <h1>Hello {name}</h1>;
+}
+```
+
+When you open the template in the preview page without passing any values, the `name` will appear empty. To visualize how the template looks with sample data, you can assign mock values to the props:
+
+```jsx mail/templates/my-first.jsx
+export const props = {
+  name: String("Theryston"),
+};
+
+export default function MyFirst({ name }) {
+  return <h1>Hello {name}</h1>;
+}
+```
+
+With this change, the preview page will display "Hello Theryston". Remember, these mock values are only for preview purposes. When rendering the email template for actual use, you must provide the relevant props through the `render` function. [Learn more about rendering templates](/framework/learning/rendering).
+
+**Important Notes:**
+
+- The `props` object should list all the props you intend to use in your template.
+- Omitting a prop from this object means it cannot be used within the template.
+- Only templates that require props need to include the `props` object. This is not necessary for components.
+
+## Styles
+
+Styles enhance the visual appeal of your emails. JSX Mail allows you to add CSS styles directly to your templates, enabling customization of various elements.
+
+You can apply inline styles directly within your JSX tags. Here’s an example of setting a background color:
+
+```jsx mail/templates/my-first.jsx
+export const props = {
+  name: String("Theryston"),
+};
+
+export default function MyFirst({ name }) {
+  return <h1 style={{ backgroundColor: "red" }}>Hello {name}</h1>;
+}
+```
+
+For more complex styling or to maintain cleaner code, you can externalize your styles. Create a file ending in `styles.ts`, `style.ts`, `styles.js`, `style.js`, `styles.tsx`, `style.tsx`, `style.jsx`, or `styles.jsx`. In this file, export an object containing your styles:
+
+```jsx mail/templates/my-first.styles.jsx
+export const Title = { backgroundColor: "red" };
+```
+
+For TypeScript users, ensure type safety by defining the style object as `JSX.ElementStyle` (you don't need to import `JSX` because it's a global type for all files inside the `mail` folder):
+
+```tsx mail/templates/my-first.styles.tsx
+export const Title: JSX.ElementStyle = { backgroundColor: "red" };
+```
+
+Import the style object into your template or component and apply it:
+
+```jsx mail/templates/my-first.jsx
+import * as Styles from "./my-first.styles";
+
+export const props = {
+  name: String("Theryston"),
+};
+
+export default function MyFirst({ name }) {
+  return <h1 style={Styles.Title}>Hello {name}</h1>;
+}
+```
+
+With these steps, your template in the preview page will display "Hello Theryston" with a red background, as defined in the `Styles.Title` object.
+
+It's important to note that some CSS properties may not be supported by all email clients. In this case, JSX Mail will report an error to you saying that the CSS property used is not compatible. JSX Mail's styling approach is similar to React.
+
+You can see the list of supported CSS properties in the [Style Docs](/framework/style)
+
+## On Render
+
+The `onRender` function is a powerful feature in JSX Mail, allowing you to execute specific logic before rendering a template. This can include fetching data from an API to dynamically populate your email content.
+
+To incorporate an `onRender` function, export it from your template file. This function takes the props as its argument and should return an updated props object with additional data for the template. Here's an example:
+
+```jsx mail/templates/my-first.jsx
+import * as Styles from "./my-first.styles";
+
+export const props = {
+  name: String("Theryston"),
+  bio: String(), // add bio to props. It will be fetched from the API in the onRender function
+};
+
+export async function onRender({ name }) {
+  const url = `https://api.github.com/users/${name}`;
+  const response = await fetch(url);
+  const user = await response.json();
+
+  return {
+    bio: user.bio, // this append the bio to the props object
+  };
+}
+
+// bio is the new prop added in the onRender function
+export default function MyFirst({ name, bio }) {
+  return (
+    <div>
+      <h1 style={Styles.Title}>Hello {name}</h1>
+      <p>{bio}</p>
+    </div>
+  );
+}
+```
+
+Now, when you visit the preview page, the template will display "Hello Theryston" with a red background and the fetched bio information.

@@ -1,0 +1,65 @@
+---
+title: Getting started
+description: "Here you start learning how to build emails with JSX Mail framework"
+icon: "rocket"
+---
+
+JSX Mail is a very powerful company that provides a full email workflow. It allows you to build emails, send emails, host your images, and much more.
+
+But now we are getting started with the framework. The framework is a very powerful tool that allows you to build emails using JSX syntax.
+
+## Start building
+
+To begin, ensure you have a Node.js project with a configured `package.json` file. If you're using TypeScript, a `tsconfig.json` file is also necessary. For simplicity, this example will focus on JavaScript:
+
+```sh
+mkdir jsx-mail-quickstart
+cd jsx-mail-quickstart
+yarn init -y
+```
+
+Next, let's set up your project with JSX Mail. Start by installing JSX Mail and then initialize it. Execute the following commands:
+
+```sh
+yarn add jsx-mail
+yarn jsxm init
+```
+
+## File structure
+
+After running the `yarn jsxm init` command, the following file structure will be created:
+
+- **jsx-mail-quickstart/**
+  - **mail/**
+    - **components/**
+      - featured.jsx
+      - featured.styles.jsx
+      - info.jsx
+      - info.styles.jsx
+      - layout.jsx
+      - layout.styles.jsx
+    - **templates/**
+      - **zoo/**
+        - example.jsx
+      - welcome.jsx
+      - welcome.styles.jsx
+    - **assets/**
+      - code.png
+      - logo.png
+  - node_modules/
+  - .gitignore
+  - jsx-mail.config.js
+  - package.json
+  - yarn.lock
+
+This file structure is essential to organize your project and facilitate the development of emails with JSX Mail.
+
+## Preview your templates
+
+With everything set up, let's preview your templates. Run the following command:
+
+```sh
+yarn jsxm preview
+```
+
+This command launches a server on port `3256`, showcasing your template previews. They can be viewed at `http://localhost:3256`.

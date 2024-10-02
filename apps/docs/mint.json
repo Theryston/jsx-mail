@@ -1,0 +1,92 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "JSX Mail Docs",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#006FEE",
+    "light": "#006FEE",
+    "dark": "#006FEE",
+    "anchors": {
+      "from": "#006FEE",
+      "to": "#006FEE"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "/cloud/support"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Dashboard",
+    "url": "https://jsxmail.org/cloud/app"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Documentation",
+      "icon": "book-open-cover",
+      "url": "/"
+    },
+    {
+      "name": "Cloud",
+      "icon": "cloud",
+      "url": "https://jsxmail.org/cloud/app"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": ["introduction"]
+    },
+    {
+      "group": "The Framework",
+      "pages": [
+        {
+          "group": "Learning",
+          "pages": [
+            "framework/learning/getting-started",
+            "framework/learning/concepts",
+            "framework/learning/templates",
+            "framework/learning/components",
+            "framework/learning/assets",
+            "framework/learning/rendering",
+            "framework/learning/summary"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "CLI",
+      "pages": ["cli/introduction"]
+    },
+    {
+      "group": "Cloud",
+      "pages": ["cloud/introduction"]
+    },
+    {
+      "group": "API Documentation",
+      "pages": ["api-reference/introduction"]
+    },
+    {
+      "group": "Endpoint Examples",
+      "pages": [
+        "api-reference/endpoint/get",
+        "api-reference/endpoint/create",
+        "api-reference/endpoint/delete"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/Theryston/jsx-mail"
+  }
+}

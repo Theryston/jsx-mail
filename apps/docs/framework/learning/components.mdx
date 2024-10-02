@@ -1,0 +1,63 @@
+---
+title: Components
+description: "Here you will learn about components in JSX Mail"
+icon: "puzzle-piece"
+---
+
+In JSX Mail, files with the extensions `.js`, `.ts`, `.jsx`, or `.tsx` that are not located in the `templates` folder are recognized as components.
+
+For optimal organization, it's advisable to create a `components` folder inside the `mail` directory. Here, you can store and manage your components.
+
+Here's a basic example to illustrate how to create a component:
+
+```jsx mail/components/my-first-component.jsx
+export default function MyFirstComponent({ bio }) {
+  return (
+    <div>
+      <p style={{ color: "red" }}>
+        I'm your first component. My function is to show the user's bio:
+      </p>
+      <p>{bio}</p>
+    </div>
+  );
+}
+```
+
+Note that for components, the `default` export is not mandatory. You can export any function, but it's advisable to use a function name that matches the file name for clarity and consistency.
+
+Unlike templates, components do not require an exported `props` object. Simply use the props as needed within your component.
+
+## Components in Templates
+
+You can easily import and utilize your components within templates. Here's how you can incorporate the `MyFirstComponent` into a template:
+
+```jsx mail/templates/my-first.jsx
+import MyFirstComponent from "../components/my-first-component"; // import the component
+import * as Styles from "./my-first.styles";
+
+export const props = {
+  name: String("Theryston"),
+  bio: String(),
+};
+
+export async function onRender({ name }) {
+  const url = `https://api.github.com/users/${name}`;
+  const response = await fetch(url);
+  const user = await response.json();
+
+  return {
+    bio: user.bio,
+  };
+}
+
+export default function MyFirst({ name, bio }) {
+  return (
+    <div>
+      <h1 style={Styles.Title}>Hello {name}</h1>
+      <MyFirstComponent bio={bio} /> {/* use the component */}
+    </div>
+  );
+}
+```
+
+When you preview this template, it will display "Hello Theryston" with a red background, followed by "I'm your first component. My function is to show the user's bio:" and the user's bio.

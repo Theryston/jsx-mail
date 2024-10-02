@@ -1,0 +1,39 @@
+---
+title: Concepts
+description: "Here you will learn the main concepts of JSX Mail"
+icon: "brain"
+---
+
+It's essential to familiarize yourself with the `mail` folder, which serves as the central hub for all your email-related activities. This folder includes various resources such as templates, components, images, and more.
+
+Within the `mail` folder, you'll discover several subfolders, each with a specific purpose:
+
+- **components/**: This directory houses reusable components that can be used across multiple templates.
+- **templates/**: Contains individual templates, each tailored to specific use cases or design styles.
+- **assets/**: Stores static assets like images, fonts, and other media files.
+
+## Templates
+
+Templates are the core of your email project. They are the starting point for building your email.
+
+All files with the extensions `.js`, `.ts`, `.jsx`, or `.tsx` located in the `templates` folder are recognized as templates for crafting your emails.
+
+Each template must include a `default` export. This export is a function invoked to return your email template. It should return a JSX component, which JSX Mail will later render.
+
+Learn more about templates [here](/framework/learning/templates).
+
+## Components
+
+Components are reusable parts of your email. They can be used across multiple templates.
+
+By default, all files with the extensions `.js`, `.ts`, `.jsx`, or `.tsx` that are not inside the `templates` folder are recognized as components.
+
+Learn more about components [here](/framework/learning/components).
+
+## Assets
+
+Assets are static files that are used in your email. They can be used in your templates and components.
+
+By default, all files that does not end with `.jsx`, `.tsx`, `.js`, or `.ts` are recognized as assets.
+
+Learn more about assets [here](/framework/learning/assets).
