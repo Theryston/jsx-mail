@@ -206,16 +206,9 @@ export default function SendingHistoryContent() {
                   ?.description
               }
             >
-              <Chip
-                size="sm"
-                style={{
-                  backgroundColor: allStatuses?.find(
-                    (s) => s.value === message.status,
-                  )?.color,
-                }}
-              >
+              <span className="text-xs">
                 {allStatuses?.find((s) => s.value === message.status)?.label}
-              </Chip>
+              </span>
             </Tooltip>,
             moment(message.sentAt).format('DD MMM YY'),
           ]) || []
