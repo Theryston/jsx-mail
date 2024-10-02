@@ -11,8 +11,6 @@ export class EmailWebhookService {
     console.log('[EMAIL_WEBHOOK_SERVICE] received data: ', data);
 
     try {
-      data = JSON.parse(data);
-
       const externalId = data?.mail?.messageId;
       if (!externalId) return 'ignored because the externalId is missing';
 
