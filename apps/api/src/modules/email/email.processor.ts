@@ -54,6 +54,7 @@ export class EmailProcessor extends WorkerHost {
           },
         },
       },
+      ConfigurationSetName: process.env.AWS_SES_CONFIGURATION_SET,
     });
 
     const response = await clientSES.send(command);
