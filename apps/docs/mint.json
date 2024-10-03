@@ -25,12 +25,6 @@
     "name": "Dashboard",
     "url": "https://jsxmail.org/cloud/app"
   },
-  "tabs": [
-    {
-      "name": "Cloud API Reference",
-      "url": "api-reference"
-    }
-  ],
   "anchors": [
     {
       "name": "Getting Started",
@@ -51,6 +45,11 @@
       "name": "Cloud",
       "icon": "cloud",
       "url": "/cloud"
+    },
+    {
+      "name": "API Reference",
+      "icon": "code-branch",
+      "url": "/api-reference"
     }
   ],
   "navigation": [
@@ -110,18 +109,23 @@
     },
     {
       "group": "API Documentation",
-      "pages": ["api-reference/introduction"]
+      "pages": ["api-reference/introduction", "api-reference/authentication"]
     },
     {
-      "group": "Senders",
-      "pages": ["api-reference/endpoint/senders/send"]
-    },
-    {
-      "group": "Endpoint Examples",
+      "group": "Sender",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-reference/endpoint/sender/send",
+        "api-reference/endpoint/sender/list",
+        "api-reference/endpoint/sender/create",
+        "api-reference/endpoint/sender/delete"
+      ]
+    },
+    {
+      "group": "File",
+      "pages": [
+        "api-reference/endpoint/file/upload",
+        "api-reference/endpoint/file/list",
+        "api-reference/endpoint/file/delete"
       ]
     }
   ],

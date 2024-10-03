@@ -1,0 +1,25 @@
+---
+title: 'Authentication'
+---
+
+The API is authenticated using a bearer token. You can just pass the token in the header as `Authorization: Bearer <token>`.
+
+## Creating a session
+
+To get your token, you need to be logged in to the JSX Mail Cloud.
+
+And then go to [your account page](https://jsxmail.org/cloud/app/account) and click into the create button:
+
+![sessions-page-create](./images/sessions-page-create.png)
+
+After that just fill the form and create your session.
+
+![sessions-page-create-form](./images/sessions-page-create-form.png)
+
+After the session is created, just copy the token and use it in the API.
+
+<Note>This is the only moment you can see your generated token</Note>
+
+## Using the token
+
+To use the token, you just need to pass it in the header as `Authorization: Bearer <token>`.
