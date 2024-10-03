@@ -1,0 +1,21 @@
+---
+title: Zip
+description: The zip command is used to zip your email templates.
+icon: 'file-zipper'
+---
+
+The zip command is used to zip your email template.
+
+To zip your email template, you can run the following command:
+
+```sh
+yarn jsxm zip {{template-name}} --out="{{output-file-path}}" ...{{props}}
+```
+
+Example:
+
+```sh
+yarn jsxm zip "my-first" --out="my-first.zip" --name="Theryston"
+```
+
+This will call the [render command](/cli/render) and then compress all the output files into a single zip file.

@@ -84,8 +84,18 @@
       ]
     },
     {
-      "group": "CLI",
-      "pages": ["cli/introduction"]
+      "group": "Overview",
+      "pages": [
+        "cli/introduction",
+        "cli/init",
+        "cli/login",
+        "cli/logout",
+        "cli/prepare",
+        "cli/preview",
+        "cli/render",
+        "cli/zip",
+        "cli/cache-clean"
+      ]
     },
     {
       "group": "Cloud",

@@ -1,0 +1,36 @@
+---
+title: Login
+description: The login command is used to login in your JSX Mail account.
+icon: 'key'
+---
+
+To allow your JSX Mail CLI to access the JSX Mail Cloud API, you need to login in your account. In this page we will see how to login in your local machine and in production.
+
+## Development
+
+When it comes to your local machine, in the terminal it is also very simple. Just type the command below to login in your account:
+
+```sh
+yarn jsxm login
+```
+
+It's always good to keep in mind that logging into JSX Mail is done per project, that is, each project must have a different token, so you need to type this command above for each project (if you have an error accessing the JSX Mail API cloud).
+
+## Production
+
+Logging into production is also very simple, just follow the steps below:
+
+- Go to your [JSX Mail Cloud account](https://jsxmail.org/cloud/app/account)
+- You will see a table with all the logged sessions, just click on the "Create" button to create a new session
+
+Once done you will have the token and the ID of your section, to authenticate your project in production with this token just copy the token and replace the `{{YOUR_TOKEN}}` with the token generated in the command below
+
+```sh
+yarn jsxm login --token {{YOUR_TOKEN}}
+```
+
+If you don't have a secure way to pass your token through the command line as
+shown above, you can just set the `__JSX_MAIL_TOKEN` environment variable (in
+an .env file for example) and run the `yarn jsxm login` command without
+passing the `--token {{ YOUR_TOKE }}` that JSX Mail will automatically load
+the variable `__JSX_MAIL_TOKEN`

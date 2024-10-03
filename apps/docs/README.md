@@ -28,16 +28,15 @@
 
 **cli:**
 
-- [ ] /cli/introduction
-- [ ] /cli/init
-- [ ] /cli/login
-- [ ] /cli/login#production
-- [ ] /cli/login#development
-- [ ] /cli/logout
-- [ ] /cli/prepare
-- [ ] /cli/preview
-- [ ] /cli/render
-- [ ] /cli/zip
+- [x] /cli/init
+- [x] /cli/login
+- [x] /cli/login#production
+- [x] /cli/login#development
+- [x] /cli/logout
+- [x] /cli/prepare
+- [x] /cli/preview
+- [x] /cli/render
+- [x] /cli/zip
 - [ ] /cli/cache-clean
 
 **cloud:**

@@ -1,0 +1,21 @@
+---
+title: Render
+description: The render command is used to render your email templates.
+icon: 'oven'
+---
+
+The render command is used to render your email templates.
+
+To render your email templates, you can run the following command:
+
+```sh
+yarn jsxm render {{template-name}} --out="{{output-file-path}}" ...{{props}}
+```
+
+Example:
+
+```sh
+yarn jsxm render "my-first" --out="my-first.html" --name="Theryston" --greeting="Hello"
+```
+
+If you want to know more about the render command, you can check the [render page](/framework/learning/rendering#rendering)
