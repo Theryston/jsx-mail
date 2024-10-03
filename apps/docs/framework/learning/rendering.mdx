@@ -1,7 +1,7 @@
 ---
 title: Rendering
 description: Learn how to render your templates.
-icon: "gear"
+icon: 'oven'
 ---
 
 Before rendering your email templates with JSX Mail, it's essential to prepare your project. This preparation step ensures everything is set up correctly for rendering, including image uploads and template compilation.
@@ -73,10 +73,10 @@ This method is quick and suitable for simple rendering tasks or testing.
 And for more integrated scenarios, use the `render` function in your code:
 
 ```js my-first.js
-const jsxMail = require("jsx-mail");
+const jsxMail = require('jsx-mail');
 
 jsxMail
-  .render("my-first", { name: "Theryston" })
+  .render('my-first', { name: 'Theryston' })
   .then((html) => console.log(html));
 ```
 

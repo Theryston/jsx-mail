@@ -1,0 +1,36 @@
+---
+title: Preview
+description: Preview your email in the browser.
+icon: eye
+---
+
+The Preview feature in JSX Mail acts as an interactive simulator, enabling real-time visualization of your email templates. This tool is specifically engineered to streamline and enhance the template development process.
+
+## How to Use Preview
+
+To activate Preview, execute the `preview` (or its shorthand `pv`) command in the Command Line Interface (CLI). This initiates the Preview on your web browser, accessible via port `3256`.
+
+To start the Preview, use either of the following commands:
+
+```sh
+yarn jsxm preview
+```
+
+Or:
+
+```sh
+yarn jsxm pv
+```
+
+After running the command, visit: [http://localhost:3256](http://localhost:3256)
+
+## Dynamic Refreshing
+
+The Preview feature is designed to be responsive to changes in the `mail` folder. When any file within the `mail` folder is modified it performs the following steps:
+
+- Clear the cache [with the cli](/cli/cache-clean)
+- Execute the [prepare](/cli/prepare) process
+- Render only the currently open template
+- Update the Preview with the new HTML via websocket
+
+This dynamic updating ensures that you always have a real-time view of how your email templates will appear, significantly improving your development workflow.

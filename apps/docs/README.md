@@ -17,22 +17,14 @@
 - [x] /framework/learning/rendering
 - [x] /framework/learning/summary
 
-- [ ] /framework/preview
-- [ ] /framework/image
-- [ ] /framework/configuration
-- [ ] /framework/typescript
-- [ ] /framework/style
-- [ ] /framework/local
-- [ ] /framework/tags
-- [ ] /framework/core
-- [ ] /framework/rendering
-
-**cloud:**
-
-- [ ] /cloud/introduction
-- [ ] /cloud/sending-email
-- [ ] /cloud/pricing
-- [ ] /cloud/support
+- [x] /framework/preview
+- [x] /framework/image
+- [x] /framework/configuration
+- [x] /framework/typescript
+- [x] /framework/style
+- [x] /framework/local
+- [x] /framework/tags
+- [x] /framework/core
 
 **cli:**
 
@@ -47,3 +39,13 @@
 - [ ] /cli/render
 - [ ] /cli/zip
 - [ ] /cli/cache-clean
+
+**cloud:**
+
+- [ ] /cloud/introduction
+- [ ] /cloud/sending-email
+- [ ] /cloud/pricing
+- [ ] /cloud/senders
+- [ ] /cloud/domains
+- [ ] /cloud/files
+- [ ] /cloud/support

@@ -27,7 +27,7 @@
   },
   "tabs": [
     {
-      "name": "API Reference",
+      "name": "Cloud API Reference",
       "url": "api-reference"
     }
   ],
@@ -68,6 +68,19 @@
         "framework/learning/assets",
         "framework/learning/rendering",
         "framework/learning/summary"
+      ]
+    },
+    {
+      "group": "Advanced",
+      "pages": [
+        "framework/preview",
+        "framework/image",
+        "framework/configuration",
+        "framework/typescript",
+        "framework/style",
+        "framework/local",
+        "framework/tags",
+        "framework/core"
       ]
     },
     {

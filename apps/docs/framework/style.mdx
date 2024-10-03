@@ -1,0 +1,66 @@
+---
+title: Style
+description: Learn how to use style with JSX Mail.
+icon: 'brush'
+---
+
+Enhance the visual appeal of your email templates in JSX Mail using our extensive selection of style properties. Tailor each element to fit your design needs with these customizable options:
+
+```tsx
+type ElementStyle = {
+  backgroundColor?: string;
+  border?: string;
+  boxSizing?: string;
+  borderBottom?: string;
+  borderBottomColor?: string;
+  borderBottomStyle?: string;
+  borderBottomWidth?: string;
+  borderColor?: string;
+  borderLeft?: string;
+  borderLeftColor?: string;
+  borderLeftStyle?: string;
+  borderLeftWidth?: string;
+  borderRight?: string;
+  borderRightColor?: string;
+  borderRightStyle?: string;
+  borderRightWidth?: string;
+  borderStyle?: string;
+  borderTop?: string;
+  borderTopColor?: string;
+  borderWidth?: string;
+  margin?: string;
+  marginBottom?: string;
+  marginLeft?: string;
+  marginRight?: string;
+  marginTop?: string;
+  color?: string;
+  display?: 'block' | 'inline-block' | 'inline';
+  font?: string;
+  fontFamily?: string;
+  fontSize?: string;
+  fontWeight?: string;
+  letterSpacing?: string;
+  lineHeight?: string;
+  listStyleType?: string;
+  padding?: string;
+  paddingBottom?: string;
+  paddingLeft?: string;
+  paddingRight?: string;
+  paddingTop?: string;
+  textAlign?: string;
+  textDecoration?: string;
+  textIndent?: string;
+  textTransform?: string;
+  verticalAlign?: string;
+  width?: string;
+  height?: string;
+};
+```
+
+Incorporate these styles directly into your [JSX Mail tag](/framework/tags) by setting the style property with your desired style object.
+
+```tsx
+<a style={{ color: 'red' }}>Hello</a>
+```
+
+Each property offers you the flexibility to craft the exact look and feel for your email templates, making your emails not just communicative but also visually compelling.

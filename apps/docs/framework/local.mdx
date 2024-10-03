@@ -1,0 +1,48 @@
+---
+title: Local
+description: Learn how to use JSX Mail locally.
+icon: 'desktop'
+---
+
+We have the JSX Mail Cloud, but sometimes you want render your templates locally. and not use the JSX Mail Cloud to host your images for example. This is possible, you can run the project locally and render your templates.
+
+But before you do that, you need to know that this is not for development, in development you can just use the [preview server](/framework/preview) cause it will be faster and easier.
+
+We strongly recommend you to use the JSX Mail Cloud in production. But maybe you don't want to. So this process is for handle all the [render](/framework/learning/rendering) without the need of the JSX Mail Cloud.
+
+## Locally Settings
+
+Just change the `storage` parameter in the [configuration file](/framework/configuration) to `LOCAL`.
+
+```js jsx-mail.config.js
+/** @type {import('jsx-mail').JsxMailConfig} */
+module.exports = {
+  dir: 'mail',
+  storage: 'LOCAL',
+};
+```
+
+This action should give you an error like this:
+
+```sh
+name: base_image_path_not_found
+
+message: When you add the storage as LOCAL you must enter a baseImagePath
+```
+
+So, you need to create a folder in your project and set the `baseImagePath` parameter in the [configuration file](/framework/configuration).
+
+```js jsx-mail.config.js
+/** @type {import('jsx-mail').JsxMailConfig} */
+module.exports = {
+  dir: 'mail',
+  storage: 'LOCAL',
+  baseImagePath: 'path/to/your/folder',
+};
+```
+
+The JSX Mail framework will create this folder if it doesn't exist and will move the optimized images to this folder and the [prepare](/framework/learning/rendering#preparing) command. And now when you [render](/framework/learning/rendering#rendering) the `img` tags will use the images from the `baseImagePath` folder.
+
+## Important
+
+As the images is just a local folder you **CAN'T** send the email cause the images will not be available to the email clients. This action is only when you want get your HTML, CSS, and assets ready to use it in other platforms or you want render it locally.
