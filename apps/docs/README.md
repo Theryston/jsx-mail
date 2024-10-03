@@ -37,7 +37,7 @@
 - [x] /cli/preview
 - [x] /cli/render
 - [x] /cli/zip
-- [ ] /cli/cache-clean
+- [x] /cli/cache-clean
 
 **cloud:**
 
