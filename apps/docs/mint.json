@@ -17,8 +17,8 @@
   },
   "topbarLinks": [
     {
-      "name": "Support",
-      "url": "/cloud/support"
+      "name": "FAQ",
+      "url": "/faq"
     }
   ],
   "topbarCtaButton": {
@@ -33,36 +33,41 @@
   ],
   "anchors": [
     {
-      "name": "Documentation",
-      "icon": "book-open-cover",
+      "name": "Getting Started",
+      "icon": "rocket",
       "url": "/"
+    },
+    {
+      "name": "The Framework",
+      "icon": "code",
+      "url": "/framework"
+    },
+    {
+      "name": "CLI",
+      "icon": "terminal",
+      "url": "/cli"
     },
     {
       "name": "Cloud",
       "icon": "cloud",
-      "url": "https://jsxmail.org/cloud/app"
+      "url": "/cloud"
     }
   ],
   "navigation": [
     {
-      "group": "Get Started",
-      "pages": ["introduction"]
+      "group": "Overview",
+      "pages": ["introduction", "what-is-jsx-mail", "why-jsx-mail", "faq"]
     },
     {
-      "group": "The Framework",
+      "group": "Learning",
       "pages": [
-        {
-          "group": "Learning",
-          "pages": [
-            "framework/learning/getting-started",
-            "framework/learning/concepts",
-            "framework/learning/templates",
-            "framework/learning/components",
-            "framework/learning/assets",
-            "framework/learning/rendering",
-            "framework/learning/summary"
-          ]
-        }
+        "framework/learning/getting-started",
+        "framework/learning/concepts",
+        "framework/learning/templates",
+        "framework/learning/components",
+        "framework/learning/assets",
+        "framework/learning/rendering",
+        "framework/learning/summary"
       ]
     },
     {

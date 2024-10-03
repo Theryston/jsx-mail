@@ -2,11 +2,10 @@
 
 ## TODO
 
-- [ ] change the support link to "FAQ"
-
 - [x] /introduction
-- [ ] /what-and-why
-- [ ] /FAQ
+- [x] /what-is-jsx-mail
+- [x] /why-jsx-mail
+- [x] /faq
 
 **framework:**
 
@@ -26,6 +25,7 @@
 - [ ] /framework/local
 - [ ] /framework/tags
 - [ ] /framework/core
+- [ ] /framework/rendering
 
 **cloud:**
 
