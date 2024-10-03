@@ -1,0 +1,47 @@
+---
+title: Sending Email
+description: send email by using JSX Mail Cloud
+icon: 'envelope'
+---
+
+To send an email, you have two ways to do it.
+
+First, you can send an email by using the [API](/api-reference/introduction); this way you can send emails even if you are not using the [JSX Mail framework](/framework/learning/getting-started).
+
+The second way to send an email is using the `jsx-mail` package. This way will render and send the email template to you, but you need to use the [JSX Mail framework](/framework/learning/getting-started).
+
+In this page, we will see only the second way; to send using the first way, you can check the [API](/api-reference/endpoint/senders/send).
+
+Before sending an email, it is good to keep in mind that you must first follow the [JSX Mail Cloud login](/cli/login#development) process.
+
+Now you can send an email using JSX Mail Cloud. Here below is an example of how to do this:
+
+```javascript
+const jsxMail = require('jsx-mail');
+
+await jsxMail.send('your:template:name', {
+  subject: 'Your Email Subject',
+  to: ['example@example.com'],
+  props: { key: 'value' },
+  sender: 'example@your-domain.com',
+});
+```
+
+- The `subject` param is required and can be used to specify the subject of the email.
+
+- The `to` param is required and can be used to specify the recipient of the email.
+
+- The `props` param is also optional and can be used to pass props to the template, just if the template requires props.
+
+- The `sender` param is optional and can be used to specify the [sender](/cloud/senders) of the email. The senders is from your JSX Mail Cloud account.
+
+  - If you don't specify your sender, it will take the last created sender from your account.
+  - You also can specify your sender from your JSX Mail configuration file, just by setting `defaultSender` on the configuration object. Just like:
+
+  ```js jsx-mail.config.js
+  /** @type {import('jsx-mail').JsxMailConfig} */
+  module.exports = {
+    dir: 'mail',
+    defaultSender: 'example@jsxmail.org',
+  };
+  ```

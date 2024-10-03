@@ -99,11 +99,22 @@
     },
     {
       "group": "Cloud",
-      "pages": ["cloud/introduction"]
+      "pages": [
+        "cloud/introduction",
+        "cloud/sending-email",
+        "cloud/senders",
+        "cloud/domains",
+        "cloud/files",
+        "cloud/support"
+      ]
     },
     {
       "group": "API Documentation",
       "pages": ["api-reference/introduction"]
+    },
+    {
+      "group": "Senders",
+      "pages": ["api-reference/endpoint/senders/send"]
     },
     {
       "group": "Endpoint Examples",

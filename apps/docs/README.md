@@ -41,10 +41,9 @@
 
 **cloud:**
 
-- [ ] /cloud/introduction
-- [ ] /cloud/sending-email
-- [ ] /cloud/pricing
-- [ ] /cloud/senders
-- [ ] /cloud/domains
-- [ ] /cloud/files
-- [ ] /cloud/support
+- [x] /cloud/introduction
+- [x] /cloud/sending-email
+- [x] /cloud/senders
+- [x] /cloud/domains
+- [x] /cloud/files
+- [x] /cloud/support
