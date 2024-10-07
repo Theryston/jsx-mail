@@ -32,7 +32,6 @@ import {
   FREE_BALANCE,
   MONEY_SCALE,
   PRICE_PER_MESSAGE,
-  STORAGE_GB_PRICE,
 } from 'src/utils/constants';
 import { friendlyMoney } from 'src/utils/format-money';
 import { GetFullBalanceService } from './services/get-full-balance.service';
@@ -195,15 +194,6 @@ export class UserController {
           maxValue: 1000000,
           price: PRICE_PER_MESSAGE * 1000,
           friendlyAmount: friendlyMoney(PRICE_PER_MESSAGE * 1000, true),
-        },
-        {
-          unit: 1,
-          unitName: 'GB',
-          description: 'Price per stored files',
-          step: 1,
-          maxValue: 100,
-          price: STORAGE_GB_PRICE,
-          friendlyAmount: friendlyMoney(STORAGE_GB_PRICE, true),
         },
       ],
     };

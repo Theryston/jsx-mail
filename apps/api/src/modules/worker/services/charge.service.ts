@@ -8,11 +8,15 @@ import moment from 'moment';
 
 @Injectable()
 export class ChargeService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async execute() {
     console.log(`[CHARGE] started at: ${new Date()}`);
-    const results = await Promise.all([this.chargeMessage(), this.chargeStorage()]);
+    const results = await Promise.all([
+      this.chargeMessage(),
+      // do not charge storage for now
+      // this.chargeStorage()
+    ]);
     console.log(`[CHARGE] ended at: ${new Date()}`);
 
     return results;
@@ -71,7 +75,7 @@ export class ChargeService {
           userId,
           messagesAmount,
           price,
-        })
+        });
 
         console.log(`[CHARGE_MESSAGE] ${userId} - ${price}`);
       } catch (error) {
@@ -84,7 +88,7 @@ export class ChargeService {
     return {
       message: 'Worker CHARGE_MESSAGE finished!',
       result: usersCharged,
-    }
+    };
   }
 
   async chargeStorage() {
@@ -158,7 +162,7 @@ export class ChargeService {
         userId,
         averageSize,
         price,
-      })
+      });
 
       console.log(`[CHARGE_STORAGE] ${userId} - ${price}`);
     }
@@ -168,7 +172,7 @@ export class ChargeService {
     return {
       message: 'Worker CHARGE_STORAGE finished!',
       result: usersCharged,
-    }
+    };
   }
 
   async removeBalance({

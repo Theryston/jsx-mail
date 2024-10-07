@@ -46,6 +46,7 @@ model User {
   email             String      @unique
   phone             String?
   birthdate         DateTime?
+  storageLimit      Int         @map("storage_limit") @default(5368709120) // 5GB
   gatewayId         String?     @map("gateway_id")
   isEmailVerified   Boolean     @map("is_email_verified") @default(false)
   accessLevel       AccessLevel @map("access_level") @default(self)

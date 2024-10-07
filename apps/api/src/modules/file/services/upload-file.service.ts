@@ -3,15 +3,13 @@ import { PrismaService } from 'src/services/prisma.service';
 import calculateHash from 'src/utils/calculate-hash';
 import { MAX_FILE_SIZE } from 'src/utils/constants';
 import { fileSelect } from 'src/utils/public-selects';
-import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
-import { friendlyMoney, storageToMoney } from 'src/utils/format-money';
 import { S3ClientService } from './s3-client.service';
+import { formatSize } from 'src/utils/format';
 
 @Injectable()
 export class UploadFileService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly getBalanceService: GetBalanceService,
     private readonly s3ClientService: S3ClientService,
   ) {}
 
@@ -51,13 +49,23 @@ export class UploadFileService {
       throw new HttpException('File size is too large', HttpStatus.BAD_REQUEST);
     }
 
-    const storagePrice = storageToMoney(file.size);
+    const {
+      _sum: { size: storage },
+    } = await this.prisma.file.aggregate({
+      where: {
+        deletedAt: {
+          isSet: false,
+        },
+        userId,
+      },
+      _sum: {
+        size: true,
+      },
+    });
 
-    const balance = await this.getBalanceService.execute(user.id);
-
-    if (balance.amount < storagePrice) {
+    if (storage + file.size > user.storageLimit) {
       throw new HttpException(
-        `You need at least ${friendlyMoney(storagePrice, true)} to upload this file`,
+        `You have reached the maximum storage limit of ${formatSize(user.storageLimit)}`,
         HttpStatus.BAD_REQUEST,
       );
     }

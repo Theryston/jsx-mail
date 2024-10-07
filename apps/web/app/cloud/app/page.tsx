@@ -33,8 +33,8 @@ type MessagesSentByDay = {
 type Insight = {
   BALANCE: string;
   MESSAGES_SENT: number;
-  STORAGE: number;
-  SESSIONS: number;
+  CLICK_RATE: number;
+  OPEN_RATE: number;
   MESSAGES_SENT_BY_DAY: MessagesSentByDay[];
 };
 
@@ -78,17 +78,17 @@ export default function HomePageContent() {
         </Card>
         <Card height="8rem" isLoading={isLoading}>
           <div className="w-full h-full flex flex-col justify-between">
-            <p className="text-xs font-medium">Current Storage</p>
+            <p className="text-xs font-medium">Open rate</p>
             <p className="text-3xl font-bold text-primary">
-              {formatSize(insights?.STORAGE || 0)}
+              {((insights?.OPEN_RATE || 0) * 100).toFixed(2)}%
             </p>
           </div>
         </Card>
         <Card height="8rem" isLoading={isLoading}>
           <div className="w-full h-full flex flex-col justify-between">
-            <p className="text-xs font-medium">Sessions</p>
+            <p className="text-xs font-medium">Click rate</p>
             <p className="text-3xl font-bold text-primary">
-              {formatNumber(insights?.SESSIONS || 0)}
+              {((insights?.CLICK_RATE || 0) * 100).toFixed(2)}%
             </p>
           </div>
         </Card>
