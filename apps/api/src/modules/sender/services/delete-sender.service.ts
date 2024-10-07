@@ -10,9 +10,7 @@ export class DeleteSenderService {
       where: {
         id,
         userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

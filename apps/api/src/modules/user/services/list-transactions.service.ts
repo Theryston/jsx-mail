@@ -19,9 +19,7 @@ export class ListTransactionsService {
     let transactions = await this.prisma.transaction.findMany({
       where: {
         userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
       select: transactionSelect,
       skip,
@@ -39,9 +37,7 @@ export class ListTransactionsService {
     const count = await this.prisma.transaction.count({
       where: {
         userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

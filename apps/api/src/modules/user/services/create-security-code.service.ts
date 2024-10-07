@@ -15,9 +15,7 @@ export class CreateSecurityCodeService {
     const user = await this.prisma.user.findFirst({
       where: {
         email: data.email,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

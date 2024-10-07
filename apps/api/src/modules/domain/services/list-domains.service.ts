@@ -14,9 +14,7 @@ export class ListDomainsService {
   async execute(userId: string, status?: DomainStatus) {
     const domainWhere: Prisma.DomainFindManyArgs['where'] = {
       userId,
-      deletedAt: {
-        isSet: false,
-      },
+      deletedAt: null,
     };
 
     if (status) {

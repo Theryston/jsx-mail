@@ -15,9 +15,7 @@ export class DeleteDomainService {
       where: {
         id: domainId,
         userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

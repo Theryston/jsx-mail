@@ -26,18 +26,14 @@ export class SenderSendEmailService {
         where: {
           email: senderEmail,
           userId,
-          deletedAt: {
-            isSet: false,
-          },
+          deletedAt: null,
         },
       });
     } else {
       sender = await this.prisma.sender.findFirst({
         where: {
           userId,
-          deletedAt: {
-            isSet: false,
-          },
+          deletedAt: null,
         },
         orderBy: {
           createdAt: 'desc',

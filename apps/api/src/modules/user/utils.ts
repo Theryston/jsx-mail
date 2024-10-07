@@ -20,9 +20,7 @@ export function getFilterWhereMessages(
 
   let where: Prisma.MessageWhereInput = {
     userId,
-    deletedAt: {
-      isSet: false,
-    },
+    deletedAt: null,
   };
 
   if (endDate)

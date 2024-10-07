@@ -5,7 +5,7 @@ import { FREE_BALANCE } from 'src/utils/constants';
 
 @Injectable()
 export class AddFreeBalanceService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async execute() {
     console.log('[ADD_FREE_BALANCE] started at: ', new Date());
@@ -23,9 +23,7 @@ export class AddFreeBalanceService {
 
     const usersToAddBalance = await this.prisma.user.findMany({
       where: {
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
         isEmailVerified: true,
         transactions: {
           none: {
@@ -46,9 +44,7 @@ export class AddFreeBalanceService {
       } = await this.prisma.transaction.aggregate({
         where: {
           userId: user.id,
-          deletedAt: {
-            isSet: false,
-          },
+          deletedAt: null,
         },
         _sum: {
           amount: true,

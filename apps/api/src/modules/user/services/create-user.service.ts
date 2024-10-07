@@ -14,9 +14,7 @@ export class CreateUserService {
     const userExists = await this.prisma.user.findFirst({
       where: {
         email: email,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

@@ -11,7 +11,7 @@ export class AuthGuard implements CanActivate {
     private readonly reflector: Reflector,
     private readonly prisma: PrismaService,
     private readonly getBalanceService: GetBalanceService,
-  ) { }
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const permissions = this.reflector.get(Permissions, context.getHandler());
@@ -32,9 +32,7 @@ export class AuthGuard implements CanActivate {
         AND: [
           {
             token,
-            deletedAt: {
-              isSet: false,
-            },
+            deletedAt: null,
           },
           {
             OR: [
@@ -66,9 +64,7 @@ export class AuthGuard implements CanActivate {
     const user = await this.prisma.user.findFirst({
       where: {
         id: session.userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

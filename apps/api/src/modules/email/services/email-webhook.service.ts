@@ -32,13 +32,9 @@ export class EmailWebhookService {
       const message = await this.prisma.message.findFirst({
         where: {
           externalId,
-          deletedAt: {
-            isSet: false,
-          },
+          deletedAt: null,
           domain: {
-            deletedAt: {
-              isSet: false,
-            },
+            deletedAt: null,
           },
         },
       });

@@ -7,7 +7,7 @@ RUN apt-get update -y && apt-get install -y openssl
 
 RUN npm install -g pnpm
 RUN pnpm install
-RUN pnpm run prepare:all
+RUN pnpm run prepare:db:prod
 RUN pnpm build
 
 EXPOSE 3331

@@ -18,9 +18,7 @@ export class CreateDomainService {
     const domainExists = await this.prisma.domain.findFirst({
       where: {
         name,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

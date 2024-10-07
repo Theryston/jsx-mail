@@ -10,9 +10,7 @@ export class GetBalanceService {
     const result = await this.prisma.transaction.aggregate({
       where: {
         userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
       _sum: {
         amount: true,

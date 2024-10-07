@@ -26,9 +26,7 @@ export class GetFullBalanceService {
     } = await this.prisma.transaction.aggregate({
       where: {
         userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
         amount: {
           gt: 0,
         },
@@ -46,9 +44,7 @@ export class GetFullBalanceService {
     } = await this.prisma.transaction.aggregate({
       where: {
         userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
         amount: {
           lt: 0,
         },

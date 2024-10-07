@@ -55,9 +55,7 @@ export class CreateCheckoutService {
     const user = await this.prisma.user.findFirst({
       where: {
         id: userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

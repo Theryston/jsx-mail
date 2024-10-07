@@ -17,9 +17,7 @@ export class ListFilesService {
     const files = await this.prisma.file.findMany({
       where: {
         userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
       select: fileSelect,
       skip,
@@ -32,9 +30,7 @@ export class ListFilesService {
     const count = await this.prisma.file.count({
       where: {
         userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

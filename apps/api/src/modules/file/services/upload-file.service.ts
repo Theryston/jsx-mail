@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import calculateHash from 'src/utils/calculate-hash';
-import { MAX_FILE_SIZE } from 'src/utils/constants';
+import { MAX_FILE_SIZE, MAXIMUM_STORAGE } from 'src/utils/constants';
 import { fileSelect } from 'src/utils/public-selects';
 import { S3ClientService } from './s3-client.service';
 import { formatSize } from 'src/utils/format';
@@ -35,9 +35,7 @@ export class UploadFileService {
     const user = await this.prisma.user.findFirst({
       where: {
         id: userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 
@@ -53,9 +51,7 @@ export class UploadFileService {
       _sum: { size: storage },
     } = await this.prisma.file.aggregate({
       where: {
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
         userId,
       },
       _sum: {
@@ -63,9 +59,9 @@ export class UploadFileService {
       },
     });
 
-    if (storage + file.size > user.storageLimit) {
+    if (storage + file.size > MAXIMUM_STORAGE) {
       throw new HttpException(
-        `You have reached the maximum storage limit of ${formatSize(user.storageLimit)}`,
+        `You have reached the maximum storage limit of ${formatSize(MAXIMUM_STORAGE)}`,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -76,9 +72,7 @@ export class UploadFileService {
       where: {
         hash,
         userId: user.id,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
       select: fileSelect,
     });

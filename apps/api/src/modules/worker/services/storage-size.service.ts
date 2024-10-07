@@ -4,16 +4,12 @@ import moment from 'moment';
 
 @Injectable()
 export class StorageSizeService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async execute() {
     console.log(`[STORAGE_SIZE] started at: ${new Date()}`);
     const filesUsers = await this.prisma.file.groupBy({
-      where: {
-        deletedAt: {
-          isSet: false,
-        },
-      },
+      where: { deletedAt: null },
       by: ['userId'],
       _sum: {
         size: true,
@@ -65,7 +61,7 @@ export class StorageSizeService {
       usersRecorded.push({
         userId,
         size,
-      })
+      });
 
       console.log(`[STORAGE_SIZE] ${userId} - ${size}`);
     }
@@ -75,6 +71,6 @@ export class StorageSizeService {
     return {
       message: 'Worker STORAGE_SIZE finished!',
       result: usersRecorded,
-    }
+    };
   }
 }

@@ -10,13 +10,9 @@ export class ListSendersService {
     return this.prisma.sender.findMany({
       where: {
         userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
         domain: {
-          deletedAt: {
-            isSet: false,
-          },
+          deletedAt: null,
         },
       },
       select: senderSelect,

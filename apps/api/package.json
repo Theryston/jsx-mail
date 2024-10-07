@@ -5,13 +5,14 @@
   "license": "MIT",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
-    "start:dev": "pnpm prepare:all && nest start --watch",
+    "start:dev": "pnpm run prepare:db:dev && nest start --watch",
     "build": "nest build",
     "docker:build": "docker build . -t jsxmail-api",
     "start": "node dist/main.js",
     "lint": "eslint \"{src}/**/*.ts\" --fix",
-    "prepare:all": "pnpm run prepare:db",
-    "prepare:db": "prisma db push && prisma generate && prisma db seed"
+    "prepare:db:dev": "pnpm run docker:up && prisma migrate dev && prisma generate && prisma db seed",
+    "prepare:db:prod": "prisma migrate deploy && prisma generate && prisma db seed",
+    "docker:up": "docker compose up -d"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.515.0",

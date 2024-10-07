@@ -15,9 +15,7 @@ export class GetInsightsService {
     const messagesCount = await this.prisma.message.groupBy({
       by: ['status'],
       where: {
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
         sentAt: {
           gte: monthStart.toDate(),
         },
@@ -43,14 +41,12 @@ export class GetInsightsService {
     const messagesSentByDay = await this.prisma.message.groupBy({
       by: ['sentDay'],
       where: {
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
         sentAt: {
           gte: monthStart.toDate(),
         },
         sentDay: {
-          isSet: true,
+          not: null,
         },
         userId,
       },

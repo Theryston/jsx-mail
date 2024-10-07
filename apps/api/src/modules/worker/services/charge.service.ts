@@ -27,11 +27,9 @@ export class ChargeService {
       where: {
         hasCharged: false,
         sentAt: {
-          isSet: true,
+          not: null,
         },
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
       by: ['userId'],
       _count: {
@@ -60,11 +58,9 @@ export class ChargeService {
             userId,
             hasCharged: false,
             sentAt: {
-              isSet: true,
+              not: null,
             },
-            deletedAt: {
-              isSet: false,
-            },
+            deletedAt: null,
           },
           data: {
             hasCharged: true,
@@ -101,12 +97,8 @@ export class ChargeService {
 
     const storageSize = await this.prisma.storageSize.groupBy({
       where: {
-        deletedAt: {
-          isSet: false,
-        },
-        chargedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
+        chargedAt: null,
         chargeAt: {
           gte: today.toDate(),
         },
@@ -143,12 +135,8 @@ export class ChargeService {
       await this.prisma.storageSize.updateMany({
         where: {
           userId,
-          deletedAt: {
-            isSet: false,
-          },
-          chargedAt: {
-            isSet: false,
-          },
+          deletedAt: null,
+          chargedAt: null,
           chargeAt: {
             gte: today.toDate(),
           },

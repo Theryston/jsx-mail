@@ -50,9 +50,7 @@ export class HandleWebhookService {
     const user = await this.prisma.user.findFirst({
       where: {
         id: checkout.userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

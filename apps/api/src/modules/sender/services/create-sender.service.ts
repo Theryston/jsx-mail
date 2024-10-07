@@ -16,9 +16,7 @@ export class CreateSenderService {
     const domainWhere = {
       name: domainName,
       userId,
-      deletedAt: {
-        isSet: false,
-      },
+      deletedAt: null,
     };
 
     if (domainName === process.env.DEFAULT_EMAIL_DOMAIN_NAME) {
@@ -38,9 +36,7 @@ export class CreateSenderService {
     const senderExists = await this.prisma.sender.findFirst({
       where: {
         email,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

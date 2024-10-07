@@ -4,8 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("MONGODB_URI")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum AccessLevel {
@@ -41,12 +41,11 @@ enum MessageStatus {
 }
 
 model User {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  id                String      @id @default(uuid())
   name              String
   email             String      @unique
   phone             String?
   birthdate         DateTime?
-  storageLimit      Int         @map("storage_limit") @default(5368709120) // 5GB
   gatewayId         String?     @map("gateway_id")
   isEmailVerified   Boolean     @map("is_email_verified") @default(false)
   accessLevel       AccessLevel @map("access_level") @default(self)
@@ -70,8 +69,8 @@ model User {
 }
 
 model Transaction {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String      @map("user_id") @db.ObjectId
+  id                String      @id @default(uuid())
+  userId            String      @map("user_id")
   gatewayId         String?     @map("gateway_id")
   amount            Int
   description       String
@@ -86,8 +85,8 @@ model Transaction {
 }
 
 model Session {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String      @map("user_id") @db.ObjectId
+  id                String      @id @default(uuid())
+  userId            String      @map("user_id")
   token             String
   description       String?
   permissions       String[]
@@ -102,8 +101,8 @@ model Session {
 }
 
 model SecurityCode {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String      @map("user_id") @db.ObjectId
+  id                String      @id @default(uuid())
+  userId            String      @map("user_id")
   code              String
   expiresAt         DateTime    @map("expires_at")
   createdAt         DateTime    @map("created_at") @default(now())
@@ -116,10 +115,10 @@ model SecurityCode {
 }
 
 model Domain {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  id                String      @id @default(uuid())
   name              String      @unique
   status            DomainStatus @map("status") @default(pending)
-  userId            String      @map("user_id") @db.ObjectId
+  userId            String      @map("user_id")
   createdAt         DateTime    @map("created_at") @default(now())
   updatedAt         DateTime    @map("updated_at") @updatedAt
   deletedAt         DateTime?   @map("deleted_at")
@@ -134,8 +133,8 @@ model Domain {
 }
 
 model DNSRecord {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
-  domainId          String      @map("domain_id") @db.ObjectId
+  id                String      @id @default(uuid())
+  domainId          String      @map("domain_id")
   type              String
   name              String
   value             String
@@ -151,15 +150,15 @@ model DNSRecord {
 }
 
 model File {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  id                String      @id @default(uuid())
   originalName      String      @map("original_name")
   key               String
   hash              String
+  size              Int
   mimeType          String      @map("mime_type")
   encoding          String
-  size              Int
   url               String
-  userId            String      @map("user_id") @db.ObjectId
+  userId            String      @map("user_id")
   createdAt         DateTime    @map("created_at") @default(now())
   updatedAt         DateTime    @map("updated_at") @updatedAt
   deletedAt         DateTime?   @map("deleted_at")
@@ -170,8 +169,8 @@ model File {
 }
 
 model StorageSize {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String      @map("user_id") @db.ObjectId
+  id                String      @id @default(uuid())
+  userId            String      @map("user_id")
   size              Int
   chargeAt          DateTime    @map("charge_at")
   chargedAt         DateTime?   @map("charged_at")
@@ -185,12 +184,12 @@ model StorageSize {
 }
 
 model Sender {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  id                String      @id @default(uuid())
   username          String
   name              String
   email             String
-  userId            String      @map("user_id") @db.ObjectId
-  domainId          String      @map("domain_id") @db.ObjectId
+  userId            String      @map("user_id")
+  domainId          String      @map("domain_id")
   createdAt         DateTime    @map("created_at") @default(now())
   updatedAt         DateTime    @map("updated_at") @updatedAt
   deletedAt         DateTime?   @map("deleted_at")
@@ -204,10 +203,10 @@ model Sender {
 }
 
 model Message {
-  id                String        @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String        @map("user_id") @db.ObjectId
-  senderId          String        @map("sender_id") @db.ObjectId
-  domainId          String        @map("domain_id") @db.ObjectId
+  id                String        @id @default(uuid())
+  userId            String        @map("user_id")
+  senderId          String        @map("sender_id")
+  domainId          String        @map("domain_id")
   hasCharged        Boolean       @default(false) @map("has_charged")
   subject           String
   body              String
@@ -229,13 +228,13 @@ model Message {
 }
 
 model Checkout {
-  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  id                String      @id @default(uuid())
   gatewayId         String      @map("gateway_id")
   gatewayUrl        String      @map("gateway_url")
   localAmount       Int         @map("local_amount")
   localCurrency     String      @map("local_currency")
   amount            Int
-  userId            String      @map("user_id") @db.ObjectId
+  userId            String      @map("user_id")
   completedAt       DateTime?   @map("completed_at")
   createdAt         DateTime    @map("created_at") @default(now())
   updatedAt         DateTime    @map("updated_at") @updatedAt

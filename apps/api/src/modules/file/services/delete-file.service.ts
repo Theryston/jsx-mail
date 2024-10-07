@@ -14,9 +14,7 @@ export class DeleteFileService {
       where: {
         id: fileId,
         userId: userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

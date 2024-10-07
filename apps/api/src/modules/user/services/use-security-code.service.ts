@@ -19,9 +19,7 @@ export class UseSecurityCodeService {
     const code = await this.prisma.securityCode.findFirst({
       where: {
         code: securityCode,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 
@@ -36,9 +34,7 @@ export class UseSecurityCodeService {
     const user = await this.prisma.user.findFirst({
       where: {
         id: code.userId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

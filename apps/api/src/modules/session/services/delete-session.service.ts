@@ -14,9 +14,7 @@ export class DeleteSessionService {
     const session = await this.prisma.session.findFirst({
       where: {
         id: sessionId,
-        deletedAt: {
-          isSet: false,
-        },
+        deletedAt: null,
       },
     });
 

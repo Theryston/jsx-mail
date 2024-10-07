@@ -11,9 +11,7 @@ export class ListSessionsService {
       where: {
         AND: [
           {
-            deletedAt: {
-              isSet: false,
-            },
+            deletedAt: null,
             userId,
           },
           {
