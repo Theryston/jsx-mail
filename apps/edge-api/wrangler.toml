@@ -5,6 +5,9 @@ compatibility_date = "2022-10-10"
 [triggers]
 crons = ["0 0 * * *"]
 
+[observability]
+enabled = true
+
 [vars]
 BASE_API_URL = "https://api.jsxmail.org"
 
