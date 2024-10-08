@@ -1,7 +1,6 @@
 import { TransactionStyle } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
-  IsArray,
   IsDate,
   IsEmail,
   IsNotEmpty,
@@ -12,11 +11,8 @@ import {
   Length,
   Matches,
   Max,
-  MaxDate,
   Min,
-  MinDate,
 } from 'class-validator';
-import moment from 'moment';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -121,13 +117,11 @@ export class MessagesInsightsDto {
   @IsOptional()
   @Type(() => Date)
   @IsDate()
-  @MaxDate(new Date())
   endDate?: Date;
 
   @IsOptional()
   @Type(() => Date)
   @IsDate()
-  @MaxDate(new Date())
   startDate?: Date;
 
   @IsOptional()
