@@ -25,17 +25,22 @@ type Price = {
 };
 
 export default function Pricing() {
-  const [value, setValue] = useState(50000);
-  const [prices, setPrices] = useState<Price[]>([]);
   const { data, isLoading } = useSWR('/user/price', fetcher);
-  const emailPricing = data?.pricing[0];
+  const emailPricing = data?.EMAIL_PRICING;
+
+  const [prices, setPrices] = useState<Price[]>([]);
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    setValue(emailPricing?.defaultValue || 1000);
+  }, [emailPricing]);
 
   useEffect(() => {
     if (!emailPricing) return;
 
     const jsxMailCloudPricing =
-      (value * ((emailPricing?.price || 0) / emailPricing.unit)) /
-      data.moneyScale;
+      (value * ((emailPricing.price || 0) / emailPricing.unit)) /
+      data.MONEY_SCALE;
 
     const newPricing: Price[] = [
       {
@@ -210,7 +215,7 @@ export default function Pricing() {
             label="Sent emails"
             maxValue={emailPricing?.maxValue}
             step={emailPricing?.step}
-            minValue={1000}
+            minValue={emailPricing?.minValue}
             getValue={(count) => `${count.toLocaleString('en-US')} emails`}
             value={value}
             onChange={(count) => setValue(Number(count))}
