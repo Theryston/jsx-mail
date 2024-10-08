@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
 import { Link } from '@nextui-org/link';
 import { Slider } from '@nextui-org/slider';
 import { Spinner } from '@nextui-org/spinner';
@@ -38,9 +39,14 @@ export default function Pricing() {
   useEffect(() => {
     if (!emailPricing) return;
 
-    const jsxMailCloudPricing =
-      (value * ((emailPricing.price || 0) / emailPricing.unit)) /
-      data.MONEY_SCALE;
+    let jsxMailCloudPricing =
+      value * ((emailPricing.price || 0) / emailPricing.unit);
+
+    if (jsxMailCloudPricing <= data.FREE_BALANCE) {
+      jsxMailCloudPricing = 0;
+    } else {
+      jsxMailCloudPricing = jsxMailCloudPricing / data.MONEY_SCALE;
+    }
 
     const newPricing: Price[] = [
       {
@@ -210,17 +216,55 @@ export default function Pricing() {
               </div>
             </div>
           )}
-          <Slider
-            size="sm"
-            label="Sent emails"
-            maxValue={emailPricing?.maxValue}
-            step={emailPricing?.step}
-            minValue={emailPricing?.minValue}
-            getValue={(count) => `${count.toLocaleString('en-US')} emails`}
-            value={value}
-            onChange={(count) => setValue(Number(count))}
-            className="w-full"
-          />
+
+          <div className="w-full flex flex-col">
+            <div className="w-full flex justify-between items-center mx-1">
+              <p className="text-sm">Emails</p>
+
+              <Input
+                type="text"
+                value={value.toLocaleString('en-US')}
+                size="sm"
+                onChange={(e) => {
+                  const newNumber = Number(e.target.value.replace(/\D/g, ''));
+
+                  if (newNumber > emailPricing?.maxValue) {
+                    setValue(emailPricing?.maxValue);
+                  } else {
+                    setValue(newNumber);
+                  }
+                }}
+                className="w-28"
+                onKeyUp={(e) => {
+                  if (e.key === 'ArrowUp') {
+                    setValue((prev) => {
+                      if (prev + 1000 > emailPricing?.maxValue)
+                        return emailPricing?.maxValue;
+
+                      return prev + 1000;
+                    });
+                  } else if (e.key === 'ArrowDown') {
+                    setValue((prev) => {
+                      if (prev - 1000 < 0) return 0;
+
+                      return prev - 1000;
+                    });
+                  }
+                }}
+                endContent={<span className="text-xs text-zinc-300">/Mo</span>}
+              />
+            </div>
+
+            <Slider
+              size="sm"
+              maxValue={emailPricing?.maxValue}
+              step={emailPricing?.step}
+              minValue={emailPricing?.minValue}
+              value={value}
+              onChange={(count) => setValue(Number(count))}
+              className="w-full"
+            />
+          </div>
         </div>
       </div>
 
@@ -238,23 +282,27 @@ export default function Pricing() {
                   'bg-primary': index === 0,
                   'bg-zinc-500': index !== 0,
                 })}
-                style={{ width: `${price.barPercentage}%` }}
+                style={{ width: `${price.barPercentage || 1}%` }}
               />
 
               <p className="text-sm">
-                {price.amount.toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                })}
+                {price.amount === 0
+                  ? 'Free'
+                  : price.amount.toLocaleString('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                    })}
 
-                <span
-                  className="text-zinc-500"
-                  style={{
-                    fontSize: '0.65rem',
-                  }}
-                >
-                  /{price.period}
-                </span>
+                {price.amount !== 0 && (
+                  <span
+                    className="text-zinc-500"
+                    style={{
+                      fontSize: '0.65rem',
+                    }}
+                  >
+                    /{price.period}
+                  </span>
+                )}
               </p>
             </div>
           </div>
