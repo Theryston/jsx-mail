@@ -60,29 +60,31 @@ export default function Pricing() {
           value < 60000
             ? 20
             : value < 110000
-              ? 50
+              ? 35
               : value < 160000
-                ? 80
+                ? 50
                 : value < 300000
-                  ? 200
-                  : 400,
+                  ? 80
+                  : value < 700000
+                    ? 200
+                    : 400,
         period: 'mo',
         logo: <img src="/resend.svg" className="w-24" />,
         barPercentage: 0, // This will be calculated later
       },
       {
         amount:
-          value < 10000
+          value <= 10000
             ? 15
-            : value < 50000
+            : value <= 50000
               ? 35
-              : value < 100000
+              : value <= 100000
                 ? 75
-                : value < 250000
+                : value <= 250000
                   ? 215
-                  : value < 500000
+                  : value <= 500000
                     ? 400
-                    : value < 750000
+                    : value <= 750000
                       ? 550
                       : 700,
         period: 'mo',
@@ -91,15 +93,15 @@ export default function Pricing() {
       },
       {
         amount:
-          value < 15000
+          value <= 15000
             ? 27
-            : value < 50000
+            : value <= 50000
               ? 55
-              : value < 100000
+              : value <= 100000
                 ? 105
-                : value < 250000
+                : value <= 250000
                   ? 250
-                  : value < 500000
+                  : value <= 500000
                     ? 470
                     : 700,
         period: 'mo',
