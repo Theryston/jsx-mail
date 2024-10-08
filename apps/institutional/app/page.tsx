@@ -3,11 +3,14 @@ import Hero from '@/components/Hero';
 import Whats from '@/components/Whats';
 import Why from '@/components/Why';
 import Pricing from '@/components/Pricing';
+import Faq from '@/components/Faq';
+import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
     <main className="flex flex-col">
       <Header />
+
       <div className="flex flex-col px-6">
         <Hero />
         <div className="flex items-center justify-center flex-col lg:flex-row gap-6 pb-[20vh] mt-20 md:mt-0">
@@ -30,7 +33,10 @@ export default function Home() {
         <Whats />
         <Why />
         <Pricing />
+        <Faq />
       </div>
+
+      <Footer />
     </main>
   );
 }

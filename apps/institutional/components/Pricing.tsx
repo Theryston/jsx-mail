@@ -126,7 +126,7 @@ export default function Pricing() {
             color="primary"
             variant="flat"
             className="w-fit"
-            href="https://docs.jsxmail.com"
+            href="https://docs.jsxmail.org"
             target="_blank"
           >
             Documentation
@@ -177,7 +177,7 @@ export default function Pricing() {
                 color="primary"
                 variant="flat"
                 className="w-fit"
-                href="https://cloud.jsxmail.com"
+                href="https://cloud.jsxmail.org"
                 target="_blank"
               >
                 Go to cloud

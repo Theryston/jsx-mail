@@ -39,7 +39,7 @@ export default function Hero() {
           color="primary"
           variant="shadow"
           as={Link}
-          href="https://cloud.jsxmail.com"
+          href="https://cloud.jsxmail.org"
           target="_blank"
           fullWidth
         >
@@ -49,7 +49,7 @@ export default function Hero() {
           color="primary"
           variant="flat"
           as={Link}
-          href="https://docs.jsxmail.com"
+          href="https://docs.jsxmail.org"
           target="_blank"
           fullWidth
         >
