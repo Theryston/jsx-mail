@@ -183,19 +183,18 @@ export class UserController {
   @Get('price')
   price() {
     return {
-      moneyScale: MONEY_SCALE,
-      freeBalance: FREE_BALANCE,
-      pricing: [
-        {
-          unit: 1000,
-          unitName: 'emails',
-          description: 'Price per sent emails',
-          step: 1000,
-          maxValue: 1000000,
-          price: PRICE_PER_MESSAGE * 1000,
-          friendlyAmount: friendlyMoney(PRICE_PER_MESSAGE * 1000, true),
-        },
-      ],
+      MONEY_SCALE: MONEY_SCALE,
+      FREE_BALANCE: FREE_BALANCE,
+      EMAIL_PRICING: {
+        unit: 1000,
+        unitName: 'emails',
+        step: 1000,
+        minValue: 1000,
+        maxValue: 1000000,
+        defaultValue: 10000,
+        price: PRICE_PER_MESSAGE * 1000,
+        friendlyAmount: friendlyMoney(PRICE_PER_MESSAGE * 1000, true),
+      },
     };
   }
 }
