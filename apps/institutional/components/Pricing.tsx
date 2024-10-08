@@ -177,7 +177,7 @@ export default function Pricing() {
                 color="primary"
                 variant="flat"
                 className="w-fit"
-                href="https://cloud.jsxmail.org"
+                href="https://cloud.jsxmail.org/app"
                 target="_blank"
               >
                 Go to cloud

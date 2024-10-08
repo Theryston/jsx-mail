@@ -62,7 +62,7 @@ export default function Header() {
             as={Link}
             className="w-28"
             color="primary"
-            href="https://cloud.jsxmail.org"
+            href="https://cloud.jsxmail.org/app"
             variant="shadow"
             isExternal
             size="sm"
@@ -90,7 +90,7 @@ export default function Header() {
             as={Link}
             className="w-28"
             color="primary"
-            href="https://cloud.jsxmail.org"
+            href="https://cloud.jsxmail.org/app"
             variant="shadow"
             isExternal
             size="sm"

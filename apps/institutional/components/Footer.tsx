@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="flex gap-4">
         <Link
           color="foreground"
-          href="https://cloud.jsxmail.org"
+          href="https://cloud.jsxmail.org/app"
           isExternal
           size="sm"
         >
