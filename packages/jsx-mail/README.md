@@ -8,7 +8,7 @@
 
 **Automatic Image Optimization and Hosting**
 
-With JSX Mail, you don't have to worry about image hosting or optimization. It will automatically optimize and upload the image to [JSX Mail Cloud](https://jsxmail.org/docs/cloud). You can also [configure your own S3](https://jsxmail.org/docs/image) very simply.
+With JSX Mail, you don't have to worry about image hosting or optimization. It will automatically optimize and upload the image to [JSX Mail Cloud](https://docs.jsxmail.org/cloud/introduction). You can also [configure your own S3](https://docs.jsxmail.org/framework/image) very simply.
 
 In the end, JSX Mail allows you to use an image in your email template in the same way as you do on the front-end with React. Here is a code example:
 
@@ -46,7 +46,7 @@ Ready to transform the way you develop emails? Visit our [website](https://jsxma
 
 ## Documentation
 
-For a deeper understanding of all features and how to make the most of JSX Mail, check out our [complete documentation](https://jsxmail.org/docs).
+For a deeper understanding of all features and how to make the most of JSX Mail, check out our [complete documentation](https://docs.jsxmail.org/introduction).
 
 ---
 

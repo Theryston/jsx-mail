@@ -7,7 +7,7 @@ export default function Info({ version }) {
         Start by editing the templates/welcome.tsx file and see how your
         template automatically updates in the preview
       </p>
-      <button style={S.Button} href="https://jsxmail.org/docs">
+      <button style={S.Button} href="https://docs.jsxmail.org/introduction">
         Read the documentation
       </button>
       <p>
