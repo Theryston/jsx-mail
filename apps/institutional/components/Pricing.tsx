@@ -5,6 +5,7 @@ import { Link } from '@nextui-org/link';
 import { Slider } from '@nextui-org/slider';
 import { Spinner } from '@nextui-org/spinner';
 import axios from 'axios';
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 
@@ -36,11 +37,12 @@ export default function Pricing() {
       (value * ((emailPricing?.price || 0) / emailPricing.unit)) /
       data.moneyScale;
 
-    const newPricing: any = [
+    const newPricing: Price[] = [
       {
         amount: jsxMailCloudPricing,
         period: 'just when you send',
         logo: <img src="/our-cloud-logo.svg" className="w-24" />,
+        barPercentage: 0, // This will be calculated later
       },
       {
         amount:
@@ -55,6 +57,7 @@ export default function Pricing() {
                   : 400,
         period: 'mo',
         logo: <img src="/resend.svg" className="w-24" />,
+        barPercentage: 0, // This will be calculated later
       },
       {
         amount:
@@ -73,6 +76,7 @@ export default function Pricing() {
                       : 700,
         period: 'mo',
         logo: <img src="/mailgun.svg" className="w-24" />,
+        barPercentage: 0, // This will be calculated later
       },
       {
         amount:
@@ -89,6 +93,7 @@ export default function Pricing() {
                     : 700,
         period: 'mo',
         logo: <img src="/mailjet.svg" className="w-24" />,
+        barPercentage: 0, // This will be calculated later
       },
     ];
 
@@ -104,14 +109,16 @@ export default function Pricing() {
   }, [value, emailPricing]);
 
   return (
-    <div id="pricing" className="flex flex-col gap-8 items-center w-full mb-20">
-      <div className="flex items-start justify-center gap-10 w-8/12">
-        <div className="bg-zinc-900 h-96 px-6 py-9 rounded-3xl w-full gap-9 flex flex-col justify-center">
+    <div id="pricing" className="flex flex-col gap-9 items-center w-full mb-20">
+      <h2 className="text-4xl font-bold text-center">Pricing</h2>
+
+      <div className="flex flex-col md:flex-row items-start justify-center gap-4 w-full md:w-8/12">
+        <div className="bg-zinc-900 h-fit md:h-96 px-6 py-9 rounded-3xl w-full gap-6 md:gap-9 flex flex-col justify-center">
           <p className="text-base">Framework</p>
 
           <div className="flex gap-2 items-end">
-            <span className="text-6xl font-medium">Free</span>
-            <span className="text-sm">Forever</span>
+            <span className="text-5xl md:text-6xl font-medium">Free</span>
+            <span className="text-xs md:text-sm">Forever</span>
           </div>
 
           <Button
@@ -153,14 +160,14 @@ export default function Pricing() {
             </div>
           )}
           {!isLoading && (
-            <div className="bg-zinc-900 h-96 px-6 py-9 rounded-3xl w-full gap-9 flex flex-col justify-center">
+            <div className="bg-zinc-900 h-fit md:h-96 px-6 py-9 rounded-3xl w-full gap-6 md:gap-9 flex flex-col justify-center">
               <p className="text-base">Cloud</p>
 
               <div className="flex gap-2 items-end">
-                <span className="text-6xl font-medium">
+                <span className="text-5xl md:text-6xl font-medium">
                   {emailPricing?.friendlyAmount}
                 </span>
-                <span className="text-sm">
+                <span className="text-xs md:text-sm">
                   {emailPricing?.unit} {emailPricing?.unitName}
                 </span>
               </div>
@@ -203,20 +210,49 @@ export default function Pricing() {
             label="Sent emails"
             maxValue={emailPricing?.maxValue}
             step={emailPricing?.step}
+            minValue={1000}
             getValue={(count) => `${count.toLocaleString('en-US')} emails`}
             value={value}
             onChange={(count) => setValue(Number(count))}
+            className="w-full"
           />
         </div>
       </div>
-      <div className="bg-red-500 flex flex-col items-center justify-center gap-10 w-8/12">
+
+      <div className="flex flex-col items-center justify-center gap-4 w-full md:w-8/12">
         {prices.map((price, index) => (
-          <p>
-            {price.amount.toLocaleString('en-US', {
-              style: 'currency',
-              currency: 'USD',
-            })}
-          </p>
+          <div
+            key={index}
+            className="grid grid-cols-12 w-full items-center gap-2 md:gap-0"
+          >
+            <div className="col-span-3 md:col-span-2">{price.logo}</div>
+
+            <div className="col-span-9 md:col-span-10 flex items-center gap-3">
+              <div
+                className={clsx('h-9 rounded-lg transition-all duration-500', {
+                  'bg-primary': index === 0,
+                  'bg-zinc-500': index !== 0,
+                })}
+                style={{ width: `${price.barPercentage}%` }}
+              />
+
+              <p className="text-sm">
+                {price.amount.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                })}
+
+                <span
+                  className="text-zinc-500"
+                  style={{
+                    fontSize: '0.65rem',
+                  }}
+                >
+                  /{price.period}
+                </span>
+              </p>
+            </div>
+          </div>
         ))}
       </div>
     </div>
