@@ -31,7 +31,7 @@ export default function Why() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {REASONS.map((reason, index) => (
-          <div key={index} className="flex flex-col gap-3 w-full md:w-80">
+          <div key={index} className="flex flex-col gap-3 w-full md:max-w-80">
             <h2 className="text-base font-medium">{reason.title}</h2>
             <p className="text-sm text-gray-500">{reason.description}</p>
           </div>
