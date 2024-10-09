@@ -13,7 +13,7 @@ export default function Home() {
 
       <div className="flex flex-col px-6">
         <Hero />
-        <div className="flex items-center justify-center flex-col lg:flex-row gap-6 pb-[20vh] mt-20 md:mt-0">
+        <div className="flex items-center justify-center flex-col lg:flex-row gap-6 pb-[20vh]">
           <img
             src="/code.svg"
             alt="code image"

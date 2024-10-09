@@ -1,7 +1,38 @@
+'use client';
+
 import { Link } from '@nextui-org/link';
 import { Button } from '@nextui-org/button';
+import { useEffect, useState } from 'react';
 
 export default function Hero() {
+  const [bottom, setBottom] = useState(0);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const isMobile = window.innerWidth < 768;
+
+      if (!isMobile) {
+        setBottom(0);
+        return;
+      }
+
+      if (window.scrollY > lastScrollY) {
+        setBottom(-100);
+      } else {
+        setBottom(0);
+      }
+      lastScrollY = window.scrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col gap-3 md:gap-5 items-center justify-between md:justify-center h-[calc(100vh-64px)] py-6">
       <div />
@@ -35,7 +66,12 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 w-full md:w-4/12">
+      <div className="block md:hidden" />
+
+      <div
+        className="flex fixed z-50 p-4 bg-background/70 backdrop-blur-lg md:relative gap-4 w-full md:w-4/12 2xl:w-3/12 shadow-[10px_0_10px_rgba(0,0,0,0.5)] md:shadow-none transition-all duration-200"
+        style={{ bottom }}
+      >
         <Button
           color="primary"
           variant="shadow"
@@ -43,6 +79,7 @@ export default function Hero() {
           href="https://cloud.jsxmail.org/app"
           target="_blank"
           fullWidth
+          size="sm"
         >
           Cloud
         </Button>
@@ -53,6 +90,7 @@ export default function Hero() {
           href="https://docs.jsxmail.org"
           target="_blank"
           fullWidth
+          size="sm"
         >
           Docs
         </Button>
