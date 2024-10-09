@@ -1,61 +1,14 @@
 'use client';
 
 import clsx from 'clsx';
-import {
-  Home,
-  Computing,
-  CloudSunny,
-  Send,
-  DocumentSketch,
-  MessageTick,
-  Document,
-} from 'iconsax-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { HEADER_ITEMS } from './constants';
 
 export default function Sidebar() {
   const pathname = usePathname();
 
   const sizeClassnames = 'w-80 h-[70vh]';
-
-  const ITEMS = [
-    {
-      label: 'Home',
-      href: '/app',
-      icon: <Home variant="Bold" size="1.5rem" />,
-    },
-    {
-      label: 'Billing',
-      href: '/app/billing',
-      icon: <Computing variant="Bold" size="1.5rem" />,
-    },
-    {
-      label: 'Domains',
-      href: '/app/domains',
-      icon: <CloudSunny variant="Bold" size="1.5rem" />,
-    },
-    {
-      label: 'Senders',
-      href: '/app/senders',
-      icon: <Send variant="Bold" size="1.5rem" />,
-    },
-    {
-      label: 'Files',
-      href: '/app/files',
-      icon: <DocumentSketch variant="Bold" size="1.5rem" />,
-    },
-    {
-      label: 'Sending History',
-      href: '/app/sending-history',
-      icon: <MessageTick variant="Bold" size="1.5rem" />,
-    },
-    {
-      label: 'Documentation',
-      href: 'https://docs.jsxmail.org/introduction',
-      icon: <Document variant="Bold" size="1.5rem" />,
-      isExternal: true,
-    },
-  ];
 
   return (
     <div className={sizeClassnames}>
@@ -65,7 +18,7 @@ export default function Sidebar() {
           'bg-zinc-900 fixed rounded-2xl flex flex-col py-5 px-8 gap-3',
         )}
       >
-        {ITEMS.map((item) => (
+        {HEADER_ITEMS.map((item) => (
           <Link
             key={item.href}
             href={item.href}
