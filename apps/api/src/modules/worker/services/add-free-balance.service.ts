@@ -52,10 +52,7 @@ export class AddFreeBalanceService {
       });
 
       let diff = balance < 0 ? 0 : FREE_BALANCE - balance;
-
-      if (diff < 0) {
-        diff = 0;
-      }
+      if (diff < 0) diff = 0;
 
       await this.prisma.transaction.create({
         data: {
