@@ -79,7 +79,7 @@ export default function AccountContent() {
       </h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-4/6 grid grid-cols-2 gap-4"
+        className="w-full md:w-4/6 grid grid-cols-1 md:grid-cols-2 gap-4"
       >
         <Input
           isRequired
@@ -151,16 +151,13 @@ export default function AccountContent() {
           }
         />
 
-        <Button
-          color="primary"
-          className="h-12"
-          type="submit"
-          isLoading={isSubmitting}
-        >
+        <Button color="primary" type="submit" isLoading={isSubmitting}>
           Save
         </Button>
       </form>
+
       <Divider />
+
       <Sessions />
     </>
   );

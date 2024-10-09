@@ -59,7 +59,7 @@ export default function HomePageContent() {
       <h1 className="text-2xl">
         <span className="font-bold">Welcome,</span> {titleCase(user.name)}
       </h1>
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         <Card height="8rem" isLoading={isLoading}>
           <div className="w-full h-full flex flex-col justify-between">
             <p className="text-xs font-medium">Your balance</p>

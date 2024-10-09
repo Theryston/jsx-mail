@@ -19,11 +19,12 @@ export default async function AppLayout({
     return (
       <CloudAppContextProvider user={user}>
         <Header />
-        <div className="px-12 py-12 w-full flex gap-12">
-          <div className="relative">
+
+        <div className="p-6 md:p-12 w-full flex gap-12">
+          <div className="hidden md:block relative">
             <Sidebar />
           </div>
-          <div className="w-[calc(100%-23rem)] flex flex-col gap-6">
+          <div className="w-full md:w-[calc(100%-23rem)] flex flex-col gap-4 md:gap-6">
             {children}
           </div>
         </div>
