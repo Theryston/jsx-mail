@@ -93,7 +93,7 @@ export default function Sessions() {
   }, []);
 
   return (
-    <>
+    <div id="sessions">
       <Table
         isLoading={isLoading}
         columns={[
@@ -147,6 +147,6 @@ export default function Sessions() {
           await mutate();
         }}
       />
-    </>
+    </div>
   );
 }
