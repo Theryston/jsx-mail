@@ -34,7 +34,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-3 md:gap-5 items-center justify-between md:justify-center h-[calc(100vh-64px)] py-6">
+    <div className="flex flex-col gap-3 md:gap-5 items-center justify-between md:justify-center h-[calc(100dvh-64px)] py-6">
       <div />
       <div className="flex flex-col items-center justify-end md:justify-center gap-2 h-fit">
         <Link
