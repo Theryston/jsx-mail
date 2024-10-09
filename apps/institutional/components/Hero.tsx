@@ -3,8 +3,9 @@ import { Button } from '@nextui-org/button';
 
 export default function Hero() {
   return (
-    <div className="flex flex-col gap-3 md:gap-5 items-center justify-start md:justify-center h-[calc(100vh-64px)]">
-      <div className="flex flex-col items-center justify-end md:justify-center gap-2 h-full md:h-fit">
+    <div className="flex flex-col gap-3 md:gap-5 items-center justify-between md:justify-center h-[calc(100vh-64px)] py-6">
+      <div />
+      <div className="flex flex-col items-center justify-end md:justify-center gap-2 h-fit">
         <Link
           href="https://github.com/Theryston/jsx-mail"
           target="_blank"
