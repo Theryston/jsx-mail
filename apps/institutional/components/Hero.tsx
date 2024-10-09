@@ -69,7 +69,7 @@ export default function Hero() {
       <div className="block md:hidden" />
 
       <div
-        className="flex fixed z-50 p-4 bg-background/70 backdrop-blur-lg md:relative gap-4 w-full md:w-4/12 2xl:w-3/12 shadow-[10px_0_10px_rgba(0,0,0,0.5)] md:shadow-none transition-all duration-200"
+        className="flex fixed z-50 md:z-0 p-4 bg-background/70 backdrop-blur-lg md:relative gap-4 w-full md:w-4/12 2xl:w-3/12 shadow-[10px_0_10px_rgba(0,0,0,0.5)] md:shadow-none transition-all duration-200"
         style={{ bottom }}
       >
         <Button
