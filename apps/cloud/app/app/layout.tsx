@@ -24,7 +24,7 @@ export default async function AppLayout({
           <div className="hidden md:block relative">
             <Sidebar />
           </div>
-          <div className="w-full md:w-[calc(100%-23rem)] flex flex-col gap-6">
+          <div className="w-full md:w-[calc(100%-23rem)] flex flex-col gap-4 md:gap-6">
             {children}
           </div>
         </div>
