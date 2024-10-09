@@ -26,7 +26,7 @@ export default function Table({
         {columns.map((column, index) => (
           <div
             key={index}
-            className="font-semibold text-sm text-blue-300 flex items-center"
+            className="font-semibold text-sm text-blue-300 overflow-auto whitespace-nowrap text-ellipsis flex items-center scrollbar-hide"
           >
             {column}
           </div>
@@ -39,7 +39,7 @@ export default function Table({
             {Array.from({ length: columns.length }).map((_, subIndex) => (
               <div
                 key={subIndex}
-                className="font-normal text-xs overflow-hidden whitespace-nowrap text-ellipsis flex items-center"
+                className="font-normal text-xs overflow-hidden whitespace-nowrap text-ellipsis flex items-center scrollbar-hide"
               >
                 <Skeleton className="h-8 w-full rounded-md" />
               </div>
@@ -53,7 +53,7 @@ export default function Table({
             {row.map((cell, index) => (
               <div
                 key={index}
-                className="font-normal text-xs overflow-hidden whitespace-nowrap text-ellipsis flex items-center"
+                className="font-normal text-xs overflow-auto whitespace-nowrap text-ellipsis flex items-center md:scrollbar-hide"
               >
                 {isValidElement(cell) ? (
                   cell
