@@ -63,6 +63,7 @@ export default function Header() {
               color="foreground"
               className="text-sm"
               onClick={() => setIsMenuOpen(false)}
+              isExternal={item.isExternal}
             >
               <div className="flex gap-3 items-center">
                 {item.icon}
