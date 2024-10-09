@@ -1,4 +1,5 @@
 import { Skeleton, Tooltip } from '@nextui-org/react';
+import clsx from 'clsx';
 import { isValidElement } from 'react';
 
 type Props = {
@@ -17,12 +18,21 @@ export default function Table({
   const gridStyle = {
     display: 'grid',
     gridTemplateColumns: `repeat(${columns.length}, 1fr)`,
-    gap: isLoading ? '0.75rem' : '1.5rem',
   };
 
+  const classNameGap = clsx('w-full', {
+    'gap-2': isLoading,
+    'gap-3': !isLoading,
+  });
+
   return (
-    <div className="w-full flex flex-col" style={{ gap: gridStyle.gap }}>
-      <div style={gridStyle} className="w-full">
+    <div
+      className={clsx('flex flex-col', classNameGap, {
+        'gap-2': isLoading,
+        'gap-4': !isLoading,
+      })}
+    >
+      <div style={gridStyle} className={classNameGap}>
         {columns.map((column, index) => (
           <div
             key={index}
@@ -35,7 +45,7 @@ export default function Table({
 
       {isLoading &&
         Array.from({ length: mockCountOnLoading }).map((_, index) => (
-          <div key={index} style={gridStyle} className="w-full">
+          <div key={index} style={gridStyle} className={classNameGap}>
             {Array.from({ length: columns.length }).map((_, subIndex) => (
               <div
                 key={subIndex}
@@ -49,7 +59,7 @@ export default function Table({
 
       {!isLoading &&
         rows.map((row, index) => (
-          <div key={index} style={gridStyle} className="w-full">
+          <div key={index} style={gridStyle} className={classNameGap}>
             {row.map((cell, index) => (
               <div
                 key={index}
