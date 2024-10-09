@@ -79,7 +79,7 @@ model Transaction {
   updatedAt         DateTime    @map("updated_at") @updatedAt
   deletedAt         DateTime?   @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("transactions")
 }
@@ -95,7 +95,7 @@ model Session {
   updatedAt         DateTime    @map("updated_at") @updatedAt
   deletedAt         DateTime?   @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
@@ -109,7 +109,7 @@ model SecurityCode {
   updatedAt         DateTime    @map("updated_at") @updatedAt
   deletedAt         DateTime?   @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("security_codes")
 }
@@ -123,7 +123,7 @@ model Domain {
   updatedAt         DateTime    @map("updated_at") @updatedAt
   deletedAt         DateTime?   @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   dnsRecords DNSRecord[]
   senders Sender[]
@@ -144,7 +144,7 @@ model DNSRecord {
   updatedAt         DateTime    @map("updated_at") @updatedAt
   deletedAt         DateTime?   @map("deleted_at")
 
-  domain Domain @relation(fields: [domainId], references: [id])
+  domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
 
   @@map("dns_records")
 }
@@ -163,7 +163,7 @@ model File {
   updatedAt         DateTime    @map("updated_at") @updatedAt
   deletedAt         DateTime?   @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("files")
 }
@@ -178,7 +178,7 @@ model StorageSize {
   updatedAt         DateTime    @map("updated_at") @updatedAt
   deletedAt         DateTime?   @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("storage_sizes")
 }
@@ -194,8 +194,8 @@ model Sender {
   updatedAt         DateTime    @map("updated_at") @updatedAt
   deletedAt         DateTime?   @map("deleted_at")
 
-  domain Domain @relation(fields: [domainId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   messages Message[]
 
@@ -220,9 +220,9 @@ model Message {
   updatedAt         DateTime      @map("updated_at") @updatedAt
   deletedAt         DateTime?     @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id])
-  sender Sender @relation(fields: [senderId], references: [id])
-  domain Domain @relation(fields: [domainId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sender Sender @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
 
   @@map("messages")
 }
@@ -240,7 +240,7 @@ model Checkout {
   updatedAt         DateTime    @map("updated_at") @updatedAt
   deletedAt         DateTime?   @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("checkouts")
 }
