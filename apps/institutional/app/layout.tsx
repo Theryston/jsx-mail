@@ -1,6 +1,6 @@
 import '@/styles/globals.css';
 import { Metadata, Viewport } from 'next';
-import { Link } from '@nextui-org/link';
+import { GoogleTagManager } from '@next/third-parties/google';
 import { Poppins as Font } from 'next/font/google';
 import clsx from 'clsx';
 
@@ -35,6 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head />
+      <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || ''} />
       <body className={clsx('min-h-screen bg-background', font.className)}>
         <Providers themeProps={{ attribute: 'class', defaultTheme: 'dark' }}>
           {children}
