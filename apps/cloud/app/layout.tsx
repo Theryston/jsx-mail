@@ -10,8 +10,9 @@ const font = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'JSX Mail',
-  description: 'Building the future of email with JSX syntax',
+  title: 'JSX Mail Cloud',
+  description:
+    'Send email, host images, get analytics from your email campaigns, and more with JSX Mail Cloud.',
 };
 
 export default function RootLayout({
