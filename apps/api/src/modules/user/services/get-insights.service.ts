@@ -80,8 +80,11 @@ export class GetInsightsService {
       DATA: [
         balanceData,
         { title: 'Emails sent this month', value: formatNumber(totalMessages) },
-        { title: 'Open rate', value: `${(openRate * 100).toFixed(2)}%` },
-        { title: 'Click rate', value: `${(clickRate * 100).toFixed(2)}%` },
+        { title: 'Open rate', value: `${((openRate || 0) * 100).toFixed(2)}%` },
+        {
+          title: 'Click rate',
+          value: `${((clickRate || 0) * 100).toFixed(2)}%`,
+        },
       ],
     };
   }
