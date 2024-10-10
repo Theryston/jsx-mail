@@ -30,12 +30,18 @@ type MessagesSentByDay = {
   count: number;
 };
 
+type InsightData = {
+  title: string;
+  value: string;
+};
+
 type Insight = {
-  BALANCE: string;
-  MESSAGES_SENT: number;
-  CLICK_RATE: number;
-  OPEN_RATE: number;
+  // BALANCE: string;
+  // MESSAGES_SENT: number;
+  // CLICK_RATE: number;
+  // OPEN_RATE: number;
   MESSAGES_SENT_BY_DAY: MessagesSentByDay[];
+  DATA: InsightData[];
 };
 
 export default function HomePageContent() {
@@ -60,38 +66,24 @@ export default function HomePageContent() {
         <span className="font-bold">Welcome,</span> {titleCase(user.name)}
       </h1>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-        <Card height="8rem" isLoading={isLoading}>
-          <div className="w-full h-full flex flex-col justify-between">
-            <p className="text-xs font-medium">Your balance</p>
-            <p className="text-3xl font-bold text-primary">
-              {insights?.BALANCE}
-            </p>
-          </div>
-        </Card>
-        <Card height="8rem" isLoading={isLoading}>
-          <div className="w-full h-full flex flex-col justify-between">
-            <p className="text-xs font-medium">Email sent this month</p>
-            <p className="text-3xl font-bold text-primary">
-              {formatNumber(insights?.MESSAGES_SENT || 0)}
-            </p>
-          </div>
-        </Card>
-        <Card height="8rem" isLoading={isLoading}>
-          <div className="w-full h-full flex flex-col justify-between">
-            <p className="text-xs font-medium">Open rate</p>
-            <p className="text-3xl font-bold text-primary">
-              {((insights?.OPEN_RATE || 0) * 100).toFixed(2)}%
-            </p>
-          </div>
-        </Card>
-        <Card height="8rem" isLoading={isLoading}>
-          <div className="w-full h-full flex flex-col justify-between">
-            <p className="text-xs font-medium">Click rate</p>
-            <p className="text-3xl font-bold text-primary">
-              {((insights?.CLICK_RATE || 0) * 100).toFixed(2)}%
-            </p>
-          </div>
-        </Card>
+        {isLoading &&
+          Array.from({ length: 4 }).map((_, index) => (
+            <Card key={index} height="8rem" isLoading>
+              Loading
+            </Card>
+          ))}
+
+        {!isLoading &&
+          insights?.DATA.map((insight, index) => (
+            <Card key={index} height="8rem">
+              <div className="w-full h-full flex flex-col justify-between">
+                <p className="text-xs font-medium">{insight.title}</p>
+                <p className="text-3xl font-bold text-primary">
+                  {insight.value}
+                </p>
+              </div>
+            </Card>
+          ))}
       </div>
       <Card className="w-full md:h-[39vh] 2xl:h-[48vh]" isLoading={isLoading}>
         <div className="w-full h-full flex flex-col justify-between">

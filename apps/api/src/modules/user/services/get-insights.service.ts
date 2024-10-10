@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import moment from 'moment';
 import { PrismaService } from 'src/services/prisma.service';
 import { GetBalanceService } from './get-balance.service';
+import { FREE_EMAILS_PER_MONTH } from 'src/utils/constants';
+import { friendlyMoney } from 'src/utils/format-money';
+import { formatNumber } from 'src/utils/format';
 
 @Injectable()
 export class GetInsightsService {
@@ -57,15 +60,34 @@ export class GetInsightsService {
 
     const balance = await this.getBalanceService.execute(userId);
 
+    let balanceData = {
+      title: 'Your balance',
+      value: friendlyMoney(0),
+    };
+
+    if (balance.amount > 0) {
+      balanceData = {
+        title: 'Your balance',
+        value: balance.friendlyAmount,
+      };
+    } else if (totalMessages <= FREE_EMAILS_PER_MONTH) {
+      balanceData = {
+        title: 'Free emails left',
+        value: (FREE_EMAILS_PER_MONTH - totalMessages).toLocaleString('en-US'),
+      };
+    }
+
     return {
-      BALANCE: balance.friendlyAmount,
-      MESSAGES_SENT: totalMessages,
-      CLICK_RATE: clickRate,
-      OPEN_RATE: openRate,
       MESSAGES_SENT_BY_DAY: messagesSentByDay.map((m) => ({
         sentDay: m.sentDay,
         count: m._count.id || 0,
       })),
+      DATA: [
+        balanceData,
+        { title: 'Emails sent this month', value: formatNumber(totalMessages) },
+        { title: 'Open rate', value: `${(openRate * 100).toFixed(2)}%` },
+        { title: 'Click rate', value: `${(clickRate * 100).toFixed(2)}%` },
+      ],
     };
   }
 }
