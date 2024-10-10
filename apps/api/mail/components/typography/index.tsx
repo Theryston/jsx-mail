@@ -17,7 +17,7 @@ export default function Typography({
         fontFamily: 'Poppins, sans-serif',
         color: color === 'gray' ? '#666' : '#333',
         fontSize:
-          size === 'small' ? '12px' : size === 'medium' ? '16px' : '20px',
+          size === 'small' ? '0.75rem' : size === 'medium' ? '1rem' : '1.25rem',
         fontWeight:
           weight === 'light' ? '300' : weight === 'regular' ? '400' : '700',
       }}
