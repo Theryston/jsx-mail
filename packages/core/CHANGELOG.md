@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.2.1
+
+### Patch Changes
+
+- 1d90e45: fixing cloud url
+
 ## 2.2.0
 
 ### Minor Changes
