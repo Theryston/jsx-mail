@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.2.2
+
+### Patch Changes
+
+- f2a3406: Add maxWidth, borderRadius, and maxHeight properties to ElementStyle and JSX namespace
+
 ## 2.2.1
 
 ### Patch Changes
