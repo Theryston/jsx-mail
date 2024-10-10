@@ -200,7 +200,7 @@ export default function Pricing() {
                 <div className="flex gap-3 items-center">
                   <img src="/tick.svg" alt="tick" />
                   <p className="text-xs text-zinc-300">
-                    Send unlimited emails and pay minimum fees
+                    Send emails with pay-as-you-go pricing
                   </p>
                 </div>
                 <div className="flex gap-3 items-center">
