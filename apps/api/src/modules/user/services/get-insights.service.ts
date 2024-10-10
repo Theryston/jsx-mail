@@ -62,15 +62,10 @@ export class GetInsightsService {
 
     let balanceData = {
       title: 'Your balance',
-      value: friendlyMoney(0),
+      value: balance.friendlyAmount,
     };
 
-    if (balance.amount > 0) {
-      balanceData = {
-        title: 'Your balance',
-        value: balance.friendlyAmount,
-      };
-    } else if (totalMessages <= FREE_EMAILS_PER_MONTH) {
+    if (totalMessages <= FREE_EMAILS_PER_MONTH) {
       balanceData = {
         title: 'Free emails left',
         value: (FREE_EMAILS_PER_MONTH - totalMessages).toLocaleString('en-US'),
