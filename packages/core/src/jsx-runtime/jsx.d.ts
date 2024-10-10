@@ -37,6 +37,9 @@ declare namespace JSX {
     borderBottomStyle?: string;
     borderBottomWidth?: string;
     borderColor?: string;
+    maxWidth?: string;
+    borderRadius?: string;
+    maxHeight?: string;
     borderLeft?: string;
     borderLeftColor?: string;
     borderLeftStyle?: string;
