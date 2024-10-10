@@ -1,5 +1,12 @@
 # jsx-mail
 
+## 2.3.2
+
+### Patch Changes
+
+- Updated dependencies [f2a3406]
+  - @jsx-mail/core@2.2.2
+
 ## 2.3.1
 
 ### Patch Changes
