@@ -191,7 +191,7 @@ export class UserController {
         step: 1000,
         minValue: 1000,
         maxValue: 1000000,
-        defaultValue: 10000,
+        defaultValue: FREE_EMAILS_PER_MONTH,
         price: PRICE_PER_MESSAGE * 1000,
         friendlyAmount: friendlyMoney(PRICE_PER_MESSAGE * 1000, true),
       },

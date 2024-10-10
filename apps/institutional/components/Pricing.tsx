@@ -37,10 +37,11 @@ export default function Pricing() {
   }, [emailPricing]);
 
   useEffect(() => {
-    if (!emailPricing) return;
+    if (!emailPricing || !data) return;
 
     let jsxMailCloudPricing =
-      (value * ((emailPricing.price || 0) / emailPricing.unit)) /
+      ((value - data.FREE_EMAILS_PER_MONTH) *
+        ((emailPricing.price || 0) / emailPricing.unit)) /
       data.MONEY_SCALE;
 
     if (value <= data.FREE_EMAILS_PER_MONTH) jsxMailCloudPricing = 0;
@@ -203,8 +204,9 @@ export default function Pricing() {
                 <div className="flex gap-3 items-center">
                   <img src="/tick.svg" alt="tick" />
                   <p className="text-xs text-zinc-300">
-                    Send {data.FREE_EMAILS_PER_MONTH.toLocaleString('en-US')}{' '}
-                    emails for free every month
+                    The first{' '}
+                    {data?.FREE_EMAILS_PER_MONTH.toLocaleString('en-US')} of
+                    each month are free
                   </p>
                 </div>
                 <div className="flex gap-3 items-center">
