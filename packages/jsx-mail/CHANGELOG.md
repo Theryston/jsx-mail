@@ -1,5 +1,13 @@
 # jsx-mail
 
+## 2.3.1
+
+### Patch Changes
+
+- 1d90e45: fixing cloud url
+- Updated dependencies [1d90e45]
+  - @jsx-mail/core@2.2.1
+
 ## 2.3.0
 
 ### Minor Changes
