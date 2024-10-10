@@ -3,7 +3,6 @@ import { PERMISSIONS } from 'src/auth/permissions';
 import { PrismaService } from 'src/services/prisma.service';
 import { CreateSessionService } from '../../session/services/create-session.service';
 import { AddBalanceService } from './add-balance.service';
-import { FREE_BALANCE } from 'src/utils/constants';
 
 @Injectable()
 export class ValidateEmailService {
@@ -40,13 +39,6 @@ export class ValidateEmailService {
       data: {
         isEmailVerified: true,
       },
-    });
-
-    await this.addBalanceService.execute({
-      amount: FREE_BALANCE,
-      style: 'earn_free',
-      userId: userId,
-      description: 'Earning from email verification',
     });
 
     return this.createSessionService.execute({

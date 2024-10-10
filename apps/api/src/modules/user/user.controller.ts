@@ -29,7 +29,7 @@ import { ValidateEmailService } from './services/validate-email.service';
 import { AuthUserService } from './services/auth-user.service';
 import { ResetPasswordService } from './services/reset-password.service';
 import {
-  FREE_BALANCE,
+  FREE_EMAILS_PER_MONTH,
   MONEY_SCALE,
   PRICE_PER_MESSAGE,
 } from 'src/utils/constants';
@@ -184,7 +184,7 @@ export class UserController {
   price() {
     return {
       MONEY_SCALE: MONEY_SCALE,
-      FREE_BALANCE: FREE_BALANCE,
+      FREE_EMAILS_PER_MONTH: FREE_EMAILS_PER_MONTH,
       EMAIL_PRICING: {
         unit: 1000,
         unitName: 'emails',

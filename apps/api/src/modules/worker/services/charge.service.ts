@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TransactionStyle } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
-import { PRICE_PER_MESSAGE } from 'src/utils/constants';
+import { FREE_EMAILS_PER_MONTH, PRICE_PER_MESSAGE } from 'src/utils/constants';
 import { formatSize } from 'src/utils/format';
 import { storageToMoney } from 'src/utils/format-money';
 import moment from 'moment';
@@ -23,10 +23,13 @@ export class ChargeService {
   }
 
   async chargeMessage() {
-    const messages = await this.prisma.message.groupBy({
+    const currentMonth = moment().startOf('month');
+
+    const currentMonthMessages = await this.prisma.message.groupBy({
       where: {
         hasCharged: false,
         sentAt: {
+          gte: currentMonth.toDate(),
           not: null,
         },
         deletedAt: null,
@@ -41,16 +44,51 @@ export class ChargeService {
 
     for (const {
       userId,
-      _count: { id: messagesAmount },
-    } of messages) {
+      _count: { id: notChargedMessagesAmount },
+    } of currentMonthMessages) {
       try {
-        const price = messagesAmount * PRICE_PER_MESSAGE;
+        const currentMonthMessagesAmount = await this.prisma.message.count({
+          where: {
+            userId,
+            sentAt: {
+              gte: currentMonth.toDate(),
+              not: null,
+            },
+            deletedAt: null,
+          },
+        });
+
+        let price = 0;
+        let description = `Ignored charge of ${notChargedMessagesAmount} message because the free messages limit was not reached`;
+        let chargedMessages = notChargedMessagesAmount;
+        let restFreeMessages = 0;
+
+        if (currentMonthMessagesAmount > FREE_EMAILS_PER_MONTH) {
+          // Calculate the remaining free messages for the user in the current month
+          restFreeMessages =
+            FREE_EMAILS_PER_MONTH -
+            (currentMonthMessagesAmount - notChargedMessagesAmount);
+
+          if (restFreeMessages < 0) restFreeMessages = 0;
+
+          // Calculate the number of messages to be charged
+          chargedMessages = notChargedMessagesAmount - restFreeMessages;
+
+          // If the number of charged messages is negative, set it to 0
+          if (chargedMessages < 0) chargedMessages = 0;
+
+          // Calculate the price based on the number of charged messages
+          price = chargedMessages * PRICE_PER_MESSAGE;
+
+          // Set the description for the charge
+          description = `Charge for ${chargedMessages} messages${restFreeMessages !== 0 ? ` ignored ${restFreeMessages} free messages` : ''}`;
+        }
 
         await this.removeBalance({
           amount: price,
           style: 'message_charge',
           userId,
-          description: `Charge for ${messagesAmount} sent messages`,
+          description,
         });
 
         await this.prisma.message.updateMany({
@@ -69,7 +107,9 @@ export class ChargeService {
 
         usersCharged.push({
           userId,
-          messagesAmount,
+          messagesAmount: notChargedMessagesAmount,
+          chargedMessages,
+          restFreeMessages,
           price,
         });
 
@@ -175,11 +215,6 @@ export class ChargeService {
     description: string;
   }) {
     const negativeAmount = Math.round(amount) * -1;
-
-    if (negativeAmount === 0) {
-      return;
-    }
-
     await this.prisma.transaction.create({
       data: {
         amount: negativeAmount,

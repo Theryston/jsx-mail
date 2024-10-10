@@ -40,13 +40,10 @@ export default function Pricing() {
     if (!emailPricing) return;
 
     let jsxMailCloudPricing =
-      value * ((emailPricing.price || 0) / emailPricing.unit);
+      (value * ((emailPricing.price || 0) / emailPricing.unit)) /
+      data.MONEY_SCALE;
 
-    if (jsxMailCloudPricing <= data.FREE_BALANCE) {
-      jsxMailCloudPricing = 0;
-    } else {
-      jsxMailCloudPricing = jsxMailCloudPricing / data.MONEY_SCALE;
-    }
+    if (value <= data.FREE_EMAILS_PER_MONTH) jsxMailCloudPricing = 0;
 
     const newPricing: Price[] = [
       {
@@ -126,7 +123,7 @@ export default function Pricing() {
       <h2 className="text-4xl font-bold text-center">Pricing</h2>
 
       <div className="flex flex-col md:flex-row items-start justify-center gap-4 w-full md:w-8/12">
-        <div className="bg-zinc-900 h-fit md:h-96 px-6 py-9 rounded-3xl w-full gap-6 md:gap-9 flex flex-col justify-center">
+        <div className="bg-zinc-900 h-[400px] px-6 py-9 rounded-3xl w-full gap-6 md:gap-9 flex flex-col justify-center">
           <p className="text-base">Framework</p>
 
           <div className="flex gap-2 items-end">
@@ -164,6 +161,12 @@ export default function Pricing() {
                 Get compatibility with all email clients
               </p>
             </div>
+            <div className="flex gap-3 items-center">
+              <img src="/tick.svg" alt="tick" />
+              <p className="text-xs text-zinc-300">
+                Optimize and host the images of your email templates
+              </p>
+            </div>
           </div>
         </div>
         <div className="w-full flex flex-col gap-3">
@@ -173,7 +176,7 @@ export default function Pricing() {
             </div>
           )}
           {!isLoading && (
-            <div className="bg-zinc-900 h-fit md:h-96 px-6 py-9 rounded-3xl w-full gap-6 md:gap-9 flex flex-col justify-center">
+            <div className="bg-zinc-900 h-fit md:h-[400px] px-6 py-9 rounded-3xl w-full gap-6 md:gap-9 flex flex-col justify-center">
               <p className="text-base">Cloud</p>
 
               <div className="flex gap-2 items-end">
@@ -197,6 +200,13 @@ export default function Pricing() {
               </Button>
 
               <div className="flex flex-col gap-3">
+                <div className="flex gap-3 items-center">
+                  <img src="/tick.svg" alt="tick" />
+                  <p className="text-xs text-zinc-300">
+                    Send {data.FREE_EMAILS_PER_MONTH.toLocaleString('en-US')}{' '}
+                    emails for free every month
+                  </p>
+                </div>
                 <div className="flex gap-3 items-center">
                   <img src="/tick.svg" alt="tick" />
                   <p className="text-xs text-zinc-300">
