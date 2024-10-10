@@ -11,7 +11,7 @@ import {
 import client from './cloud/client';
 import { getToken } from './cloud/get-token';
 import { setToken } from './cloud/set-token';
-import { API_URL, WEBSITE_URL } from './utils/cloud';
+import { API_URL, CLOUD_URL, WEBSITE_URL } from './utils/cloud';
 import { logout } from './cloud/logout';
 
 const core = {
@@ -26,6 +26,7 @@ const core = {
   getToken,
   setToken,
   logout,
+  CLOUD_URL,
   WEBSITE_URL,
   API_URL,
   getImagesFolder,

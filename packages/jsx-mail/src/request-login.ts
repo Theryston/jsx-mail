@@ -19,7 +19,7 @@ export default async function requestLogin(receivedToken?: string) {
   if (isLogged) return;
   if (!process.stdin.isTTY && !receivedToken) {
     await core.logout();
-    const message = `Please specify a token from ${core.WEBSITE_URL}/cloud/app/account typing: \`jsxm login --token YOUR_TOKEN\`. If you set the env variable \`__JSX_MAIL_TOKEN\`, can also use \`jsxm login\` without any arguments.`;
+    const message = `Please specify a token from ${core.CLOUD_URL}/app/account typing: \`jsxm login --token YOUR_TOKEN\`. If you set the env variable \`__JSX_MAIL_TOKEN\`, can also use \`jsxm login\` without any arguments.`;
     showError(message);
     return;
   }
@@ -90,7 +90,7 @@ export default async function requestLogin(receivedToken?: string) {
       const PORT = 6553;
       server.listen(PORT);
 
-      const url = `${core.WEBSITE_URL}/cloud/sign-in?redirect=http://localhost:${PORT}/callback`;
+      const url = `${core.CLOUD_URL}/sign-in?redirect=http://localhost:${PORT}/callback`;
       import('open').then(({ default: open }) => {
         open(url, { wait: true })
           .then(() => {

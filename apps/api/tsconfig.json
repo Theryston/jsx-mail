@@ -19,5 +19,9 @@
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true
   },
-  "exclude": ["prisma/seed", "node_modules"]
+  "exclude": [
+    "prisma/seed",
+    "node_modules",
+    "mail"
+  ]
 }

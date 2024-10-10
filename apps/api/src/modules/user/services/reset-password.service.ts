@@ -6,6 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { CreateSessionService } from '../../session/services/create-session.service';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
 import { titleCase } from 'src/utils/title-case';
+import { render as jsxMailRender } from 'jsx-mail';
 
 type ResetPassword = {
   userId: string;
@@ -60,6 +61,8 @@ export class ResetPasswordService {
       (session as any).email = user.email;
     }
 
+    const htmlCode = await jsxMailRender('user:password-redefined');
+
     await this.sendEmailService.execute({
       from: {
         name: 'JSX Mail Cloud',
@@ -67,12 +70,7 @@ export class ResetPasswordService {
       },
       to: [user.email],
       subject: 'Your password has been reset',
-      html: `
-				<div>
-					<p>Hi, ${titleCase(user.name)}!</p>
-					<p>Your password has been reset successfully</p>
-				</div>
-			`,
+      html: htmlCode,
     });
 
     return session;

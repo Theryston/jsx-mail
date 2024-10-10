@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
 import { CreateSecurityCodeDto } from '../user.dto';
-import { titleCase } from 'src/utils/title-case';
+import { render as jsxMailRender } from 'jsx-mail';
 
 @Injectable()
 export class CreateSecurityCodeService {
@@ -29,13 +29,19 @@ export class CreateSecurityCodeService {
     }
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(new Date().getTime() + 1000 * 60 * 5); // 5 minutes
 
     await this.prisma.securityCode.create({
       data: {
         userId: user.id,
         code,
-        expiresAt: new Date(new Date().getTime() + 1000 * 60 * 5), // 5 minutes
+        expiresAt,
       },
+    });
+
+    const htmlCode = await jsxMailRender('user:security-code', {
+      code,
+      expiresAt,
     });
 
     await this.sendEmailService.execute({
@@ -45,12 +51,7 @@ export class CreateSecurityCodeService {
       },
       to: [user.email],
       subject: 'Your security code',
-      html: `
-				<div>
-					<p>Hi, ${titleCase(user.name)}!</p>
-					<p>Your security code is: <strong>${code}</strong></p>
-				</div>
-			`,
+      html: htmlCode,
     });
 
     return {
