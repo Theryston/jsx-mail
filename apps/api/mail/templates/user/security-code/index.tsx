@@ -4,7 +4,7 @@ import moment from 'moment';
 
 export const props = {
   code: String('123456'),
-  expiresAt: Date(),
+  expiresAt: new Date().toISOString(),
 };
 
 export default function SecurityCodeTemplate({
