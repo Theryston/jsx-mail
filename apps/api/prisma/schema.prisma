@@ -215,6 +215,7 @@ model Message {
   externalId        String?       @map("external_id")
   sentDay           String?       @map("sent_day")
   sentAt            DateTime?     @map("sent_at")
+  chargeMonth       String?        @map("charge_month") // which month the message will be charged (YYYY-MM)
   createdDay        String        @map("created_day")
   createdAt         DateTime      @map("created_at") @default(now())
   updatedAt         DateTime      @map("updated_at") @updatedAt

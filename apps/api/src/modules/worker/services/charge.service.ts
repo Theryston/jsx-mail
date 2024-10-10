@@ -23,15 +23,12 @@ export class ChargeService {
   }
 
   async chargeMessage() {
-    const currentMonth = moment().startOf('month');
+    const currentChargeMonth = moment().format('YYYY-MM');
 
     const currentMonthMessages = await this.prisma.message.groupBy({
       where: {
         hasCharged: false,
-        sentAt: {
-          gte: currentMonth.toDate(),
-          not: null,
-        },
+        chargeMonth: currentChargeMonth,
         deletedAt: null,
       },
       by: ['userId'],
@@ -50,10 +47,7 @@ export class ChargeService {
         const currentMonthMessagesAmount = await this.prisma.message.count({
           where: {
             userId,
-            sentAt: {
-              gte: currentMonth.toDate(),
-              not: null,
-            },
+            chargeMonth: currentChargeMonth,
             deletedAt: null,
           },
         });
@@ -95,9 +89,7 @@ export class ChargeService {
           where: {
             userId,
             hasCharged: false,
-            sentAt: {
-              not: null,
-            },
+            chargeMonth: currentChargeMonth,
             deletedAt: null,
           },
           data: {

@@ -50,6 +50,7 @@ export class EmailWebhookService {
           ...(status === 'sent'
             ? {
                 sentAt: new Date(),
+                chargeMonth: moment().format('YYYY-MM'),
                 sentDay: moment().format('YYYY-MM-DD'),
               }
             : {}),
