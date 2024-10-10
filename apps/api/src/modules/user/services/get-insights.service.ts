@@ -65,7 +65,7 @@ export class GetInsightsService {
       value: balance.friendlyAmount,
     };
 
-    if (totalMessages <= FREE_EMAILS_PER_MONTH) {
+    if (totalMessages < FREE_EMAILS_PER_MONTH) {
       balanceData = {
         title: 'Free emails left',
         value: (FREE_EMAILS_PER_MONTH - totalMessages).toLocaleString('en-US'),
