@@ -19,7 +19,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
     if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
-      console.log(`[INTERNAL_EXCEPTION] ${exception}`);
+      console.log(`[INTERNAL_EXCEPTION] ${JSON.stringify(exception)}`);
     }
 
     const exceptionResponse =
