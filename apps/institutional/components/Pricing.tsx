@@ -1,22 +1,13 @@
 'use client';
 
+import { usePricing } from '@/lib/hooks';
 import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input';
 import { Link } from '@nextui-org/link';
 import { Slider } from '@nextui-org/slider';
 import { Spinner } from '@nextui-org/spinner';
-import axios from 'axios';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import useSWR from 'swr';
-
-const client = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-});
-
-function fetcher(url: string) {
-  return client.get(url).then((res) => res.data);
-}
 
 type Price = {
   amount: number;
@@ -26,7 +17,7 @@ type Price = {
 };
 
 export default function Pricing() {
-  const { data, isLoading } = useSWR('/user/price', fetcher);
+  const { data, isPending: isLoadingPricing } = usePricing();
   const emailPricing = data?.EMAIL_PRICING;
 
   const [prices, setPrices] = useState<Price[]>([]);
@@ -171,12 +162,12 @@ export default function Pricing() {
           </div>
         </div>
         <div className="w-full flex flex-col gap-3">
-          {isLoading && (
+          {isLoadingPricing && (
             <div className="bg-zinc-900 h-96 px-6 py-9 rounded-3xl w-full gap-9 flex flex-col justify-center items-center">
               <Spinner />
             </div>
           )}
-          {!isLoading && (
+          {!isLoadingPricing && (
             <div className="bg-zinc-900 h-fit md:h-[400px] px-6 py-9 rounded-3xl w-full gap-6 md:gap-9 flex flex-col justify-center">
               <p className="text-base">Cloud</p>
 
