@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.3.3
+
+### Patch Changes
+
+- 3f60f58: change logo
+
 ## 2.3.2
 
 ### Patch Changes
