@@ -19,7 +19,7 @@ export default function Logo({ variant = 'normal' }: Props) {
         height={24}
         src={variant === 'cloud' ? '/logo-cloud.svg' : '/logo.svg'}
         alt="JSX Mail Cloud"
-        className="object-contain w-44"
+        className="object-contain w-40"
       />
     </Link>
   );

@@ -1,4 +1,4 @@
-![Featured Logo Dark (1)](https://github.com/Theryston/jsx-mail/assets/72868196/9964df7d-81c6-41f2-96d5-005a87760cf4)
+![featured](https://i.imgur.com/O1jwOJo.png)
 
 <div align="center">
 <b>JSX Mail</b> is an innovative and efficient framework for creating email templates using JSX syntax. Designed for high compatibility and ease of use, this framework offers a modern approach to developing responsive and attractive emails.

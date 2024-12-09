@@ -11,8 +11,8 @@ import {
   Link,
   Button,
 } from '@nextui-org/react';
-import Logo from './Logo';
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,7 +41,13 @@ export default function Header() {
       <NavbarContent>
         <NavbarBrand>
           <Link href="/">
-            <Logo className="w-28" />
+            <Image
+              src="/logo.svg"
+              alt="Logo"
+              className="w-28"
+              width={100}
+              height={100}
+            />
           </Link>
         </NavbarBrand>
       </NavbarContent>
