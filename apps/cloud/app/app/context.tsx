@@ -42,9 +42,9 @@ export const CloudAppContextProvider = ({
   }, []);
 
   useEffect(() => {
-    Crisp.user.setNickname(user.name);
-    Crisp.user.setEmail(user.email);
-    Crisp.user.setPhone(user.phone || '');
+    if (user?.name) Crisp.user.setNickname(user.name);
+    if (user?.email) Crisp.user.setEmail(user.email);
+    if (user?.phone) Crisp.user.setPhone(user.phone);
   }, [user]);
 
   return (
