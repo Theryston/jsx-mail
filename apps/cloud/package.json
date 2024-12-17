@@ -20,6 +20,7 @@
     "chart.js": "^4.4.1",
     "clsx": "2.1.1",
     "country-to-currency": "^1.1.5",
+    "crisp-sdk-web": "^1.0.25",
     "framer-motion": "~11.1.1",
     "iconsax-react": "^0.0.8",
     "intl-messageformat": "^10.5.0",

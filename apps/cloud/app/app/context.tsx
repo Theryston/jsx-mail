@@ -1,8 +1,15 @@
 'use client';
 
 import axios from '@/app/utils/axios';
-import { createContext, useCallback, useContext, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { User } from './types';
+import { Crisp } from 'crisp-sdk-web';
 
 type CloudAppContextType = {
   user: User;
@@ -33,6 +40,12 @@ export const CloudAppContextProvider = ({
       birthdate: data.birthdate ? new Date(data.birthdate) : null,
     });
   }, []);
+
+  useEffect(() => {
+    Crisp.user.setNickname(user.name);
+    Crisp.user.setEmail(user.email);
+    Crisp.user.setPhone(user.phone || '');
+  }, [user]);
 
   return (
     <CloudAppContext.Provider

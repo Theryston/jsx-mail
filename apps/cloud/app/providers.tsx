@@ -4,10 +4,15 @@ import { NextUIProvider, Spinner } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
+import { Crisp } from 'crisp-sdk-web';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+
+  useEffect(() => {
+    Crisp.configure(process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID || '');
+  }, []);
 
   return (
     <NextUIProvider navigate={router.push}>
@@ -18,7 +23,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           </div>
         }
       >
-          {children}
+        {children}
         <ToastContainer closeOnClick theme="dark" position="bottom-right" />
       </Suspense>
     </NextUIProvider>
