@@ -181,6 +181,9 @@ importers:
       country-to-currency:
         specifier: ^1.1.5
         version: 1.1.5
+      crisp-sdk-web:
+        specifier: ^1.0.25
+        version: 1.0.25
       framer-motion:
         specifier: ~11.1.1
         version: 11.1.9(@emotion/is-prop-valid@1.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -4250,6 +4253,9 @@ packages:
 
   create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
+
+  crisp-sdk-web@1.0.25:
+    resolution: {integrity: sha512-CWTHFFeHRV0oqiXoPh/aIAKhFs6xcIM4NenGPnClAMCZUDQgQsF1OWmZWmnVNjJriXUmWRgDfeUxcxygS0dCRA==}
 
   cron-parser@4.9.0:
     resolution: {integrity: sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==}
@@ -14059,6 +14065,8 @@ snapshots:
       capture-stack-trace: 1.0.2
 
   create-require@1.1.1: {}
+
+  crisp-sdk-web@1.0.25: {}
 
   cron-parser@4.9.0:
     dependencies:
