@@ -5,13 +5,13 @@
   "license": "MIT",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
-    "start:dev": "pnpm run prepare:dev && nest start --watch",
+    "start:dev": "yarn run prepare:dev && nest start --watch",
     "build": "nest build",
     "docker:build": "docker build . -t jsxmail-api",
     "start": "node dist/main.js",
     "lint": "eslint \"{src}/**/*.ts\" --fix",
-    "prepare:dev": "pnpm jsxm prepare && pnpm run docker:up && prisma migrate dev && prisma generate && prisma db seed",
-    "prepare:prod": "pnpm jsxm prepare && prisma migrate deploy && prisma generate && prisma db seed",
+    "prepare:dev": "yarn jsxm prepare && yarn run docker:up && prisma migrate dev && prisma generate && prisma db seed",
+    "prepare:prod": "yarn jsxm prepare && prisma migrate deploy && prisma generate && prisma db seed",
     "docker:up": "docker compose up -d"
   },
   "dependencies": {
