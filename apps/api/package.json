@@ -5,13 +5,13 @@
   "license": "MIT",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
-    "start:dev": "pnpm run prepare:db:dev && nest start --watch",
+    "start:dev": "pnpm run prepare:dev && nest start --watch",
     "build": "nest build",
     "docker:build": "docker build . -t jsxmail-api",
     "start": "node dist/main.js",
     "lint": "eslint \"{src}/**/*.ts\" --fix",
-    "prepare:db:dev": "pnpm jsxm prepare && pnpm run docker:up && prisma migrate dev && prisma generate && prisma db seed",
-    "prepare:db:prod": "pnpm jsxm prepare && prisma migrate deploy && prisma generate && prisma db seed",
+    "prepare:dev": "pnpm jsxm prepare && pnpm run docker:up && prisma migrate dev && prisma generate && prisma db seed",
+    "prepare:prod": "pnpm jsxm prepare && prisma migrate deploy && prisma generate && prisma db seed",
     "docker:up": "docker compose up -d"
   },
   "dependencies": {
@@ -31,6 +31,7 @@
     "class-validator": "^0.14.1",
     "country-to-currency": "^1.1.5",
     "dotenv": "^16.4.4",
+    "imagemin-pngquant": "^9.0.2",
     "jsx-mail": "^2.3.2",
     "moment": "^2.30.1",
     "multer": "1.4.5-lts.1",
