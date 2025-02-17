@@ -23,7 +23,7 @@
     "jsxm": "bin/jsxm"
   },
   "scripts": {
-    "build": "tsc && pnpm copy-files",
+    "build": "tsc && bun copy-files",
     "copy-files": "rm -rf dist/preview/client && cp -rf src/preview/client dist/preview/client && rm -rf dist/cli/templates && cp -rf src/cli/templates dist/cli/templates",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix"

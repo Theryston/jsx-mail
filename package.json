@@ -1,6 +1,12 @@
 {
   "name": "jsx-mail",
   "private": true,
+  "packageManager": "bun@1.2.2",
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "examples/*"
+  ],
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",

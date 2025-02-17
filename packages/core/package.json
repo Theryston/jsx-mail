@@ -20,7 +20,7 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "tsc && pnpm copy-jsx-types",
+    "build": "tsc && bun copy-jsx-types",
     "copy-jsx-types": "cp ./src/jsx-runtime/jsx.d.ts ./dist/jsx-runtime/jsx.d.ts"
   },
   "devDependencies": {
