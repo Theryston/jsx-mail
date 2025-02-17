@@ -17,7 +17,7 @@ export class SenderSendEmailService {
   ) {}
 
   async execute(
-    { sender: senderEmail, html, subject, to }: SenderSendEmailDto,
+    { sender: senderEmail, html, subject, to, filesIds }: SenderSendEmailDto,
     userId: string,
   ) {
     let sender: Sender | null = null;
@@ -77,6 +77,17 @@ export class SenderSendEmailService {
         senderId: sender.id,
         userId,
         createdDay: moment().format('YYYY-MM-DD'),
+        messageFiles: filesIds
+          ? {
+              create: filesIds.map((fileId) => ({
+                file: {
+                  connect: {
+                    id: fileId,
+                  },
+                },
+              })),
+            }
+          : undefined,
       },
       select: messageSelect,
     });
@@ -90,6 +101,7 @@ export class SenderSendEmailService {
       subject,
       to,
       messageId: message.id,
+      filesIds,
     });
 
     return message;

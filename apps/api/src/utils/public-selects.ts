@@ -47,6 +47,19 @@ export const messageSelect: Prisma.MessageSelect = {
   status: true,
   userId: true,
   sentAt: true,
+  messageFiles: {
+    select: {
+      file: {
+        select: {
+          id: true,
+          originalName: true,
+          mimeType: true,
+          size: true,
+          url: true,
+        },
+      },
+    },
+  },
 };
 
 export const sessionSelect: Prisma.SessionSelect = {

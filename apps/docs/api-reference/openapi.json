@@ -596,6 +596,12 @@
           "sender": {
             "type": "string",
             "example": "sender@jsxmail.org"
+          },
+          "filesIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },

@@ -35,4 +35,8 @@ export class SenderSendEmailDto {
   @IsNotEmpty({ each: true })
   @IsArray()
   to: string[];
+
+  @IsOptional()
+  @IsArray()
+  filesIds?: string[];
 }

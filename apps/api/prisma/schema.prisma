@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-   binaryTargets = ["native", "debian-openssl-3.0.x", "debian-openssl-1.1.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -41,43 +41,43 @@ enum MessageStatus {
 }
 
 model User {
-  id                String      @id @default(uuid())
-  name              String
-  email             String      @unique
-  phone             String?
-  birthdate         DateTime?
-  gatewayId         String?     @map("gateway_id")
-  isEmailVerified   Boolean     @map("is_email_verified") @default(false)
-  accessLevel       AccessLevel @map("access_level") @default(self)
-  password          String
-  isPhoneVerified   Boolean     @map("is_phone_verified") @default(false)
-  createdAt         DateTime    @map("created_at") @default(now())
-  updatedAt         DateTime    @map("updated_at") @updatedAt
-  deletedAt         DateTime?   @map("deleted_at")
+  id              String      @id @default(uuid())
+  name            String
+  email           String      @unique
+  phone           String?
+  birthdate       DateTime?
+  gatewayId       String?     @map("gateway_id")
+  isEmailVerified Boolean     @default(false) @map("is_email_verified")
+  accessLevel     AccessLevel @default(self) @map("access_level")
+  password        String
+  isPhoneVerified Boolean     @default(false) @map("is_phone_verified")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+  deletedAt       DateTime?   @map("deleted_at")
 
-  transactions Transaction[]
-  sessions Session[]
+  transactions  Transaction[]
+  sessions      Session[]
   securityCodes SecurityCode[]
-  domains Domain[]
-  files File[]
-  senders Sender[]
-  messages Message[]
-  storageSizes StorageSize[]
-  checkouts Checkout[]
+  domains       Domain[]
+  files         File[]
+  senders       Sender[]
+  messages      Message[]
+  storageSizes  StorageSize[]
+  checkouts     Checkout[]
 
   @@map("users")
 }
 
 model Transaction {
-  id                String      @id @default(uuid())
-  userId            String      @map("user_id")
-  gatewayId         String?     @map("gateway_id")
-  amount            Int
-  description       String
-  style             TransactionStyle
-  createdAt         DateTime    @map("created_at") @default(now())
-  updatedAt         DateTime    @map("updated_at") @updatedAt
-  deletedAt         DateTime?   @map("deleted_at")
+  id          String           @id @default(uuid())
+  userId      String           @map("user_id")
+  gatewayId   String?          @map("gateway_id")
+  amount      Int
+  description String
+  style       TransactionStyle
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  deletedAt   DateTime?        @map("deleted_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -85,15 +85,15 @@ model Transaction {
 }
 
 model Session {
-  id                String      @id @default(uuid())
-  userId            String      @map("user_id")
-  token             String
-  description       String?
-  permissions       String[]
-  expiresAt         DateTime?   @map("expires_at")
-  createdAt         DateTime    @map("created_at") @default(now())
-  updatedAt         DateTime    @map("updated_at") @updatedAt
-  deletedAt         DateTime?   @map("deleted_at")
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  token       String
+  description String?
+  permissions String[]
+  expiresAt   DateTime? @map("expires_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -101,13 +101,13 @@ model Session {
 }
 
 model SecurityCode {
-  id                String      @id @default(uuid())
-  userId            String      @map("user_id")
-  code              String
-  expiresAt         DateTime    @map("expires_at")
-  createdAt         DateTime    @map("created_at") @default(now())
-  updatedAt         DateTime    @map("updated_at") @updatedAt
-  deletedAt         DateTime?   @map("deleted_at")
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  code      String
+  expiresAt DateTime  @map("expires_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -115,34 +115,34 @@ model SecurityCode {
 }
 
 model Domain {
-  id                String      @id @default(uuid())
-  name              String      @unique
-  status            DomainStatus @map("status") @default(pending)
-  userId            String      @map("user_id")
-  createdAt         DateTime    @map("created_at") @default(now())
-  updatedAt         DateTime    @map("updated_at") @updatedAt
-  deletedAt         DateTime?   @map("deleted_at")
+  id        String       @id @default(uuid())
+  name      String       @unique
+  status    DomainStatus @default(pending) @map("status")
+  userId    String       @map("user_id")
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
+  deletedAt DateTime?    @map("deleted_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   dnsRecords DNSRecord[]
-  senders Sender[]
-  messages Message[]
+  senders    Sender[]
+  messages   Message[]
 
   @@map("domains")
 }
 
 model DNSRecord {
-  id                String      @id @default(uuid())
-  domainId          String      @map("domain_id")
-  type              String
-  name              String
-  value             String
-  ttl               Int
-  priority          Int?
-  createdAt         DateTime    @map("created_at") @default(now())
-  updatedAt         DateTime    @map("updated_at") @updatedAt
-  deletedAt         DateTime?   @map("deleted_at")
+  id        String    @id @default(uuid())
+  domainId  String    @map("domain_id")
+  type      String
+  name      String
+  value     String
+  ttl       Int
+  priority  Int?
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
 
@@ -150,33 +150,35 @@ model DNSRecord {
 }
 
 model File {
-  id                String      @id @default(uuid())
-  originalName      String      @map("original_name")
-  key               String
-  hash              String
-  size              Int
-  mimeType          String      @map("mime_type")
-  encoding          String
-  url               String
-  userId            String      @map("user_id")
-  createdAt         DateTime    @map("created_at") @default(now())
-  updatedAt         DateTime    @map("updated_at") @updatedAt
-  deletedAt         DateTime?   @map("deleted_at")
+  id           String    @id @default(uuid())
+  originalName String    @map("original_name")
+  key          String
+  hash         String
+  size         Int
+  mimeType     String    @map("mime_type")
+  encoding     String
+  url          String
+  userId       String    @map("user_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  messageFiles MessageFile[]
 
   @@map("files")
 }
 
 model StorageSize {
-  id                String      @id @default(uuid())
-  userId            String      @map("user_id")
-  size              Int
-  chargeAt          DateTime    @map("charge_at")
-  chargedAt         DateTime?   @map("charged_at")
-  createdAt         DateTime    @map("created_at") @default(now())
-  updatedAt         DateTime    @map("updated_at") @updatedAt
-  deletedAt         DateTime?   @map("deleted_at")
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  size      Int
+  chargeAt  DateTime  @map("charge_at")
+  chargedAt DateTime? @map("charged_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -184,18 +186,18 @@ model StorageSize {
 }
 
 model Sender {
-  id                String      @id @default(uuid())
-  username          String
-  name              String
-  email             String
-  userId            String      @map("user_id")
-  domainId          String      @map("domain_id")
-  createdAt         DateTime    @map("created_at") @default(now())
-  updatedAt         DateTime    @map("updated_at") @updatedAt
-  deletedAt         DateTime?   @map("deleted_at")
+  id        String    @id @default(uuid())
+  username  String
+  name      String
+  email     String
+  userId    String    @map("user_id")
+  domainId  String    @map("domain_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   messages Message[]
 
@@ -203,43 +205,59 @@ model Sender {
 }
 
 model Message {
-  id                String        @id @default(uuid())
-  userId            String        @map("user_id")
-  senderId          String        @map("sender_id")
-  domainId          String        @map("domain_id")
-  hasCharged        Boolean       @default(false) @map("has_charged")
-  subject           String
-  body              String
-  to                String[]
-  status            MessageStatus @default(queued)
-  externalId        String?       @map("external_id")
-  sentDay           String?       @map("sent_day")
-  sentAt            DateTime?     @map("sent_at")
-  chargeMonth       String?        @map("charge_month") // which month the message will be charged (YYYY-MM)
-  createdDay        String        @map("created_day")
-  createdAt         DateTime      @map("created_at") @default(now())
-  updatedAt         DateTime      @map("updated_at") @updatedAt
-  deletedAt         DateTime?     @map("deleted_at")
+  id          String        @id @default(uuid())
+  userId      String        @map("user_id")
+  senderId    String        @map("sender_id")
+  domainId    String        @map("domain_id")
+  hasCharged  Boolean       @default(false) @map("has_charged")
+  subject     String
+  body        String
+  to          String[]
+  status      MessageStatus @default(queued)
+  externalId  String?       @map("external_id")
+  sentDay     String?       @map("sent_day")
+  sentAt      DateTime?     @map("sent_at")
+  chargeMonth String?       @map("charge_month") // which month the message will be charged (YYYY-MM)
+  createdDay  String        @map("created_day")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  deletedAt   DateTime?     @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   sender Sender @relation(fields: [senderId], references: [id], onDelete: Cascade)
   domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
+
+  messageFiles MessageFile[]
 
   @@map("messages")
 }
 
+model MessageFile {
+  id        String    @id @default(uuid())
+  messageId String    @map("message_id")
+  fileId    String    @map("file_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  file    File    @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@map("message_files")
+}
+
 model Checkout {
-  id                String      @id @default(uuid())
-  gatewayId         String      @map("gateway_id")
-  gatewayUrl        String      @map("gateway_url")
-  localAmount       Int         @map("local_amount")
-  localCurrency     String      @map("local_currency")
-  amount            Int
-  userId            String      @map("user_id")
-  completedAt       DateTime?   @map("completed_at")
-  createdAt         DateTime    @map("created_at") @default(now())
-  updatedAt         DateTime    @map("updated_at") @updatedAt
-  deletedAt         DateTime?   @map("deleted_at")
+  id            String    @id @default(uuid())
+  gatewayId     String    @map("gateway_id")
+  gatewayUrl    String    @map("gateway_url")
+  localAmount   Int       @map("local_amount")
+  localCurrency String    @map("local_currency")
+  amount        Int
+  userId        String    @map("user_id")
+  completedAt   DateTime? @map("completed_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
