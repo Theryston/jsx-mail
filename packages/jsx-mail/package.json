@@ -29,7 +29,7 @@
     "lint:fix": "eslint . --ext .ts,.tsx --fix"
   },
   "dependencies": {
-    "@jsx-mail/core": "workspace:*",
+    "@jsx-mail/core": "latest",
     "archiver": "^7.0.1",
     "axios": "^1.6.7",
     "chokidar": "^3.5.3",
