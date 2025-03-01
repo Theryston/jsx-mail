@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.2.3
+
+### Patch Changes
+
+- 74fbe5b: update esbuild
+
 ## 2.2.2
 
 ### Patch Changes
