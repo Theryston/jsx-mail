@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.3.5
+
+### Patch Changes
+
+- d1b3e76: fix: import core version
+
 ## 2.3.4
 
 ### Patch Changes
