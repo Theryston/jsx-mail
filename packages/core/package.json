@@ -38,7 +38,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.462.0",
     "axios": "^1.6.2",
-    "esbuild": "^0.19.7",
+    "esbuild": "^0.25.0",
     "form-data": "^4.0.0",
     "imagemin": "^8.0.1",
     "imagemin-giflossy": "^5.1.10",
