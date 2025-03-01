@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import CoreError from '../utils/error';
-import esbuild from 'esbuild';
+import * as esbuild from 'esbuild';
 import {
   changePathExt,
   clearModuleFromCache,
