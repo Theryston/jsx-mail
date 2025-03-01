@@ -1,5 +1,11 @@
 # @jsx-mail/core
 
+## 2.2.4
+
+### Patch Changes
+
+- c40ffb6: fix: update esbuild import
+
 ## 2.2.3
 
 ### Patch Changes
