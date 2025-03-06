@@ -15,8 +15,8 @@ export function getFilterWhereMessages(
 ) {
   let statuses: string[] = statusesParam ? JSON.parse(statusesParam) : [];
 
-  if (endDate) endDate = moment(endDate).toDate();
-  if (startDate) startDate = moment(startDate).toDate();
+  if (endDate) endDate = moment(endDate).endOf('day').toDate();
+  if (startDate) startDate = moment(startDate).startOf('day').toDate();
 
   let where: Prisma.MessageWhereInput = {
     userId,
