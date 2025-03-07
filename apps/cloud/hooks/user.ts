@@ -1,5 +1,5 @@
 import api from '@/utils/api';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
 export function useSignIn() {
   const queryClient = useQueryClient();
@@ -35,5 +35,19 @@ export function useVerifySecurityCode() {
 export function useValidateEmail() {
   return useMutation({
     mutationFn: async () => await api.put('/user/validate-email'),
+  });
+}
+
+export function useMe() {
+  return useQuery({
+    queryKey: ['me'],
+    queryFn: async () => await api.get('/user/me'),
+  });
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: async (data: { newPassword: string }) =>
+      await api.post('/user/reset-password', data),
   });
 }

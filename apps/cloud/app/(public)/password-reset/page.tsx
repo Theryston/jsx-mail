@@ -17,16 +17,12 @@ import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import handleRedirectUrl from '@/utils/handle-redirect-url';
-import { useSignUp } from '@/hooks/user';
+import { useResetPassword } from '@/hooks/user';
 import { toast } from '@jsx-mail/ui/sonner';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 
-const signUpScheme = z
+const passwordResetSchema = z
   .object({
-    name: z.string({ required_error: 'Name is required' }),
-    email: z.string({ required_error: 'Email is required' }).email({
-      message: 'Invalid email address',
-    }),
     password: z
       .string({ required_error: 'Password is required' })
       .min(8, { message: 'Password must be at least 8 characters' }),
@@ -39,17 +35,19 @@ const signUpScheme = z
     path: ['password2'],
   });
 
-type SignUpForm = z.infer<typeof signUpScheme>;
+type PasswordResetForm = z.infer<typeof passwordResetSchema>;
 
-export default function SignUp() {
+export default function PasswordReset() {
   const [redirect, setRedirect] = useState('' as string);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const searchParams = useSearchParams();
-  const form = useForm<SignUpForm>({
-    resolver: zodResolver(signUpScheme),
-  });
-  const { mutateAsync: signUp } = useSignUp();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const form = useForm<PasswordResetForm>({
+    resolver: zodResolver(passwordResetSchema),
+  });
+
+  const { mutateAsync: resetPassword } = useResetPassword();
 
   useEffect(() => {
     setRedirect(handleRedirectUrl(searchParams));
@@ -58,19 +56,27 @@ export default function SignUp() {
   const togglePasswordVisibility = () => setIsPasswordVisible((prev) => !prev);
 
   const onSubmit = useCallback(
-    async ({ name, email, password }: SignUpForm) => {
+    async ({ password }: PasswordResetForm) => {
       try {
-        await signUp({ name, email, password });
+        const { data } = await resetPassword({ newPassword: password });
 
-        toast.success('Account created successfully');
-        router.push(
-          `/security-code?permission=self:email-validate&email=${email}&redirect=${encodeURIComponent(`/verify-email?redirect=${redirect}`)}`,
-        );
-      } catch (error) {
-        toast.error('Failed to create account');
+        toast.success('Password has been reset successfully');
+
+        let redirectUrl: URL | string = new URL(redirect);
+        redirectUrl.searchParams.append('token', data.token);
+        redirectUrl.searchParams.append('sessionId', data.sessionId);
+        redirectUrl = redirectUrl.toString();
+
+        if (data.isEmailVerified === false) {
+          redirectUrl = `/security-code?permission=self:email-validate&email=${data.email}&redirect=${encodeURIComponent(`/verify-email?redirect=${redirectUrl}`)}`;
+        }
+
+        router.push(redirectUrl);
+      } catch (error: any) {
+        toast.error('Failed to reset password');
       }
     },
-    [router, redirect, signUp],
+    [router, redirect, resetPassword],
   );
 
   return (
@@ -81,37 +87,11 @@ export default function SignUp() {
           className="w-full max-w-md mx-auto fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-4 items-center px-4 text-center"
         >
           <div className="flex flex-col gap-2 items-center">
-            <h1 className="text-2xl font-bold">Sign up to your account</h1>
+            <h1 className="text-2xl font-bold">Reset Password</h1>
             <p className="text-muted-foreground text-xs">
-              Enter your details below to create your account
+              Enter your new password below
             </p>
           </div>
-
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem className="flex flex-col gap-2 w-full text-left">
-                <FormControl>
-                  <Input placeholder="Enter your name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="flex flex-col gap-2 w-full text-left">
-                <FormControl>
-                  <Input placeholder="Enter your email" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           <FormField
             control={form.control}
@@ -121,7 +101,7 @@ export default function SignUp() {
                 <FormControl>
                   <div className="relative">
                     <Input
-                      placeholder="Enter your password"
+                      placeholder="Enter new password"
                       type={isPasswordVisible ? 'text' : 'password'}
                       {...field}
                     />
@@ -151,7 +131,7 @@ export default function SignUp() {
                 <FormControl>
                   <div className="relative">
                     <Input
-                      placeholder="Confirm your password"
+                      placeholder="Confirm new password"
                       type={isPasswordVisible ? 'text' : 'password'}
                       {...field}
                     />
@@ -178,7 +158,7 @@ export default function SignUp() {
             className="w-full"
             isLoading={form.formState.isSubmitting}
           >
-            Sign up
+            Reset Password
           </Button>
 
           <div className="flex flex-col gap-1">
@@ -186,7 +166,7 @@ export default function SignUp() {
               href={`/sign-in?redirect=${redirect}`}
               className="text-xs text-primary text-center hover:underline"
             >
-              Already have an account? Sign in
+              I remember my password
             </Link>
           </div>
         </form>
