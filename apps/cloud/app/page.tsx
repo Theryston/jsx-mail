@@ -1,5 +1,7 @@
-import { redirect } from 'next/navigation';
-
-export default function Page() {
-  redirect('/app');
+export default function Home() {
+  return (
+    <main>
+      <div>Hello world!</div>
+    </main>
+  );
 }
