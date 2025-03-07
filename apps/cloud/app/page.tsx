@@ -1,7 +1,10 @@
+import { Button } from '@jsx-mail/ui/button';
+
 export default function Home() {
   return (
     <main>
-      <div>Hello world!</div>
+      <h1>ok</h1>
+      <Button>Click me</Button>
     </main>
   );
 }

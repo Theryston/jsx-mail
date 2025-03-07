@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import '@jsx-mail/ui/globals.css';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
