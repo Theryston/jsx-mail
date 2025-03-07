@@ -8,6 +8,7 @@ const publicRoutes: { path: string; whenAuthenticated: 'next' | 'redirect' }[] =
     { path: '/password-recovery', whenAuthenticated: 'next' },
     { path: '/password-reset', whenAuthenticated: 'next' },
     { path: '/auth', whenAuthenticated: 'next' },
+    { path: '/verify-email', whenAuthenticated: 'next' },
   ];
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED = '/sign-in';

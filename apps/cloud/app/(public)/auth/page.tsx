@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import handleRedirectUrl from '@/utils/handle-redirect-url';
 import { useRouter } from 'next/navigation';
 import { Container } from '@/components/container';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function Auth() {
   const [redirect, setRedirect] = useState('' as string);
@@ -13,6 +14,7 @@ export default function Auth() {
   const [dots, setDots] = useState('');
   const searchParams = useSearchParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!redirect || !token) return;
@@ -20,8 +22,9 @@ export default function Auth() {
     document.cookie = `token=${token}; path=/; max-age=604800;`;
     document.cookie = `sessionId=${sessionId}; path=/; max-age=604800;`;
 
+    queryClient.invalidateQueries({ queryKey: ['me'] });
     router.push(redirect);
-  }, [redirect, token, router, sessionId]);
+  }, [redirect, token, router, sessionId, queryClient]);
 
   useEffect(() => {
     setRedirect(handleRedirectUrl(searchParams));
