@@ -185,7 +185,7 @@
     },
     "examples/next-and-jsxmail": {
       "name": "next-and-jsxmail",
-      "version": "0.1.0",
+      "version": "0.1.2",
       "dependencies": {
         "jsx-mail": "workspace:*",
         "next": "14.1.0",
@@ -203,7 +203,7 @@
     },
     "examples/use-core": {
       "name": "use-core",
-      "version": "1.0.0",
+      "version": "1.0.2",
       "dependencies": {
         "@jsx-mail/core": "workspace:*",
         "@jsx-mail/eslint-config": "workspace:*",
@@ -216,7 +216,7 @@
     },
     "examples/use-jsx-mail": {
       "name": "use-jsx-mail",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "dependencies": {
         "@jsx-mail/core": "workspace:*",
         "@jsx-mail/eslint-config": "workspace:*",
@@ -230,7 +230,7 @@
     },
     "packages/core": {
       "name": "@jsx-mail/core",
-      "version": "2.2.2",
+      "version": "2.2.4",
       "dependencies": {
         "@aws-sdk/client-s3": "^3.462.0",
         "axios": "^1.6.2",
@@ -273,12 +273,12 @@
     },
     "packages/jsx-mail": {
       "name": "jsx-mail",
-      "version": "2.3.3",
+      "version": "2.3.5",
       "bin": {
         "jsxm": "bin/jsxm"
       },
       "dependencies": {
-        "@jsx-mail/core": "workspace:*",
+        "@jsx-mail/core": "latest",
         "archiver": "^7.0.1",
         "axios": "^1.6.7",
         "chokidar": "^3.5.3",
@@ -4323,6 +4323,8 @@
     "jpegoptim-bin/bin-build": ["bin-build@3.0.0", "", { "dependencies": { "decompress": "^4.0.0", "download": "^6.2.2", "execa": "^0.7.0", "p-map-series": "^1.0.0", "tempfile": "^2.0.0" } }, "sha512-jcUOof71/TNAI2uM5uoUaDq2ePcVBQ3R/qhxAz1rX7UfvduAL/RXD3jXzvn8cVcDJdGVkiR1shal3OH0ImpuhA=="],
 
     "jpegoptim-bin/bin-wrapper": ["bin-wrapper@4.1.0", "", { "dependencies": { "bin-check": "^4.1.0", "bin-version-check": "^4.0.0", "download": "^7.1.0", "import-lazy": "^3.1.0", "os-filter-obj": "^2.0.0", "pify": "^4.0.1" } }, "sha512-hfRmo7hWIXPkbpi0ZltboCMVrU+0ClXR/JgbCKKjlDjQf6igXa7OwdqNcFWQZPZTgiY7ZpzE3+LjjkLiTN2T7Q=="],
+
+    "jsx-mail/@jsx-mail/core": ["@jsx-mail/core@2.2.4", "", { "dependencies": { "@aws-sdk/client-s3": "^3.462.0", "axios": "^1.6.2", "esbuild": "^0.25.0", "form-data": "^4.0.0", "imagemin": "^8.0.1", "imagemin-giflossy": "^5.1.10", "imagemin-jpegoptim": "^8.0.0", "imagemin-pngquant": "^9.0.2", "mime-types": "^2.1.35", "node-localstorage": "^3.0.5" } }, "sha512-HV7Dzh6K5dcbPv4UKw1u9BZE0Ocz6w45imbC2T0kfnMCMCUu5ZwdFrsJOO7BzULqVOQoEghP+utOwHvo82HkFg=="],
 
     "jsx-mail-cloud/@types/node": ["@types/node@20.5.7", "", {}, "sha512-dP7f3LdZIysZnmvP3ANJYTSwg+wLLl8p7RqniVlV7j+oXSXAbt9h0WIBFmJy5inWZoX9wZN6eXx+YXd9Rh3RBA=="],
 
