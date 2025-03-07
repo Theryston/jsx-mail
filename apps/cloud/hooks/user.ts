@@ -1,3 +1,4 @@
+import { Session, User } from '@/types/user';
 import api from '@/utils/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
@@ -39,9 +40,9 @@ export function useValidateEmail() {
 }
 
 export function useMe() {
-  return useQuery({
+  return useQuery<User>({
     queryKey: ['me'],
-    queryFn: async () => await api.get('/user/me'),
+    queryFn: async () => await api.get('/user/me').then((res) => res.data),
   });
 }
 
@@ -49,5 +50,25 @@ export function useResetPassword() {
   return useMutation({
     mutationFn: async (data: { newPassword: string }) =>
       await api.post('/user/reset-password', data),
+  });
+}
+
+export function useDeleteSession() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (sessionId: string) =>
+      await api.delete(`/session?id=${sessionId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['me'] });
+      queryClient.invalidateQueries({ queryKey: ['sessions'] });
+    },
+  });
+}
+
+export function useSessions() {
+  return useQuery<Session[]>({
+    queryKey: ['sessions'],
+    queryFn: async () => await api.get('/session').then((res) => res.data),
   });
 }

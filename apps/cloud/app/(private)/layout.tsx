@@ -1,8 +1,11 @@
 'use client';
 
 import { useMe } from '@/hooks/user';
+import { CloudSidebar } from '@/components/cloud-sidebar';
+import { SidebarProvider } from '@jsx-mail/ui/sidebar';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { Crisp } from 'crisp-sdk-web';
 
 export default function PrivateLayout({
   children,
@@ -11,6 +14,12 @@ export default function PrivateLayout({
 }) {
   const { data: me, error, isPending } = useMe();
   const router = useRouter();
+
+  useEffect(() => {
+    if (me?.name) Crisp.user.setNickname(me.name);
+    if (me?.email) Crisp.user.setEmail(me.email);
+    if (me?.phone) Crisp.user.setPhone(me.phone);
+  }, [me]);
 
   if (isPending) return <Loading />;
 
@@ -24,7 +33,12 @@ export default function PrivateLayout({
     return null;
   }
 
-  return <main>{children}</main>;
+  return (
+    <SidebarProvider>
+      <CloudSidebar />
+      <main className="w-full">{children}</main>
+    </SidebarProvider>
+  );
 }
 
 function Loading() {
