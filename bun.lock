@@ -286,6 +286,7 @@
         "next-themes": "^0.4.4",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
+        "sonner": "^2.0.1",
         "tailwind-merge": "^3.0.1",
         "tailwindcss-animate": "^1.0.7",
         "zod": "^3.24.2",
@@ -2865,6 +2866,8 @@
     "socks": ["socks@2.8.4", "", { "dependencies": { "ip-address": "^9.0.5", "smart-buffer": "^4.2.0" } }, "sha512-D3YaD0aRxR3mEcqnidIs7ReYJFVzWdd6fXJYUM8ixcQcJRGTka/b3saV0KflYhyVJXKhb947GndU35SxYNResQ=="],
 
     "socks-proxy-agent": ["socks-proxy-agent@8.0.5", "", { "dependencies": { "agent-base": "^7.1.2", "debug": "^4.3.4", "socks": "^2.8.3" } }, "sha512-HehCEsotFqbPW9sJ8WVYB6UbmIMv7kUUORIF2Nncq4VQvBfNBLibW9YZR5dlYCSUhwcD628pRllm7n+E+YTzJw=="],
+
+    "sonner": ["sonner@2.0.1", "", { "peerDependencies": { "react": "^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react-dom": "^18.0.0 || ^19.0.0 || ^19.0.0-rc" } }, "sha512-FRBphaehZ5tLdLcQ8g2WOIRE+Y7BCfWi5Zyd8bCvBjiW8TxxAyoWZIxS661Yz6TGPqFQ4VLzOF89WEYhfynSFQ=="],
 
     "sort-keys": ["sort-keys@1.1.2", "", { "dependencies": { "is-plain-obj": "^1.0.0" } }, "sha512-vzn8aSqKgytVik0iwdBEi+zevbTYZogewTUM6dtpmGwEcdzbub/TX4bCzRhebDCRC3QzXgJsLRKB2V/Oof7HXg=="],
 
