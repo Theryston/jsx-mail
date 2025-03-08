@@ -5,9 +5,10 @@ import { InsightsChart } from '@/components/insights-chart';
 import { SmallCard } from '@jsx-mail/ui/small-card';
 import { useInsights, useMe } from '@/hooks/user';
 import { titleCase } from '@/utils/title-case';
+import { Skeleton } from '@jsx-mail/ui/skeleton';
 
 export default function Home() {
-  const { data: insight } = useInsights();
+  const { data: insight, isPending } = useInsights();
   const { data: me } = useMe();
 
   return (
@@ -18,17 +19,32 @@ export default function Home() {
           {titleCase(me?.name ?? '')}
         </h1>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {insight?.DATA.map((insight) => (
-            <SmallCard
-              key={insight.title}
-              title={insight.title}
-              value={insight.value}
-            />
-          ))}
-        </div>
+        {isPending ? (
+          <>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+            </div>
 
-        {insight && <InsightsChart insight={insight} />}
+            <Skeleton className="h-[300px] w-full" />
+          </>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {insight?.DATA.map((insight) => (
+                <SmallCard
+                  key={insight.title}
+                  title={insight.title}
+                  value={insight.value}
+                />
+              ))}
+            </div>
+
+            {insight && <InsightsChart insight={insight} />}
+          </>
+        )}
       </div>
     </Container>
   );
