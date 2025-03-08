@@ -22,7 +22,6 @@ export default function SendingHistoryPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Initialize state from URL or defaults
   const [page, setPage] = useState(() => {
     const pageParam = searchParams?.get('page');
     return pageParam ? parseInt(pageParam, 10) : 1;
@@ -39,7 +38,6 @@ export default function SendingHistoryPage() {
       };
     }
 
-    // Default: last 30 days
     return {
       from: new Date(moment().subtract(30, 'days').format('YYYY-MM-DD')),
       to: new Date(),
@@ -55,13 +53,11 @@ export default function SendingHistoryPage() {
     return statusesParam ? JSON.parse(statusesParam) : [];
   });
 
-  // Convert date range to moment objects for API calls
   const startDate = moment(
     dateRange?.from || moment().subtract(30, 'days').toDate(),
   );
   const endDate = moment(dateRange?.to || new Date());
 
-  // Fetch data
   const { data: messagesPagination, isPending: isLoadingMessages } =
     useMessages({
       page,
@@ -83,7 +79,6 @@ export default function SendingHistoryPage() {
 
   const { data: messageStatuses } = useMessageStatuses();
 
-  // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams();
     params.set('page', page.toString());
@@ -111,19 +106,15 @@ export default function SendingHistoryPage() {
     router.push(`/sending-history?${params.toString()}`);
   }, [page, dateRange, fromEmail, toEmail, statuses, router]);
 
-  // Handle page change
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
 
-  // Handle date range change
   const handleDateRangeChange = (range: DateRange | undefined) => {
     setDateRange(range);
-    // Reset to page 1 when filters change
     setPage(1);
   };
 
-  // Handle filters change
   const handleFiltersChange = (filters: {
     fromEmail: string;
     toEmail: string;
@@ -132,17 +123,15 @@ export default function SendingHistoryPage() {
     setFromEmail(filters.fromEmail);
     setToEmail(filters.toEmail);
     setStatuses(filters.statuses);
-    // Reset to page 1 when filters change
     setPage(1);
   };
 
-  // Create columns with status information
   const columns = createColumns(messageStatuses);
 
   return (
     <Container header>
       <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <h1 className="text-2xl">
             <span className="font-bold">Your</span> sending history
           </h1>

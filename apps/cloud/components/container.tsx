@@ -49,7 +49,7 @@ function Header() {
 
   return (
     <div className="h-16">
-      <header className="w-full px-4 border-b flex items-center justify-between fixed left-0 bg-background">
+      <header className="w-full px-4 border-b flex items-center justify-between fixed left-0 bg-background z-40">
         <div className="md:hidden">
           <CloudLogo />
         </div>
