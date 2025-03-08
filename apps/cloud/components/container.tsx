@@ -23,7 +23,7 @@ export function Container({
     <div>
       {anonymousHeader && <AnonymousHeader />}
       {header && <Header />}
-      <main className="container mx-auto p-4 md:p-8">{children}</main>
+      <main className="container mx-auto p-4 py-8">{children}</main>
     </div>
   );
 }

@@ -46,3 +46,19 @@ export type FullBalance = {
   MONTH_ADDED: Balance;
   MONTH_CHARGED: Balance;
 };
+
+export type Transaction = {
+  id: string;
+  amount: number;
+  friendlyAmount: string;
+  description: string;
+  createdAt: string;
+};
+
+export type Pagination = {
+  totalPages: number;
+};
+
+export type TransactionsPagination = Pagination & {
+  transactions: Transaction[];
+};

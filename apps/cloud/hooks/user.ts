@@ -1,4 +1,10 @@
-import { FullBalance, Insight, Session, User } from '@/types/user';
+import {
+  FullBalance,
+  Insight,
+  Session,
+  TransactionsPagination,
+  User,
+} from '@/types/user';
 import api from '@/utils/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
@@ -92,5 +98,15 @@ export function useCreateCheckoutSession() {
   return useMutation({
     mutationFn: async (data: { amount: number; country: string }) =>
       await api.post('/user/checkout', data).then((res) => res.data),
+  });
+}
+
+export function useTransactions(page: number) {
+  return useQuery<TransactionsPagination>({
+    queryKey: ['transactions'],
+    queryFn: async () =>
+      await api
+        .get(`/user/transactions?page=${page}&take=10`)
+        .then((res) => res.data),
   });
 }

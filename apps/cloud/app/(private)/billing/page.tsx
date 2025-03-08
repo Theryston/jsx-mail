@@ -2,7 +2,11 @@
 
 import { Container } from '@/components/container';
 import { Skeleton } from '@jsx-mail/ui/skeleton';
-import { useCreateCheckoutSession, useFullBalance } from '@/hooks/user';
+import {
+  useCreateCheckoutSession,
+  useFullBalance,
+  useTransactions,
+} from '@/hooks/user';
 import { SmallCard } from '@jsx-mail/ui/small-card';
 import { PlusIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -28,6 +32,8 @@ import {
 import { Combobox } from '@jsx-mail/ui/combobox';
 import { Button } from '@jsx-mail/ui/button';
 import { toast } from '@jsx-mail/ui/sonner';
+import { columns } from './columns';
+import { DataTable } from './data-table';
 
 const formSchema = z.object({
   amount: z.coerce.number().min(1),
@@ -37,15 +43,18 @@ const formSchema = z.object({
 export default function Billing() {
   const { data: fullBalance, isPending } = useFullBalance();
   const [isOpenAddBalance, setIsOpenAddBalance] = useState(false);
+  const [page, setPage] = useState(1);
+  const { data: transactionPagination, isPending: isPendingTransactions } =
+    useTransactions(page);
 
   return (
     <Container header>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 w-full">
         <h1 className="text-2xl">
           <span className="font-bold">Your</span> billing & transactions
         </h1>
 
-        {isPending ? (
+        {isPending || isPendingTransactions ? (
           <>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <Skeleton className="h-32 w-full" />
@@ -83,6 +92,13 @@ export default function Billing() {
             </div>
           </div>
         )}
+
+        <div className="rounded-xl bg-zinc-900 p-4 w-full">
+          <DataTable
+            columns={columns}
+            data={transactionPagination?.transactions ?? []}
+          />
+        </div>
       </div>
 
       <AddBalanceModal
