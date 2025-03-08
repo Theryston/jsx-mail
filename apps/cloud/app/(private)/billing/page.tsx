@@ -85,7 +85,7 @@ export default function Billing() {
 
             <div
               onClick={() => setIsOpenAddBalance(true)}
-              className="flex flex-col gap-2 bg-zinc-900 p-4 rounded-2xl items-center justify-center text-muted-foreground cursor-pointer hover:bg-zinc-800 transition-colors"
+              className="flex flex-col gap-2 bg-zinc-900 p-4 rounded-2xl items-center justify-center cursor-pointer hover:bg-zinc-800 transition-colors"
             >
               <PlusIcon className="size-6" />
               <h2 className="text-sm">Add balance</h2>
