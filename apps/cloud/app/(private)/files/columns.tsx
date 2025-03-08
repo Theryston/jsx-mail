@@ -1,27 +1,31 @@
 'use client';
 
-import { Sender } from '@/types/sender';
+import { File } from '@/types/file';
 import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
 import { Button } from '@jsx-mail/ui/button';
 import { useState } from 'react';
 import { DeleteConfirmationModal } from '@jsx-mail/ui/delete-confirmation-modal';
-import { useDeleteSender } from '@/hooks/sender';
+import { useDeleteFile } from '@/hooks/file';
 import { toast } from '@jsx-mail/ui/sonner';
-import { TrashIcon } from 'lucide-react';
+import { formatSize } from '@/utils/format';
+import { DownloadIcon, TrashIcon } from 'lucide-react';
 
-export const columns: ColumnDef<Sender>[] = [
+export const columns: ColumnDef<File>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
   },
   {
-    accessorKey: 'name',
+    accessorKey: 'originalName',
     header: 'Name',
   },
   {
-    accessorKey: 'email',
-    header: 'Email',
+    accessorKey: 'size',
+    header: 'Size',
+    cell: ({ row }) => {
+      return <span>{formatSize(row.original.size)}</span>;
+    },
   },
   {
     accessorKey: 'createdAt',
@@ -34,23 +38,31 @@ export const columns: ColumnDef<Sender>[] = [
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => {
-      const sender = row.original;
+      const file = row.original;
       const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-      const { mutateAsync: deleteSender } = useDeleteSender();
+      const { mutateAsync: deleteFile } = useDeleteFile();
 
       const handleDelete = async (confirmationKey: string) => {
         try {
-          await deleteSender({ id: sender.id, confirmationKey });
-          toast.success('Sender deleted successfully');
+          await deleteFile({ id: file.id, confirmationKey });
+          toast.success('File deleted successfully');
         } catch (error) {
-          toast.error('Failed to delete sender');
+          toast.error('Failed to delete file');
           console.error(error);
         }
+      };
+
+      const handleDownload = () => {
+        window.open(file.url, '_blank');
       };
 
       return (
         <>
           <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={handleDownload}>
+              <DownloadIcon className="size-4" />
+              Download
+            </Button>
             <Button
               variant="destructive"
               size="sm"
@@ -65,10 +77,10 @@ export const columns: ColumnDef<Sender>[] = [
             isOpen={isDeleteOpen}
             onClose={() => setIsDeleteOpen(false)}
             onConfirm={handleDelete}
-            title="Delete Sender"
-            description={`Are you sure you want to delete the sender "${sender.email}"? This action cannot be undone.`}
-            confirmationKeyPlaceholder="Type the email to confirm"
-            expectedConfirmationKey={sender.email}
+            title="Delete File"
+            description={`Are you sure you want to delete the file "${file.originalName}"? This action cannot be undone.`}
+            confirmationKeyPlaceholder="Type the file name to confirm"
+            expectedConfirmationKey={file.originalName}
           />
         </>
       );

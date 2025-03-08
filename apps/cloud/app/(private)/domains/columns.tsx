@@ -9,6 +9,7 @@ import { ViewDNSModal } from './view-dns-modal';
 import { DeleteConfirmationModal } from '@jsx-mail/ui/delete-confirmation-modal';
 import { useDeleteDomain } from '@/hooks/domain';
 import { toast } from '@jsx-mail/ui/sonner';
+import { CircleIcon, ClockIcon, EyeIcon, TrashIcon } from 'lucide-react';
 
 export const columns: ColumnDef<Domain>[] = [
   {
@@ -57,13 +58,24 @@ export const columns: ColumnDef<Domain>[] = [
               size="sm"
               onClick={() => setIsViewDNSOpen(true)}
             >
-              {domain.status === 'verified' ? 'View DNS' : 'Verify'}
+              {domain.status === 'verified' ? (
+                <>
+                  <EyeIcon className="size-4" />
+                  View DNS
+                </>
+              ) : (
+                <>
+                  <ClockIcon className="size-4" />
+                  Verify
+                </>
+              )}
             </Button>
             <Button
               variant="destructive"
               size="sm"
               onClick={() => setIsDeleteOpen(true)}
             >
+              <TrashIcon className="size-4" />
               Delete
             </Button>
           </div>
