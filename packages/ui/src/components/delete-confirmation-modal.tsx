@@ -70,11 +70,9 @@ export function DeleteConfirmationModal({
           <div className="flex flex-col gap-2">
             <Label
               htmlFor="confirmationKey"
-              className="text-muted-foreground text-xs font-normal"
+              className="text-muted-foreground text-xs font-normal text-center"
             >
-              Type{' '}
-              <span className="font-semibold">{expectedConfirmationKey}</span>{' '}
-              to confirm
+              Type "{expectedConfirmationKey}" to confirm
             </Label>
             <Input
               id="confirmationKey"

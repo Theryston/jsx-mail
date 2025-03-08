@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSessions, useDeleteSession, useLogout } from '@/hooks/user';
+import { useSessions, useDeleteSession } from '@/hooks/user';
 import { toast } from '@jsx-mail/ui/sonner';
 import { Button } from '@jsx-mail/ui/button';
 import { PlusIcon } from 'lucide-react';
@@ -19,16 +19,17 @@ import {
 } from '@jsx-mail/ui/table';
 import { format } from 'date-fns';
 import { Skeleton } from '@jsx-mail/ui/skeleton';
+import { useRouter } from 'next/navigation';
 
 export function Sessions() {
   const { data: sessions, isPending } = useSessions();
   const { mutateAsync: deleteSession } = useDeleteSession();
-  const { mutateAsync: logout } = useLogout();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const sessionId = document.cookie
@@ -41,7 +42,7 @@ export function Sessions() {
 
   const handleDeleteSession = async (id: string) => {
     if (id === currentSessionId) {
-      handleLogout();
+      router.push('/sign-out');
       return;
     }
 
@@ -50,7 +51,7 @@ export function Sessions() {
     setIsDeleteModalOpen(true);
   };
 
-  const confirmDeleteSession = async (confirmationKey: string) => {
+  const confirmDeleteSession = async () => {
     if (!selectedSession) return;
 
     try {
@@ -58,23 +59,6 @@ export function Sessions() {
       toast.success('Session deleted successfully');
     } catch (error) {
       toast.error('Failed to delete session');
-      console.error(error);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      toast.success('Logged out successfully');
-
-      // Clear cookies
-      document.cookie = 'token=; path=/; max-age=0;';
-      document.cookie = 'sessionId=; path=/; max-age=0;';
-
-      // Redirect to sign-in page
-      window.location.href = '/sign-in';
-    } catch (error) {
-      toast.error('Failed to logout');
       console.error(error);
     }
   };
@@ -119,7 +103,7 @@ export function Sessions() {
               {sessions && sessions.length > 0 ? (
                 sessions.map((session) => (
                   <TableRow key={session.id}>
-                    <TableCell className="font-mono text-xs">
+                    <TableCell>
                       {session.id}
                       {session.id === currentSessionId && (
                         <span className="ml-2 text-xs text-green-500">
