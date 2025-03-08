@@ -3,7 +3,7 @@ import api from '@/utils/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FilesPagination } from '@/types/file';
 
-export const PER_PAGE = 1;
+export const PER_PAGE = 10;
 
 export function useUploadFile() {
   const queryClient = useQueryClient();

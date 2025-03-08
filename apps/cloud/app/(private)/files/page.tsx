@@ -9,6 +9,7 @@ import { Skeleton } from '@jsx-mail/ui/skeleton';
 import { columns } from './columns';
 import { DataTable } from './data-table';
 import { UploadFileModal } from './upload-file-modal';
+import { PaginationControls } from '@jsx-mail/ui/pagination-controls';
 
 export default function FilesPage() {
   const [isOpenUploadFile, setIsOpenUploadFile] = useState(false);
@@ -40,36 +41,12 @@ export default function FilesPage() {
           </div>
         )}
 
-        {filesPagination && filesPagination.totalPages > 1 && (
-          <div className="flex justify-center mt-4">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(Math.max(1, page - 1))}
-                disabled={page === 1}
-              >
-                Previous
-              </Button>
-
-              <span className="text-sm">
-                Page {page} of {filesPagination.totalPages}
-              </span>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  handlePageChange(
-                    Math.min(filesPagination.totalPages, page + 1),
-                  )
-                }
-                disabled={page === filesPagination.totalPages}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+        {filesPagination && (
+          <PaginationControls
+            currentPage={page}
+            totalPages={filesPagination.totalPages}
+            onPageChange={handlePageChange}
+          />
         )}
       </div>
 

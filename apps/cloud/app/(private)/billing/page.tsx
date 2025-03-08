@@ -34,6 +34,7 @@ import { Button } from '@jsx-mail/ui/button';
 import { toast } from '@jsx-mail/ui/sonner';
 import { columns } from './columns';
 import { DataTable } from './data-table';
+import { PaginationControls } from '@jsx-mail/ui/pagination-controls';
 
 const formSchema = z.object({
   amount: z.coerce.number().min(1),
@@ -46,6 +47,10 @@ export default function Billing() {
   const [page, setPage] = useState(1);
   const { data: transactionPagination, isPending: isPendingTransactions } =
     useTransactions(page);
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
 
   return (
     <Container header>
@@ -99,6 +104,14 @@ export default function Billing() {
             data={transactionPagination?.transactions ?? []}
           />
         </div>
+
+        {transactionPagination && (
+          <PaginationControls
+            currentPage={page}
+            totalPages={transactionPagination.totalPages}
+            onPageChange={handlePageChange}
+          />
+        )}
       </div>
 
       <AddBalanceModal

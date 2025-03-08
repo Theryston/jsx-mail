@@ -8,6 +8,8 @@ import {
 import api from '@/utils/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
+export const PER_PAGE = 10;
+
 export function useSignIn() {
   const queryClient = useQueryClient();
 
@@ -103,10 +105,10 @@ export function useCreateCheckoutSession() {
 
 export function useTransactions(page: number) {
   return useQuery<TransactionsPagination>({
-    queryKey: ['transactions'],
+    queryKey: ['transactions', page],
     queryFn: async () =>
       await api
-        .get(`/user/transactions?page=${page}&take=10`)
+        .get(`/user/transactions?page=${page}&take=${PER_PAGE}`)
         .then((res) => res.data),
   });
 }
