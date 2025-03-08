@@ -25,3 +25,18 @@ export type Session = {
   expiresAt: string | null;
   permissions: string[];
 };
+
+export type MessagesSentByDay = {
+  sentDay: string;
+  count: number;
+};
+
+export type InsightData = {
+  title: string;
+  value: string;
+};
+
+export type Insight = {
+  MESSAGES_SENT_BY_DAY: MessagesSentByDay[];
+  DATA: InsightData[];
+};

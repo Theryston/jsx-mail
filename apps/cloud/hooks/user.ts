@@ -1,4 +1,4 @@
-import { Session, User } from '@/types/user';
+import { Insight, Session, User } from '@/types/user';
 import api from '@/utils/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
@@ -70,5 +70,13 @@ export function useSessions() {
   return useQuery<Session[]>({
     queryKey: ['sessions'],
     queryFn: async () => await api.get('/session').then((res) => res.data),
+  });
+}
+
+export function useInsights() {
+  return useQuery<Insight>({
+    queryKey: ['insights'],
+    queryFn: async () =>
+      await api.get('/user/insights').then((res) => res.data),
   });
 }
