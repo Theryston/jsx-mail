@@ -101,11 +101,13 @@ export function CloudSidebar() {
                       <item.icon
                         className={cn('size-5', {
                           'text-muted-foreground': pathname !== item.href,
+                          'text-primary': pathname === item.href,
                         })}
                       />
                       <span
                         className={cn('text-xs', {
                           'text-muted-foreground': pathname !== item.href,
+                          'text-primary': pathname === item.href,
                         })}
                       >
                         {item.label}
