@@ -9,10 +9,10 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from './dialog.js';
-import { Button } from './button.js';
-import { Input } from './input.js';
-import { Label } from './label.js';
+} from '@jsx-mail/ui/dialog';
+import { Button } from '@jsx-mail/ui/button';
+import { Input } from '@jsx-mail/ui/input';
+import { Label } from '@jsx-mail/ui/label';
 
 interface DeleteConfirmationModalProps {
   isOpen: boolean;

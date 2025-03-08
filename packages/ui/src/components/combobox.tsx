@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
 
-import { Button } from './button.js';
+import { Button } from '@jsx-mail/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -11,8 +11,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from './command.js';
-import { Popover, PopoverContent, PopoverTrigger } from './popover.js';
+} from '@jsx-mail/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@jsx-mail/ui/popover';
 
 export function Combobox({
   items,

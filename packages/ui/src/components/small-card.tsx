@@ -1,4 +1,4 @@
-import { cn } from '../lib/utils.js';
+import { cn } from '@jsx-mail/ui/lib/utils';
 
 export function SmallCard({
   title,

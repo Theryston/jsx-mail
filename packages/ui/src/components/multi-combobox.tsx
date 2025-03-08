@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
 
-import { Button } from './button.js';
+import { Button } from '@jsx-mail/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -11,10 +11,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from './command.js';
-import { Popover, PopoverContent, PopoverTrigger } from './popover.js';
-import { Badge } from './badge.js';
-import { cn } from '../lib/utils.js';
+} from '@jsx-mail/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@jsx-mail/ui/popover';
+import { Badge } from '@jsx-mail/ui/badge';
+import { cn } from '@jsx-mail/ui/lib/utils';
 
 export function MultiCombobox({
   items,

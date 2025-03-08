@@ -4,8 +4,8 @@ import * as React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DayPicker } from 'react-day-picker';
 
-import { cn } from '../lib/utils.js';
-import { buttonVariants } from './button.js';
+import { cn } from '@jsx-mail/ui/lib/utils';
+import { buttonVariants } from '@jsx-mail/ui/button';
 
 function Calendar({
   className,

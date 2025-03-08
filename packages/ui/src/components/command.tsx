@@ -4,14 +4,14 @@ import * as React from 'react';
 import { Command as CommandPrimitive } from 'cmdk';
 import { SearchIcon } from 'lucide-react';
 
-import { cn } from '../lib/utils.js';
+import { cn } from '@jsx-mail/ui/lib/utils';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from './dialog.js';
+} from '@jsx-mail/ui/dialog';
 
 function Command({
   className,

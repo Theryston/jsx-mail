@@ -1,4 +1,4 @@
-import { Input } from './input.js';
+import { Input } from '@jsx-mail/ui/input';
 
 import CurrencyInputComponent, {
   CurrencyInputProps,

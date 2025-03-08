@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { Button } from './button.js';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@jsx-mail/ui/button';
 
 interface PaginationControlsProps {
   currentPage: number;

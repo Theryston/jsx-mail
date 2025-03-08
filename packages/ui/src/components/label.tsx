@@ -2,8 +2,9 @@
 
 import * as React from 'react';
 import * as LabelPrimitive from '@radix-ui/react-label';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-import { cn } from '../lib/utils.js';
+import { cn } from '@jsx-mail/ui/lib/utils';
 
 function Label({
   className,

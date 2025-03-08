@@ -4,25 +4,26 @@ import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { VariantProps, cva } from 'class-variance-authority';
 
-import { useIsMobile } from '../hooks/use-mobile.js';
-import { cn } from '../lib/utils.js';
-import { Button } from './button.js';
-import { Input } from './input.js';
-import { Separator } from './separator.js';
-import { Skeleton } from './skeleton.js';
+import { useIsMobile } from '@jsx-mail/ui/hooks/use-mobile';
+import { cn } from '@jsx-mail/ui/lib/utils';
+import { Button } from '@jsx-mail/ui/button';
+import { Input } from '@jsx-mail/ui/input';
+import { Separator } from '@jsx-mail/ui/separator';
+import { Skeleton } from '@jsx-mail/ui/skeleton';
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from './sheet.js';
+  SheetTrigger,
+} from '@jsx-mail/ui/sheet';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from './tooltip.js';
+} from '@jsx-mail/ui/tooltip';
 import { MenuIcon } from 'lucide-react';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';

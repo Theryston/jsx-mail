@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { cn } from '../lib/utils.js';
+import { cn } from '@jsx-mail/ui/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 
 function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
