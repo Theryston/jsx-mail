@@ -10,9 +10,9 @@ export type User = {
   email: string;
   isEmailVerified: boolean;
   accessLevel: string;
-  phone: string | null;
+  phone?: string | null;
   isPhoneVerified: boolean;
-  birthdate: Date | null;
+  birthdate?: Date | null;
   balance: Balance;
   createdAt: Date;
   updatedAt: Date;
@@ -61,4 +61,10 @@ export type Pagination = {
 
 export type TransactionsPagination = Pagination & {
   transactions: Transaction[];
+};
+
+export type Permission = {
+  title: string;
+  value: string;
+  description: string;
 };

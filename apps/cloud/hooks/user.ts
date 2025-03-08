@@ -4,6 +4,7 @@ import {
   Session,
   TransactionsPagination,
   User,
+  Permission,
 } from '@/types/user';
 import api from '@/utils/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
@@ -61,23 +62,10 @@ export function useResetPassword() {
   });
 }
 
-export function useDeleteSession() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (sessionId: string) =>
-      await api.delete(`/session?id=${sessionId}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['me'] });
-      queryClient.invalidateQueries({ queryKey: ['sessions'] });
-    },
-  });
-}
-
 export function useSessions() {
   return useQuery<Session[]>({
     queryKey: ['sessions'],
-    queryFn: async () => await api.get('/session').then((res) => res.data),
+    queryFn: () => api.get('/session').then((res) => res.data),
   });
 }
 
@@ -110,5 +98,60 @@ export function useTransactions(page: number) {
       await api
         .get(`/user/transactions?page=${page}&take=${PER_PAGE}`)
         .then((res) => res.data),
+  });
+}
+
+export function useUpdateUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: {
+      name: string;
+      phone?: string | null;
+      birthdate?: Date | null;
+    }) => api.put('/user', data).then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+    },
+  });
+}
+
+export function useCreateSession() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: {
+      description: string;
+      permissions: string[];
+      expirationDate: string | null;
+    }) => api.post('/session', data).then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sessions'] });
+    },
+  });
+}
+
+export function useLogout() {
+  return useMutation({
+    mutationFn: () => api.delete('/session').then((res) => res.data),
+  });
+}
+
+export function usePermissions() {
+  return useQuery<Permission[]>({
+    queryKey: ['permissions'],
+    queryFn: () => api.get('/session/permissions').then((res) => res.data),
+  });
+}
+
+export function useDeleteSession() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) =>
+      api.delete(`/session?id=${id}`).then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sessions'] });
+    },
   });
 }
