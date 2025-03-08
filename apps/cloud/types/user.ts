@@ -40,3 +40,9 @@ export type Insight = {
   MESSAGES_SENT_BY_DAY: MessagesSentByDay[];
   DATA: InsightData[];
 };
+
+export type FullBalance = {
+  CURRENT: Balance;
+  MONTH_ADDED: Balance;
+  MONTH_CHARGED: Balance;
+};
