@@ -8,7 +8,7 @@ import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: {
-    default: 'JSX Mail',
+    default: 'JSX Mail - The complete solution for your email flow',
     template: `%s - JSX Mail`,
   },
   description:
