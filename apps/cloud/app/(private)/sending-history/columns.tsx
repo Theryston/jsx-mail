@@ -32,25 +32,6 @@ export const createColumns = (
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ row }) => {
-      const status = row.original.status;
-      const statusInfo = statuses.find((s) => s.value === status);
-
-      if (!statusInfo) {
-        return <span>{status}</span>;
-      }
-
-      return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>{statusInfo.label}</TooltipTrigger>
-            <TooltipContent>
-              <p>{statusInfo.description}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      );
-    },
   },
   {
     accessorKey: 'sentAt',
