@@ -19,7 +19,11 @@ const faqData: FaqItem[] = [
     answer: (
       <>
         Yes, you can see into the{' '}
-        <Link href="https://docs.jsxmail.org/api-reference" isExternal>
+        <Link
+          href="https://docs.jsxmail.org/api-reference"
+          isExternal
+          aria-label="View API Reference documentation"
+        >
           API Reference
         </Link>{' '}
         the JSX Mail Cloud if just a API that you call by giving a HTML body,
@@ -36,13 +40,18 @@ const faqData: FaqItem[] = [
         <Link
           href="https://docs.jsxmail.org/framework/learning/rendering"
           isExternal
+          aria-label="View rendering documentation"
         >
           rendering documentation
         </Link>
         , you can use the JSX Mail framework just for generating the HTML body,
         and then you can use any sending provider to send your email. You can
         also{' '}
-        <Link href="https://docs.jsxmail.org/cli/zip" isExternal>
+        <Link
+          href="https://docs.jsxmail.org/cli/zip"
+          isExternal
+          aria-label="Learn about zipping your email"
+        >
           zip your email
         </Link>{' '}
         and get the files as images and then add it to any email platform that
@@ -68,11 +77,17 @@ const faqData: FaqItem[] = [
         <Link
           href="https://github.com/Theryston/jsx-mail/discussions"
           isExternal
+          aria-label="Visit GitHub Discussions"
         >
           GitHub Discussions
         </Link>{' '}
         and you can also contact our{' '}
-        <Link href="https://docs.jsxmail.org/cloud/support">support team</Link>{' '}
+        <Link
+          href="https://docs.jsxmail.org/cloud/support"
+          aria-label="Contact support team"
+        >
+          support team
+        </Link>{' '}
         for more personalized assistance.
       </>
     ),
@@ -100,6 +115,7 @@ export default function Faq() {
             <AccordionItem
               key={`${item}-${index}`}
               title={<p className="text-base font-medium">{item.question}</p>}
+              textValue={item.question}
             >
               <p className="text-sm text-zinc-300">{item.answer}</p>
             </AccordionItem>

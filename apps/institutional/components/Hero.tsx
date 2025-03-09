@@ -1,7 +1,7 @@
 'use client';
 
-import { Link } from "@heroui/link";
-import { Button } from "@heroui/button";
+import { Link } from '@heroui/link';
+import { Button } from '@heroui/button';
 import { useEffect, useState } from 'react';
 
 export default function Hero() {
@@ -44,6 +44,7 @@ export default function Hero() {
             fontSize: '10px',
             lineHeight: '10px',
           }}
+          aria-label="Visit our GitHub repository with MIT license"
         >
           Our github with the MIT code
         </Link>
@@ -80,6 +81,7 @@ export default function Hero() {
           target="_blank"
           fullWidth
           size="sm"
+          aria-label="Go to JSX Mail Cloud"
         >
           Cloud
         </Button>
@@ -91,6 +93,7 @@ export default function Hero() {
           target="_blank"
           fullWidth
           size="sm"
+          aria-label="View JSX Mail Documentation"
         >
           Docs
         </Button>

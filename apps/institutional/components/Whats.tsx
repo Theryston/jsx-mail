@@ -37,7 +37,7 @@ export default function Whats() {
 
           <img
             src="/full-code.svg"
-            alt="cloud"
+            alt="framework code example"
             className="w-full h-full object-cover object-left-top"
           />
         </div>

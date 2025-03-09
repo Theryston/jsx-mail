@@ -10,7 +10,7 @@ import {
   NavbarMenuItem,
   Link,
   Button,
-} from "@heroui/react";
+} from '@heroui/react';
 import { useState } from 'react';
 import Image from 'next/image';
 
@@ -55,7 +55,12 @@ export default function Header() {
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         {menuItems.map((item, index) => (
           <NavbarItem key={`${item}-${index}`}>
-            <Link href={item.href} color="foreground" className="text-sm">
+            <Link
+              href={item.href}
+              color="foreground"
+              className="text-sm"
+              aria-label={item.label}
+            >
               {item.label}
             </Link>
           </NavbarItem>
@@ -72,6 +77,7 @@ export default function Header() {
             variant="shadow"
             isExternal
             size="sm"
+            aria-label="Cloud"
           >
             Cloud
           </Button>
@@ -86,7 +92,12 @@ export default function Header() {
       <NavbarMenu>
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={`${item}-${index}`}>
-            <Link href={item.href} color="foreground" className="text-sm">
+            <Link
+              href={item.href}
+              color="foreground"
+              className="text-sm"
+              aria-label={item.label}
+            >
               {item.label}
             </Link>
           </NavbarMenuItem>
@@ -100,6 +111,7 @@ export default function Header() {
             variant="shadow"
             isExternal
             size="sm"
+            aria-label="Cloud"
           >
             Cloud
           </Button>

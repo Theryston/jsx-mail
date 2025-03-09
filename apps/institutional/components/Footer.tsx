@@ -1,4 +1,4 @@
-import { Link } from "@heroui/link";
+import { Link } from '@heroui/link';
 import Image from 'next/image';
 
 export default function Footer() {
@@ -17,6 +17,7 @@ export default function Footer() {
           href="https://cloud.jsxmail.org/app"
           isExternal
           size="sm"
+          aria-label="Go to JSX Mail Cloud"
         >
           Cloud
         </Link>
@@ -25,6 +26,7 @@ export default function Footer() {
           href="https://docs.jsxmail.org"
           isExternal
           size="sm"
+          aria-label="View JSX Mail Documentation"
         >
           Docs
         </Link>
@@ -33,6 +35,7 @@ export default function Footer() {
           href="https://github.com/Theryston/jsx-mail"
           isExternal
           size="sm"
+          aria-label="Visit JSX Mail GitHub repository"
         >
           GitHub
         </Link>

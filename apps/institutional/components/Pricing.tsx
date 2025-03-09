@@ -1,11 +1,11 @@
 'use client';
 
 import { usePricing } from '@/lib/hooks';
-import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
-import { Link } from "@heroui/link";
-import { Slider } from "@heroui/slider";
-import { Spinner } from "@heroui/spinner";
+import { Button } from '@heroui/button';
+import { Input } from '@heroui/input';
+import { Link } from '@heroui/link';
+import { Slider } from '@heroui/slider';
+import { Spinner } from '@heroui/spinner';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 
@@ -41,7 +41,13 @@ export default function Pricing() {
       {
         amount: jsxMailCloudPricing,
         period: 'just when you send',
-        logo: <img src="/our-cloud-logo.svg" className="w-24" />,
+        logo: (
+          <img
+            src="/our-cloud-logo.svg"
+            className="w-24"
+            alt="JSX Mail Cloud logo"
+          />
+        ),
         barPercentage: 0, // This will be calculated later
       },
       {
@@ -58,7 +64,7 @@ export default function Pricing() {
                     ? 200
                     : 400,
         period: 'mo',
-        logo: <img src="/resend.svg" className="w-24" />,
+        logo: <img src="/resend.svg" className="w-24" alt="Resend logo" />,
         barPercentage: 0, // This will be calculated later
       },
       {
@@ -77,7 +83,7 @@ export default function Pricing() {
                       ? 550
                       : 700,
         period: 'mo',
-        logo: <img src="/mailgun.svg" className="w-24" />,
+        logo: <img src="/mailgun.svg" className="w-24" alt="Mailgun logo" />,
         barPercentage: 0, // This will be calculated later
       },
       {
@@ -94,7 +100,7 @@ export default function Pricing() {
                     ? 470
                     : 700,
         period: 'mo',
-        logo: <img src="/mailjet.svg" className="w-24" />,
+        logo: <img src="/mailjet.svg" className="w-24" alt="Mailjet logo" />,
         barPercentage: 0, // This will be calculated later
       },
     ];
@@ -129,6 +135,7 @@ export default function Pricing() {
             className="w-fit"
             href="https://docs.jsxmail.org"
             target="_blank"
+            aria-label="View JSX Mail Documentation"
           >
             Documentation
           </Button>
@@ -186,6 +193,7 @@ export default function Pricing() {
                 className="w-fit"
                 href="https://cloud.jsxmail.org/app"
                 target="_blank"
+                aria-label="Go to JSX Mail Cloud"
               >
                 Go to cloud
               </Button>
@@ -256,6 +264,7 @@ export default function Pricing() {
                   }
                 }}
                 endContent={<span className="text-xs text-zinc-300">/Mo</span>}
+                aria-label="Number of emails"
               />
             </div>
 
