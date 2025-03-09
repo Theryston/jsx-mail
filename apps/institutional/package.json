@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@next/third-parties": "^14.2.15",
+    "@nextui-org/accordion": "^2.2.7",
     "@nextui-org/button": "2.0.38",
     "@nextui-org/code": "2.0.33",
     "@nextui-org/input": "2.2.5",
@@ -17,6 +18,7 @@
     "@nextui-org/link": "2.0.35",
     "@nextui-org/listbox": "2.1.27",
     "@nextui-org/navbar": "2.0.37",
+    "@nextui-org/react": "^2.6.11",
     "@nextui-org/slider": "^2.2.17",
     "@nextui-org/snippet": "2.0.43",
     "@nextui-org/switch": "2.0.34",
