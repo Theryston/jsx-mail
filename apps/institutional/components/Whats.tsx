@@ -23,7 +23,7 @@ export default function Whats() {
           <img
             src="/cloud.svg"
             alt="cloud"
-            className="w-full h-full object-cover object-left-top"
+            className="w-full h-full object-cover object-left-top border-t border-l border-zinc-800 rounded-tl-2xl md:rounded-tl-3xl"
           />
         </div>
 
@@ -38,7 +38,7 @@ export default function Whats() {
           <img
             src="/full-code.svg"
             alt="framework code example"
-            className="w-full h-full object-cover object-left-top"
+            className="w-full h-full object-cover object-left-top border-t border-l border-zinc-800 rounded-tl-2xl md:rounded-tl-3xl"
           />
         </div>
       </div>
