@@ -1,11 +1,11 @@
 'use client';
 
 import { usePricing } from '@/lib/hooks';
-import { Button } from '@nextui-org/button';
-import { Input } from '@nextui-org/input';
-import { Link } from '@nextui-org/link';
-import { Slider } from '@nextui-org/slider';
-import { Spinner } from '@nextui-org/spinner';
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Link } from "@heroui/link";
+import { Slider } from "@heroui/slider";
+import { Spinner } from "@heroui/spinner";
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 
@@ -113,7 +113,6 @@ export default function Pricing() {
   return (
     <div id="pricing" className="flex flex-col gap-9 items-center w-full mb-20">
       <h2 className="text-4xl font-bold text-center">Pricing</h2>
-
       <div className="flex flex-col md:flex-row items-start justify-center gap-4 w-full md:w-8/12">
         <div className="bg-zinc-900 h-[400px] px-6 py-9 rounded-3xl w-full gap-6 md:gap-9 flex flex-col justify-center">
           <p className="text-base">Framework</p>
@@ -272,7 +271,6 @@ export default function Pricing() {
           </div>
         </div>
       </div>
-
       <div className="flex flex-col items-center justify-center gap-4 w-full md:w-8/12">
         {prices.map((price, index) => (
           <div
