@@ -14,27 +14,31 @@ import {
 import { useState } from 'react';
 import Image from 'next/image';
 
-export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const DEFAULT_MENU_ITEMS = [
+  {
+    label: "What's?",
+    href: '#whats',
+  },
+  {
+    label: 'Why?',
+    href: '#why',
+  },
+  {
+    label: 'Pricing',
+    href: '#pricing',
+  },
+  {
+    label: 'FAQ',
+    href: '#faq',
+  },
+];
 
-  const menuItems = [
-    {
-      label: "What's?",
-      href: '#whats',
-    },
-    {
-      label: 'Why?',
-      href: '#why',
-    },
-    {
-      label: 'Pricing',
-      href: '#pricing',
-    },
-    {
-      label: 'FAQ',
-      href: '#faq',
-    },
-  ];
+export default function Header({
+  menuItems = DEFAULT_MENU_ITEMS,
+}: {
+  menuItems?: { label: string; href: string }[];
+}) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen} maxWidth="2xl">
