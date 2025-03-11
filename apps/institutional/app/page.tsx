@@ -9,7 +9,30 @@ import Footer from '@/components/Footer';
 export default function Home() {
   return (
     <main className="flex flex-col">
-      <Header />
+      <Header
+        menuItems={[
+          {
+            label: 'Cloud',
+            href: '/cloud',
+          },
+          {
+            label: "What's?",
+            href: '#whats',
+          },
+          {
+            label: 'Why?',
+            href: '#why',
+          },
+          {
+            label: 'Pricing',
+            href: '#pricing',
+          },
+          {
+            label: 'FAQ',
+            href: '#faq',
+          },
+        ]}
+      />
 
       <div className="flex flex-col px-6">
         <Hero />

@@ -14,29 +14,10 @@ import {
 import { useState } from 'react';
 import Image from 'next/image';
 
-const DEFAULT_MENU_ITEMS = [
-  {
-    label: "What's?",
-    href: '#whats',
-  },
-  {
-    label: 'Why?',
-    href: '#why',
-  },
-  {
-    label: 'Pricing',
-    href: '#pricing',
-  },
-  {
-    label: 'FAQ',
-    href: '#faq',
-  },
-];
-
 export default function Header({
-  menuItems = DEFAULT_MENU_ITEMS,
+  menuItems,
 }: {
-  menuItems?: { label: string; href: string }[];
+  menuItems: { label: string; href: string }[];
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 

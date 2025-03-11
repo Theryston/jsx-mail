@@ -91,6 +91,7 @@ export default function CloudPage() {
     <main className="flex flex-col">
       <Header
         menuItems={[
+          { label: 'Home', href: '/' },
           { label: 'Features', href: '#features' },
           { label: 'Why?', href: '#why' },
           { label: 'Pricing', href: '#pricing' },
@@ -163,7 +164,7 @@ export default function CloudPage() {
             >
               <motion.div className="relative" variants={fadeInUp}>
                 <motion.h1
-                  className="hidden md:block text-7xl 2xl:text-8xl font-bold text-center bg-gradient-to-br from-primary-100 via-primary-300 to-primary-500 text-transparent bg-clip-text"
+                  className="hidden md:block text-7xl 2xl:text-8xl font-bold text-center bg-gradient-to-br from-primary-900 to-primary-700 text-transparent bg-clip-text"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{
@@ -175,7 +176,7 @@ export default function CloudPage() {
                   JSX Mail Cloud
                 </motion.h1>
                 <motion.h1
-                  className="md:hidden text-4xl font-bold text-center bg-gradient-to-br from-primary-100 via-primary-300 to-primary-500 text-transparent bg-clip-text"
+                  className="md:hidden text-4xl font-bold text-center bg-gradient-to-br from-primary-900 to-primary-700 text-transparent bg-clip-text"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{
@@ -215,7 +216,6 @@ export default function CloudPage() {
               href="https://cloud.jsxmail.org/app"
               target="_blank"
               fullWidth
-              size="lg"
               className="font-medium"
               aria-label="Go to JSX Mail Cloud Dashboard"
             >
@@ -228,7 +228,6 @@ export default function CloudPage() {
               href="https://docs.jsxmail.org/cloud"
               target="_blank"
               fullWidth
-              size="lg"
               className="font-medium"
               aria-label="View JSX Mail Cloud Documentation"
             >
