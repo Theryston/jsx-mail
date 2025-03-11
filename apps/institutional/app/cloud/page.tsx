@@ -30,11 +30,11 @@ export default function CloudPage() {
   const pricingRef = useRef(null);
 
   // Hooks para detectar elementos no viewport
-  const heroInView = useInView(heroRef, { once: false, amount: 0.2 });
-  const featuresInView = useInView(featuresRef, { once: false, amount: 0.2 });
-  const whyInView = useInView(whyRef, { once: false, amount: 0.2 });
-  const howInView = useInView(howRef, { once: false, amount: 0.2 });
-  const pricingInView = useInView(pricingRef, { once: false, amount: 0.2 });
+  const heroInView = useInView(heroRef, { once: false, amount: 0.1 });
+  const featuresInView = useInView(featuresRef, { once: false, amount: 0.1 });
+  const whyInView = useInView(whyRef, { once: false, amount: 0.1 });
+  const howInView = useInView(howRef, { once: false, amount: 0.1 });
+  const pricingInView = useInView(pricingRef, { once: false, amount: 0.1 });
 
   // Efeito de parallax para o hero
   const { scrollY } = useScroll();
@@ -68,11 +68,11 @@ export default function CloudPage() {
 
   // Variantes de animação
   const fadeInUp = {
-    hidden: { opacity: 0, y: 60 },
+    hidden: { opacity: 0, y: 40 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+      transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
     },
   };
 
@@ -81,8 +81,8 @@ export default function CloudPage() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
+        staggerChildren: 0.05,
+        delayChildren: 0.05,
       },
     },
   };
@@ -239,11 +239,11 @@ export default function CloudPage() {
 
           <motion.div
             className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 0.7, y: 0 }}
             transition={{
-              duration: 1,
-              delay: 1,
+              duration: 0.7,
+              delay: 0.8,
               repeat: Infinity,
               repeatType: 'reverse',
             }}
@@ -269,11 +269,11 @@ export default function CloudPage() {
         {/* Cloud Features Section */}
         <motion.div
           ref={featuresRef}
-          className="flex flex-col gap-12 items-center w-full my-32"
+          className="flex flex-col gap-12 items-center w-full my-16 md:my-32"
           initial="hidden"
           animate={featuresInView ? 'visible' : 'hidden'}
           variants={staggerContainer}
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: false, amount: 0.05 }}
         >
           <motion.div
             className="flex flex-col gap-4 items-center w-full md:w-7/12 2xl:w-5/12"
@@ -433,11 +433,12 @@ export default function CloudPage() {
         {/* Why Choose JSX Mail Cloud Section */}
         <motion.div
           ref={whyRef}
-          className="my-32 md:min-h-[80vh] flex justify-center items-center flex-col md:flex-row gap-20"
+          className="my-16 md:my-32 md:min-h-[80vh] flex justify-center items-center flex-col md:flex-row gap-12 md:gap-20"
           id="why"
           initial="hidden"
           animate={whyInView ? 'visible' : 'hidden'}
           variants={staggerContainer}
+          viewport={{ once: false, amount: 0.05 }}
         >
           <motion.div className="relative" variants={fadeInUp}>
             <motion.h1
@@ -593,10 +594,11 @@ export default function CloudPage() {
         {/* How It Works Section */}
         <motion.div
           ref={howRef}
-          className="flex flex-col gap-12 items-center w-full my-32"
+          className="flex flex-col gap-12 items-center w-full my-16 md:my-32"
           initial="hidden"
           animate={howInView ? 'visible' : 'hidden'}
           variants={staggerContainer}
+          viewport={{ once: false, amount: 0.05 }}
         >
           <motion.div
             className="flex flex-col gap-4 items-center w-full md:w-7/12 2xl:w-5/12"
@@ -738,29 +740,15 @@ export default function CloudPage() {
                   whileHover={{ opacity: 1 }}
                 />
                 <div className="relative flex flex-col gap-4">
-                  <div className="flex items-center gap-4">
-                    <motion.div
-                      className="h-12 w-12 bg-primary-900/20 rounded-xl flex items-center justify-center"
-                      whileHover={{
-                        scale: 1.05,
-                        transition: { duration: 0.2, type: 'spring' },
-                      }}
-                    >
-                      {item.icon}
-                    </motion.div>
-                    <motion.div
-                      className="h-8 w-8 bg-primary-500 rounded-full flex items-center justify-center text-zinc-900 font-bold text-sm"
-                      initial={{ scale: 0.8, opacity: 0.5 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{
-                        duration: 0.5,
-                        delay: 0.3 + index * 0.1,
-                        type: 'spring',
-                      }}
-                    >
-                      {item.step}
-                    </motion.div>
-                  </div>
+                  <motion.div
+                    className="h-12 w-12 bg-primary-900/20 rounded-xl flex items-center justify-center"
+                    whileHover={{
+                      scale: 1.05,
+                      transition: { duration: 0.2, type: 'spring' },
+                    }}
+                  >
+                    {item.icon}
+                  </motion.div>
                   <div className="space-y-2">
                     <h2 className="text-lg font-medium text-zinc-100">
                       {item.title}
@@ -1089,11 +1077,11 @@ export default function CloudPage() {
 
         {/* Call to Action Section */}
         <motion.div
-          className="relative flex flex-col md:flex-row items-center justify-between gap-8 p-12 md:p-16 my-32 overflow-hidden"
+          className="relative flex flex-col md:flex-row items-center justify-between gap-8 p-8 md:p-12 lg:p-16 my-16 md:my-32 overflow-hidden"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.2 }}
-          transition={{ duration: 0.8 }}
+          viewport={{ once: false, amount: 0.05 }}
+          transition={{ duration: 0.6 }}
         >
           <motion.div
             className="absolute inset-0 bg-gradient-to-br from-primary-950 via-primary-900/50 to-zinc-900 -z-20"
@@ -1198,10 +1186,11 @@ export default function CloudPage() {
         <motion.div
           ref={pricingRef}
           id="pricing"
-          className="flex flex-col gap-12 items-center w-full my-32"
+          className="flex flex-col gap-12 items-center w-full my-16 md:my-32"
           initial="hidden"
           animate={pricingInView ? 'visible' : 'hidden'}
           variants={staggerContainer}
+          viewport={{ once: false, amount: 0.05 }}
         >
           <motion.div
             className="flex flex-col gap-4 items-center w-full md:w-7/12 2xl:w-5/12"
@@ -1376,14 +1365,14 @@ function CloudPricing() {
       className="w-full max-w-6xl mx-auto"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
+      transition={{ duration: 0.5 }}
     >
       {/* Simulador de Custos */}
       <motion.div
         className="relative bg-gradient-to-br from-zinc-900/90 to-zinc-800/90 p-8 md:p-12 rounded-3xl mb-12 backdrop-blur-sm border border-zinc-800/50 overflow-hidden"
-        initial={{ y: 50, opacity: 0 }}
+        initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.5 }}
         whileHover={{ boxShadow: '0 0 30px rgba(0, 0, 0, 0.2)' }}
       >
         <motion.div
@@ -1402,8 +1391,8 @@ function CloudPricing() {
             visible: {
               opacity: 1,
               transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.3,
+                staggerChildren: 0.05,
+                delayChildren: 0.1,
               },
             },
           }}
@@ -1500,9 +1489,9 @@ function CloudPricing() {
 
         <motion.div
           className="relative bg-gradient-to-br from-zinc-900 to-zinc-800/90 p-6 md:p-8 rounded-2xl border border-zinc-800/50"
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.05 }}
         >
           <motion.div
             className="space-y-8 mt-4"
@@ -1513,8 +1502,8 @@ function CloudPricing() {
               visible: {
                 opacity: 1,
                 transition: {
-                  staggerChildren: 0.15,
-                  delayChildren: 0.7,
+                  staggerChildren: 0.08,
+                  delayChildren: 0.3,
                 },
               },
             }}
@@ -1544,7 +1533,7 @@ function CloudPricing() {
                     className="flex items-center gap-1 md:ml-auto"
                     initial={{ scale: 0.9 }}
                     animate={{ scale: 1 }}
-                    transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
+                    transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
                   >
                     <span
                       className={clsx('text-lg font-bold', {
@@ -1571,7 +1560,7 @@ function CloudPricing() {
                     style={{ width: `${price.barPercentage || 1}%` }}
                     initial={{ width: 0 }}
                     animate={{ width: `${price.barPercentage || 1}%` }}
-                    transition={{ duration: 0.8, delay: 0.9 + index * 0.1 }}
+                    transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
                   />
                 </div>
 
@@ -1580,7 +1569,7 @@ function CloudPricing() {
                     className="absolute right-0 -top-8"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 1.2 }}
+                    transition={{ duration: 0.5, delay: 0.6 }}
                   >
                     <motion.span
                       className="inline-flex items-center gap-1 text-xs bg-primary-500/20 text-primary-300 px-3 py-1.5 rounded-full"
@@ -1620,8 +1609,8 @@ function CloudPricing() {
           visible: {
             opacity: 1,
             transition: {
-              staggerChildren: 0.15,
-              delayChildren: 0.3,
+              staggerChildren: 0.05,
+              delayChildren: 0.1,
             },
           },
         }}
@@ -1629,11 +1618,11 @@ function CloudPricing() {
         <motion.div
           className="group relative p-6 bg-gradient-to-br from-primary-900/20 to-primary-700/20 rounded-2xl border border-primary-800/30 hover:border-primary-700/50 transition-all duration-300"
           variants={{
-            hidden: { opacity: 0, y: 30 },
+            hidden: { opacity: 0, y: 20 },
             visible: {
               opacity: 1,
               y: 0,
-              transition: { duration: 0.6 },
+              transition: { duration: 0.4 },
             },
           }}
           whileHover={{
@@ -1686,11 +1675,11 @@ function CloudPricing() {
         <motion.div
           className="group relative p-6 bg-gradient-to-br from-zinc-900/90 to-zinc-800/90 rounded-2xl border border-zinc-800/50 hover:border-primary-500/50 transition-all duration-300"
           variants={{
-            hidden: { opacity: 0, y: 30 },
+            hidden: { opacity: 0, y: 20 },
             visible: {
               opacity: 1,
               y: 0,
-              transition: { duration: 0.6, delay: 0.1 },
+              transition: { duration: 0.4, delay: 0.05 },
             },
           }}
           whileHover={{
@@ -1742,11 +1731,11 @@ function CloudPricing() {
         <motion.div
           className="group relative p-6 bg-gradient-to-br from-zinc-900/90 to-zinc-800/90 rounded-2xl border border-zinc-800/50 hover:border-primary-500/50 transition-all duration-300"
           variants={{
-            hidden: { opacity: 0, y: 30 },
+            hidden: { opacity: 0, y: 20 },
             visible: {
               opacity: 1,
               y: 0,
-              transition: { duration: 0.6, delay: 0.2 },
+              transition: { duration: 0.4, delay: 0.1 },
             },
           }}
           whileHover={{
@@ -1797,9 +1786,9 @@ function CloudPricing() {
 
       <motion.div
         className="mt-12 text-center"
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.9 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
       >
         <motion.div
           whileHover={{ scale: 1.03 }}
@@ -1824,7 +1813,7 @@ function CloudPricing() {
           className="text-xs text-zinc-500 mt-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1.1 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
         >
           No credit card required
         </motion.p>
