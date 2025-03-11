@@ -1498,13 +1498,7 @@ function CloudPricing() {
             animate="visible"
             variants={{
               hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.08,
-                  delayChildren: 0.3,
-                },
-              },
+              visible: { opacity: 1 },
             }}
           >
             {prices.map((price, index) => (
@@ -1532,7 +1526,7 @@ function CloudPricing() {
                     className="flex items-center gap-1 md:ml-auto"
                     initial={{ scale: 0.9 }}
                     animate={{ scale: 1 }}
-                    transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
+                    transition={{ duration: 0.3, delay: 0 }}
                   >
                     <span
                       className={clsx('text-lg font-bold', {
@@ -1546,10 +1540,10 @@ function CloudPricing() {
                   </motion.div>
                 </div>
 
-                <div className="h-3 w-full bg-zinc-800 rounded-full overflow-hidden">
+                <div className="h-3 w-full bg-zinc-800 rounded-full overflow-hidden group">
                   <motion.div
                     className={clsx(
-                      'h-full rounded-full transition-all duration-500',
+                      'h-full rounded-full transition-all duration-300 group-hover:brightness-110',
                       {
                         'bg-gradient-to-r from-primary-600 to-primary-400':
                           index === 0,
@@ -1559,7 +1553,7 @@ function CloudPricing() {
                     style={{ width: `${price.barPercentage || 1}%` }}
                     initial={{ width: 0 }}
                     animate={{ width: `${price.barPercentage || 1}%` }}
-                    transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
+                    transition={{ duration: 0.3, delay: 0 }}
                   />
                 </div>
 
@@ -1568,7 +1562,7 @@ function CloudPricing() {
                     className="absolute right-0 -top-8"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.6 }}
+                    transition={{ duration: 0.3, delay: 0 }}
                   >
                     <motion.span
                       className="inline-flex items-center gap-1 text-xs bg-primary-500/20 text-primary-300 px-3 py-1.5 rounded-full"
