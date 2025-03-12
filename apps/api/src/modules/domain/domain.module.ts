@@ -4,6 +4,7 @@ import { CreateDomainService } from './services/create-domain.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { DeleteDomainService } from './services/delete-domain.service';
 import { ListDomainsService } from './services/list-domains.service';
+import { VerifyDomainService } from './services/verify-domain.service';
 
 @Module({
   controllers: [DomainController],
@@ -12,6 +13,7 @@ import { ListDomainsService } from './services/list-domains.service';
     PrismaService,
     DeleteDomainService,
     ListDomainsService,
+    VerifyDomainService,
   ],
 })
 export class DomainModule {}

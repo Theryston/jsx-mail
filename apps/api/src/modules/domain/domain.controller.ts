@@ -14,6 +14,7 @@ import { CreateDomainService } from './services/create-domain.service';
 import { CreateDomainDto } from './domain.dto';
 import { DeleteDomainService } from './services/delete-domain.service';
 import { ListDomainsService } from './services/list-domains.service';
+import { VerifyDomainService } from './services/verify-domain.service';
 
 @Controller('domain')
 export class DomainController {
@@ -21,6 +22,7 @@ export class DomainController {
     private readonly createDomainService: CreateDomainService,
     private readonly deleteDomainService: DeleteDomainService,
     private readonly listDomainsService: ListDomainsService,
+    private readonly verifyDomainService: VerifyDomainService,
   ) {}
 
   @Post()
@@ -33,6 +35,12 @@ export class DomainController {
   @Permissions([PERMISSIONS.SELF_DOMAIN_DELETE.value])
   async delete(@Param('id') id: string, @Req() req) {
     return this.deleteDomainService.execute(id, req.user.id);
+  }
+
+  @Get(':id/verify')
+  @Permissions([PERMISSIONS.SELF_DOMAIN_VERIFY.value])
+  async verify(@Param('id') id: string, @Req() req) {
+    return this.verifyDomainService.execute(id, req.user.id);
   }
 
   @Get()

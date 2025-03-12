@@ -128,8 +128,24 @@ model Domain {
   dnsRecords DNSRecord[]
   senders    Sender[]
   messages   Message[]
+  dkim       DKIM[]
 
   @@map("domains")
+}
+
+model DKIM {
+  id         String    @id @default(uuid())
+  domainId   String    @map("domain_id")
+  publicKey  String
+  privateKey String
+  selector   String
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
+
+  @@map("dkim")
 }
 
 model DNSRecord {

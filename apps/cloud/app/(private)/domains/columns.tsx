@@ -9,7 +9,8 @@ import { ViewDNSModal } from './view-dns-modal';
 import { DeleteConfirmationModal } from '@jsx-mail/ui/delete-confirmation-modal';
 import { useDeleteDomain } from '@/hooks/domain';
 import { toast } from '@jsx-mail/ui/sonner';
-import { CircleIcon, ClockIcon, EyeIcon, TrashIcon } from 'lucide-react';
+import { ClockIcon, EyeIcon, TrashIcon } from 'lucide-react';
+import { DomainStatus } from '@/components/domain-status';
 
 export const columns: ColumnDef<Domain>[] = [
   {
@@ -23,6 +24,11 @@ export const columns: ColumnDef<Domain>[] = [
   {
     accessorKey: 'status',
     header: 'Status',
+    cell: ({ row }) => {
+      const domain = row.original;
+
+      return <DomainStatus domain={domain} />;
+    },
   },
   {
     accessorKey: 'createdAt',

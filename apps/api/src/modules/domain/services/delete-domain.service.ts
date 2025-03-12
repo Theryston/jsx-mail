@@ -1,10 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import {
-  SESClient,
-  GetIdentityVerificationAttributesCommand,
-  DeleteIdentityCommand,
-} from '@aws-sdk/client-ses';
+import { DeleteEmailIdentityCommand } from '@aws-sdk/client-sesv2';
+import { sesClient } from '../ses';
 
 @Injectable()
 export class DeleteDomainService {
@@ -23,22 +20,11 @@ export class DeleteDomainService {
       throw new HttpException('Domain not found', HttpStatus.NOT_FOUND);
     }
 
-    const client = new SESClient();
-
-    const getCommand = new GetIdentityVerificationAttributesCommand({
-      Identities: [domain.name],
+    const deleteCommand = new DeleteEmailIdentityCommand({
+      EmailIdentity: domain.name,
     });
 
-    const getResponse = await client.send(getCommand);
-    const verificationAttributes = getResponse.VerificationAttributes;
-
-    if (verificationAttributes[domain.name]?.VerificationStatus) {
-      const deleteCommand = new DeleteIdentityCommand({
-        Identity: domain.name,
-      });
-
-      await client.send(deleteCommand);
-    }
+    await sesClient.send(deleteCommand);
 
     await this.prisma.domain.update({
       where: {

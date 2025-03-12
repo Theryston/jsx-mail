@@ -62,6 +62,11 @@ export function ViewDNSModal({ isOpen, onClose, domain }: ViewDNSModalProps) {
                   Your domain is not verified yet. Please add the following DNS
                   records to your domain provider to verify ownership.
                 </p>
+                <br />
+                <p className="text-sm">
+                  If you already added the DNS records, please wait for a few
+                  minutes to verify.
+                </p>
               </div>
             )}
 

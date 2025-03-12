@@ -137,4 +137,9 @@ export const PERMISSIONS: {
     value: 'self:messages-insight',
     description: 'Can get messages insights',
   },
+  SELF_DOMAIN_VERIFY: {
+    title: 'Self Domain Verify',
+    value: 'self:domain-verify',
+    description: 'Can verify a domain for itself',
+  },
 };

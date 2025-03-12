@@ -42,3 +42,18 @@ export function useDeleteDomain() {
     },
   });
 }
+
+export function useVerifyDomain({
+  id,
+  enabled,
+}: {
+  id: string;
+  enabled: boolean;
+}) {
+  return useQuery<Domain & { lastVerificationAt: string }>({
+    queryKey: ['domains', id, 'verify'],
+    queryFn: () => api.get(`/domain/${id}/verify`).then((res) => res.data),
+    enabled: enabled && !!id,
+    refetchInterval: 5000,
+  });
+}

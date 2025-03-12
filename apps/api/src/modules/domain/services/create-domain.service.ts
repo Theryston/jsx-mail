@@ -1,8 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateDomainDto } from '../domain.dto';
-import { SESClient, VerifyDomainDkimCommand } from '@aws-sdk/client-ses';
 import { PrismaService } from 'src/services/prisma.service';
 import { domainSelect } from 'src/utils/public-selects';
+import { generateKeyPairSync } from 'crypto';
+import { CreateEmailIdentityCommand } from '@aws-sdk/client-sesv2';
+import { sesClient } from '../ses';
 
 const domainRegex = /^(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
 
@@ -33,32 +35,60 @@ export class CreateDomainService {
       );
     }
 
-    const client = new SESClient();
-
-    const command = new VerifyDomainDkimCommand({
-      Domain: name,
+    const { publicKey, privateKey } = generateKeyPairSync('rsa', {
+      modulusLength: 1024,
+      publicExponent: 0x10001,
+      privateKeyEncoding: {
+        type: 'pkcs1',
+        format: 'pem',
+      },
+      publicKeyEncoding: {
+        type: 'spki',
+        format: 'pem',
+      },
     });
 
-    const sesResult = await client.send(command);
+    const selector = 'jsxmail';
 
-    const dkimTokens = sesResult.DkimTokens;
+    const privateKeyCleaned = privateKey
+      .replace(/-----BEGIN RSA PRIVATE KEY-----/, '')
+      .replace(/-----END RSA PRIVATE KEY-----/, '')
+      .replace(/\n/g, '')
+      .trim();
 
-    const DNSRecords = dkimTokens.map((token) => {
-      return {
-        name: `${token}._domainkey.${name}`,
-        value: `${token}.dkim.amazonses.com`,
-        type: 'CNAME',
-        ttl: 1800,
-      };
+    const publicKeyCleaned = publicKey
+      .replace(/-----BEGIN PUBLIC KEY-----/, '')
+      .replace(/-----END PUBLIC KEY-----/, '')
+      .replace(/\n/g, '')
+      .trim();
+
+    const command = new CreateEmailIdentityCommand({
+      EmailIdentity: name,
+      DkimSigningAttributes: {
+        DomainSigningSelector: selector,
+        DomainSigningPrivateKey: privateKeyCleaned,
+      },
     });
+
+    await sesClient.send(command);
 
     const domain = await this.prisma.domain.create({
       data: {
         name,
         userId,
+        dkim: {
+          create: {
+            publicKey: publicKeyCleaned,
+            privateKey: privateKeyCleaned,
+            selector,
+          },
+        },
         dnsRecords: {
-          createMany: {
-            data: DNSRecords,
+          create: {
+            name: `${selector}._domainkey.${name}`,
+            value: `p=${publicKeyCleaned}`,
+            type: 'TXT',
+            ttl: 1800,
           },
         },
       },
