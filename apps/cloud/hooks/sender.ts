@@ -54,3 +54,14 @@ export function useVerifiedDomains() {
         .then((res) => res.data),
   });
 }
+
+export function useSendEmail() {
+  return useMutation({
+    mutationFn: (data: {
+      subject: string;
+      html: string;
+      to: string[];
+      sender: string;
+    }) => api.post('/sender/send', data).then((res) => res.data),
+  });
+}

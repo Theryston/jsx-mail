@@ -10,6 +10,12 @@ export type User = {
   email: string;
   isEmailVerified: boolean;
   accessLevel: string;
+  onboardingStep:
+    | 'create_domain'
+    | 'verify_domain'
+    | 'create_sender'
+    | 'send_test_email'
+    | 'completed';
   phone?: string | null;
   isPhoneVerified: boolean;
   birthdate?: Date | null;

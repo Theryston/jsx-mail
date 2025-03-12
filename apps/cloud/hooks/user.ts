@@ -155,3 +155,22 @@ export function useDeleteSession() {
     },
   });
 }
+
+export function useUpdateOnboarding() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (
+      onboardingStep:
+        | 'create_domain'
+        | 'verify_domain'
+        | 'create_sender'
+        | 'send_test_email'
+        | 'completed',
+    ) =>
+      api.put('/user/onboarding', { onboardingStep }).then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['me'] });
+    },
+  });
+}

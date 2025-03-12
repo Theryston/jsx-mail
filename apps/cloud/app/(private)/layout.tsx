@@ -3,7 +3,7 @@
 import { useMe } from '@/hooks/user';
 import { CloudSidebar } from '@/components/cloud-sidebar';
 import { SidebarProvider } from '@jsx-mail/ui/sidebar';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Crisp } from 'crisp-sdk-web';
 
@@ -13,6 +13,7 @@ export default function PrivateLayout({
   children: React.ReactNode;
 }) {
   const { data: me, error, isPending } = useMe();
+  const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
@@ -20,6 +21,18 @@ export default function PrivateLayout({
     if (me?.email) Crisp.user.setEmail(me.email);
     if (me?.phone) Crisp.user.setPhone(me.phone);
   }, [me]);
+
+  useEffect(() => {
+    if (me?.onboardingStep !== 'completed' && pathname !== '/onboarding') {
+      router.push('/onboarding');
+      return;
+    }
+
+    if (me?.onboardingStep === 'completed' && pathname === '/onboarding') {
+      router.push('/');
+      return;
+    }
+  }, [pathname, me?.onboardingStep]);
 
   if (isPending) return <Loading />;
 
@@ -35,7 +48,7 @@ export default function PrivateLayout({
 
   return (
     <SidebarProvider>
-      <CloudSidebar />
+      <CloudSidebar disabled={me?.onboardingStep !== 'completed'} />
       <main className="w-full">{children}</main>
     </SidebarProvider>
   );

@@ -19,6 +19,7 @@ import {
   ListMessagesDto,
   MessagesInsightsDto,
   ResetPasswordDto,
+  UpdateOnboardingDto,
   UseSecurityCodeDto,
 } from './user.dto';
 import { Permissions } from 'src/auth/permissions.decorator';
@@ -44,6 +45,7 @@ import { UpdateUserService } from './services/update-user.service';
 import { ListMessagesService } from './services/list-messages.service';
 import { MessagesInsightsService } from './services/messages-insights.service';
 import { MESSAGES_STATUS } from '../../utils/constants';
+import { UpdateOnboardingStepService } from './services/update-onboarding-step.service';
 
 @Controller('user')
 export class UserController {
@@ -63,6 +65,7 @@ export class UserController {
     private readonly updateUserService: UpdateUserService,
     private readonly listMessagesService: ListMessagesService,
     private readonly messagesInsightsService: MessagesInsightsService,
+    private readonly updateOnboardingService: UpdateOnboardingStepService,
   ) {}
 
   @Put()
@@ -196,5 +199,11 @@ export class UserController {
         friendlyAmount: friendlyMoney(PRICE_PER_MESSAGE * 1000, true),
       },
     };
+  }
+
+  @Put('onboarding')
+  @Permissions([PERMISSIONS.SELF_UPDATE_ONBOARDING.value])
+  updateOnboarding(@Request() req, @Body() data: UpdateOnboardingDto) {
+    return this.updateOnboardingService.execute(data, req.user.id);
   }
 }

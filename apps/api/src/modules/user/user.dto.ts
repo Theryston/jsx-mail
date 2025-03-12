@@ -1,4 +1,4 @@
-import { TransactionStyle } from '@prisma/client';
+import { OnboardingStep, TransactionStyle } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsDate,
@@ -150,4 +150,10 @@ export class ListMessagesDto extends MessagesInsightsDto {
   @IsNumber()
   @Min(1)
   page: number;
+}
+
+export class UpdateOnboardingDto {
+  @IsNotEmpty()
+  @IsString()
+  onboardingStep: OnboardingStep;
 }

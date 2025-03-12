@@ -34,7 +34,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@jsx-mail/ui/dropdown-menu';
 
@@ -77,13 +76,19 @@ export const ITEMS = [
   },
 ];
 
-export function CloudSidebar() {
+export function CloudSidebar({ disabled }: { disabled: boolean }) {
   const pathname = usePathname();
   const isMobile = useIsMobile();
   const { data: me } = useMe();
 
   return (
-    <Sidebar side={isMobile ? 'right' : 'left'} pathname={pathname}>
+    <Sidebar
+      side={isMobile ? 'right' : 'left'}
+      pathname={pathname}
+      className={cn({
+        'pointer-events-none cursor-not-allowed opacity-80': disabled,
+      })}
+    >
       <SidebarHeader className="px-2">
         <CloudLogo />
       </SidebarHeader>

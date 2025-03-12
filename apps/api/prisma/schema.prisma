@@ -40,20 +40,29 @@ enum MessageStatus {
   clicked
 }
 
+enum OnboardingStep {
+  create_domain
+  verify_domain
+  create_sender
+  send_test_email
+  completed
+}
+
 model User {
-  id              String      @id @default(uuid())
+  id              String         @id @default(uuid())
   name            String
-  email           String      @unique
+  email           String         @unique
+  onboardingStep  OnboardingStep @default(create_domain) @map("onboarding_step")
   phone           String?
   birthdate       DateTime?
-  gatewayId       String?     @map("gateway_id")
-  isEmailVerified Boolean     @default(false) @map("is_email_verified")
-  accessLevel     AccessLevel @default(self) @map("access_level")
+  gatewayId       String?        @map("gateway_id")
+  isEmailVerified Boolean        @default(false) @map("is_email_verified")
+  accessLevel     AccessLevel    @default(self) @map("access_level")
   password        String
-  isPhoneVerified Boolean     @default(false) @map("is_phone_verified")
-  createdAt       DateTime    @default(now()) @map("created_at")
-  updatedAt       DateTime    @updatedAt @map("updated_at")
-  deletedAt       DateTime?   @map("deleted_at")
+  isPhoneVerified Boolean        @default(false) @map("is_phone_verified")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  deletedAt       DateTime?      @map("deleted_at")
 
   transactions  Transaction[]
   sessions      Session[]

@@ -22,6 +22,7 @@ import { SessionModule } from '../session/session.module';
 import { UpdateUserService } from './services/update-user.service';
 import { ListMessagesService } from './services/list-messages.service';
 import { MessagesInsightsService } from './services/messages-insights.service';
+import { UpdateOnboardingStepService } from './services/update-onboarding-step.service';
 
 @Module({
   controllers: [UserController],
@@ -46,6 +47,7 @@ import { MessagesInsightsService } from './services/messages-insights.service';
     UpdateUserService,
     ListMessagesService,
     MessagesInsightsService,
+    UpdateOnboardingStepService,
   ],
   imports: [EmailModule, SessionModule],
 })
