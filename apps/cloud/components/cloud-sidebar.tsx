@@ -71,7 +71,7 @@ export const ITEMS = [
   },
   {
     label: 'Documentation',
-    href: 'https://docs.jsxmail.org',
+    href: 'https://docs.jsxmail.org/api-reference/introduction',
     icon: BookOpen,
     isExternal: true,
   },
