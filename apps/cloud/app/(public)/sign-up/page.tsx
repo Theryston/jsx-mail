@@ -20,7 +20,7 @@ import handleRedirectUrl from '@/utils/handle-redirect-url';
 import { useSignUp } from '@/hooks/user';
 import { toast } from '@jsx-mail/ui/sonner';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { sendGAEvent } from '@next/third-parties/google';
+import { sendGTMEvent } from '@next/third-parties/google';
 
 const signUpScheme = z
   .object({
@@ -63,7 +63,7 @@ export default function SignUp() {
       try {
         await signUp({ name, email, password });
 
-        sendGAEvent({ event: 'sign_up', value: email });
+        sendGTMEvent({ event: 'sign_up' });
 
         toast.success('Account created successfully');
         router.push(
