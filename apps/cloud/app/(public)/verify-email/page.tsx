@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { Container } from '@/components/container';
 import { useQueryClient } from '@tanstack/react-query';
 import { useValidateEmail } from '@/hooks/user';
-import { toast } from '@jsx-mail/ui/sonner';
 
 export default function VerifyEmail() {
   const [redirect, setRedirect] = useState('' as string);
