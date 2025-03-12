@@ -74,6 +74,6 @@ export class EmailProcessor extends WorkerHost {
       });
     }
 
-    console.log(`[EMAIL_PROCESSOR] email sent: ${dataLog}`);
+    console.log(`[EMAIL_PROCESSOR] e-mail sent: ${dataLog}`);
   }
 }
