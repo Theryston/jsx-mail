@@ -9,9 +9,6 @@ import axios from 'axios';
 
 const transporter = nodemailer.createTransport({
   SES: { aws, ses: sesClient },
-  ses: {
-    ConfigurationSetName: process.env.AWS_SES_CONFIGURATION_SET as string,
-  },
 });
 
 @Processor('email')
@@ -74,6 +71,9 @@ export class EmailProcessor extends WorkerHost {
       subject,
       html,
       attachments,
+      ses: {
+        ConfigurationSetName: process.env.AWS_SES_CONFIGURATION_SET as string,
+      },
     } as any);
 
     if (messageId) {
