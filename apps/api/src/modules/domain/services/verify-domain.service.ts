@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { domainSelect } from 'src/utils/public-selects';
-import { sesClient } from '../ses';
+import { sesv2Client } from '../ses';
 import {
   GetEmailIdentityCommand,
   VerificationStatus,
@@ -34,7 +34,7 @@ export class VerifyDomainService {
     });
 
     const { VerificationStatus: status, VerificationInfo } =
-      await sesClient.send(command);
+      await sesv2Client.send(command);
 
     const statusMap: Record<VerificationStatus, DomainStatus> = {
       FAILED: 'failed',

@@ -1,9 +1,15 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { SendEmailDto } from './email.dto';
-import { SendEmailCommand } from '@aws-sdk/client-sesv2';
+import * as aws from '@aws-sdk/client-ses';
 import { PrismaService } from 'src/services/prisma.service';
 import { sesClient } from '../domain/ses';
+import nodemailer from 'nodemailer';
+import axios from 'axios';
+
+const transporter = nodemailer.createTransport({
+  SES: { aws, ses: sesClient },
+});
 
 @Processor('email')
 export class EmailProcessor extends WorkerHost {
@@ -28,10 +34,6 @@ export class EmailProcessor extends WorkerHost {
   }
 
   async sendEmail(data: SendEmailDto) {
-    if (data.filesIds) {
-      throw new Error('Attachments are not supported yet');
-    }
-
     let dataLog: any = { ...data };
     delete dataLog.html;
 
@@ -39,29 +41,37 @@ export class EmailProcessor extends WorkerHost {
 
     console.log(`[EMAIL_PROCESSOR] sending email: ${dataLog}`);
 
-    const { subject, html, from, to, messageId } = data;
+    const { subject, html, from, to, messageId, filesIds } = data;
 
-    const command = new SendEmailCommand({
-      FromEmailAddress: `"${from.name}" <${from.email}>`,
-      Destination: {
-        ToAddresses: to,
-      },
-      Content: {
-        Simple: {
-          Subject: {
-            Data: subject,
-          },
-          Body: {
-            Html: {
-              Data: html,
-            },
-          },
-        },
-      },
-      ConfigurationSetName: process.env.AWS_SES_CONFIGURATION_SET,
+    let attachments: any[] = [];
+
+    if (filesIds) {
+      const files = await this.prisma.file.findMany({
+        where: { id: { in: filesIds } },
+      });
+
+      for (const file of files) {
+        const { data: bytes } = await axios.get(file.url, {
+          responseType: 'arraybuffer',
+        });
+
+        const base64 = Buffer.from(bytes).toString('base64');
+
+        attachments.push({
+          filename: file.originalName,
+          content: base64,
+          encoding: 'base64',
+        });
+      }
+    }
+
+    const { response: externalMessageId } = await transporter.sendMail({
+      from: `"${from.name}" <${from.email}>`,
+      to,
+      subject,
+      html,
+      attachments,
     });
-
-    const response = await sesClient.send(command);
 
     if (messageId) {
       await this.prisma.message.update({
@@ -69,9 +79,13 @@ export class EmailProcessor extends WorkerHost {
           id: messageId,
         },
         data: {
-          externalId: response.MessageId,
+          externalId: externalMessageId,
         },
       });
+
+      console.log(
+        `[EMAIL_PROCESSOR] updated message: ${messageId} to add externalId: ${externalMessageId}`,
+      );
     }
 
     console.log(`[EMAIL_PROCESSOR] email sent: ${dataLog}`);

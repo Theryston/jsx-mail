@@ -8,11 +8,14 @@ export class EmailWebhookService {
   constructor(private prisma: PrismaService) {}
 
   async execute(data: any) {
-    console.log('[EMAIL_WEBHOOK_SERVICE] received data: ', data);
+    console.log(
+      `[EMAIL_WEBHOOK_SERVICE] received data: ${JSON.stringify(data)}`,
+    );
 
     try {
       const externalId = data?.mail?.messageId;
       if (!externalId) return 'ignored because the externalId is missing';
+      console.log(`[EMAIL_WEBHOOK_SERVICE] received data from: ${externalId}`);
 
       const status: MessageStatus | undefined = {
         Send: 'sent',

@@ -4,7 +4,7 @@ import { PrismaService } from 'src/services/prisma.service';
 import { domainSelect } from 'src/utils/public-selects';
 import { generateKeyPairSync } from 'crypto';
 import { CreateEmailIdentityCommand } from '@aws-sdk/client-sesv2';
-import { sesClient } from '../ses';
+import { sesv2Client } from '../ses';
 
 const domainRegex = /^(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
 
@@ -70,7 +70,7 @@ export class CreateDomainService {
       },
     });
 
-    await sesClient.send(command);
+    await sesv2Client.send(command);
 
     const domain = await this.prisma.domain.create({
       data: {
