@@ -147,4 +147,9 @@ export const PERMISSIONS: {
     value: 'self:domain-verify',
     description: 'Can verify a domain for itself',
   },
+  ADMIN_GET_USERS: {
+    title: 'Admin Get Users',
+    value: 'other:get-users',
+    description: 'Can get all users',
+  },
 };

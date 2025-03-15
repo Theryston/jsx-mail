@@ -16,6 +16,7 @@ import {
   CreateCheckoutDto,
   CreateSecurityCodeDto,
   CreateUserDto,
+  GetUsersDto,
   ListMessagesDto,
   MessagesInsightsDto,
   ResetPasswordDto,
@@ -44,6 +45,7 @@ import { UpdateUserService } from './services/update-user.service';
 import { ListMessagesService } from './services/list-messages.service';
 import { MessagesInsightsService } from './services/messages-insights.service';
 import { MESSAGES_STATUS } from '../../utils/constants';
+import { GetUsersService } from './services/get-users.service';
 
 @Controller('user')
 export class UserController {
@@ -63,7 +65,18 @@ export class UserController {
     private readonly updateUserService: UpdateUserService,
     private readonly listMessagesService: ListMessagesService,
     private readonly messagesInsightsService: MessagesInsightsService,
+    private readonly getUsersService: GetUsersService,
   ) {}
+
+  @Get('admin/users')
+  @Permissions([PERMISSIONS.ADMIN_GET_USERS.value])
+  getUsers(@Query() data: GetUsersDto) {
+    return this.getUsersService.execute({
+      ...data,
+      take: Number(data.take) || 10,
+      page: Number(data.page) || 1,
+    });
+  }
 
   @Put()
   @Permissions([PERMISSIONS.SELF_UPDATE.value])

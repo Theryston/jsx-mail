@@ -23,6 +23,7 @@ import {
   LogOutIcon,
   BookOpen,
   UserIcon,
+  Shield,
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@jsx-mail/ui/lib/utils';
@@ -34,7 +35,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@jsx-mail/ui/dropdown-menu';
 
@@ -75,12 +75,25 @@ export const ITEMS = [
     icon: BookOpen,
     isExternal: true,
   },
+  {
+    label: 'Admin',
+    href: '/admin',
+    icon: Shield,
+    accessLevel: 'other',
+  },
 ];
 
 export function CloudSidebar() {
   const pathname = usePathname();
   const isMobile = useIsMobile();
   const { data: me } = useMe();
+
+  const items = ITEMS.filter((item) => {
+    if (item.accessLevel === 'other') {
+      return me?.accessLevel === 'other';
+    }
+    return true;
+  });
 
   return (
     <Sidebar side={isMobile ? 'right' : 'left'} pathname={pathname}>
@@ -91,7 +104,7 @@ export function CloudSidebar() {
         <SidebarGroup>
           <SidebarGroupContent className="mt-8">
             <SidebarMenu className="flex flex-col gap-3">
-              {ITEMS.map((item) => (
+              {items.map((item) => (
                 <SidebarMenuItem key={item.label}>
                   <SidebarMenuButton asChild isActive={pathname === item.href}>
                     <Link

@@ -151,3 +151,22 @@ export class ListMessagesDto extends MessagesInsightsDto {
   @Min(1)
   page: number;
 }
+
+export class GetUsersDto {
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  @Max(100)
+  take?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  page?: number;
+}

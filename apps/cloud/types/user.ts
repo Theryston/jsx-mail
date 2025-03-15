@@ -9,7 +9,7 @@ export type User = {
   name: string;
   email: string;
   isEmailVerified: boolean;
-  accessLevel: string;
+  accessLevel: 'self' | 'other';
   phone?: string | null;
   isPhoneVerified: boolean;
   birthdate?: Date | null;
