@@ -71,7 +71,10 @@ export class EmailProcessor extends WorkerHost {
       subject,
       html,
       attachments,
-    });
+      ses: {
+        ConfigurationSetName: process.env.AWS_SES_CONFIGURATION_SET as string,
+      },
+    } as any);
 
     if (messageId) {
       await this.prisma.message.update({
