@@ -1,5 +1,11 @@
 # jsx-mail
 
+## 2.3.6
+
+### Patch Changes
+
+- 9594906: fix: logo, favicon and featured images
+
 ## 2.3.5
 
 ### Patch Changes
