@@ -7,6 +7,8 @@ import { FREE_EMAILS_PER_MONTH, PRICE_PER_MESSAGE } from 'src/utils/constants';
 import { messageSelect } from 'src/utils/public-selects';
 import moment from 'moment';
 import { Sender } from '@prisma/client';
+import { BetaPermissionCheckService } from 'src/modules/user/services/beta-permission-check.service';
+import { PERMISSIONS } from 'src/auth/permissions';
 
 @Injectable()
 export class SenderSendEmailService {
@@ -14,12 +16,19 @@ export class SenderSendEmailService {
     private readonly prisma: PrismaService,
     private readonly getBalanceService: GetBalanceService,
     private readonly sendEmailService: SendEmailService,
+    private readonly betaPermissionCheckService: BetaPermissionCheckService,
   ) {}
 
   async execute(
     { sender: senderEmail, html, subject, to, filesIds }: SenderSendEmailDto,
     userId: string,
   ) {
+    if (filesIds && filesIds.length > 0) {
+      await this.betaPermissionCheckService.execute(userId, [
+        PERMISSIONS.SELF_SEND_EMAIL_WITH_ATTACHMENTS.value,
+      ]);
+    }
+
     let sender: Sender | null = null;
 
     if (senderEmail) {

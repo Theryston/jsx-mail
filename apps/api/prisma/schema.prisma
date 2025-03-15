@@ -55,17 +55,42 @@ model User {
   updatedAt       DateTime    @updatedAt @map("updated_at")
   deletedAt       DateTime?   @map("deleted_at")
 
-  transactions  Transaction[]
-  sessions      Session[]
-  securityCodes SecurityCode[]
-  domains       Domain[]
-  files         File[]
-  senders       Sender[]
-  messages      Message[]
-  storageSizes  StorageSize[]
-  checkouts     Checkout[]
+  transactions        Transaction[]
+  sessions            Session[]
+  securityCodes       SecurityCode[]
+  domains             Domain[]
+  files               File[]
+  senders             Sender[]
+  messages            Message[]
+  storageSizes        StorageSize[]
+  checkouts           Checkout[]
+  userBetaPermissions UserBetaPermission[]
 
   @@map("users")
+}
+
+model PermissionRequiresBeta {
+  id         String    @id @default(uuid())
+  permission String    @unique
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  @@index([permission])
+  @@map("permissions_requires_beta")
+}
+
+model UserBetaPermission {
+  id         String    @id @default(uuid())
+  userId     String    @map("user_id")
+  permission String
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_beta_permissions")
 }
 
 model Transaction {

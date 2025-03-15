@@ -1,9 +1,15 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Permissions } from './permissions.decorator';
 import { PrismaService } from 'src/services/prisma.service';
 import { PERMISSIONS } from './permissions';
 import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
+import { BetaPermissionCheckService } from 'src/modules/user/services/beta-permission-check.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -11,6 +17,7 @@ export class AuthGuard implements CanActivate {
     private readonly reflector: Reflector,
     private readonly prisma: PrismaService,
     private readonly getBalanceService: GetBalanceService,
+    private readonly betaPermissionCheckService: BetaPermissionCheckService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -71,6 +78,8 @@ export class AuthGuard implements CanActivate {
     if (!user) {
       return false;
     }
+
+    await this.betaPermissionCheckService.execute(user.id, permissions);
 
     delete user.password;
     delete user.deletedAt;

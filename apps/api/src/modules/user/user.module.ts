@@ -22,6 +22,7 @@ import { SessionModule } from '../session/session.module';
 import { UpdateUserService } from './services/update-user.service';
 import { ListMessagesService } from './services/list-messages.service';
 import { MessagesInsightsService } from './services/messages-insights.service';
+import { BetaPermissionCheckService } from './services/beta-permission-check.service';
 
 @Module({
   controllers: [UserController],
@@ -46,7 +47,9 @@ import { MessagesInsightsService } from './services/messages-insights.service';
     UpdateUserService,
     ListMessagesService,
     MessagesInsightsService,
+    BetaPermissionCheckService,
   ],
   imports: [EmailModule, SessionModule],
+  exports: [BetaPermissionCheckService],
 })
 export class UserModule {}

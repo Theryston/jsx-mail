@@ -12,6 +12,7 @@ import { SenderModule } from './modules/sender/sender.module';
 import { StripeService } from './services/stripe.service';
 import { WorkerModule } from './modules/worker/worker.module';
 import { BullModule } from '@nestjs/bullmq';
+import { BetaPermissionCheckService } from './modules/user/services/beta-permission-check.service';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { BullModule } from '@nestjs/bullmq';
     PrismaService,
     GetBalanceService,
     StripeService,
+    BetaPermissionCheckService,
   ],
 })
 export class AppModule {}
