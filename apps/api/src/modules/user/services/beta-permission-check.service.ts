@@ -6,6 +6,10 @@ export class BetaPermissionCheckService {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(userId: string, permissions: string[]) {
+    if (!permissions || permissions.length === 0) {
+      return;
+    }
+
     const betaPermissions = await this.prisma.permissionRequiresBeta.findMany({
       where: {
         deletedAt: null,
