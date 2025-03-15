@@ -30,7 +30,7 @@ export class BetaPermissionCheckService {
 
       if (!userBetaPermissions.length) {
         throw new UnauthorizedException(
-          `The resource ${betaPermissions[0].permission} is in beta and is not available for you. Please contact us at https://x.com/jsxmail if you want to access it.`,
+          `The resource ${betaPermissions[0].permission} is in beta and is not available for you! Please contact us at https://x.com/jsxmail if you want to access it.`,
         );
       }
     }
