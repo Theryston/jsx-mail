@@ -26,13 +26,8 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = request.headers.authorization?.split(' ')[1];
 
-    if (!token && !permissions) {
-      return true;
-    }
-
-    if (!token && permissions) {
-      return false;
-    }
+    if (!permissions) return true;
+    if (!token) return false;
 
     const session = await this.prisma.session.findFirst({
       where: {
