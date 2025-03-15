@@ -147,9 +147,14 @@ export const PERMISSIONS: {
     value: 'self:domain-verify',
     description: 'Can verify a domain for itself',
   },
-  ADMIN_GET_USERS: {
+  OTHER_GET_USERS: {
     title: 'Admin Get Users',
     value: 'other:get-users',
     description: 'Can get all users',
+  },
+  OTHER_IMPERSONATE_USER: {
+    title: 'Other Impersonate User',
+    value: 'other:impersonate-user',
+    description: 'Can impersonate a user',
   },
 };

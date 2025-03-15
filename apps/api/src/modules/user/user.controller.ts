@@ -17,6 +17,7 @@ import {
   CreateSecurityCodeDto,
   CreateUserDto,
   GetUsersDto,
+  ImpersonateUserDto,
   ListMessagesDto,
   MessagesInsightsDto,
   ResetPasswordDto,
@@ -46,6 +47,7 @@ import { ListMessagesService } from './services/list-messages.service';
 import { MessagesInsightsService } from './services/messages-insights.service';
 import { MESSAGES_STATUS } from '../../utils/constants';
 import { GetUsersService } from './services/get-users.service';
+import { ImpersonateUserService } from './services/impersonate-user.service';
 
 @Controller('user')
 export class UserController {
@@ -66,16 +68,23 @@ export class UserController {
     private readonly listMessagesService: ListMessagesService,
     private readonly messagesInsightsService: MessagesInsightsService,
     private readonly getUsersService: GetUsersService,
+    private readonly impersonateUserService: ImpersonateUserService,
   ) {}
 
   @Get('admin/users')
-  @Permissions([PERMISSIONS.ADMIN_GET_USERS.value])
+  @Permissions([PERMISSIONS.OTHER_GET_USERS.value])
   getUsers(@Query() data: GetUsersDto) {
     return this.getUsersService.execute({
       ...data,
       take: Number(data.take) || 10,
       page: Number(data.page) || 1,
     });
+  }
+
+  @Post('admin/users/impersonate')
+  @Permissions([PERMISSIONS.OTHER_IMPERSONATE_USER.value])
+  impersonateUser(@Body() data: ImpersonateUserDto, @Request() req) {
+    return this.impersonateUserService.execute(data, req.user.id);
   }
 
   @Put()
@@ -126,7 +135,17 @@ export class UserController {
   @Get('me')
   @Permissions([PERMISSIONS.SELF_GET.value])
   getMe(@Request() req) {
-    return req.user;
+    return {
+      ...req.user,
+      session: {
+        id: req.session.id,
+        createdAt: req.session.createdAt,
+        expiresAt: req.session.expiresAt,
+        permissions: req.session.permissions,
+        description: req.session.description,
+        impersonateUserId: req.session.impersonateUserId,
+      },
+    };
   }
 
   @Get('balance')

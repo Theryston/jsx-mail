@@ -170,3 +170,9 @@ export class GetUsersDto {
   @Min(1)
   page?: number;
 }
+
+export class ImpersonateUserDto {
+  @IsNotEmpty()
+  @IsString()
+  userId: string;
+}

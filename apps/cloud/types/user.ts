@@ -14,6 +14,7 @@ export type User = {
   isPhoneVerified: boolean;
   birthdate?: Date | null;
   balance: Balance;
+  session: Session | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -24,6 +25,7 @@ export type Session = {
   description: string;
   expiresAt: string | null;
   permissions: string[];
+  impersonateUserId: string | null;
 };
 
 export type MessagesSentByDay = {
@@ -67,4 +69,11 @@ export type Permission = {
   title: string;
   value: string;
   description: string;
+};
+
+export type AdminUsersPagination = {
+  users: User[];
+  totalPages: number;
+  total: number;
+  hasNext: boolean;
 };

@@ -56,7 +56,6 @@ model User {
   deletedAt       DateTime?   @map("deleted_at")
 
   transactions        Transaction[]
-  sessions            Session[]
   securityCodes       SecurityCode[]
   domains             Domain[]
   files               File[]
@@ -65,6 +64,8 @@ model User {
   storageSizes        StorageSize[]
   checkouts           Checkout[]
   userBetaPermissions UserBetaPermission[]
+  sessions            Session[]            @relation("Session")
+  impersonatedBy      Session[]            @relation("ImpersonatedBy")
 
   @@map("users")
 }
@@ -110,17 +111,19 @@ model Transaction {
 }
 
 model Session {
-  id          String    @id @default(uuid())
-  userId      String    @map("user_id")
-  token       String
-  description String?
-  permissions String[]
-  expiresAt   DateTime? @map("expires_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
+  id                String    @id @default(uuid())
+  userId            String    @map("user_id")
+  token             String
+  description       String?
+  permissions       String[]
+  impersonateUserId String?   @map("impersonate_user_id")
+  expiresAt         DateTime? @map("expires_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  deletedAt         DateTime? @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User  @relation("Session", fields: [userId], references: [id], onDelete: Cascade)
+  impersonateUser User? @relation("ImpersonatedBy", fields: [impersonateUserId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }

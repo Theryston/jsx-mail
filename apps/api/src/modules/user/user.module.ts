@@ -24,6 +24,7 @@ import { ListMessagesService } from './services/list-messages.service';
 import { MessagesInsightsService } from './services/messages-insights.service';
 import { BetaPermissionCheckService } from './services/beta-permission-check.service';
 import { GetUsersService } from './services/get-users.service';
+import { ImpersonateUserService } from './services/impersonate-user.service';
 
 @Module({
   controllers: [UserController],
@@ -50,6 +51,7 @@ import { GetUsersService } from './services/get-users.service';
     MessagesInsightsService,
     BetaPermissionCheckService,
     GetUsersService,
+    ImpersonateUserService,
   ],
   imports: [EmailModule, SessionModule],
   exports: [BetaPermissionCheckService],

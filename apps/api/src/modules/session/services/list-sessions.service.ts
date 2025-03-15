@@ -13,6 +13,7 @@ export class ListSessionsService {
           {
             deletedAt: null,
             userId,
+            impersonateUserId: null,
           },
           {
             OR: [

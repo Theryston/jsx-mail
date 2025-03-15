@@ -5,6 +5,7 @@ import {
   TransactionsPagination,
   User,
   Permission,
+  AdminUsersPagination,
 } from '@/types/user';
 import api from '@/utils/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
@@ -161,13 +162,6 @@ export function useDeleteSession() {
   });
 }
 
-export type AdminUsersPagination = {
-  users: User[];
-  totalPages: number;
-  total: number;
-  hasNext: boolean;
-};
-
 export function useAdminUsers(
   page: number = 1,
   search: string = '',
@@ -179,5 +173,12 @@ export function useAdminUsers(
       api
         .get(`/user/admin/users?search=${search}&take=${take}&page=${page}`)
         .then((res) => res.data),
+  });
+}
+
+export function useImpersonateUser() {
+  return useMutation({
+    mutationFn: (data: { userId: string }) =>
+      api.post('/user/admin/users/impersonate', data).then((res) => res.data),
   });
 }

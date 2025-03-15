@@ -12,6 +12,9 @@ import {
   DropdownMenuItem,
 } from '@jsx-mail/ui/dropdown-menu';
 import { DropdownMenuTrigger } from '@jsx-mail/ui/dropdown-menu';
+import { useImpersonateUser } from '@/hooks/user';
+import handleRedirectUrl from '@/utils/handle-redirect-url';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -56,10 +59,36 @@ export const columns: ColumnDef<User>[] = [
     header: 'Actions',
     cell: ({ row }) => {
       const user = row.original;
+      const { mutateAsync: impersonateUser } = useImpersonateUser();
+      const searchParams = useSearchParams();
+      const router = useRouter();
 
-      const handleImpersonate = () => {
-        toast.info(`Impersonating user: ${user.name}`);
-        // Implement impersonation logic here
+      const handleImpersonate = async () => {
+        const id = toast.loading('Impersonating user...');
+
+        try {
+          const impersonatedSession = await impersonateUser({
+            userId: user.id,
+          });
+
+          const redirectUrlString = handleRedirectUrl(searchParams);
+          const redirectUrlObj = new URL(redirectUrlString);
+          redirectUrlObj.searchParams.append(
+            'sessionId',
+            impersonatedSession.sessionId,
+          );
+          redirectUrlObj.searchParams.append(
+            'token',
+            impersonatedSession.token,
+          );
+
+          const redirectUrl = redirectUrlObj.toString();
+
+          toast.success('User impersonated successfully', { id });
+          router.push(redirectUrl);
+        } catch (error) {
+          toast.error('Failed to impersonate user', { id });
+        }
       };
 
       const handleBlock = () => {
