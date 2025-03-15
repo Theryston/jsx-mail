@@ -1,4 +1,4 @@
-![featured](https://i.imgur.com/O1jwOJo.png)
+![featured](https://i.imgur.com/HQARFgz.png)
 
 <div align="center">
 <b>JSX Mail</b> is an innovative and efficient framework for creating email templates using JSX syntax. Designed for high compatibility and ease of use, this framework offers a modern approach to developing responsive and attractive emails.
