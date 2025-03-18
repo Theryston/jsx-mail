@@ -2,7 +2,13 @@
 
 import { Container } from '@/components/container';
 import { Button } from '@jsx-mail/ui/button';
-import { PlusIcon, FileUpIcon, UserPlusIcon, Send } from 'lucide-react';
+import {
+  PlusIcon,
+  FileUpIcon,
+  UserPlusIcon,
+  Send,
+  Loader2,
+} from 'lucide-react';
 import { use, useEffect, useState } from 'react';
 import {
   useGetContactGroup,
@@ -216,9 +222,10 @@ function ImportsBanner({ imports }: { imports: ContactImport[] }) {
           <div className="flex flex-col gap-1">
             {(importItem.status === 'pending' ||
               importItem.status === 'processing') && (
-              <p className="text-sm">
-                There&apos;s a contact import in progress.
-              </p>
+              <div className="flex items-center gap-2">
+                <Loader2 className="size-4 animate-spin" />
+                <p className="text-sm">Importing your contacts...</p>
+              </div>
             )}
 
             {importItem.status === 'failed' && (
