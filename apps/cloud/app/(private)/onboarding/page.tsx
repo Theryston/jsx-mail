@@ -83,7 +83,7 @@ export default function OnboardingPage() {
 
   if (isLoadingUser) {
     return (
-      <Container header>
+      <Container loggedHeaderNoActions>
         <div className="flex items-center justify-center h-[60vh]">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
@@ -101,7 +101,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <Container header>
+    <Container loggedHeaderNoActions>
       <div className="flex flex-col gap-8 max-w-3xl mx-auto">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold">Welcome to JSX Mail</h1>

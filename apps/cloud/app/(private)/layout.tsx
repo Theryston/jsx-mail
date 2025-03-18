@@ -49,7 +49,7 @@ export default function PrivateLayout({
 
   return (
     <SidebarProvider>
-      <CloudSidebar />
+      {pathname !== '/onboarding' && <CloudSidebar />}
 
       {me?.session?.impersonateUserId && (
         <div className="fixed bottom-0 right-0 py-2 px-4 bg-black/70 rounded-tl-xl z-50">

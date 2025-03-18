@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@jsx-mail/ui/button';
-import { BookOpenIcon } from 'lucide-react';
+import { BookOpenIcon, LogOutIcon } from 'lucide-react';
 import Link from 'next/link';
 import { CloudLogo } from './cloud-logo';
 import { SidebarTrigger } from '@jsx-mail/ui/sidebar';
@@ -12,19 +12,43 @@ type ContainerProps = {
   children: React.ReactNode;
   anonymousHeader?: boolean;
   header?: boolean;
+  loggedHeaderNoActions?: boolean;
 };
 
 export function Container({
   children,
   anonymousHeader,
   header,
+  loggedHeaderNoActions,
 }: ContainerProps) {
   return (
     <div>
       {anonymousHeader && <AnonymousHeader />}
       {header && <Header />}
+      {loggedHeaderNoActions && <LoggedHeaderNoActions />}
       <main className="container mx-auto p-4 py-8">{children}</main>
     </div>
+  );
+}
+
+function LoggedHeaderNoActions() {
+  return (
+    <header className="w-full px-4 border-b flex items-center justify-between fixed left-0 bg-background z-40 h-16">
+      <CloudLogo imageOnly />
+
+      <Link href="/sign-out" className="hidden md:block">
+        <Button variant="ghost">
+          <LogOutIcon className="size-4" />
+          <span className="text-sm font-medium">Sign out</span>
+        </Button>
+      </Link>
+
+      <Link href="/sign-out" className="md:hidden">
+        <Button variant="ghost" size="icon">
+          <LogOutIcon className="size-4" />
+        </Button>
+      </Link>
+    </header>
   );
 }
 

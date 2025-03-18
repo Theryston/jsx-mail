@@ -83,7 +83,7 @@ export const ITEMS = [
   },
 ];
 
-export function CloudSidebar({ disabled }: { disabled: boolean }) {
+export function CloudSidebar() {
   const pathname = usePathname();
   const isMobile = useIsMobile();
   const { data: me } = useMe();
@@ -96,13 +96,7 @@ export function CloudSidebar({ disabled }: { disabled: boolean }) {
   });
 
   return (
-    <Sidebar
-      side={isMobile ? 'right' : 'left'}
-      pathname={pathname}
-      className={cn({
-        'pointer-events-none cursor-not-allowed opacity-80': disabled,
-      })}
-    >
+    <Sidebar side={isMobile ? 'right' : 'left'} pathname={pathname}>
       <SidebarHeader className="px-2">
         <CloudLogo />
       </SidebarHeader>
