@@ -36,7 +36,6 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Domain } from '@/types/domain';
-import { ControllerRenderProps } from 'react-hook-form';
 import { DomainStatus } from '@/components/domain-status';
 import { cn } from '@jsx-mail/ui/lib/utils';
 import { Sender } from '@/types/sender';
@@ -151,7 +150,7 @@ export default function OnboardingPage() {
                 )}
 
                 {/* Step indicator and title row */}
-                <div className="flex items-start gap-6 mb-2">
+                <div className="flex items-start gap-4 mb-2">
                   <div
                     className={cn(
                       'flex items-center justify-center rounded-full w-8 h-8 mt-1 z-10 bg-background',
@@ -170,7 +169,7 @@ export default function OnboardingPage() {
                   </div>
 
                   <div className="flex-1">
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-2">
                       <h3
                         className={cn(
                           'font-medium text-lg',
@@ -184,7 +183,7 @@ export default function OnboardingPage() {
                         {step.title}
                       </h3>
                       {isCompleted && (
-                        <CheckCircle2 className="h-5 w-5 ml-2 text-green-500" />
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
                       )}
                     </div>
 
@@ -198,7 +197,7 @@ export default function OnboardingPage() {
 
                 {/* Content area (only for active step) */}
                 {isActive && (
-                  <div className="ml-[3.5rem] bg-card border rounded-lg p-5 mb-5">
+                  <div className="ml-[3rem] bg-card border rounded-lg p-5 mb-5">
                     {step.id === 'create_domain' && (
                       <CreateDomainStep
                         onSkip={() => updateOnboarding('create_sender')}
@@ -212,6 +211,15 @@ export default function OnboardingPage() {
               </div>
             );
           })}
+
+          <Button
+            variant="ghost"
+            onClick={() => updateOnboarding('completed')}
+            className="w-fit"
+          >
+            Skip onboarding
+            <ArrowRight className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </Container>
@@ -245,11 +253,7 @@ function CreateDomainStep({ onSkip }: { onSkip: () => void }) {
           <FormField
             control={form.control}
             name="domain"
-            render={({
-              field,
-            }: {
-              field: ControllerRenderProps<{ domain: string }, 'domain'>;
-            }) => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel>Domain Name</FormLabel>
                 <FormControl>
@@ -276,7 +280,7 @@ function CreateDomainStep({ onSkip }: { onSkip: () => void }) {
               ) : (
                 <>
                   Continue
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="h-4 w-4" />
                 </>
               )}
             </Button>
@@ -486,14 +490,7 @@ function CreateSenderStep() {
           <FormField
             control={form.control}
             name="domainName"
-            render={({
-              field,
-            }: {
-              field: ControllerRenderProps<
-                { name: string; username: string; domainName: string },
-                'domainName'
-              >;
-            }) => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel>Domain</FormLabel>
                 <Select
@@ -527,14 +524,7 @@ function CreateSenderStep() {
           <FormField
             control={form.control}
             name="name"
-            render={({
-              field,
-            }: {
-              field: ControllerRenderProps<
-                { name: string; username: string; domainName: string },
-                'name'
-              >;
-            }) => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel>Sender Name</FormLabel>
                 <FormControl>
@@ -551,14 +541,7 @@ function CreateSenderStep() {
           <FormField
             control={form.control}
             name="username"
-            render={({
-              field,
-            }: {
-              field: ControllerRenderProps<
-                { name: string; username: string; domainName: string },
-                'username'
-              >;
-            }) => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
@@ -566,11 +549,18 @@ function CreateSenderStep() {
                     <Input
                       {...field}
                       placeholder="username"
-                      className="rounded-r-none w-full"
+                      className={cn(
+                        'w-full',
+                        form.watch('domainName') && 'rounded-r-none',
+                      )}
                     />
-                    <div className="bg-zinc-900 h-12 px-3 py-2 rounded-r-md flex items-center text-sm">
-                      @{form.watch('domainName')}
-                    </div>
+                    {form.watch('domainName') && (
+                      <div className="bg-zinc-900 h-12 px-3 py-2 rounded-r-md flex items-center text-sm max-w-[120px] md:max-w-[200px]">
+                        <span className="text-xs overflow-hidden truncate">
+                          @{form.watch('domainName')}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </FormControl>
                 <FormDescription>
@@ -590,7 +580,7 @@ function CreateSenderStep() {
             ) : (
               <>
                 Create Sender
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <ArrowRight className="h-4 w-4" />
               </>
             )}
           </Button>
@@ -779,7 +769,7 @@ function SendTestEmailStep() {
                   ) : (
                     <>
                       Send Test Email
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      <ArrowRight className="h-4 w-4" />
                     </>
                   )}
                 </Button>
