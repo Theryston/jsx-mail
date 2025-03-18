@@ -14,7 +14,6 @@ import {
 import { CloudLogo } from '@/components/cloud-logo';
 import { usePathname } from 'next/navigation';
 import {
-  Home,
   Cloud,
   Send,
   File,
@@ -25,6 +24,8 @@ import {
   UserIcon,
   Shield,
   Key,
+  Users,
+  Mail,
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@jsx-mail/ui/lib/utils';
@@ -41,19 +42,24 @@ import {
 
 export const ITEMS = [
   {
-    label: 'Home',
-    href: '/',
-    icon: Home,
+    label: 'Bulk Sending',
+    href: '/bulk-sending',
+    icon: Mail,
   },
   {
-    label: 'Billing',
-    href: '/billing',
-    icon: Wallet,
+    label: 'Contacts',
+    href: '/contacts',
+    icon: Users,
   },
   {
     label: 'Domains',
     href: '/domains',
     icon: Cloud,
+  },
+  {
+    label: 'Billing',
+    href: '/billing',
+    icon: Wallet,
   },
   {
     label: 'Senders',
