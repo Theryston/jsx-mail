@@ -147,6 +147,11 @@ export const PERMISSIONS: {
     value: 'self:domain-verify',
     description: 'Can verify a domain for itself',
   },
+  SELF_UPDATE_ONBOARDING: {
+    title: 'Self Update Onboarding',
+    value: 'self:update-onboarding',
+    description: 'Can update its own onboarding',
+  },
   OTHER_GET_USERS: {
     title: 'Admin Get Users',
     value: 'other:get-users',

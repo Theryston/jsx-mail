@@ -5,7 +5,7 @@ import { CalendarIcon } from 'lucide-react';
 
 function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <input
         type={type}
         data-slot="input"

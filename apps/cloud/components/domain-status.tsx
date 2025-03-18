@@ -45,15 +45,13 @@ export function DomainStatus({ domain }: { domain: Domain }) {
   }, [verifyDomain?.status, domain.status]);
 
   return (
-    <span>
+    <span className="text-xs">
       {domain.status}{' '}
       {verifyDomain?.lastVerificationAt &&
         verifyDomain.status === 'pending' && (
           <>
             <br />
-            <span className="text-xs text-gray-500">
-              Last verified {timeAgo}
-            </span>
+            <span className="text-gray-500">Last verified {timeAgo}</span>
           </>
         )}
     </span>
