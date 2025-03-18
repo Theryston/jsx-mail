@@ -85,7 +85,10 @@ export function CreateContactGroupModal({
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Contact group name" {...field} />
+                    <Input
+                      placeholder="Contact group name (e.g. 'Leads', 'Customers', etc.)"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
