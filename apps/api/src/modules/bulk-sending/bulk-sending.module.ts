@@ -11,6 +11,7 @@ import { CreateBulkContactsService } from './services/create-bulk-contacts.servi
 import { BullModule } from '@nestjs/bullmq';
 import { BulkSendingProcessor } from './bulk-sending.processor';
 import { ListContactImportsService } from './services/list-contact-imports.service';
+import { MarkContactImportsAsReadService } from './services/mark-contact-imports-as-read.service';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ListContactImportsService } from './services/list-contact-imports.servi
     CreateBulkContactsService,
     BulkSendingProcessor,
     ListContactImportsService,
+    MarkContactImportsAsReadService,
   ],
 })
 export class BulkSendingModule {}

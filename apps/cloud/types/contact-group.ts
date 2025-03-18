@@ -32,3 +32,24 @@ export type ContactGroup = {
   createdAt: Date;
   contactsCount: number;
 };
+
+export type ContactImport = {
+  id: string;
+  fileId: string;
+  emailColumn: string;
+  nameColumn: string;
+  userId: string;
+  totalLines: number;
+  processedLines: number;
+  readFinalStatusAt: Date | null;
+  contactGroupId: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  failures: {
+    message: string;
+    line?: number;
+    createdAt: Date;
+  }[];
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+};

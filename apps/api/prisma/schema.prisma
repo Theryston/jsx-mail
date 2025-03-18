@@ -48,6 +48,13 @@ enum OnboardingStep {
   completed
 }
 
+enum ContactImportStatus {
+  pending
+  processing
+  completed
+  failed
+}
+
 model User {
   id              String         @id @default(uuid())
   name            String
@@ -337,15 +344,19 @@ model ContactGroup {
 }
 
 model ContactImport {
-  id             String    @id @default(uuid())
-  fileId         String    @map("file_id")
-  emailColumn    String    @map("email_column")
-  nameColumn     String    @map("name_column")
-  userId         String    @map("user_id")
-  contactGroupId String    @map("contact_group_id")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
-  deletedAt      DateTime? @map("deleted_at")
+  id                String              @id @default(uuid())
+  fileId            String              @map("file_id")
+  emailColumn       String              @map("email_column")
+  nameColumn        String              @map("name_column")
+  userId            String              @map("user_id")
+  contactGroupId    String              @map("contact_group_id")
+  totalLines        Int                 @default(0) @map("total_lines")
+  readFinalStatusAt DateTime?           @map("read_final_status_at")
+  processedLines    Int                 @default(0) @map("processed_lines")
+  status            ContactImportStatus @default(pending) @map("status")
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+  deletedAt         DateTime?           @map("deleted_at")
 
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   contactGroup ContactGroup @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)

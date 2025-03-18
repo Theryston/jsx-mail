@@ -5,6 +5,7 @@ import {
   ContactGroup,
   ContactGroupContactsPagination,
   ContactGroupsPagination,
+  ContactImport,
 } from '@/types/contact-group';
 
 export const PER_PAGE = 10;
@@ -86,5 +87,59 @@ export function useDeleteContactGroupContact() {
       api
         .delete(`/bulk-sending/contact-group/${id}/contacts/${contactId}`)
         .then((res) => res.data),
+  });
+}
+
+export function useContactImports(
+  groupId: string,
+  options?: { refetchInterval?: number | false },
+) {
+  return useQuery<ContactImport[]>({
+    queryKey: ['contactImports', groupId],
+    queryFn: () =>
+      api
+        .get(`/bulk-sending/contact-import/${groupId}`)
+        .then((res) => res.data),
+    ...options,
+  });
+}
+
+export function useCreateContactImport(groupId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      fileId,
+      emailColumn,
+      nameColumn,
+    }: {
+      fileId: string;
+      emailColumn: string;
+      nameColumn: string;
+    }) =>
+      api.post(`/bulk-sending/contact-import/${groupId}`, {
+        fileId,
+        emailColumn,
+        nameColumn,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contactImports', groupId] });
+    },
+  });
+}
+
+export function useMarkContactImportAsRead() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (contactImportId: string) =>
+      api
+        .put(`/bulk-sending/contact-import/${contactImportId}/read`)
+        .then((res) => res.data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ['contactImports', data.contactGroupId],
+      });
+    },
   });
 }

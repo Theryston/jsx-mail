@@ -3,10 +3,12 @@
 import { Container } from '@/components/container';
 import { Button } from '@jsx-mail/ui/button';
 import { PlusIcon, FileUpIcon, UserPlusIcon } from 'lucide-react';
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import {
   useGetContactGroup,
   useContactGroupContacts,
+  useContactImports,
+  useMarkContactImportAsRead,
 } from '@/hooks/contact-group';
 import { Skeleton } from '@jsx-mail/ui/skeleton';
 import { useRouter } from 'next/navigation';
@@ -16,26 +18,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@jsx-mail/ui/dropdown-menu';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@jsx-mail/ui/dialog';
 import { DataTable } from './data-table';
 import { columns } from './columns';
 import { Badge } from '@jsx-mail/ui/badge';
 import { PaginationControls } from '@jsx-mail/ui/pagination-controls';
 import { Input } from '@jsx-mail/ui/input';
+import AddContactManually from './add-contact-manually';
+import { ContactImport } from '@/types/contact-group';
+import { cn } from '@jsx-mail/ui/lib/utils';
+import { DialogContent, DialogTitle, DialogHeader } from '@jsx-mail/ui/dialog';
+import { Dialog } from '@jsx-mail/ui/dialog';
 
 export default function ContactGroupPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params;
+  const { id } = use(params);
   const router = useRouter();
   const [isAddContactManuallyOpen, setIsAddContactManuallyOpen] =
     useState(false);
@@ -46,6 +45,37 @@ export default function ContactGroupPage({
     useGetContactGroup(id);
   const { data: contactsPagination, isPending: isContactsPending } =
     useContactGroupContacts(id, page, search);
+  const [processingImport, setProcessingImport] =
+    useState<ContactImport | null>(null);
+  const [notReadFinalStatusImports, setNotReadFinalStatusImports] = useState<
+    ContactImport[]
+  >([]);
+  const { data: contactImports } = useContactImports(id, {
+    refetchInterval: processingImport ? 5000 : false,
+  });
+
+  useEffect(() => {
+    if (!contactImports) return;
+    setProcessingImport(
+      contactImports.find(
+        (contactImport) =>
+          contactImport.status === 'processing' ||
+          contactImport.status === 'pending',
+      ) || null,
+    );
+  }, [contactImports]);
+
+  useEffect(() => {
+    if (!contactImports) return;
+    setNotReadFinalStatusImports(
+      contactImports.filter(
+        (contactImport) =>
+          (contactImport.status === 'failed' ||
+            contactImport.status === 'completed') &&
+          !contactImport.readFinalStatusAt,
+      ),
+    );
+  }, [contactImports]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -78,6 +108,12 @@ export default function ContactGroupPage({
   return (
     <Container header>
       <div className="flex flex-col gap-4">
+        {processingImport && <ImportsBanner imports={[processingImport]} />}
+
+        {notReadFinalStatusImports.length > 0 && (
+          <ImportsBanner imports={notReadFinalStatusImports} />
+        )}
+
         <div className="flex flex-col gap-4 md:flex-row md:items-center justify-between">
           <div className="flex items-center justify-between">
             <div className="flex gap-2 flex-col">
@@ -135,26 +171,152 @@ export default function ContactGroupPage({
         )}
       </div>
 
-      <Dialog
-        open={isAddContactManuallyOpen}
+      <AddContactManually
+        isOpen={isAddContactManuallyOpen}
         onOpenChange={setIsAddContactManuallyOpen}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Contact Manually</DialogTitle>
-            <DialogDescription>
-              This is a placeholder modal. The actual implementation will be
-              done manually.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button onClick={() => setIsAddContactManuallyOpen(false)}>
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        id={id}
+      />
     </Container>
+  );
+}
+
+function ImportsBanner({ imports }: { imports: ContactImport[] }) {
+  const [selectedImport, setSelectedImport] = useState<ContactImport | null>(
+    null,
+  );
+  const [isViewingErrors, setIsViewingErrors] = useState(false);
+  const { mutate: markContactImportAsRead, isPending: isMarkingAsRead } =
+    useMarkContactImportAsRead();
+
+  return (
+    <div className="flex flex-col gap-2">
+      {imports.map((importItem) => (
+        <div
+          key={importItem.id}
+          className={cn(
+            'rounded-md p-4 flex flex-col md:flex-row justify-between md:items-center gap-2',
+            {
+              'bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse':
+                importItem.status === 'pending' ||
+                importItem.status === 'processing',
+              'bg-green-500/10 text-green-500 border border-green-500/20':
+                importItem.status === 'completed',
+              'bg-red-500/10 text-red-500 border border-red-500/20':
+                importItem.status === 'failed',
+            },
+          )}
+        >
+          <div className="flex flex-col gap-1">
+            {(importItem.status === 'pending' ||
+              importItem.status === 'processing') && (
+              <p className="text-sm">
+                There&apos;s a contact import in progress.
+              </p>
+            )}
+
+            {importItem.status === 'failed' && (
+              <p className="text-sm">
+                There was an error importing the contacts.
+              </p>
+            )}
+
+            {importItem.status === 'completed' && (
+              <p className="text-sm">
+                The contacts were imported successfully.
+              </p>
+            )}
+
+            {importItem.failures.length > 0 && (
+              <p className="text-xs">
+                {importItem.failures.length} failures found.
+              </p>
+            )}
+
+            {importItem.totalLines > 0 && (
+              <p className="text-xs">
+                {importItem.processedLines}/{importItem.totalLines} lines
+                processed
+              </p>
+            )}
+          </div>
+
+          <div className="flex gap-2">
+            {(importItem.status === 'completed' ||
+              importItem.status === 'failed') && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-white"
+                onClick={() => {
+                  setSelectedImport(importItem);
+                  markContactImportAsRead(importItem.id);
+                }}
+                disabled={
+                  isMarkingAsRead && selectedImport?.id === importItem.id
+                }
+              >
+                {isMarkingAsRead && selectedImport?.id === importItem.id
+                  ? 'Ignoring...'
+                  : 'Ignore'}
+              </Button>
+            )}
+
+            {importItem.status === 'failed' && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-white"
+                onClick={() => {
+                  setSelectedImport(importItem);
+                  setIsViewingErrors(true);
+                }}
+              >
+                View errors
+              </Button>
+            )}
+          </div>
+        </div>
+      ))}
+
+      <ViewErrorsDialog
+        isOpen={isViewingErrors}
+        onOpenChange={setIsViewingErrors}
+        importItem={selectedImport}
+      />
+    </div>
+  );
+}
+
+function ViewErrorsDialog({
+  isOpen,
+  onOpenChange,
+  importItem,
+}: {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  importItem: ContactImport | null;
+}) {
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Errors</DialogTitle>
+        </DialogHeader>
+
+        <div className="flex flex-col gap-2">
+          {importItem?.failures.map((failure) => (
+            <code
+              key={failure.message}
+              className="flex flex-col gap-1 p-2 rounded-md bg-zinc-900 overflow-auto"
+            >
+              {failure.line && <p className="text-sm">Line: {failure.line}</p>}
+              <p className="text-xs">{failure.createdAt.toLocaleString()}</p>
+              <p className="text-xs">{failure.message}</p>
+            </code>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

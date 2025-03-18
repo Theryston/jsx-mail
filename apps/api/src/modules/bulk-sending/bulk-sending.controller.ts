@@ -7,6 +7,7 @@ import {
   Delete,
   Param,
   Query,
+  Put,
 } from '@nestjs/common';
 import { CreateContactsGroupService } from './services/create-contacts-group.service';
 import {
@@ -22,6 +23,7 @@ import { ListContactsFromContactGroupService } from './services/list-contacts-fr
 import { DeleteContactGroupContactService } from './services/delete-contact-group-contact.service';
 import { CreateBulkContactsService } from './services/create-bulk-contacts.service';
 import { ListContactImportsService } from './services/list-contact-imports.service';
+import { MarkContactImportsAsReadService } from './services/mark-contact-imports-as-read.service';
 
 @Controller('bulk-sending')
 export class BulkSendingController {
@@ -34,6 +36,7 @@ export class BulkSendingController {
     private readonly deleteContactGroupContactService: DeleteContactGroupContactService,
     private readonly createBulkContactsService: CreateBulkContactsService,
     private readonly listContactImportsService: ListContactImportsService,
+    private readonly markContactImportAsReadService: MarkContactImportsAsReadService,
   ) {}
 
   @Post('contact-group')
@@ -88,7 +91,7 @@ export class BulkSendingController {
     );
   }
 
-  @Post('contact-group/:id/contacts')
+  @Post('contact-import/:id')
   @Permissions([PERMISSIONS.SELF_CREATE_CONTACT_IMPORT.value])
   addContactGroupContacts(
     @Param('id') id: string,
@@ -98,9 +101,21 @@ export class BulkSendingController {
     return this.createBulkContactsService.execute(id, body, req.user.id);
   }
 
-  @Get('contact-import')
+  @Get('contact-import/:id')
   @Permissions([PERMISSIONS.SELF_GET_CONTACT_IMPORT.value])
-  getContactImport(@Req() req) {
-    return this.listContactImportsService.execute(req.user.id);
+  getContactImport(@Param('id') id: string, @Req() req) {
+    return this.listContactImportsService.execute(id, req.user.id);
+  }
+
+  @Put('contact-import/:contactImportId/read')
+  @Permissions([PERMISSIONS.MARK_CONTACT_IMPORT_AS_READ.value])
+  readContactImport(
+    @Param('contactImportId') contactImportId: string,
+    @Req() req,
+  ) {
+    return this.markContactImportAsReadService.execute(
+      contactImportId,
+      req.user.id,
+    );
   }
 }
