@@ -22,12 +22,9 @@ export class DeleteSessionService {
       throw new HttpException('Session not found', HttpStatus.NOT_FOUND);
     }
 
-    await this.prisma.session.update({
+    await this.prisma.session.delete({
       where: {
         id: sessionId,
-      },
-      data: {
-        deletedAt: new Date(),
       },
     });
 

@@ -24,12 +24,9 @@ export class DeleteFileService {
 
     await this.s3ClientService.deleteObject(file.key);
 
-    await this.prisma.file.update({
+    await this.prisma.file.delete({
       where: {
         id: fileId,
-      },
-      data: {
-        deletedAt: new Date(),
       },
     });
 

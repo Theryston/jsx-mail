@@ -26,13 +26,9 @@ export class DeleteDomainService {
 
     await sesv2Client.send(deleteCommand);
 
-    await this.prisma.domain.update({
+    await this.prisma.domain.delete({
       where: {
         id: domainId,
-      },
-      data: {
-        deletedAt: new Date(),
-        name: new Date().getTime().toString(),
       },
     });
 
