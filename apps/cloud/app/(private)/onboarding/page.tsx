@@ -721,61 +721,72 @@ function SendTestEmailStep() {
     );
   }
 
+  // Determine if the email form is valid
+  const isFormValid = emailForm.formState.isValid;
+  const recipientEmail =
+    emailForm.getValues().recipientEmail || 'recipient@example.com';
+
   return (
     <div className="space-y-6">
+      <Form {...emailForm}>
+        <div className="space-y-4">
+          <FormField
+            control={emailForm.control}
+            name="recipientEmail"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Recipient Email</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="Enter your email address"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  We&apos;ll send a test email to this address.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+      </Form>
+
       <Tabs defaultValue="send" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid grid-cols-3 mb-4 w-full">
-          <TabsTrigger value="send">Send Email</TabsTrigger>
-          <TabsTrigger value="api">API Example</TabsTrigger>
-          <TabsTrigger value="preview">Preview</TabsTrigger>
+          <TabsTrigger value="send" className="w-full">
+            Send
+          </TabsTrigger>
+          <TabsTrigger value="api" className="w-full">
+            API
+          </TabsTrigger>
+          <TabsTrigger value="preview" className="w-full">
+            Preview
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="send" className="space-y-4">
-          <Form {...emailForm}>
-            <form className="space-y-4">
-              <FormField
-                control={emailForm.control}
-                name="recipientEmail"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Recipient Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="Enter your email address"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      We&apos;ll send a test email to this address.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex flex-col gap-2">
-                <Button
-                  type="button"
-                  onClick={handleSendTestEmail}
-                  disabled={isSending || !emailForm.formState.isValid}
-                  className="w-full"
-                >
-                  {isSending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      Send Test Email
-                      <ArrowRight className="h-4 w-4" />
-                    </>
-                  )}
-                </Button>
-              </div>
-            </form>
-          </Form>
+          <div className="flex flex-col gap-2">
+            <Button
+              type="button"
+              onClick={handleSendTestEmail}
+              disabled={isSending || !isFormValid}
+              className="w-full"
+            >
+              {isSending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  Send Test Email
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
         </TabsContent>
 
         <TabsContent value="preview">
@@ -795,24 +806,14 @@ function SendTestEmailStep() {
 
             <div className="relative">
               <pre className="bg-zinc-900 text-zinc-100 p-4 rounded-xl overflow-x-auto text-xs">
-                <code>
-                  {getApiExample(
-                    senders[0],
-                    emailForm.getValues().recipientEmail,
-                  )}
-                </code>
+                <code>{getApiExample(senders[0], recipientEmail)}</code>
               </pre>
               <Button
                 variant="ghost"
                 size="icon"
                 className="absolute top-2 right-2"
                 onClick={() =>
-                  handleCopy(
-                    getApiExample(
-                      senders[0],
-                      emailForm.getValues().recipientEmail,
-                    ),
-                  )
+                  handleCopy(getApiExample(senders[0], recipientEmail))
                 }
               >
                 {isCopied ? (
