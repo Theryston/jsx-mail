@@ -28,6 +28,7 @@ import { ContactImport } from '@/types/contact-group';
 import { cn } from '@jsx-mail/ui/lib/utils';
 import { DialogContent, DialogTitle, DialogHeader } from '@jsx-mail/ui/dialog';
 import { Dialog } from '@jsx-mail/ui/dialog';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ContactGroupPage({
   params,
@@ -53,6 +54,17 @@ export default function ContactGroupPage({
   const { data: contactImports } = useContactImports(id, {
     refetchInterval: processingImport ? 5000 : false,
   });
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: ['contactGroupContacts', id],
+    });
+
+    queryClient.invalidateQueries({
+      queryKey: ['contactGroup'],
+    });
+  }, [contactImports, id]);
 
   useEffect(() => {
     if (!contactImports) return;
@@ -261,7 +273,7 @@ function ImportsBanner({ imports }: { imports: ContactImport[] }) {
               </Button>
             )}
 
-            {importItem.status === 'failed' && (
+            {importItem.failures.length > 0 && (
               <Button
                 size="sm"
                 variant="outline"
@@ -309,7 +321,11 @@ function ViewErrorsDialog({
               key={failure.message}
               className="flex flex-col gap-1 p-2 rounded-md bg-zinc-900 overflow-auto"
             >
-              {failure.line && <p className="text-sm">Line: {failure.line}</p>}
+              {failure.line && (
+                <p className="text-xs">
+                  <span className="font-bold">Line:</span> {failure.line}
+                </p>
+              )}
               <p className="text-xs">{failure.createdAt.toLocaleString()}</p>
               <p className="text-xs">{failure.message}</p>
             </code>

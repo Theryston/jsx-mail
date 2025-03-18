@@ -17,6 +17,9 @@ export const columns = (
   {
     accessorKey: 'name',
     header: 'Name',
+    cell: ({ row }) => {
+      return <span>{row.original.name || 'N/A'}</span>;
+    },
   },
   {
     accessorKey: 'email',
@@ -73,8 +76,8 @@ export const columns = (
             onConfirm={handleDelete}
             title="Delete Contact"
             description={`Are you sure you want to delete the contact "${contact.name} (${contact.email})"? This action cannot be undone.`}
-            confirmationKeyPlaceholder="Type DELETE to confirm"
-            expectedConfirmationKey="DELETE"
+            confirmationKeyPlaceholder={`Type "${contact.email}" to confirm`}
+            expectedConfirmationKey={contact.email}
           />
         </>
       );

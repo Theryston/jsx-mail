@@ -79,7 +79,98 @@ export class BulkSendingProcessor extends WorkerHost {
         throw new Error('Invalid name column');
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 10000));
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+
+        const email = row[emailColumn];
+        let name = row[nameColumn];
+
+        if (!email) {
+          await this.prisma.contactImportFailure.create({
+            data: {
+              contactImportId,
+              message: 'There is no email in the row',
+              line: i + 1,
+            },
+          });
+
+          await this.prisma.contactImport.update({
+            where: { id: contactImportId },
+            data: {
+              processedLines: i + 1,
+            },
+          });
+
+          continue;
+        }
+
+        const isValidEmail = this.validateEmail(email);
+
+        if (!isValidEmail) {
+          await this.prisma.contactImportFailure.create({
+            data: {
+              contactImportId,
+              message: `The content ${email} is not a valid email`,
+              line: i + 1,
+            },
+          });
+
+          await this.prisma.contactImport.update({
+            where: { id: contactImportId },
+            data: {
+              processedLines: i + 1,
+            },
+          });
+
+          continue;
+        }
+
+        if (name === '' || name === '_') {
+          name = null;
+        }
+
+        const existingContact = await this.prisma.contact.findFirst({
+          where: { email, contactGroupId: contactImport.contactGroupId },
+        });
+
+        if (existingContact) {
+          await this.prisma.contactImportFailure.create({
+            data: {
+              contactImportId,
+              message: `The contact ${email} already exists`,
+              line: i + 1,
+            },
+          });
+
+          await this.prisma.contactImport.update({
+            where: { id: contactImportId },
+            data: {
+              processedLines: i + 1,
+            },
+          });
+
+          continue;
+        }
+
+        await this.prisma.contact.create({
+          data: {
+            email,
+            name,
+            contactGroup: {
+              connect: {
+                id: contactImport.contactGroupId,
+              },
+            },
+          },
+        });
+
+        await this.prisma.contactImport.update({
+          where: { id: contactImportId },
+          data: {
+            processedLines: i + 1,
+          },
+        });
+      }
 
       await this.prisma.contactImport.update({
         where: { id: contactImportId },
@@ -105,5 +196,9 @@ export class BulkSendingProcessor extends WorkerHost {
         },
       });
     }
+  }
+
+  validateEmail(email: string) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 }

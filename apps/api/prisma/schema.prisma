@@ -384,7 +384,7 @@ model ContactImportFailure {
 model Contact {
   id             String    @id @default(uuid())
   email          String
-  name           String
+  name           String?
   contactGroupId String    @map("contact_group_id")
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
