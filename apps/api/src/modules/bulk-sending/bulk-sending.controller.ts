@@ -6,6 +6,7 @@ import {
   Get,
   Delete,
   Param,
+  Query,
 } from '@nestjs/common';
 import { CreateContactsGroupService } from './services/create-contacts-group.service';
 import { CreateContactGroupDto } from './bulk-sending.dto';
@@ -30,8 +31,8 @@ export class BulkSendingController {
 
   @Get('contact-group')
   @Permissions([PERMISSIONS.SELF_LIST_CONTACT_GROUPS.value])
-  listContactGroups(@Req() req) {
-    return this.listContactGroupsService.execute(req.user.id);
+  listContactGroups(@Req() req, @Query() query: any) {
+    return this.listContactGroupsService.execute(req.user.id, query);
   }
 
   @Delete('contact-group/:id')
