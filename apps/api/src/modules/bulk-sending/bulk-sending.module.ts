@@ -4,9 +4,20 @@ import { CreateContactsGroupService } from './services/create-contacts-group.ser
 import { PrismaService } from 'src/services/prisma.service';
 import { ListContactGroupsService } from './services/list-contact-groups.service';
 import { DeleteContactGroupService } from './services/delete-contact-group.service';
+import { GetContactGroupServiceService } from './services/get-contact-group-service.service';
+import { ListContactsFromContactGroupService } from './services/list-contacts-from-contact-group.service';
+import { DeleteContactGroupContactService } from './services/delete-contact-group-contact.service';
 
 @Module({
   controllers: [BulkSendingController],
-  providers: [CreateContactsGroupService, PrismaService, ListContactGroupsService, DeleteContactGroupService],
+  providers: [
+    CreateContactsGroupService,
+    PrismaService,
+    ListContactGroupsService,
+    DeleteContactGroupService,
+    GetContactGroupServiceService,
+    ListContactsFromContactGroupService,
+    DeleteContactGroupContactService,
+  ],
 })
 export class BulkSendingModule {}

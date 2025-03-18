@@ -14,6 +14,9 @@ import { PERMISSIONS } from 'src/auth/permissions';
 import { Permissions } from 'src/auth/permissions.decorator';
 import { ListContactGroupsService } from './services/list-contact-groups.service';
 import { DeleteContactGroupService } from './services/delete-contact-group.service';
+import { GetContactGroupServiceService } from './services/get-contact-group-service.service';
+import { ListContactsFromContactGroupService } from './services/list-contacts-from-contact-group.service';
+import { DeleteContactGroupContactService } from './services/delete-contact-group-contact.service';
 
 @Controller('bulk-sending')
 export class BulkSendingController {
@@ -21,6 +24,9 @@ export class BulkSendingController {
     private readonly createContactsGroupService: CreateContactsGroupService,
     private readonly listContactGroupsService: ListContactGroupsService,
     private readonly deleteContactGroupService: DeleteContactGroupService,
+    private readonly getContactGroupService: GetContactGroupServiceService,
+    private readonly listContactsFromContactGroupService: ListContactsFromContactGroupService,
+    private readonly deleteContactGroupContactService: DeleteContactGroupContactService,
   ) {}
 
   @Post('contact-group')
@@ -39,5 +45,39 @@ export class BulkSendingController {
   @Permissions([PERMISSIONS.SELF_DELETE_CONTACT_GROUP.value])
   deleteContactGroup(@Param('id') id: string, @Req() req) {
     return this.deleteContactGroupService.execute(id, req.user.id);
+  }
+
+  @Get('contact-group/:id')
+  @Permissions([PERMISSIONS.SELF_GET_CONTACT_GROUP.value])
+  getContactGroup(@Param('id') id: string, @Req() req) {
+    return this.getContactGroupService.execute(id, req.user.id);
+  }
+
+  @Get('contact-group/:id/contacts')
+  @Permissions([PERMISSIONS.SELF_GET_CONTACT_GROUP_CONTACTS.value])
+  getContactGroupContacts(
+    @Param('id') id: string,
+    @Req() req,
+    @Query() query: any,
+  ) {
+    return this.listContactsFromContactGroupService.execute(
+      id,
+      req.user.id,
+      query,
+    );
+  }
+
+  @Delete('contact-group/:id/contacts/:contactId')
+  @Permissions([PERMISSIONS.SELF_DELETE_CONTACT_GROUP_CONTACTS.value])
+  deleteContactGroupContact(
+    @Param('id') id: string,
+    @Param('contactId') contactId: string,
+    @Req() req,
+  ) {
+    return this.deleteContactGroupContactService.execute(
+      id,
+      contactId,
+      req.user.id,
+    );
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { ContactListItem } from '@/types/contact-group';
+import { ContactGroupListItem } from '@/types/contact-group';
 import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
 import { Button } from '@jsx-mail/ui/button';
@@ -11,7 +11,7 @@ import { toast } from '@jsx-mail/ui/sonner';
 import { ChevronRightIcon, TrashIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export const columns: ColumnDef<ContactListItem>[] = [
+export const columns: ColumnDef<ContactGroupListItem>[] = [
   {
     accessorKey: 'id',
     header: 'ID',

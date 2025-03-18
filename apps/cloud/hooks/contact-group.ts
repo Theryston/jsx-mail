@@ -1,7 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '@/utils/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ContactGroupsPagination } from '@/types/contact-group';
+import {
+  ContactGroup,
+  ContactGroupContactsPagination,
+  ContactGroupsPagination,
+} from '@/types/contact-group';
 
 export const PER_PAGE = 10;
 
@@ -49,5 +53,38 @@ export function useDeleteContactGroup() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contactGroups'] });
     },
+  });
+}
+
+export function useGetContactGroup(id: string) {
+  return useQuery<ContactGroup>({
+    queryKey: ['contactGroup', id],
+    queryFn: () =>
+      api.get(`/bulk-sending/contact-group/${id}`).then((res) => res.data),
+  });
+}
+
+export function useContactGroupContacts(
+  id: string,
+  page: number = 1,
+  search: string = '',
+) {
+  return useQuery<ContactGroupContactsPagination>({
+    queryKey: ['contactGroupContacts', id, page, search],
+    queryFn: () =>
+      api
+        .get(
+          `/bulk-sending/contact-group/${id}/contacts?page=${page}&take=${PER_PAGE}&search=${search}`,
+        )
+        .then((res) => res.data),
+  });
+}
+
+export function useDeleteContactGroupContact() {
+  return useMutation({
+    mutationFn: ({ id, contactId }: { id: string; contactId: string }) =>
+      api
+        .delete(`/bulk-sending/contact-group/${id}/contacts/${contactId}`)
+        .then((res) => res.data),
   });
 }
