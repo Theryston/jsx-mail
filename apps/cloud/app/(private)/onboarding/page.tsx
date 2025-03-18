@@ -14,16 +14,7 @@ import { Input } from '@jsx-mail/ui/input';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from '@jsx-mail/ui/sonner';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@jsx-mail/ui/card';
-import { Loader2, ArrowRight, Copy, Check } from 'lucide-react';
-import { Separator } from '@jsx-mail/ui/separator';
+import { Loader2, ArrowRight, Copy, Check, CheckCircle2 } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -57,6 +48,30 @@ import {
   TableBody,
   TableCell,
 } from '@jsx-mail/ui/table';
+
+// Define onboarding steps with titles and descriptions
+const ONBOARDING_STEPS = [
+  {
+    id: 'create_domain',
+    title: 'Create a Domain',
+    description: 'Add a domain that you own to send emails from.',
+  },
+  {
+    id: 'verify_domain',
+    title: 'Verify Domain',
+    description: 'Verify ownership of your domain by adding DNS records.',
+  },
+  {
+    id: 'create_sender',
+    title: 'Create a Sender',
+    description: 'Create a sender to send emails from.',
+  },
+  {
+    id: 'send_test_email',
+    title: 'Send a Test Email',
+    description: 'Send a test email to verify everything is set up correctly.',
+  },
+];
 
 const domainSchema = z.object({
   domain: z
@@ -100,6 +115,14 @@ export default function OnboardingPage() {
     return null;
   }
 
+  // Helper function to determine if a step is completed
+  const isStepCompleted = (stepId: string) => {
+    const stepOrder = ONBOARDING_STEPS.map((s) => s.id);
+    const currentStepIndex = stepOrder.indexOf(user.onboardingStep);
+    const stepIndex = stepOrder.indexOf(stepId);
+    return stepIndex < currentStepIndex;
+  };
+
   return (
     <Container loggedHeaderNoActions>
       <div className="flex flex-col gap-8 max-w-3xl mx-auto">
@@ -111,38 +134,79 @@ export default function OnboardingPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div
-            className={`h-8 w-8 rounded-full flex items-center justify-center ${user.onboardingStep === 'create_domain' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
-          >
-            1
-          </div>
-          <Separator className="flex-1" />
-          <div
-            className={`h-8 w-8 rounded-full flex items-center justify-center ${user.onboardingStep === 'verify_domain' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
-          >
-            2
-          </div>
-          <Separator className="flex-1" />
-          <div
-            className={`h-8 w-8 rounded-full flex items-center justify-center ${user.onboardingStep === 'create_sender' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
-          >
-            3
-          </div>
-          <Separator className="flex-1" />
-          <div
-            className={`h-8 w-8 rounded-full flex items-center justify-center ${user.onboardingStep === 'send_test_email' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}
-          >
-            4
-          </div>
-        </div>
+        <div className="relative flex flex-col">
+          {/* Timeline vertical line */}
+          <div className="absolute left-4 top-9 bottom-3 w-[1px] bg-border" />
 
-        {user.onboardingStep === 'create_domain' && (
-          <CreateDomainStep onSkip={() => updateOnboarding('create_sender')} />
-        )}
-        {user.onboardingStep === 'verify_domain' && <VerifyDomainStep />}
-        {user.onboardingStep === 'create_sender' && <CreateSenderStep />}
-        {user.onboardingStep === 'send_test_email' && <SendTestEmailStep />}
+          {ONBOARDING_STEPS.map((step, index) => {
+            const isActive = user.onboardingStep === step.id;
+            const isCompleted = isStepCompleted(step.id);
+
+            return (
+              <div key={step.id} className="relative z-10 flex flex-col mb-5">
+                {/* Step indicator and title row */}
+                <div className="flex items-start gap-6 mb-2">
+                  <div
+                    className={cn(
+                      'flex items-center justify-center rounded-full w-8 h-8 mt-1',
+                      isActive
+                        ? 'bg-primary text-primary-foreground ring-4 ring-primary/20'
+                        : isCompleted
+                          ? 'bg-green-500 text-white'
+                          : 'bg-muted text-muted-foreground',
+                    )}
+                  >
+                    {isCompleted ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <span>{index + 1}</span>
+                    )}
+                  </div>
+
+                  <div className="flex-1">
+                    <div className="flex items-center">
+                      <h3
+                        className={cn(
+                          'font-medium text-lg',
+                          isActive
+                            ? 'text-foreground'
+                            : isCompleted
+                              ? 'text-foreground'
+                              : 'text-muted-foreground',
+                        )}
+                      >
+                        {step.title}
+                      </h3>
+                      {isCompleted && (
+                        <CheckCircle2 className="h-5 w-5 ml-2 text-green-500" />
+                      )}
+                    </div>
+
+                    {!isActive && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {step.description}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Content area (only for active step) */}
+                {isActive && (
+                  <div className="ml-[3.5rem] bg-card border rounded-lg p-5 mb-5">
+                    {step.id === 'create_domain' && (
+                      <CreateDomainStep
+                        onSkip={() => updateOnboarding('create_sender')}
+                      />
+                    )}
+                    {step.id === 'verify_domain' && <VerifyDomainStep />}
+                    {step.id === 'create_sender' && <CreateSenderStep />}
+                    {step.id === 'send_test_email' && <SendTestEmailStep />}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </Container>
   );
@@ -169,60 +233,51 @@ function CreateDomainStep({ onSkip }: { onSkip: () => void }) {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Create a Domain</CardTitle>
-        <CardDescription>
-          Add a domain that you own to send emails from. This domain will be
-          used to verify your identity.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="domain"
-              render={({
-                field,
-              }: {
-                field: ControllerRenderProps<{ domain: string }, 'domain'>;
-              }) => (
-                <FormItem>
-                  <FormLabel>Domain Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="example.com" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Enter a domain that you own. You&apos;ll need to verify
-                    ownership in the next step.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
+    <div className="space-y-4">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="domain"
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<{ domain: string }, 'domain'>;
+            }) => (
+              <FormItem>
+                <FormLabel>Domain Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="example.com" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Enter a domain that you own. You&apos;ll need to verify
+                  ownership in the next step.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex justify-between pt-2">
+            <Button variant="outline" type="button" onClick={onSkip}>
+              Skip domain creation
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  Continue
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
               )}
-            />
-            <div className="flex justify-between pt-2">
-              <Button variant="outline" type="button" onClick={onSkip}>
-                Skip domain creation
-              </Button>
-              <Button type="submit" disabled={isPending}>
-                {isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  <>
-                    Continue
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 }
 
@@ -260,109 +315,88 @@ function VerifyDomainStep() {
 
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Verify Domain</CardTitle>
-          <CardDescription>Loading your domains...</CardDescription>
-        </CardHeader>
-        <CardContent className="flex justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </CardContent>
-      </Card>
+      <div className="flex justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
     );
   }
 
   if (!domains || domains.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Verify Domain</CardTitle>
-          <CardDescription>
-            No domains found. Please create a domain first.
-          </CardDescription>
-        </CardHeader>
-        <CardFooter>
-          <Button onClick={() => updateOnboarding('create_domain')}>
-            Go Back
-          </Button>
-        </CardFooter>
-      </Card>
+      <div className="space-y-4">
+        <p>No domains found. Please create a domain first.</p>
+        <Button onClick={() => updateOnboarding('create_domain')}>
+          Go Back
+        </Button>
+      </div>
     );
   }
 
   const domain = domains.find((d) => d.id === selectedDomain);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Verify Domain</CardTitle>
-        <CardDescription>
-          Verify ownership of your domain by adding DNS records.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {domain && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <p className="font-medium">Records for {domain.name}</p>
-              <div
-                className={cn(
-                  'text-xs flex items-center gap-2',
-                  verificationData?.status === 'pending' && 'animate-pulse',
-                )}
-              >
-                <Loader2 className="size-4 animate-spin" />
-                <DomainStatus domain={domain} />
-              </div>
-            </div>
-
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Value</TableHead>
-                  <TableHead>Copy</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {domain.dnsRecords.map((record) => (
-                  <TableRow key={record.id}>
-                    <TableCell>{record.type}</TableCell>
-                    <TableCell>{record.name}</TableCell>
-                    <TableCell className="max-w-[200px] truncate">
-                      {record.value}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleCopy(record.value)}
-                      >
-                        {isCopied ? (
-                          <Check className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <Copy className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            <div className="flex justify-end">
-              <Button
-                variant="outline"
-                onClick={() => updateOnboarding('create_sender')}
-              >
-                Skip Verification
-              </Button>
+    <div className="space-y-4">
+      {domain && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <p className="font-medium">Records for {domain.name}</p>
+            <div
+              className={cn(
+                'text-xs flex items-center gap-2',
+                verificationData?.status === 'pending' && 'animate-pulse',
+              )}
+            >
+              <Loader2 className="size-4 animate-spin" />
+              <DomainStatus domain={domain} />
             </div>
           </div>
-        )}
-      </CardContent>
-    </Card>
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Type</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Value</TableHead>
+                <TableHead>Copy</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {domain.dnsRecords.map((record) => (
+                <TableRow key={record.id}>
+                  <TableCell>{record.type}</TableCell>
+                  <TableCell>{record.name}</TableCell>
+                  <TableCell className="max-w-[200px] truncate">
+                    {record.value}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleCopy(record.value)}
+                    >
+                      {isCopied ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              onClick={() => updateOnboarding('create_sender')}
+            >
+              Skip Verification
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -440,132 +474,123 @@ function CreateSenderStep() {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Create a Sender</CardTitle>
-        <CardDescription>
-          Create a sender to send emails from. This will be the &quot;From&quot;
-          address in your emails.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="domainName"
-              render={({
-                field,
-              }: {
-                field: ControllerRenderProps<
-                  { name: string; username: string; domainName: string },
-                  'domainName'
-                >;
-              }) => (
-                <FormItem>
-                  <FormLabel>Domain</FormLabel>
-                  <Select
-                    disabled={
-                      isLoadingDomains || !domains || domains.length === 0
-                    }
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a domain" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {domains?.map((domain) => (
-                        <SelectItem key={domain.id} value={domain.name}>
-                          {domain.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Select a verified domain for your sender.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="name"
-              render={({
-                field,
-              }: {
-                field: ControllerRenderProps<
-                  { name: string; username: string; domainName: string },
-                  'name'
-                >;
-              }) => (
-                <FormItem>
-                  <FormLabel>Sender Name</FormLabel>
+    <div className="space-y-4">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="domainName"
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                { name: string; username: string; domainName: string },
+                'domainName'
+              >;
+            }) => (
+              <FormItem>
+                <FormLabel>Domain</FormLabel>
+                <Select
+                  disabled={
+                    isLoadingDomains || !domains || domains.length === 0
+                  }
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a domain" />
+                    </SelectTrigger>
                   </FormControl>
-                  <FormDescription>
-                    This name will appear as the sender name in emails.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                  <SelectContent>
+                    {domains?.map((domain) => (
+                      <SelectItem key={domain.id} value={domain.name}>
+                        {domain.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  Select a verified domain for your sender.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="username"
-              render={({
-                field,
-              }: {
-                field: ControllerRenderProps<
-                  { name: string; username: string; domainName: string },
-                  'username'
-                >;
-              }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <div className="flex items-center w-full">
-                      <Input
-                        {...field}
-                        placeholder="username"
-                        className="rounded-r-none w-full"
-                      />
-                      <div className="bg-zinc-900 h-12 px-3 py-2 rounded-r-md flex items-center text-sm">
-                        @{form.watch('domainName')}
-                      </div>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                { name: string; username: string; domainName: string },
+                'name'
+              >;
+            }) => (
+              <FormItem>
+                <FormLabel>Sender Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="John Doe" {...field} />
+                </FormControl>
+                <FormDescription>
+                  This name will appear as the sender name in emails.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="username"
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                { name: string; username: string; domainName: string },
+                'username'
+              >;
+            }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <div className="flex items-center w-full">
+                    <Input
+                      {...field}
+                      placeholder="username"
+                      className="rounded-r-none w-full"
+                    />
+                    <div className="bg-zinc-900 h-12 px-3 py-2 rounded-r-md flex items-center text-sm">
+                      @{form.watch('domainName')}
                     </div>
-                  </FormControl>
-                  <FormDescription>
-                    This will be the username part of your email address.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                  </div>
+                </FormControl>
+                <FormDescription>
+                  This will be the username part of your email address.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <Button type="submit" className="w-full mt-4">
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
-                </>
-              ) : (
-                <>
-                  Create Sender
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </>
-              )}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+          <Button type="submit" className="w-full mt-4">
+            {isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              <>
+                Create Sender
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 }
 
@@ -683,163 +708,138 @@ function SendTestEmailStep() {
 
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Send a Test Email</CardTitle>
-          <CardDescription>Loading your senders...</CardDescription>
-        </CardHeader>
-        <CardContent className="flex justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </CardContent>
-      </Card>
+      <div className="flex justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
     );
   }
 
   if (!senders || senders.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Send a Test Email</CardTitle>
-          <CardDescription>
-            No senders found. Please create a sender first.
-          </CardDescription>
-        </CardHeader>
-        <CardFooter>
-          <Button onClick={() => updateOnboarding('create_sender')}>
-            Go Back
-          </Button>
-        </CardFooter>
-      </Card>
+      <div className="space-y-4">
+        <p>No senders found. Please create a sender first.</p>
+        <Button onClick={() => updateOnboarding('create_sender')}>
+          Go Back
+        </Button>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Send a Test Email</CardTitle>
-        <CardDescription>
-          Send a test email to verify that everything is set up correctly.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <Tabs
-          defaultValue="send"
-          value={activeTab}
-          onValueChange={setActiveTab}
-        >
-          <TabsList className="grid grid-cols-3 mb-4 w-full">
-            <TabsTrigger value="send">Send Email</TabsTrigger>
-            <TabsTrigger value="api">API Example</TabsTrigger>
-            <TabsTrigger value="preview">Preview</TabsTrigger>
-          </TabsList>
+    <div className="space-y-6">
+      <Tabs defaultValue="send" value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid grid-cols-3 mb-4 w-full">
+          <TabsTrigger value="send">Send Email</TabsTrigger>
+          <TabsTrigger value="api">API Example</TabsTrigger>
+          <TabsTrigger value="preview">Preview</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="send" className="space-y-4">
-            <Form {...emailForm}>
-              <form className="space-y-4">
-                <FormField
-                  control={emailForm.control}
-                  name="recipientEmail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Recipient Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="Enter your email address"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        We&apos;ll send a test email to this address.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex flex-col gap-2">
-                  <Button
-                    type="button"
-                    onClick={handleSendTestEmail}
-                    disabled={isSending || !emailForm.formState.isValid}
-                    className="w-full"
-                  >
-                    {isSending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Sending...
-                      </>
-                    ) : (
-                      <>
-                        Send Test Email
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </TabsContent>
-
-          <TabsContent value="preview">
-            <div className="border bg-white rounded-md p-4 overflow-auto max-h-[400px]">
-              <div
-                dangerouslySetInnerHTML={{ __html: getEmailHtml(senders[0]) }}
+        <TabsContent value="send" className="space-y-4">
+          <Form {...emailForm}>
+            <form className="space-y-4">
+              <FormField
+                control={emailForm.control}
+                name="recipientEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Recipient Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="Enter your email address"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      We&apos;ll send a test email to this address.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-          </TabsContent>
 
-          <TabsContent value="api">
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Here&apos;s how to send emails using our API. You can use this
-                example to integrate email sending into your applications.
-              </p>
-
-              <div className="relative">
-                <pre className="bg-zinc-900 text-zinc-100 p-4 rounded-xl overflow-x-auto text-xs">
-                  <code>
-                    {getApiExample(
-                      senders[0],
-                      emailForm.getValues().recipientEmail,
-                    )}
-                  </code>
-                </pre>
+              <div className="flex flex-col gap-2">
                 <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-2 right-2"
-                  onClick={() =>
-                    handleCopy(
-                      getApiExample(
-                        senders[0],
-                        emailForm.getValues().recipientEmail,
-                      ),
-                    )
-                  }
+                  type="button"
+                  onClick={handleSendTestEmail}
+                  disabled={isSending || !emailForm.formState.isValid}
+                  className="w-full"
                 >
-                  {isCopied ? (
-                    <Check className="h-4 w-4" />
+                  {isSending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending...
+                    </>
                   ) : (
-                    <Copy className="h-4 w-4" />
+                    <>
+                      Send Test Email
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
                   )}
                 </Button>
               </div>
+            </form>
+          </Form>
+        </TabsContent>
 
-              <p className="text-xs text-muted-foreground mt-2">
-                To use in production, replace the Authorization header with your
-                actual API key from the Account settings. The value{' '}
-                <code>{currentToken?.slice(0, 10)}...</code> is a temporary
-                token for the onboarding process.
-              </p>
+        <TabsContent value="preview">
+          <div className="border bg-white rounded-md p-4 overflow-auto max-h-[400px]">
+            <div
+              dangerouslySetInnerHTML={{ __html: getEmailHtml(senders[0]) }}
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="api">
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Here&apos;s how to send emails using our API. You can use this
+              example to integrate email sending into your applications.
+            </p>
+
+            <div className="relative">
+              <pre className="bg-zinc-900 text-zinc-100 p-4 rounded-xl overflow-x-auto text-xs">
+                <code>
+                  {getApiExample(
+                    senders[0],
+                    emailForm.getValues().recipientEmail,
+                  )}
+                </code>
+              </pre>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-2 right-2"
+                onClick={() =>
+                  handleCopy(
+                    getApiExample(
+                      senders[0],
+                      emailForm.getValues().recipientEmail,
+                    ),
+                  )
+                }
+              >
+                {isCopied ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </Button>
             </div>
-          </TabsContent>
-        </Tabs>
 
-        <Button variant="outline" onClick={handleSkip} className="w-full">
-          Skip & Complete Onboarding
-        </Button>
-      </CardContent>
-    </Card>
+            <p className="text-xs text-muted-foreground mt-2">
+              To use in production, replace the Authorization header with your
+              actual API key from the Account settings. The value{' '}
+              <code>{currentToken?.slice(0, 10)}...</code> is a temporary token
+              for the onboarding process.
+            </p>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <Button variant="outline" onClick={handleSkip} className="w-full">
+        Skip & Complete Onboarding
+      </Button>
+    </div>
   );
 }
