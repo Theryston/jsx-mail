@@ -162,4 +162,19 @@ export const PERMISSIONS: {
     value: 'other:impersonate-user',
     description: 'Can impersonate a user',
   },
+  SELF_CREATE_CONTACT_GROUP: {
+    title: 'Self Create Contact Group',
+    value: 'self:create-contact-group',
+    description: 'Can create a contact group for itself',
+  },
+  SELF_LIST_CONTACT_GROUPS: {
+    title: 'Self List Contact Groups',
+    value: 'self:list-contact-groups',
+    description: 'Can list contact groups for itself',
+  },
+  SELF_DELETE_CONTACT_GROUP: {
+    title: 'Self Delete Contact Group',
+    value: 'self:delete-contact-group',
+    description: 'Can delete a contact group for itself',
+  },
 };

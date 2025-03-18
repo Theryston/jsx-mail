@@ -75,6 +75,7 @@ model User {
   userBetaPermissions UserBetaPermission[]
   sessions            Session[]            @relation("Session")
   impersonatedBy      Session[]            @relation("ImpersonatedBy")
+  contactGroups       ContactGroup[]
 
   @@map("users")
 }
@@ -315,4 +316,33 @@ model Checkout {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("checkouts")
+}
+
+model ContactGroup {
+  id        String    @id @default(uuid())
+  name      String
+  userId    String    @map("user_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  contacts Contact[]
+
+  @@map("contact_groups")
+}
+
+model Contact {
+  id             String    @id @default(uuid())
+  email          String
+  name           String
+  contactGroupId String    @map("contact_group_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  contactGroup ContactGroup @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
+
+  @@map("contacts")
 }
