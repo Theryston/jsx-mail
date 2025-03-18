@@ -135,20 +135,26 @@ export default function OnboardingPage() {
         </div>
 
         <div className="relative flex flex-col">
-          {/* Timeline vertical line */}
-          <div className="absolute left-4 top-9 bottom-3 w-[1px] bg-border" />
-
           {ONBOARDING_STEPS.map((step, index) => {
             const isActive = user.onboardingStep === step.id;
             const isCompleted = isStepCompleted(step.id);
+            const isLast = index === ONBOARDING_STEPS.length - 1;
 
             return (
               <div key={step.id} className="relative z-10 flex flex-col mb-5">
+                {/* Vertical connection line (only for non-last items) */}
+                {!isLast && (
+                  <div
+                    className="absolute left-4 top-10 w-[1px] bg-border"
+                    style={{ height: 'calc(100% - 1rem)' }}
+                  />
+                )}
+
                 {/* Step indicator and title row */}
                 <div className="flex items-start gap-6 mb-2">
                   <div
                     className={cn(
-                      'flex items-center justify-center rounded-full w-8 h-8 mt-1',
+                      'flex items-center justify-center rounded-full w-8 h-8 mt-1 z-10 bg-background',
                       isActive
                         ? 'bg-primary text-primary-foreground ring-4 ring-primary/20'
                         : isCompleted
