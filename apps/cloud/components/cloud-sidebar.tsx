@@ -24,6 +24,7 @@ import {
   BookOpen,
   UserIcon,
   Shield,
+  Key,
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@jsx-mail/ui/lib/utils';
@@ -58,6 +59,11 @@ export const ITEMS = [
     label: 'Senders',
     href: '/senders',
     icon: Send,
+  },
+  {
+    label: 'API Keys',
+    href: '/account/api-keys',
+    icon: Key,
   },
   {
     label: 'Files',

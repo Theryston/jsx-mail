@@ -22,10 +22,54 @@ import { Skeleton } from '@jsx-mail/ui/skeleton';
 import { useRouter } from 'next/navigation';
 
 export function Sessions() {
-  const { data: sessions, isPending } = useSessions();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { isPending } = useSessions();
+
+  if (isPending) {
+    return (
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Sessions</CardTitle>
+          <Skeleton className="h-9 w-9" />
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-[300px] w-full" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Sessions</CardTitle>
+          <Button size="sm" onClick={() => setIsCreateModalOpen(true)}>
+            <PlusIcon className="h-4 w-4 mr-2" />
+            Create Session
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <SessionTable
+            isCreateModalOpen={isCreateModalOpen}
+            setIsCreateModalOpen={setIsCreateModalOpen}
+          />
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
+export function SessionTable({
+  isCreateModalOpen,
+  setIsCreateModalOpen,
+}: {
+  isCreateModalOpen: boolean;
+  setIsCreateModalOpen: (isOpen: boolean) => void;
+}) {
+  const { data: sessions } = useSessions();
   const { mutateAsync: deleteSession } = useDeleteSession();
 
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
@@ -63,92 +107,64 @@ export function Sessions() {
     }
   };
 
-  if (isPending) {
-    return (
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Sessions</CardTitle>
-          <Skeleton className="h-9 w-9" />
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-[300px] w-full" />
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Sessions</CardTitle>
-          <Button size="sm" onClick={() => setIsCreateModalOpen(true)}>
-            <PlusIcon className="h-4 w-4 mr-2" />
-            Create Session
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Permissions</TableHead>
-                <TableHead>Created At</TableHead>
-                <TableHead>Expires At</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sessions && sessions.length > 0 ? (
-                sessions.map((session) => (
-                  <TableRow key={session.id}>
-                    <TableCell>
-                      {session.id}
-                      {session.id === currentSessionId && (
-                        <span className="ml-2 text-xs text-green-500">
-                          (current)
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell>{session.description}</TableCell>
-                    <TableCell>{session.permissions.join(', ')}</TableCell>
-                    <TableCell>
-                      {format(new Date(session.createdAt), 'dd MMM yyyy HH:mm')}
-                    </TableCell>
-                    <TableCell>
-                      {session.expiresAt
-                        ? format(
-                            new Date(session.expiresAt),
-                            'dd MMM yyyy HH:mm',
-                          )
-                        : 'Never'}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeleteSession(session.id)}
-                      >
-                        {session.id === currentSessionId ? 'Logout' : 'Delete'}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={6}
-                    className="text-center py-6 text-muted-foreground"
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>ID</TableHead>
+            <TableHead>Description</TableHead>
+            <TableHead>Permissions</TableHead>
+            <TableHead>Created At</TableHead>
+            <TableHead>Expires At</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {sessions && sessions.length > 0 ? (
+            sessions.map((session) => (
+              <TableRow key={session.id}>
+                <TableCell>
+                  {session.id}
+                  {session.id === currentSessionId && (
+                    <span className="ml-2 text-xs text-green-500">
+                      (current)
+                    </span>
+                  )}
+                </TableCell>
+                <TableCell>{session.description}</TableCell>
+                <TableCell>{session.permissions.join(', ')}</TableCell>
+                <TableCell>
+                  {format(new Date(session.createdAt), 'dd MMM yyyy HH:mm')}
+                </TableCell>
+                <TableCell>
+                  {session.expiresAt
+                    ? format(new Date(session.expiresAt), 'dd MMM yyyy HH:mm')
+                    : 'Never'}
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDeleteSession(session.id)}
                   >
-                    No sessions found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                    {session.id === currentSessionId ? 'Logout' : 'Delete'}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={6}
+                className="text-center py-6 text-muted-foreground"
+              >
+                No sessions found
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
 
       <CreateSessionModal
         isOpen={isCreateModalOpen}
