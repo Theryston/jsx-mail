@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container } from '@/components/container';
 import { Button } from '@jsx-mail/ui/button';
@@ -8,8 +8,7 @@ import { useParams } from 'next/navigation';
 import { useUploadFile } from '@/hooks/file';
 import { useCreateContactImport } from '@/hooks/contact-group';
 import { toast } from '@jsx-mail/ui/sonner';
-import { ArrowLeft, FileUp, MoveRight } from 'lucide-react';
-import { Input } from '@jsx-mail/ui/input';
+import { ArrowLeft, FileUp, Import, MoveRight } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -25,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from '@jsx-mail/ui/table';
+import { useDropzone } from 'react-dropzone';
 
 enum ImportSteps {
   UPLOAD = 'upload',
@@ -59,6 +59,11 @@ export default function ImportContactsPage() {
   const [step, setStep] = useState<ImportSteps>(ImportSteps.UPLOAD);
   const [file, setFile] = useState<File | null>(null);
   const [uploadedFileId, setUploadedFileId] = useState<string | null>(null);
+  const { getRootProps, isDragActive } = useDropzone({
+    onDrop: (files) => setFile(files[0]),
+    accept: { csv: ['*'] },
+    multiple: false,
+  });
   const [csvData, setCSVData] = useState<{
     headers: string[];
     rows: string[][];
@@ -71,12 +76,7 @@ export default function ImportContactsPage() {
   const { mutateAsync: uploadFile, isPending: isUploading } = useUploadFile();
   const { mutateAsync: createContactImport, isPending: isCreatingImport } =
     useCreateContactImport(id);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
-  };
+  const inputFileRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async () => {
     if (!file) {
@@ -230,20 +230,30 @@ export default function ImportContactsPage() {
 
         {step === ImportSteps.UPLOAD ? (
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-700 rounded-md p-8">
+            <input
+              type="file"
+              accept="csv"
+              className="hidden"
+              id="upload-file-input"
+              onChange={(e) => {
+                if (e.target.files?.[0]) setFile(e.target.files?.[0]);
+              }}
+              ref={inputFileRef}
+            />
+            <label
+              htmlFor="upload-file-input"
+              className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-700 rounded-md p-8 cursor-pointer"
+              {...getRootProps()}
+            >
               <FileUp className="size-12 text-zinc-500 mb-4" />
-              <p className="text-sm text-zinc-400 mb-4">
-                Select a CSV file containing your contacts
+              <p className="text-xs text-zinc-400 mb-4 text-center">
+                {isDragActive
+                  ? 'Drop your CSV file here'
+                  : 'Click here or drag and drop your CSV file'}
               </p>
-              <Input
-                type="file"
-                accept=".csv"
-                onChange={handleFileChange}
-                className="max-w-xs"
-              />
-            </div>
+            </label>
             {file && (
-              <p className="text-sm text-zinc-400 text-center">
+              <p className="text-xs text-zinc-400 text-center">
                 Selected file: {file.name}
               </p>
             )}
@@ -333,16 +343,15 @@ export default function ImportContactsPage() {
               disabled={!file || isUploading || isProcessing}
             >
               {isUploading || isProcessing ? 'Processing...' : 'Continue'}
-              <MoveRight className="ml-2 size-4" />
+              <MoveRight className="size-4" />
             </Button>
           ) : (
             <Button
               onClick={handleImport}
               disabled={!getEmailColumn() || isCreatingImport || isProcessing}
             >
-              {isCreatingImport || isProcessing
-                ? 'Importing...'
-                : 'Import Contacts'}
+              {isCreatingImport || isProcessing ? 'Importing...' : 'Import'}
+              <Import className="size-4" />
             </Button>
           )}
         </div>

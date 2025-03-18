@@ -90,6 +90,9 @@ export class BulkSendingProcessor extends WorkerHost {
           name = null;
         }
 
+        email = email?.trim()?.toLowerCase();
+        name = name?.trim()?.toLowerCase();
+
         if (!email) {
           await this.prisma.contactImportFailure.create({
             data: {
