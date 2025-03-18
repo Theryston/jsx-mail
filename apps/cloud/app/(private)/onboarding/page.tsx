@@ -31,7 +31,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@jsx-mail/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@jsx-mail/ui/tabs';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -47,6 +46,7 @@ import {
   TableBody,
   TableCell,
 } from '@jsx-mail/ui/table';
+import Link from 'next/link';
 
 // Define onboarding steps with titles and descriptions
 const ONBOARDING_STEPS = [
@@ -596,9 +596,9 @@ function SendTestEmailStep() {
   const { mutateAsync: sendEmail, isPending: isSending } = useSendEmail();
   const router = useRouter();
   const { data: user } = useMe();
-  const [activeTab, setActiveTab] = useState('send');
   const [isCopied, setIsCopied] = useState(false);
   const [currentToken, setCurrentToken] = useState<string | null>(null);
+  const [hasSentTestEmail, setHasSentTestEmail] = useState(false);
 
   const emailForm = useForm({
     defaultValues: {
@@ -632,7 +632,7 @@ function SendTestEmailStep() {
         <h1 style="color: #0070f3; margin-bottom: 20px;">Welcome to JSX Mail!</h1>
         <p>Hello${user ? ` ${user.name}` : ''},</p>
         <p>This is a test email sent from your new JSX Mail account. If you're receiving this, your email setup is working correctly!</p>
-        <p>You can now start sending emails programmatically through our API or using the JSX Mail framework.</p>
+        <p>You can now start sending emails programmatically through our API (<a href="https://docs.jsxmail.org/api-reference/endpoint/sender/send" style="color: #0070f3; text-decoration: none;">docs</a>) or using the JSX Mail framework (<a href="https://docs.jsxmail.org/framework/learning/getting-started" style="color: #0070f3; text-decoration: none;">docs</a>)</p>
         <div style="margin: 30px 0; padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
           <p style="margin: 0; font-weight: bold;">Your sender address:</p>
           <p style="margin: 5px 0 0; color: #0070f3;">${sender.email}</p>
@@ -684,9 +684,10 @@ function SendTestEmailStep() {
         sender: sender.email,
       });
 
-      await updateOnboarding('completed');
-      toast.success('Test email sent successfully');
-      router.push('/');
+      toast.success(
+        `Test email sent successfully! Check your inbox at ${emailForm.getValues().recipientEmail}`,
+      );
+      setHasSentTestEmail(true);
     } catch (error) {
       toast.error('Failed to send test email');
     }
@@ -728,114 +729,97 @@ function SendTestEmailStep() {
 
   return (
     <div className="space-y-6">
-      <Form {...emailForm}>
-        <div className="space-y-4">
-          <FormField
-            control={emailForm.control}
-            name="recipientEmail"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Recipient Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="Enter your email address"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  We&apos;ll send a test email to this address.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
+      <form
+        onSubmit={emailForm.handleSubmit(handleSendTestEmail)}
+        className="space-y-2"
+      >
+        <label htmlFor="recipientEmail" className="text-sm font-medium">
+          Send a test email to
+        </label>
+
+        <div className="flex items-center gap-2">
+          <Input
+            type="email"
+            placeholder="Enter your email address"
+            {...emailForm.register('recipientEmail')}
+            id="recipientEmail"
           />
-        </div>
-      </Form>
-
-      <Tabs defaultValue="send" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-3 mb-4 w-full">
-          <TabsTrigger value="send" className="w-full">
-            Send
-          </TabsTrigger>
-          <TabsTrigger value="api" className="w-full">
-            API
-          </TabsTrigger>
-          <TabsTrigger value="preview" className="w-full">
-            Preview
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="send" className="space-y-4">
-          <div className="flex flex-col gap-2">
+          {hasSentTestEmail ? (
+            <div className="h-9 w-9 bg-green-500 rounded-full flex shrink-0 items-center justify-center">
+              <Check className="size-4 text-white" />
+            </div>
+          ) : (
             <Button
-              type="button"
-              onClick={handleSendTestEmail}
+              size="icon"
+              className="h-9 w-9"
+              type="submit"
               disabled={isSending || !isFormValid}
-              className="w-full"
             >
               {isSending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Sending...
-                </>
+                <Loader2 className="size-4 animate-spin" />
               ) : (
-                <>
-                  Send Test Email
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </>
+                <ArrowRight className="size-4" />
               )}
             </Button>
-          </div>
-        </TabsContent>
+          )}
+        </div>
 
-        <TabsContent value="preview">
-          <div className="border bg-white rounded-md p-4 overflow-auto max-h-[400px]">
-            <div
-              dangerouslySetInnerHTML={{ __html: getEmailHtml(senders[0]) }}
-            />
-          </div>
-        </TabsContent>
+        <p className="text-xs text-muted-foreground">
+          {emailForm.formState.errors.recipientEmail?.message ? (
+            <span className="text-red-500">
+              {emailForm.formState.errors.recipientEmail?.message}
+            </span>
+          ) : (
+            "We'll send a test email to this address."
+          )}
+        </p>
+      </form>
 
-        <TabsContent value="api">
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Here&apos;s how to send emails using our API. You can use this
-              example to integrate email sending into your applications.
-            </p>
+      <div className="space-y-4">
+        <p className="text-sm font-medium">Send using API</p>
 
-            <div className="relative">
-              <pre className="bg-zinc-900 text-zinc-100 p-4 rounded-xl overflow-x-auto text-xs">
-                <code>{getApiExample(senders[0], recipientEmail)}</code>
-              </pre>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2"
-                onClick={() =>
-                  handleCopy(getApiExample(senders[0], recipientEmail))
-                }
-              >
-                {isCopied ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
+        <p className="text-sm text-muted-foreground">
+          Here&apos;s how to send emails using our API. You can use this example
+          to integrate email sending into your applications.{' '}
+          <Link
+            href="https://docs.jsxmail.org/api-reference/endpoint/sender/send"
+            className="text-primary"
+            target="_blank"
+          >
+            Learn more
+          </Link>
+        </p>
 
-            <p className="text-xs text-muted-foreground mt-2">
-              To use in production, replace the Authorization header with your
-              actual API key from the Account settings. The value{' '}
-              <code>{currentToken?.slice(0, 10)}...</code> is a temporary token
-              for the onboarding process.
-            </p>
-          </div>
-        </TabsContent>
-      </Tabs>
+        <div className="relative">
+          <pre className="bg-zinc-900 text-zinc-100 p-4 rounded-xl overflow-x-auto text-xs">
+            <code>{getApiExample(senders[0], recipientEmail)}</code>
+          </pre>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-2 right-2"
+            onClick={() =>
+              handleCopy(getApiExample(senders[0], recipientEmail))
+            }
+          >
+            {isCopied ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <Copy className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
 
-      <Button variant="outline" onClick={handleSkip} className="w-full">
-        Skip & Complete Onboarding
+        <p className="text-xs text-muted-foreground mt-2">
+          To use in production, replace the Authorization header with your
+          actual API key from the Account settings. The value{' '}
+          <code>{currentToken?.slice(0, 10)}...</code> is a temporary token for
+          the onboarding process.
+        </p>
+      </div>
+
+      <Button onClick={handleSkip} className="w-full">
+        Complete Onboarding
       </Button>
     </div>
   );
