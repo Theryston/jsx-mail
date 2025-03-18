@@ -92,6 +92,11 @@ export const PERMISSIONS: {
     value: 'self:send-email',
     description: 'Can send emails using your own senders',
   },
+  SELF_SEND_EMAIL_WITH_ATTACHMENTS: {
+    title: 'Self Send Email With Attachments',
+    value: 'self:send-email-with-attachments',
+    description: 'Can send emails with attachments using your own senders',
+  },
   SELF_SESSION_CREATE: {
     title: 'Self Session Create',
     value: 'self:session-create',
@@ -146,5 +151,15 @@ export const PERMISSIONS: {
     title: 'Self Update Onboarding',
     value: 'self:update-onboarding',
     description: 'Can update its own onboarding',
+  },
+  OTHER_GET_USERS: {
+    title: 'Admin Get Users',
+    value: 'other:get-users',
+    description: 'Can get all users',
+  },
+  OTHER_IMPERSONATE_USER: {
+    title: 'Other Impersonate User',
+    value: 'other:impersonate-user',
+    description: 'Can impersonate a user',
   },
 };

@@ -157,3 +157,28 @@ export class UpdateOnboardingDto {
   @IsString()
   onboardingStep: OnboardingStep;
 }
+
+export class GetUsersDto {
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  @Max(100)
+  take?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  page?: number;
+}
+
+export class ImpersonateUserDto {
+  @IsNotEmpty()
+  @IsString()
+  userId: string;
+}

@@ -225,7 +225,7 @@ export default function CloudPage() {
               color="primary"
               variant="flat"
               as={Link}
-              href="https://docs.jsxmail.org/cloud"
+              href="https://docs.jsxmail.org/api-reference/introduction"
               target="_blank"
               fullWidth
               className="font-medium"

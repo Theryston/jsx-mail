@@ -14,7 +14,13 @@ export class CreateSessionService {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(
-    { userId, expirationDate, permissions, description }: CreateSessionData,
+    {
+      userId,
+      expirationDate,
+      permissions,
+      description,
+      impersonateUserId,
+    }: CreateSessionData,
     notAllowedPermission = [
       PERMISSIONS.SELF_EMAIL_VALIDATE.value,
       PERMISSIONS.SELF_RESET_PASSWORD.value,
@@ -89,6 +95,7 @@ export class CreateSessionService {
         expiresAt: expiration ? expiration.toDate() : null,
         permissions,
         description,
+        impersonateUserId,
       },
     });
 

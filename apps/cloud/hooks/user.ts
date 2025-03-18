@@ -5,6 +5,7 @@ import {
   TransactionsPagination,
   User,
   Permission,
+  AdminUsersPagination,
 } from '@/types/user';
 import api from '@/utils/api';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
@@ -15,7 +16,8 @@ export function useSignIn() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => await api.post('/user/auth', data),
+    mutationFn: async (data: { email: string; password: string }) =>
+      await api.post('/user/auth', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['me'] });
     },
@@ -24,7 +26,11 @@ export function useSignIn() {
 
 export function useSignUp() {
   return useMutation({
-    mutationFn: async (data: any) => await api.post('/user', data),
+    mutationFn: async (data: {
+      name: string;
+      email: string;
+      password: string;
+    }) => await api.post('/user', data),
   });
 }
 
@@ -172,5 +178,26 @@ export function useUpdateOnboarding() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['me'] });
     },
+  });
+}
+
+export function useAdminUsers(
+  page: number = 1,
+  search: string = '',
+  take: number = 10,
+) {
+  return useQuery<AdminUsersPagination>({
+    queryKey: ['admin-users', page, search, take],
+    queryFn: () =>
+      api
+        .get(`/user/admin/users?search=${search}&take=${take}&page=${page}`)
+        .then((res) => res.data),
+  });
+}
+
+export function useImpersonateUser() {
+  return useMutation({
+    mutationFn: (data: { userId: string }) =>
+      api.post('/user/admin/users/impersonate', data).then((res) => res.data),
   });
 }

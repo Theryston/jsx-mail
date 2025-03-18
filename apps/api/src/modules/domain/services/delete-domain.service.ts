@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { DeleteEmailIdentityCommand } from '@aws-sdk/client-sesv2';
-import { sesClient } from '../ses';
+import { sesv2Client } from '../ses';
 
 @Injectable()
 export class DeleteDomainService {
@@ -24,7 +24,7 @@ export class DeleteDomainService {
       EmailIdentity: domain.name,
     });
 
-    await sesClient.send(deleteCommand);
+    await sesv2Client.send(deleteCommand);
 
     await this.prisma.domain.update({
       where: {

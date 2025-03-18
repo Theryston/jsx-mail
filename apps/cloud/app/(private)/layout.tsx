@@ -6,6 +6,7 @@ import { SidebarProvider } from '@jsx-mail/ui/sidebar';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Crisp } from 'crisp-sdk-web';
+import { titleCase } from '@/utils/title-case';
 
 export default function PrivateLayout({
   children,
@@ -48,7 +49,16 @@ export default function PrivateLayout({
 
   return (
     <SidebarProvider>
-      <CloudSidebar disabled={me?.onboardingStep !== 'completed'} />
+      <CloudSidebar />
+
+      {me?.session?.impersonateUserId && (
+        <div className="fixed bottom-0 right-0 py-2 px-4 bg-black/70 rounded-tl-xl z-50">
+          <p className="text-white text-sm">
+            Impersonating {titleCase(me.name)}
+          </p>
+        </div>
+      )}
+
       <main className="w-full">{children}</main>
     </SidebarProvider>
   );

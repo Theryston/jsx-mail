@@ -23,6 +23,9 @@ import { UpdateUserService } from './services/update-user.service';
 import { ListMessagesService } from './services/list-messages.service';
 import { MessagesInsightsService } from './services/messages-insights.service';
 import { UpdateOnboardingStepService } from './services/update-onboarding-step.service';
+import { BetaPermissionCheckService } from './services/beta-permission-check.service';
+import { GetUsersService } from './services/get-users.service';
+import { ImpersonateUserService } from './services/impersonate-user.service';
 
 @Module({
   controllers: [UserController],
@@ -48,7 +51,11 @@ import { UpdateOnboardingStepService } from './services/update-onboarding-step.s
     ListMessagesService,
     MessagesInsightsService,
     UpdateOnboardingStepService,
+    BetaPermissionCheckService,
+    GetUsersService,
+    ImpersonateUserService,
   ],
   imports: [EmailModule, SessionModule],
+  exports: [BetaPermissionCheckService],
 })
 export class UserModule {}

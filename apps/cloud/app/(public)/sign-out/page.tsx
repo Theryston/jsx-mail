@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation';
 import { Container } from '@/components/container';
 import { useDeleteSession } from '@/hooks/user';
 import { toast } from '@jsx-mail/ui/sonner';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function SignOut() {
   const [dots, setDots] = useState('');
   const router = useRouter();
   const { mutateAsync: deleteSession } = useDeleteSession();
+  const queryClient = useQueryClient();
 
   const performSignOut = useCallback(async () => {
     try {
@@ -25,6 +27,8 @@ export default function SignOut() {
       }
 
       await deleteSession(sessionId);
+
+      queryClient.removeQueries();
 
       document.cookie = 'token=; path=/; max-age=0;';
       document.cookie = 'sessionId=; path=/; max-age=0;';

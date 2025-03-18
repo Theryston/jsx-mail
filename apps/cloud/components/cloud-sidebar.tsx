@@ -23,6 +23,7 @@ import {
   LogOutIcon,
   BookOpen,
   UserIcon,
+  Shield,
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@jsx-mail/ui/lib/utils';
@@ -70,9 +71,15 @@ export const ITEMS = [
   },
   {
     label: 'Documentation',
-    href: 'https://docs.jsxmail.org',
+    href: 'https://docs.jsxmail.org/api-reference/introduction',
     icon: BookOpen,
     isExternal: true,
+  },
+  {
+    label: 'Admin',
+    href: '/admin',
+    icon: Shield,
+    accessLevel: 'other',
   },
 ];
 
@@ -80,6 +87,13 @@ export function CloudSidebar({ disabled }: { disabled: boolean }) {
   const pathname = usePathname();
   const isMobile = useIsMobile();
   const { data: me } = useMe();
+
+  const items = ITEMS.filter((item) => {
+    if (item.accessLevel === 'other') {
+      return me?.accessLevel === 'other';
+    }
+    return true;
+  });
 
   return (
     <Sidebar
@@ -96,7 +110,7 @@ export function CloudSidebar({ disabled }: { disabled: boolean }) {
         <SidebarGroup>
           <SidebarGroupContent className="mt-8">
             <SidebarMenu className="flex flex-col gap-3">
-              {ITEMS.map((item) => (
+              {items.map((item) => (
                 <SidebarMenuItem key={item.label}>
                   <SidebarMenuButton asChild isActive={pathname === item.href}>
                     <Link

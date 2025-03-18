@@ -15,4 +15,7 @@ export class CreateSessionDto {
 
   @IsOptional()
   expirationDate?: Date;
+
+  @IsOptional()
+  impersonateUserId?: string;
 }

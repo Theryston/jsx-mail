@@ -2,6 +2,7 @@ import { toast } from '@jsx-mail/ui/sonner';
 
 const ALLOWED_DOMAINS = ['localhost'];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function handleRedirectUrl(searchParams: any) {
   let url = '';
   const currentDomain = window.location.hostname;

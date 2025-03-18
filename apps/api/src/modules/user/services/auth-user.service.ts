@@ -30,9 +30,15 @@ export class AuthUserService {
       throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
     }
 
+    let defaultPermissions = [PERMISSIONS.SELF_ADMIN.value];
+
+    if (user.accessLevel === 'other') {
+      defaultPermissions = [PERMISSIONS.OTHER_ADMIN.value];
+    }
+
     const session = await this.createSessionService.execute({
       userId: user.id,
-      permissions: [PERMISSIONS.SELF_ADMIN.value],
+      permissions: defaultPermissions,
       description: 'User authenticated',
       expirationDate: new Date(new Date().getTime() + 1000 * 60 * 30), // 30 minutes
     });

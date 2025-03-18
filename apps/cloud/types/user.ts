@@ -9,17 +9,18 @@ export type User = {
   name: string;
   email: string;
   isEmailVerified: boolean;
-  accessLevel: string;
   onboardingStep:
     | 'create_domain'
     | 'verify_domain'
     | 'create_sender'
     | 'send_test_email'
     | 'completed';
+  accessLevel: 'self' | 'other';
   phone?: string | null;
   isPhoneVerified: boolean;
   birthdate?: Date | null;
   balance: Balance;
+  session: Session | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -30,6 +31,7 @@ export type Session = {
   description: string;
   expiresAt: string | null;
   permissions: string[];
+  impersonateUserId: string | null;
 };
 
 export type MessagesSentByDay = {
@@ -73,4 +75,11 @@ export type Permission = {
   title: string;
   value: string;
   description: string;
+};
+
+export type AdminUsersPagination = {
+  users: User[];
+  totalPages: number;
+  total: number;
+  hasNext: boolean;
 };
