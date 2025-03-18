@@ -31,7 +31,9 @@ export default function middleware(request: NextRequest) {
 
     redirectUrl.pathname = redirectUrl.pathname.replace('/app', '');
 
-    return NextResponse.redirect(redirectUrl);
+    return NextResponse.redirect(redirectUrl, {
+      headers: request.headers,
+    });
   }
 
   const publicRoute = publicRoutes.find((route) => route.path === pathname);
@@ -44,7 +46,9 @@ export default function middleware(request: NextRequest) {
 
     redirectUrl.pathname = REDIRECT_WHEN_NOT_AUTHENTICATED;
 
-    return NextResponse.redirect(redirectUrl);
+    return NextResponse.redirect(redirectUrl, {
+      headers: request.headers,
+    });
   }
 
   if (
@@ -56,12 +60,11 @@ export default function middleware(request: NextRequest) {
 
     redirectUrl.pathname = REDIRECT_WHEN_AUTHENTICATED;
 
-    return NextResponse.redirect(redirectUrl);
+    return NextResponse.redirect(redirectUrl, {
+      headers: request.headers,
+    });
   }
 
-  if (authToken && !publicRoute) {
-    return NextResponse.next();
-  }
-
+  // if (authToken && !publicRoute) return NextResponse.next();
   return NextResponse.next();
 }
