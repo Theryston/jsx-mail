@@ -8,8 +8,16 @@ import { GetContactGroupServiceService } from './services/get-contact-group-serv
 import { ListContactsFromContactGroupService } from './services/list-contacts-from-contact-group.service';
 import { DeleteContactGroupContactService } from './services/delete-contact-group-contact.service';
 import { CreateBulkContactsService } from './services/create-bulk-contacts.service';
+import { BullModule } from '@nestjs/bullmq';
+import { BulkSendingProcessor } from './bulk-sending.processor';
+import { ListContactImportsService } from './services/list-contact-imports.service';
 
 @Module({
+  imports: [
+    BullModule.registerQueue({
+      name: 'contacts',
+    }),
+  ],
   controllers: [BulkSendingController],
   providers: [
     CreateContactsGroupService,
@@ -20,6 +28,8 @@ import { CreateBulkContactsService } from './services/create-bulk-contacts.servi
     ListContactsFromContactGroupService,
     DeleteContactGroupContactService,
     CreateBulkContactsService,
+    BulkSendingProcessor,
+    ListContactImportsService,
   ],
 })
 export class BulkSendingModule {}

@@ -76,6 +76,7 @@ model User {
   sessions            Session[]            @relation("Session")
   impersonatedBy      Session[]            @relation("ImpersonatedBy")
   contactGroups       ContactGroup[]
+  contactImports      ContactImport[]
 
   @@map("users")
 }
@@ -219,7 +220,8 @@ model File {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  messageFiles MessageFile[]
+  messageFiles   MessageFile[]
+  contactImports ContactImport[]
 
   @@map("files")
 }
@@ -328,9 +330,44 @@ model ContactGroup {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  contacts Contact[]
+  contacts       Contact[]
+  contactImports ContactImport[]
 
   @@map("contact_groups")
+}
+
+model ContactImport {
+  id             String    @id @default(uuid())
+  fileId         String    @map("file_id")
+  emailColumn    String    @map("email_column")
+  nameColumn     String    @map("name_column")
+  userId         String    @map("user_id")
+  contactGroupId String    @map("contact_group_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contactGroup ContactGroup @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
+  file         File         @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  failures ContactImportFailure[]
+
+  @@map("contact_imports")
+}
+
+model ContactImportFailure {
+  id              String    @id @default(uuid())
+  contactImportId String    @map("contact_import_id")
+  line            Int?
+  message         String
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+
+  contactImport ContactImport @relation(fields: [contactImportId], references: [id], onDelete: Cascade)
+
+  @@map("contact_import_failures")
 }
 
 model Contact {

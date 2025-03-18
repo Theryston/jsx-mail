@@ -192,4 +192,14 @@ export const PERMISSIONS: {
     value: 'self:delete-contact-group-contacts',
     description: 'Can delete contacts from a contact group for itself',
   },
+  SELF_CREATE_CONTACT_IMPORT: {
+    title: 'Self Create Contact Import',
+    value: 'self:create-contact-import',
+    description: 'Can create a contact import for itself',
+  },
+  SELF_GET_CONTACT_IMPORT: {
+    title: 'Self Get Contact Import',
+    value: 'self:get-contact-import',
+    description: 'Can get a contact import for itself',
+  },
 };

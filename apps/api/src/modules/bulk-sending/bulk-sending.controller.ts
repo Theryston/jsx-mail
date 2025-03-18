@@ -21,6 +21,7 @@ import { GetContactGroupServiceService } from './services/get-contact-group-serv
 import { ListContactsFromContactGroupService } from './services/list-contacts-from-contact-group.service';
 import { DeleteContactGroupContactService } from './services/delete-contact-group-contact.service';
 import { CreateBulkContactsService } from './services/create-bulk-contacts.service';
+import { ListContactImportsService } from './services/list-contact-imports.service';
 
 @Controller('bulk-sending')
 export class BulkSendingController {
@@ -32,6 +33,7 @@ export class BulkSendingController {
     private readonly listContactsFromContactGroupService: ListContactsFromContactGroupService,
     private readonly deleteContactGroupContactService: DeleteContactGroupContactService,
     private readonly createBulkContactsService: CreateBulkContactsService,
+    private readonly listContactImportsService: ListContactImportsService,
   ) {}
 
   @Post('contact-group')
@@ -87,12 +89,18 @@ export class BulkSendingController {
   }
 
   @Post('contact-group/:id/contacts')
-  @Permissions([PERMISSIONS.SELF_ADD_CONTACT_GROUP_CONTACTS.value])
+  @Permissions([PERMISSIONS.SELF_CREATE_CONTACT_IMPORT.value])
   addContactGroupContacts(
     @Param('id') id: string,
     @Body() body: CreateBulkContactsDto,
     @Req() req,
   ) {
     return this.createBulkContactsService.execute(id, body, req.user.id);
+  }
+
+  @Get('contact-import')
+  @Permissions([PERMISSIONS.SELF_GET_CONTACT_IMPORT.value])
+  getContactImport(@Req() req) {
+    return this.listContactImportsService.execute(req.user.id);
   }
 }
