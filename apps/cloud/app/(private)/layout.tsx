@@ -24,12 +24,14 @@ export default function PrivateLayout({
   }, [me]);
 
   useEffect(() => {
-    if (me?.onboardingStep !== 'completed' && pathname !== '/onboarding') {
+    if (!me) return;
+
+    if (me.onboardingStep !== 'completed' && pathname !== '/onboarding') {
       router.push('/onboarding');
       return;
     }
 
-    if (me?.onboardingStep === 'completed' && pathname === '/onboarding') {
+    if (me.onboardingStep === 'completed' && pathname === '/onboarding') {
       router.push('/');
       return;
     }
