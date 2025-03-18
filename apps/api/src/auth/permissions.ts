@@ -187,4 +187,9 @@ export const PERMISSIONS: {
     value: 'self:get-contact-group-contacts',
     description: 'Can get contacts for a contact group for itself',
   },
+  SELF_DELETE_CONTACT_GROUP_CONTACTS: {
+    title: 'Self Delete Contact Group Contacts',
+    value: 'self:delete-contact-group-contacts',
+    description: 'Can delete contacts from a contact group for itself',
+  },
 };
