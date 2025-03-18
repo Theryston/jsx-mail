@@ -35,14 +35,19 @@ export default function PrivateLayout({
     }
   }, [pathname, me?.onboardingStep]);
 
-  if (isPending) return <Loading />;
+  if (isPending) {
+    console.log('isPending');
+    return <Loading />;
+  }
 
   if (!me) {
+    console.log('no me');
     router.push('/sign-in');
     return null;
   }
 
   if (error) {
+    console.log('error');
     router.push('/sign-in');
     return null;
   }

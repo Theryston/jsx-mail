@@ -26,7 +26,7 @@ export default function Auth() {
     document.cookie = `sessionId=${sessionId}; path=/; max-age=604800;`;
     queryClient.removeQueries();
 
-    timer.current = setTimeout(() => router.push(redirect), 1000);
+    router.push(redirect);
   }, [redirect, token, router, sessionId, queryClient]);
 
   useEffect(() => {
