@@ -9,7 +9,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { CreateContactsGroupService } from './services/create-contacts-group.service';
-import { CreateContactGroupDto } from './bulk-sending.dto';
+import {
+  CreateBulkContactsDto,
+  CreateContactGroupDto,
+} from './bulk-sending.dto';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { Permissions } from 'src/auth/permissions.decorator';
 import { ListContactGroupsService } from './services/list-contact-groups.service';
@@ -17,6 +20,7 @@ import { DeleteContactGroupService } from './services/delete-contact-group.servi
 import { GetContactGroupServiceService } from './services/get-contact-group-service.service';
 import { ListContactsFromContactGroupService } from './services/list-contacts-from-contact-group.service';
 import { DeleteContactGroupContactService } from './services/delete-contact-group-contact.service';
+import { CreateBulkContactsService } from './services/create-bulk-contacts.service';
 
 @Controller('bulk-sending')
 export class BulkSendingController {
@@ -27,6 +31,7 @@ export class BulkSendingController {
     private readonly getContactGroupService: GetContactGroupServiceService,
     private readonly listContactsFromContactGroupService: ListContactsFromContactGroupService,
     private readonly deleteContactGroupContactService: DeleteContactGroupContactService,
+    private readonly createBulkContactsService: CreateBulkContactsService,
   ) {}
 
   @Post('contact-group')
@@ -79,5 +84,15 @@ export class BulkSendingController {
       contactId,
       req.user.id,
     );
+  }
+
+  @Post('contact-group/:id/contacts')
+  @Permissions([PERMISSIONS.SELF_ADD_CONTACT_GROUP_CONTACTS.value])
+  addContactGroupContacts(
+    @Param('id') id: string,
+    @Body() body: CreateBulkContactsDto,
+    @Req() req,
+  ) {
+    return this.createBulkContactsService.execute(id, body, req.user.id);
   }
 }

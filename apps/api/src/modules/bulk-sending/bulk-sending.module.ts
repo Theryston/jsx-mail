@@ -7,6 +7,7 @@ import { DeleteContactGroupService } from './services/delete-contact-group.servi
 import { GetContactGroupServiceService } from './services/get-contact-group-service.service';
 import { ListContactsFromContactGroupService } from './services/list-contacts-from-contact-group.service';
 import { DeleteContactGroupContactService } from './services/delete-contact-group-contact.service';
+import { CreateBulkContactsService } from './services/create-bulk-contacts.service';
 
 @Module({
   controllers: [BulkSendingController],
@@ -18,6 +19,7 @@ import { DeleteContactGroupContactService } from './services/delete-contact-grou
     GetContactGroupServiceService,
     ListContactsFromContactGroupService,
     DeleteContactGroupContactService,
+    CreateBulkContactsService,
   ],
 })
 export class BulkSendingModule {}
