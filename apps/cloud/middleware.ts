@@ -60,20 +60,7 @@ export default function middleware(request: NextRequest) {
   }
 
   if (authToken && !publicRoute) {
-    // try {
-    //   const decoded = jwt.verify(
-    //     authToken.value,
-    //     process.env.JWT_SECRET as string,
-    //   );
-    //   if (!decoded) {
-    //     throw new Error('Invalid token');
-    //   }
-    //   return NextResponse.next();
-    // } catch {
-    //   const redirectUrl = request.nextUrl.clone();
-    //   redirectUrl.pathname = REDIRECT_WHEN_NOT_AUTHENTICATED;
-    //   return NextResponse.redirect(redirectUrl);
-    // }
+    return NextResponse.next();
   }
 
   return NextResponse.next();
