@@ -599,6 +599,7 @@ function SendTestEmailStep() {
   const [isCopied, setIsCopied] = useState(false);
   const [currentToken, setCurrentToken] = useState<string | null>(null);
   const [hasSentTestEmail, setHasSentTestEmail] = useState(false);
+  const { data: me } = useMe();
 
   const emailForm = useForm({
     defaultValues: {
@@ -703,6 +704,12 @@ function SendTestEmailStep() {
     }
   };
 
+  useEffect(() => {
+    if (me?.email) {
+      emailForm.setValue('recipientEmail', me.email);
+    }
+  }, [me, emailForm]);
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-8">
@@ -722,10 +729,7 @@ function SendTestEmailStep() {
     );
   }
 
-  // Determine if the email form is valid
-  const isFormValid = emailForm.formState.isValid;
-  const recipientEmail =
-    emailForm.getValues().recipientEmail || 'recipient@example.com';
+  const recipientEmail = emailForm.getValues().recipientEmail;
 
   return (
     <div className="space-y-6">
@@ -753,7 +757,7 @@ function SendTestEmailStep() {
               size="icon"
               className="h-9 w-9"
               type="submit"
-              disabled={isSending || !isFormValid}
+              disabled={isSending}
             >
               {isSending ? (
                 <Loader2 className="size-4 animate-spin" />
