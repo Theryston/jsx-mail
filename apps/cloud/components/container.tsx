@@ -33,22 +33,24 @@ export function Container({
 
 function LoggedHeaderNoActions() {
   return (
-    <header className="w-full px-4 border-b flex items-center justify-between fixed left-0 bg-background z-40 h-16">
-      <CloudLogo imageOnly />
+    <div className="w-full h-16">
+      <header className="w-full px-4 border-b flex items-center justify-between fixed left-0 bg-background z-40 h-16">
+        <CloudLogo imageOnly />
 
-      <Link href="/sign-out" className="hidden md:block">
-        <Button variant="ghost">
-          <LogOutIcon className="size-4" />
-          <span className="text-sm font-medium">Sign out</span>
-        </Button>
-      </Link>
+        <Link href="/sign-out" className="hidden md:block">
+          <Button variant="ghost">
+            <LogOutIcon className="size-4" />
+            <span className="text-sm font-medium">Sign out</span>
+          </Button>
+        </Link>
 
-      <Link href="/sign-out" className="md:hidden">
-        <Button variant="ghost" size="icon">
-          <LogOutIcon className="size-4" />
-        </Button>
-      </Link>
-    </header>
+        <Link href="/sign-out" className="md:hidden">
+          <Button variant="ghost" size="icon">
+            <LogOutIcon className="size-4" />
+          </Button>
+        </Link>
+      </header>
+    </div>
   );
 }
 
@@ -73,7 +75,7 @@ function Header() {
 
   return (
     <div className="h-16">
-      <header className="w-full px-4 border-b flex items-center justify-between fixed left-0 bg-background z-40">
+      <header className="w-full px-4 border-b flex items-center justify-between fixed left-0 bg-background z-40 h-16">
         <div className="md:hidden">
           <CloudLogo />
         </div>
