@@ -24,6 +24,7 @@ import { DeleteContactGroupContactService } from './services/delete-contact-grou
 import { CreateBulkContactsService } from './services/create-bulk-contacts.service';
 import { ListContactImportsService } from './services/list-contact-imports.service';
 import { MarkContactImportsAsReadService } from './services/mark-contact-imports-as-read.service';
+import { ListContactImportFailuresSService } from './services/list-contact-import-failures-s.service';
 
 @Controller('bulk-sending')
 export class BulkSendingController {
@@ -37,6 +38,7 @@ export class BulkSendingController {
     private readonly createBulkContactsService: CreateBulkContactsService,
     private readonly listContactImportsService: ListContactImportsService,
     private readonly markContactImportAsReadService: MarkContactImportsAsReadService,
+    private readonly listContactImportFailuresService: ListContactImportFailuresSService,
   ) {}
 
   @Post('contact-group')
@@ -105,6 +107,20 @@ export class BulkSendingController {
   @Permissions([PERMISSIONS.SELF_GET_CONTACT_IMPORT.value])
   getContactImport(@Param('id') id: string, @Req() req) {
     return this.listContactImportsService.execute(id, req.user.id);
+  }
+
+  @Get('contact-import/:contactImportId/failures')
+  @Permissions([PERMISSIONS.SELF_GET_CONTACT_IMPORT_FAILURES.value])
+  getContactImportFailures(
+    @Param('contactImportId') contactImportId: string,
+    @Req() req,
+    @Query() query: any,
+  ) {
+    return this.listContactImportFailuresService.execute(
+      contactImportId,
+      req.user.id,
+      query,
+    );
   }
 
   @Put('contact-import/:contactImportId/read')

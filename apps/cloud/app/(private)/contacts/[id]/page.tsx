@@ -2,13 +2,14 @@
 
 import { Container } from '@/components/container';
 import { Button } from '@jsx-mail/ui/button';
-import { PlusIcon, FileUpIcon, UserPlusIcon } from 'lucide-react';
+import { PlusIcon, FileUpIcon, UserPlusIcon, Send } from 'lucide-react';
 import { use, useEffect, useState } from 'react';
 import {
   useGetContactGroup,
   useContactGroupContacts,
   useContactImports,
   useMarkContactImportAsRead,
+  useContactImportFailures,
 } from '@/hooks/contact-group';
 import { Skeleton } from '@jsx-mail/ui/skeleton';
 import { useRouter } from 'next/navigation';
@@ -29,6 +30,7 @@ import { cn } from '@jsx-mail/ui/lib/utils';
 import { DialogContent, DialogTitle, DialogHeader } from '@jsx-mail/ui/dialog';
 import { Dialog } from '@jsx-mail/ui/dialog';
 import { useQueryClient } from '@tanstack/react-query';
+import { useDebounce } from '@/hooks/use-debounce';
 
 export default function ContactGroupPage({
   params,
@@ -41,11 +43,12 @@ export default function ContactGroupPage({
     useState(false);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const searchDebounced = useDebounce(search, 500);
 
   const { data: contactGroup, isPending: isContactGroupPending } =
     useGetContactGroup(id);
   const { data: contactsPagination, isPending: isContactsPending } =
-    useContactGroupContacts(id, page, search);
+    useContactGroupContacts(id, page, searchDebounced);
   const [processingImport, setProcessingImport] =
     useState<ContactImport | null>(null);
   const [notReadFinalStatusImports, setNotReadFinalStatusImports] = useState<
@@ -98,14 +101,6 @@ export default function ContactGroupPage({
     setPage(1);
   };
 
-  const handleImportCSV = () => {
-    router.push(`/contacts/${id}/import`);
-  };
-
-  const handleAddManually = () => {
-    setIsAddContactManuallyOpen(true);
-  };
-
   if (isContactGroupPending) {
     return (
       <Container header>
@@ -136,18 +131,18 @@ export default function ContactGroupPage({
             </div>
 
             <div className="md:hidden">
-              <AddContactButton
-                handleAddManually={handleAddManually}
-                handleImportCSV={handleImportCSV}
+              <ContactButtons
+                id={id}
+                setIsAddContactManuallyOpen={setIsAddContactManuallyOpen}
               />
             </div>
           </div>
 
           <div className="flex gap-2 items-center">
             <div className="hidden md:block">
-              <AddContactButton
-                handleAddManually={handleAddManually}
-                handleImportCSV={handleImportCSV}
+              <ContactButtons
+                id={id}
+                setIsAddContactManuallyOpen={setIsAddContactManuallyOpen}
               />
             </div>
 
@@ -238,9 +233,15 @@ function ImportsBanner({ imports }: { imports: ContactImport[] }) {
               </p>
             )}
 
-            {importItem.failures.length > 0 && (
+            {importItem._count.failures > 0 && (
               <p className="text-xs">
-                {importItem.failures.length} failures found.
+                {importItem._count.failures} failures found.
+              </p>
+            )}
+
+            {importItem._count.contacts > 0 && (
+              <p className="text-xs">
+                {importItem._count.contacts} contacts imported.
               </p>
             )}
 
@@ -273,7 +274,7 @@ function ImportsBanner({ imports }: { imports: ContactImport[] }) {
               </Button>
             )}
 
-            {importItem.failures.length > 0 && (
+            {importItem._count.failures > 0 && (
               <Button
                 size="sm"
                 variant="outline"
@@ -308,15 +309,26 @@ function ViewErrorsDialog({
   onOpenChange: (open: boolean) => void;
   importItem: ContactImport | null;
 }) {
+  const [page, setPage] = useState(1);
+
+  const { data: failuresPagination } = useContactImportFailures(
+    importItem?.id,
+    page,
+  );
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Errors</DialogTitle>
+          <DialogTitle>{importItem?._count.failures} Errors</DialogTitle>
         </DialogHeader>
 
         <div className="flex flex-col gap-2">
-          {importItem?.failures.map((failure) => (
+          {failuresPagination?.failures.map((failure) => (
             <code
               key={failure.message}
               className="flex flex-col gap-1 p-2 rounded-md bg-zinc-900 overflow-auto"
@@ -330,36 +342,65 @@ function ViewErrorsDialog({
               <p className="text-xs">{failure.message}</p>
             </code>
           ))}
+
+          {failuresPagination && failuresPagination.totalPages > 1 && (
+            <div className="flex justify-center">
+              <PaginationControls
+                currentPage={page}
+                totalPages={failuresPagination.totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
   );
 }
 
-function AddContactButton({
-  handleAddManually,
-  handleImportCSV,
+function ContactButtons({
+  id,
+  setIsAddContactManuallyOpen,
 }: {
-  handleAddManually: () => void;
-  handleImportCSV: () => void;
+  id: string;
+  setIsAddContactManuallyOpen: (open: boolean) => void;
 }) {
+  const router = useRouter();
+
+  const handleImportCSV = () => {
+    router.push(`/contacts/${id}/import`);
+  };
+
+  const handleSendEmail = () => {
+    router.push(`/bulk-sending/create?contactGroupId=${id}`);
+  };
+
+  const handleAddManually = () => {
+    setIsAddContactManuallyOpen(true);
+  };
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button size="icon">
-          <PlusIcon className="size-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem onClick={handleAddManually}>
-          <UserPlusIcon className="mr-2 size-4" />
-          Add Manually
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleImportCSV}>
-          <FileUpIcon className="mr-2 size-4" />
-          Import CSV
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="flex gap-2">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button size="icon" variant="outline">
+            <PlusIcon className="size-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuItem onClick={handleAddManually}>
+            <UserPlusIcon className="mr-2 size-4" />
+            Add Manually
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleImportCSV}>
+            <FileUpIcon className="mr-2 size-4" />
+            Import CSV
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Button size="icon" variant="outline" onClick={handleSendEmail}>
+        <Send className="size-4" />
+      </Button>
+    </div>
   );
 }

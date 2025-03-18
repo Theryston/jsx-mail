@@ -207,4 +207,9 @@ export const PERMISSIONS: {
     value: 'mark-contact-import-as-read',
     description: 'Can mark a contact import as read',
   },
+  SELF_GET_CONTACT_IMPORT_FAILURES: {
+    title: 'Self Get Contact Import Failures',
+    value: 'self:get-contact-import-failures',
+    description: 'Can get contact import failures for itself',
+  },
 };

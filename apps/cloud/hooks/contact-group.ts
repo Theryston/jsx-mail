@@ -6,6 +6,7 @@ import {
   ContactGroupContactsPagination,
   ContactGroupsPagination,
   ContactImport,
+  ContactImportFailuresPagination,
 } from '@/types/contact-group';
 
 export const PER_PAGE = 10;
@@ -141,5 +142,23 @@ export function useMarkContactImportAsRead() {
         queryKey: ['contactImports', data.contactGroupId],
       });
     },
+  });
+}
+
+export function useContactImportFailures(
+  contactImportId?: string,
+  page?: number,
+) {
+  if (!page) page = 1;
+
+  return useQuery<ContactImportFailuresPagination>({
+    queryKey: ['contactImportFailures', contactImportId, page],
+    queryFn: () =>
+      api
+        .get(
+          `/bulk-sending/contact-import/${contactImportId}/failures?page=${page}&take=${PER_PAGE}`,
+        )
+        .then((res) => res.data),
+    enabled: !!contactImportId && !!page,
   });
 }

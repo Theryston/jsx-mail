@@ -10,8 +10,11 @@ export class ListContactImportsService {
       where: { contactGroupId: groupId, userId },
       orderBy: { createdAt: 'desc' },
       include: {
-        failures: {
-          orderBy: { createdAt: 'desc' },
+        _count: {
+          select: {
+            failures: true,
+            contacts: true,
+          },
         },
       },
     });

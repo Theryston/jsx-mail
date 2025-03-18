@@ -82,8 +82,13 @@ export class BulkSendingProcessor extends WorkerHost {
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
 
-        const email = row[emailColumn];
+        let email = row[emailColumn];
         let name = row[nameColumn];
+
+        if (row.length === 1) {
+          email = row[0];
+          name = null;
+        }
 
         if (!email) {
           await this.prisma.contactImportFailure.create({
@@ -159,6 +164,11 @@ export class BulkSendingProcessor extends WorkerHost {
             contactGroup: {
               connect: {
                 id: contactImport.contactGroupId,
+              },
+            },
+            contactImport: {
+              connect: {
+                id: contactImportId,
               },
             },
           },

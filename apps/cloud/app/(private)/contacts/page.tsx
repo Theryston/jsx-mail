@@ -26,7 +26,7 @@ export default function ContactsPage() {
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl">
-            <span className="font-bold">Your</span> contacts groups
+            <span className="font-bold">Your</span> contact groups
           </h1>
 
           <Button size="icon" onClick={() => setIsOpenCreateContactGroup(true)}>

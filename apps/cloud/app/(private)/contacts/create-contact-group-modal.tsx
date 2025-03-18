@@ -23,6 +23,7 @@ import {
 } from '@jsx-mail/ui/form';
 import { Input } from '@jsx-mail/ui/input';
 import { useCreateContactGroup } from '@/hooks/contact-group';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   name: z
@@ -47,15 +48,18 @@ export function CreateContactGroupModal({
     },
   });
 
+  const router = useRouter();
+
   const { mutateAsync: createContactGroup, isPending } =
     useCreateContactGroup();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await createContactGroup(values.name);
+      const contactGroup = await createContactGroup(values.name);
       toast.success('Contact group created successfully');
       form.reset();
       onClose();
+      router.push(`/contacts/${contactGroup.id}`);
     } catch (error) {
       toast.error('Failed to create contact group');
       console.error(error);

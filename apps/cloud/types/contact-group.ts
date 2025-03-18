@@ -44,12 +44,23 @@ export type ContactImport = {
   readFinalStatusAt: Date | null;
   contactGroupId: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
-  failures: {
-    message: string;
-    line?: number;
-    createdAt: Date;
-  }[];
+  _count: {
+    failures: number;
+    contacts: number;
+  };
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+};
+
+export type ContactImportFailure = {
+  id: string;
+  contactImportId: string;
+  createdAt: Date;
+  line: number | null;
+  message: string;
+};
+
+export type ContactImportFailuresPagination = ContactGroupPagination & {
+  failures: ContactImportFailure[];
 };

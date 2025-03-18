@@ -363,6 +363,7 @@ model ContactImport {
   file         File         @relation(fields: [fileId], references: [id], onDelete: Cascade)
 
   failures ContactImportFailure[]
+  contacts Contact[]
 
   @@map("contact_imports")
 }
@@ -382,15 +383,17 @@ model ContactImportFailure {
 }
 
 model Contact {
-  id             String    @id @default(uuid())
-  email          String
-  name           String?
-  contactGroupId String    @map("contact_group_id")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
-  deletedAt      DateTime? @map("deleted_at")
+  id              String    @id @default(uuid())
+  email           String
+  name            String?
+  contactGroupId  String    @map("contact_group_id")
+  contactImportId String?   @map("contact_import_id")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
 
-  contactGroup ContactGroup @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
+  contactGroup  ContactGroup   @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
+  contactImport ContactImport? @relation(fields: [contactImportId], references: [id], onDelete: Cascade)
 
   @@map("contacts")
 }

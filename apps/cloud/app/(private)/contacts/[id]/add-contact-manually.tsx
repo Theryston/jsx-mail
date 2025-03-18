@@ -22,7 +22,6 @@ export default function AddContactManually({
   onOpenChange: (open: boolean) => void;
 }) {
   const [value, setValue] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const { mutateAsync: uploadFile } = useUploadFile();
   const { mutateAsync: createContactImport } = useCreateContactImport(id);
@@ -73,22 +72,12 @@ export default function AddContactManually({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="w-full h-48 bg-zinc-900 relative rounded-md">
-          <div
-            onInput={(e) => setValue(e.currentTarget.innerText)}
-            contentEditable
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            className="text-sm w-full h-full p-2 absolute top-0 left-0 right-0 bottom-0 outline-none border-2 border-transparent focus:border-blue-900 rounded-md overflow-y-auto z-10"
-          />
-
-          {value.trim().length === 0 && !isFocused && (
-            <p className="text-zinc-400 text-sm absolute top-2 left-2 z-20">
-              john,john@example.com
-              <br />
-            </p>
-          )}
-        </div>
+        <textarea
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          className="w-full h-48 bg-zinc-900 relative rounded-md p-2 outline-none text-sm"
+          placeholder="john,john@example.com"
+        />
 
         <p className="text-xs text-muted-foreground">
           Each contact should be on a new line, in the format:
