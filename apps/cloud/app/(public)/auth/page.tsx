@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import handleRedirectUrl from '@/utils/handle-redirect-url';
 import { useRouter } from 'next/navigation';
@@ -15,15 +15,18 @@ export default function Auth() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const timer = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!redirect || !token) return;
 
+    if (timer.current) clearTimeout(timer.current);
+
     document.cookie = `token=${token}; path=/; max-age=604800;`;
     document.cookie = `sessionId=${sessionId}; path=/; max-age=604800;`;
-
     queryClient.removeQueries();
-    router.push(redirect);
+
+    timer.current = setTimeout(() => router.push(redirect), 1000);
   }, [redirect, token, router, sessionId, queryClient]);
 
   useEffect(() => {
