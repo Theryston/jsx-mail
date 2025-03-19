@@ -254,6 +254,36 @@ function SendModal({
     updateDragPosition(e.clientX);
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    updateDragPosition(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      if (!isDragging) return;
+      updateDragPosition(e.touches[0].clientX);
+    },
+    [isDragging],
+  );
+
+  const handleTouchEnd = useCallback(async () => {
+    if (isDragging) {
+      if (dragProgress > 0.9) {
+        setIsSending(true);
+        try {
+          await onSend();
+          onClose();
+        } finally {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          setIsSending(false);
+        }
+      }
+      setIsDragging(false);
+      setDragProgress(0);
+    }
+  }, [isDragging, dragProgress, onSend, onClose]);
+
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       if (!isDragging) return;
@@ -298,12 +328,22 @@ function SendModal({
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('touchmove', handleTouchMove);
+      window.addEventListener('touchend', handleTouchEnd);
       return () => {
         window.removeEventListener('mousemove', handleMouseMove);
         window.removeEventListener('mouseup', handleMouseUp);
+        window.removeEventListener('touchmove', handleTouchMove);
+        window.removeEventListener('touchend', handleTouchEnd);
       };
     }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [
+    isDragging,
+    handleMouseMove,
+    handleMouseUp,
+    handleTouchMove,
+    handleTouchEnd,
+  ]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -364,8 +404,10 @@ function SendModal({
                     dragProgress > 0.1
                       ? `rgba(0, 111, 238, ${dragProgress})`
                       : undefined,
+                  touchAction: 'none',
                 }}
                 onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
               >
                 <ArrowRight
                   className={cn('size-5', dragProgress === 1 && 'size-4')}
