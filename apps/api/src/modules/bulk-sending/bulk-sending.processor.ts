@@ -1,10 +1,9 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { PrismaService } from 'src/services/prisma.service';
-import { CreateBulkContactsDto } from './bulk-sending.dto';
 import axios from 'axios';
 
-@Processor('contacts')
+@Processor('bulk-sending')
 export class BulkSendingProcessor extends WorkerHost {
   constructor(private readonly prisma: PrismaService) {
     super();
@@ -14,6 +13,30 @@ export class BulkSendingProcessor extends WorkerHost {
     if (job.name === 'create-bulk-contacts') {
       await this.createBulkContacts(job.data);
     }
+
+    if (job.name === 'send-bulk-email') {
+      await this.sendBulkEmail(job.data);
+    }
+  }
+
+  async sendBulkEmail(data: { bulkSendingId: string }) {
+    const { bulkSendingId } = data;
+
+    console.log(`[BULK_SENDING] got new job ${bulkSendingId}`);
+
+    const bulkSending = await this.prisma.bulkSending.findUnique({
+      where: { id: bulkSendingId },
+    });
+
+    if (!bulkSending) {
+      throw new Error('Bulk sending not found');
+    }
+
+    const { subject, content, senderId, contactGroupId } = bulkSending;
+
+    console.log(
+      `[BULK_SENDING] sending email to ${bulkSending.totalContacts} contacts`,
+    );
   }
 
   async createBulkContacts(data: { contactImportId: string }) {

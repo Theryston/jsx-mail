@@ -55,6 +55,13 @@ enum ContactImportStatus {
   failed
 }
 
+enum BulkSendingStatus {
+  pending
+  processing
+  completed
+  failed
+}
+
 model User {
   id              String         @id @default(uuid())
   name            String
@@ -84,6 +91,7 @@ model User {
   impersonatedBy      Session[]            @relation("ImpersonatedBy")
   contactGroups       ContactGroup[]
   contactImports      ContactImport[]
+  bulkSendings        BulkSending[]
 
   @@map("users")
 }
@@ -262,37 +270,63 @@ model Sender {
   domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  messages Message[]
+  messages     Message[]
+  bulkSendings BulkSending[]
 
   @@map("senders")
 }
 
 model Message {
-  id          String        @id @default(uuid())
-  userId      String        @map("user_id")
-  senderId    String        @map("sender_id")
-  domainId    String        @map("domain_id")
-  hasCharged  Boolean       @default(false) @map("has_charged")
-  subject     String
-  body        String
-  to          String[]
-  status      MessageStatus @default(queued)
-  externalId  String?       @map("external_id")
-  sentDay     String?       @map("sent_day")
-  sentAt      DateTime?     @map("sent_at")
-  chargeMonth String?       @map("charge_month") // which month the message will be charged (YYYY-MM)
-  createdDay  String        @map("created_day")
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-  deletedAt   DateTime?     @map("deleted_at")
+  id            String        @id @default(uuid())
+  userId        String        @map("user_id")
+  senderId      String        @map("sender_id")
+  domainId      String        @map("domain_id")
+  hasCharged    Boolean       @default(false) @map("has_charged")
+  subject       String
+  body          String
+  to            String[]
+  status        MessageStatus @default(queued)
+  bulkSendingId String?       @map("bulk_sending_id")
+  externalId    String?       @map("external_id")
+  sentDay       String?       @map("sent_day")
+  sentAt        DateTime?     @map("sent_at")
+  chargeMonth   String?       @map("charge_month") // which month the message will be charged (YYYY-MM)
+  createdDay    String        @map("created_day")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  deletedAt     DateTime?     @map("deleted_at")
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   sender Sender @relation(fields: [senderId], references: [id], onDelete: Cascade)
   domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
 
   messageFiles MessageFile[]
+  bulkSending  BulkSending?  @relation(fields: [bulkSendingId], references: [id], onDelete: Cascade)
 
   @@map("messages")
+}
+
+model BulkSending {
+  id                String            @id @default(uuid())
+  userId            String            @map("user_id")
+  subject           String
+  content           String
+  senderId          String            @map("sender_id")
+  totalContacts     Int               @default(0) @map("total_contacts")
+  processedContacts Int               @default(0) @map("processed_contacts")
+  status            BulkSendingStatus @default(pending) @map("status")
+  contactGroupId    String            @map("contact_group_id")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+  deletedAt         DateTime?         @map("deleted_at")
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sender       Sender       @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  contactGroup ContactGroup @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
+
+  messages Message[]
+
+  @@map("bulk_sendings")
 }
 
 model MessageFile {
@@ -339,6 +373,7 @@ model ContactGroup {
 
   contacts       Contact[]
   contactImports ContactImport[]
+  bulkSendings   BulkSending[]
 
   @@map("contact_groups")
 }

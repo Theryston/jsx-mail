@@ -7,3 +7,10 @@ export class CreateBulkContactsDto {
   emailColumn: string;
   nameColumn: string;
 }
+
+export class CreateBulkSendingDto {
+  subject: string;
+  content: string;
+  senderId: string;
+  contactGroupId: string;
+}

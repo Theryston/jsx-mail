@@ -7,7 +7,7 @@ import { Queue } from 'bullmq';
 @Injectable()
 export class CreateBulkContactsService {
   constructor(
-    @InjectQueue('contacts') private readonly contactsQueue: Queue,
+    @InjectQueue('bulk-sending') private readonly contactsQueue: Queue,
     private readonly prisma: PrismaService,
   ) {}
 
