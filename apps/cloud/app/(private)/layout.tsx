@@ -4,9 +4,10 @@ import { useMe } from '@/hooks/user';
 import { CloudSidebar } from '@/components/cloud-sidebar';
 import { SidebarProvider } from '@jsx-mail/ui/sidebar';
 import { useRouter, usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Crisp } from 'crisp-sdk-web';
 import { titleCase } from '@/utils/title-case';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function PrivateLayout({
   children,
@@ -16,6 +17,12 @@ export default function PrivateLayout({
   const { data: me, error, isPending } = useMe();
   const pathname = usePathname();
   const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const redirectToSignIn = useCallback(() => {
+    queryClient.clear();
+    router.push('/sign-in');
+  }, [queryClient, router]);
 
   useEffect(() => {
     if (me?.name) Crisp.user.setNickname(me.name);
@@ -23,29 +30,25 @@ export default function PrivateLayout({
     if (me?.phone) Crisp.user.setPhone(me.phone);
   }, [me]);
 
-  useEffect(() => {
-    if (!me) return;
-
-    if (me.onboardingStep !== 'completed' && pathname !== '/onboarding') {
-      router.push('/onboarding');
-      return;
-    }
-
-    if (me.onboardingStep === 'completed' && pathname === '/onboarding') {
-      router.push('/');
-      return;
-    }
-  }, [pathname, me?.onboardingStep]);
-
   if (isPending) return <Loading />;
 
   if (!me) {
-    router.push('/sign-in');
+    redirectToSignIn();
     return null;
   }
 
   if (error) {
-    router.push('/sign-in');
+    redirectToSignIn();
+    return null;
+  }
+
+  if (me && me.onboardingStep !== 'completed' && pathname !== '/onboarding') {
+    router.push('/onboarding');
+    return null;
+  }
+
+  if (me && me.onboardingStep === 'completed' && pathname === '/onboarding') {
+    router.push('/');
     return null;
   }
 
