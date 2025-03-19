@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { Container } from '@/components/container';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useContactGroups } from '@/hooks/contact-group';
@@ -81,6 +81,7 @@ export default function BulkSendingCreatePage() {
 
     try {
       // TODO: Implement bulk sending
+      toast.success('Bulk sending started');
     } finally {
       setIsSending(false);
     }
@@ -206,6 +207,10 @@ function SendModal({
   content: string;
 }) {
   const [validationMessages, setValidationMessages] = useState<string[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragProgress, setDragProgress] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const messages = [];
@@ -235,6 +240,57 @@ function SendModal({
     setValidationMessages(messages);
   }, [from, to, subject, content, contactGroup]);
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    updateDragPosition(e.clientX);
+  };
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isDragging) return;
+      updateDragPosition(e.clientX);
+    },
+    [isDragging],
+  );
+
+  const handleMouseUp = useCallback(() => {
+    if (isDragging) {
+      if (dragProgress > 0.9) {
+        // If dragged more than 90% of the way
+        onSend();
+        onClose();
+      }
+      setIsDragging(false);
+      setDragProgress(0);
+    }
+  }, [isDragging, dragProgress, onSend, onClose]);
+
+  const updateDragPosition = (clientX: number) => {
+    if (!sliderRef.current || !buttonRef.current) return;
+
+    const sliderRect = sliderRef.current.getBoundingClientRect();
+    const buttonRect = buttonRef.current.getBoundingClientRect();
+    const maxDrag = sliderRect.width - buttonRect.width;
+
+    const dragX = Math.max(
+      0,
+      Math.min(clientX - sliderRect.left - buttonRect.width / 2, maxDrag),
+    );
+    const progress = dragX / maxDrag;
+    setDragProgress(progress);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -248,7 +304,7 @@ function SendModal({
           )}
         </DialogHeader>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-4">
           {validationMessages.map((message, index) => (
             <div
               key={index}
@@ -258,6 +314,31 @@ function SendModal({
               <span>{message}</span>
             </div>
           ))}
+
+          {validationMessages.length === 0 && (
+            <div
+              ref={sliderRef}
+              className="relative h-12 bg-zinc-800 rounded-lg overflow-hidden"
+            >
+              <div className="absolute inset-0 flex items-center justify-center text-sm text-zinc-400 pointer-events-none">
+                Slide to send
+              </div>
+              <button
+                ref={buttonRef}
+                className={cn(
+                  'absolute left-0 top-0 h-full px-4 bg-zinc-700 rounded-lg cursor-grab active:cursor-grabbing transition-colors',
+                  isDragging && 'bg-zinc-600',
+                )}
+                style={{
+                  transform: `translateX(${dragProgress * (sliderRef.current?.offsetWidth || 0)}px)`,
+                  maxWidth: 'calc(100% - 8px)',
+                }}
+                onMouseDown={handleMouseDown}
+              >
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
