@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  EditorBubble,
   EditorCommand,
   EditorCommandEmpty,
   EditorCommandItem,
@@ -9,12 +8,9 @@ import {
   EditorContent,
   EditorRoot,
 } from 'novel';
-import { useState } from 'react';
-import { JSONContent } from '@tiptap/react';
 import { defaultExtensions } from './extensions';
 import { slashCommand, suggestionItems } from './suggestion';
-import { LinkSelector } from './selectors/link-selector';
-import { NodeSelector } from './selectors/node-selector';
+import { MenuSwitch } from './menu-switch';
 
 export function RichTextEditor({
   setContent: setContentHtml,
@@ -23,9 +19,6 @@ export function RichTextEditor({
   content: string;
   setContent: (content: string) => void;
 }) {
-  const [openLink, setOpenLink] = useState(false);
-  const [openNode, setOpenNode] = useState(false);
-  const [content, setContent] = useState<JSONContent | undefined>(undefined);
   const extensions = [...defaultExtensions, slashCommand];
 
   console.log('contentHtml', contentHtml);
@@ -34,11 +27,8 @@ export function RichTextEditor({
     <EditorRoot>
       <EditorContent
         extensions={extensions}
-        initialContent={content}
         onUpdate={({ editor }) => {
-          const json = editor.getJSON();
           const html = editor.getHTML();
-          setContent(json);
           setContentHtml(html);
         }}
         editorProps={{
@@ -47,15 +37,7 @@ export function RichTextEditor({
           },
         }}
       >
-        <EditorBubble
-          tippyOptions={{
-            placement: 'top-start',
-          }}
-          className="flex w-fit max-w-[90vw] overflow-hidden rounded border border-muted bg-background shadow-xl"
-        >
-          <NodeSelector open={openNode} onOpenChange={setOpenNode} />
-          <LinkSelector open={openLink} onOpenChange={setOpenLink} />
-        </EditorBubble>
+        <MenuSwitch />
         <EditorCommand className="z-50 h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
           <EditorCommandEmpty className="px-2 text-muted-foreground">
             No results

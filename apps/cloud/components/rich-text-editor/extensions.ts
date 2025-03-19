@@ -1,8 +1,11 @@
-import { Placeholder, StarterKit } from 'novel';
+import { Placeholder, StarterKit, TaskList, TiptapLink } from 'novel';
 
-const placeholder = Placeholder.configure({
-  placeholder: 'Write something or type "/" for commands',
-  includeChildren: true,
+const placeholder = Placeholder;
+
+const tiptapLink = TiptapLink.configure({
+  HTMLAttributes: {
+    style: 'color: #006fee; text-decoration: underline;',
+  },
 });
 
 const starterKit = StarterKit.configure({
@@ -31,4 +34,15 @@ const starterKit = StarterKit.configure({
   },
 });
 
-export const defaultExtensions = [starterKit, placeholder];
+const taskList = TaskList.configure({
+  HTMLAttributes: {
+    style: 'margin-left: 1.5em; list-style-type: disc;',
+  },
+});
+
+export const defaultExtensions = [
+  starterKit,
+  placeholder,
+  tiptapLink,
+  taskList,
+];
