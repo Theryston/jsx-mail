@@ -10,14 +10,16 @@ import {
   ChevronsUpDown,
   ArrowRight,
   AlertTriangle,
-  CheckCircle,
   Loader2,
+  ChevronDown,
 } from 'lucide-react';
 import { Button } from '@jsx-mail/ui/button';
 import { Input } from '@jsx-mail/ui/input';
 import { Textarea } from '@jsx-mail/ui/textarea';
 import { toast } from '@jsx-mail/ui/sonner';
 import { cn } from '@jsx-mail/ui/lib/utils';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@jsx-mail/ui/tabs';
+import EditorCode from '@monaco-editor/react';
 
 import {
   Command,
@@ -206,14 +208,44 @@ function ContentEditor({
   content: string;
   setContent: (content: string) => void;
 }) {
+  console.log(content);
+
   return (
-    <div className="w-full">
-      <Textarea
-        placeholder="Enter email content (HTML supported). You can use variables from the contact, like {{name}} or {{email}}."
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        className="min-h-[300px] !bg-transparent px-0 border-0 resize-none text-sm placeholder:text-zinc-500 focus-visible:ring-0 w-full"
-      />
+    <div className="w-full relative">
+      <Tabs defaultValue="editor">
+        <TabsList className="w-fit ml-auto">
+          <TabsTrigger value="editor">Editor</TabsTrigger>
+          <TabsTrigger value="html">HTML</TabsTrigger>
+        </TabsList>
+        <TabsContent value="editor">
+          <Textarea
+            placeholder="Enter email content (HTML supported). You can use variables from the contact, like {{name}} or {{email}}."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="min-h-[300px] !bg-transparent px-0 border-0 resize-none text-sm placeholder:text-zinc-500 focus-visible:ring-0 w-full"
+          />
+        </TabsContent>
+        <TabsContent value="html">
+          <div className="w-full h-[200vh] md:h-[500px] flex flex-col md:flex-row gap-4">
+            <EditorCode
+              language="html"
+              theme="vs-dark"
+              value={content}
+              onChange={(value) => setContent(value || '')}
+              className="w-full h-full"
+              options={{
+                minimap: {
+                  enabled: false,
+                },
+              }}
+            />
+
+            <div className="w-full h-full bg-zinc-900 rounded-xl">
+              <iframe srcDoc={content} className="w-full h-full" />
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
