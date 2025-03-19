@@ -155,6 +155,12 @@ export class BulkSendingProcessor extends WorkerHost {
         }
 
         page++;
+
+        console.log(
+          `[BULK_SENDING] sleeping for 5 seconds to avoid rate limit for sending ${bulkSendingId}`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log(`[BULK_SENDING] waking up for sending ${bulkSendingId}`);
       }
 
       await this.prisma.bulkSending.update({
