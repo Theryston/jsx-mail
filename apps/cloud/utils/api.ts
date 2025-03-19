@@ -30,12 +30,6 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    if (error.response?.status === 403 && typeof window !== 'undefined') {
-      document.cookie = 'token=; path=/; max-age=0';
-      document.cookie = 'sessionId=; path=/; max-age=0';
-      window.location.href = '/sign-in';
-    }
-
     const errorData = error.response?.data ? error.response.data : error;
     throw errorData;
   },

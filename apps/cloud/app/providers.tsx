@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { toast, Toaster } from '@jsx-mail/ui/sonner';
@@ -46,11 +47,11 @@ function QueryClientProvider({ children }: { children: React.ReactNode }) {
           },
           queries: {
             retry: (failureCount, error: any) => {
-              if (failureCount >= 3) {
+              if ([401, 403, 404].includes(error.statusCode)) {
                 return false;
               }
 
-              if ([401, 403, 404].includes(error.status)) {
+              if (failureCount >= 3) {
                 return false;
               }
 

@@ -2,6 +2,7 @@ type Permission = {
   title: string;
   value: string;
   description: string;
+  ignoreList?: boolean;
 };
 
 export const PERMISSIONS: {
@@ -17,15 +18,22 @@ export const PERMISSIONS: {
     value: 'self:admin',
     description: 'Can perform any action on itself',
   },
+  SELF_SEND_EMAIL: {
+    title: 'Self Send Email',
+    value: 'self:send-email',
+    description: 'Can send emails using your own senders',
+  },
   SELF_EMAIL_VALIDATE: {
     title: 'Self Email Validate',
     value: 'self:email-validate',
     description: 'Can validate its own email',
+    ignoreList: true,
   },
   SELF_RESET_PASSWORD: {
     title: 'Self Reset Password',
     value: 'self:reset-password',
     description: 'Can reset its own password',
+    ignoreList: true,
   },
   SELF_GET: {
     title: 'Self Get',
@@ -87,15 +95,11 @@ export const PERMISSIONS: {
     value: 'self:list-senders',
     description: 'Can list senders for itself',
   },
-  SELF_SEND_EMAIL: {
-    title: 'Self Send Email',
-    value: 'self:send-email',
-    description: 'Can send emails using your own senders',
-  },
   SELF_SEND_EMAIL_WITH_ATTACHMENTS: {
     title: 'Self Send Email With Attachments',
     value: 'self:send-email-with-attachments',
     description: 'Can send emails with attachments using your own senders',
+    ignoreList: true,
   },
   SELF_SESSION_CREATE: {
     title: 'Self Session Create',
@@ -145,12 +149,13 @@ export const PERMISSIONS: {
   SELF_DOMAIN_VERIFY: {
     title: 'Self Domain Verify',
     value: 'self:domain-verify',
-    description: 'Can verify a domain for itself',
+    description: 'Can verify check a domain verification status',
   },
   SELF_UPDATE_ONBOARDING: {
     title: 'Self Update Onboarding',
     value: 'self:update-onboarding',
     description: 'Can update its own onboarding',
+    ignoreList: true,
   },
   OTHER_GET_USERS: {
     title: 'Admin Get Users',

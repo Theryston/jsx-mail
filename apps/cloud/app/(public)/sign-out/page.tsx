@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container } from '@/components/container';
 import { useDeleteSession } from '@/hooks/user';
@@ -12,9 +12,13 @@ export default function SignOut() {
   const router = useRouter();
   const { mutateAsync: deleteSession } = useDeleteSession();
   const queryClient = useQueryClient();
+  const hasRequestedSignOut = useRef(false);
 
   const performSignOut = useCallback(async () => {
     try {
+      if (hasRequestedSignOut.current) return;
+      hasRequestedSignOut.current = true;
+
       const sessionId = document.cookie
         .split('; ')
         .find((row) => row.startsWith('sessionId='))
@@ -28,7 +32,7 @@ export default function SignOut() {
 
       await deleteSession(sessionId);
 
-      queryClient.removeQueries();
+      queryClient.clear();
 
       document.cookie = 'token=; path=/; max-age=0;';
       document.cookie = 'sessionId=; path=/; max-age=0;';

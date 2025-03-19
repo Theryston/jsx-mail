@@ -24,7 +24,7 @@ export default function Auth() {
 
     document.cookie = `token=${token}; path=/; max-age=604800;`;
     document.cookie = `sessionId=${sessionId}; path=/; max-age=604800;`;
-    queryClient.removeQueries();
+    queryClient.clear();
 
     router.push(redirect);
   }, [redirect, token, router, sessionId, queryClient]);
