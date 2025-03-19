@@ -27,13 +27,13 @@ const tiptapImage = TiptapImage.extend({
 }).configure({
   allowBase64: true,
   HTMLAttributes: {
-    style: 'border-radius: 5px;',
+    style: 'width: 100%; height: auto; border-radius: 5px;',
   },
 });
 
 const updatedImage = UpdatedImage.configure({
   HTMLAttributes: {
-    style: 'border-radius: 5px;',
+    style: 'width: 100%; height: auto; border-radius: 5px;',
   },
 });
 

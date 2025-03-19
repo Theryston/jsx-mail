@@ -10,7 +10,6 @@ import {
   EditorRoot,
   handleImagePaste,
   handleImageDrop,
-  ImageResizer,
 } from 'novel';
 import { defaultExtensions } from './extensions';
 import { slashCommand, suggestionItems } from './suggestion';
@@ -51,7 +50,6 @@ export function RichTextEditor({
           handleDrop: (view, event, _slice, moved) =>
             handleImageDrop(view, event, moved, uploadFn),
         }}
-        slotAfter={<ImageResizer />}
       >
         <MenuSwitch />
         <EditorCommand className="z-50 h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
