@@ -11,11 +11,9 @@ import {
   ArrowRight,
   AlertTriangle,
   Loader2,
-  ChevronDown,
 } from 'lucide-react';
 import { Button } from '@jsx-mail/ui/button';
 import { Input } from '@jsx-mail/ui/input';
-import { Textarea } from '@jsx-mail/ui/textarea';
 import { toast } from '@jsx-mail/ui/sonner';
 import { cn } from '@jsx-mail/ui/lib/utils';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@jsx-mail/ui/tabs';
@@ -39,6 +37,7 @@ import {
   DialogDescription,
 } from '@jsx-mail/ui/dialog';
 import { ContactGroup } from '@/types/contact-group';
+import { RichTextEditor } from '@/components/rich-text-editor';
 
 export default function BulkSendingCreatePage() {
   const router = useRouter();
@@ -218,12 +217,13 @@ function ContentEditor({
           <TabsTrigger value="html">HTML</TabsTrigger>
         </TabsList>
         <TabsContent value="editor">
-          <Textarea
+          {/* <Textarea
             placeholder="Enter email content (HTML supported). You can use variables from the contact, like {{name}} or {{email}}."
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="min-h-[300px] !bg-transparent px-0 border-0 resize-none text-sm placeholder:text-zinc-500 focus-visible:ring-0 w-full"
-          />
+          /> */}
+          <RichTextEditor content={content} setContent={setContent} />
         </TabsContent>
         <TabsContent value="html">
           <div className="w-full h-[200vh] md:h-[500px] flex flex-col md:flex-row gap-4">
