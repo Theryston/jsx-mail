@@ -20,7 +20,7 @@ export class SessionController {
     private readonly deleteSessionService: DeleteSessionService,
     private readonly createSessionService: CreateSessionService,
     private readonly listSessionsService: ListSessionsService,
-  ) { }
+  ) {}
 
   @Delete()
   @Permissions([PERMISSIONS.SELF_SESSION_DELETE.value])
@@ -38,13 +38,17 @@ export class SessionController {
 
   @Get('permissions')
   getAllPermissions(@Req() request: any) {
-    const permissions = Object.keys(PERMISSIONS).map((key) => PERMISSIONS[key]);
+    const permissions = Object.keys(PERMISSIONS)
+      .map((key) => PERMISSIONS[key])
+      .filter((permission) => !permission.ignoreList);
 
     if (request.user && request.user.accessLevel === 'other') {
       return permissions;
     }
 
-    return permissions.filter((permission) => permission.value.startsWith('self:'))
+    return permissions.filter((permission) =>
+      permission.value.startsWith('self:'),
+    );
   }
 
   @Post()
