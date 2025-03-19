@@ -4,7 +4,7 @@ import { Container } from '@/components/container';
 import { Button } from '@jsx-mail/ui/button';
 import { PlusIcon } from 'lucide-react';
 import { useState } from 'react';
-import { useContactGroups } from '@/hooks/contact-group';
+import { useContactGroups } from '@/hooks/bulk-sending';
 import { Skeleton } from '@jsx-mail/ui/skeleton';
 import { columns } from './columns';
 import { DataTable } from './data-table';

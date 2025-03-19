@@ -1,4 +1,4 @@
-import { useCreateContactImport } from '@/hooks/contact-group';
+import { useCreateContactImport } from '@/hooks/bulk-sending';
 import { useUploadFile } from '@/hooks/file';
 import { Button } from '@jsx-mail/ui/button';
 import {

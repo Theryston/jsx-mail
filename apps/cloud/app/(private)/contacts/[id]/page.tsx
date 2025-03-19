@@ -17,7 +17,7 @@ import {
   useContactImports,
   useMarkContactImportAsRead,
   useContactImportFailures,
-} from '@/hooks/contact-group';
+} from '@/hooks/bulk-sending';
 import { Skeleton } from '@jsx-mail/ui/skeleton';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -32,7 +32,7 @@ import { Badge } from '@jsx-mail/ui/badge';
 import { PaginationControls } from '@jsx-mail/ui/pagination-controls';
 import { Input } from '@jsx-mail/ui/input';
 import AddContactManually from './add-contact-manually';
-import { ContactImport } from '@/types/contact-group';
+import { ContactImport } from '@/types/bulk-sending';
 import { cn } from '@jsx-mail/ui/lib/utils';
 import { DialogContent, DialogTitle, DialogHeader } from '@jsx-mail/ui/dialog';
 import { Dialog } from '@jsx-mail/ui/dialog';

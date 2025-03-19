@@ -1,12 +1,12 @@
 'use client';
 
-import { ContactGroupListItem } from '@/types/contact-group';
+import { ContactGroupListItem } from '@/types/bulk-sending';
 import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
 import { Button } from '@jsx-mail/ui/button';
 import { useState } from 'react';
 import { DeleteConfirmationModal } from '@jsx-mail/ui/delete-confirmation-modal';
-import { useDeleteContactGroup } from '@/hooks/contact-group';
+import { useDeleteContactGroup } from '@/hooks/bulk-sending';
 import { toast } from '@jsx-mail/ui/sonner';
 import { ChevronRightIcon, TrashIcon, UsersIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';

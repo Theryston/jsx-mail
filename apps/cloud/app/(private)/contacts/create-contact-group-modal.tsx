@@ -22,7 +22,7 @@ import {
   FormMessage,
 } from '@jsx-mail/ui/form';
 import { Input } from '@jsx-mail/ui/input';
-import { useCreateContactGroup } from '@/hooks/contact-group';
+import { useCreateContactGroup } from '@/hooks/bulk-sending';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
 

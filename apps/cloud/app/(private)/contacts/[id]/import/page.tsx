@@ -6,7 +6,7 @@ import { Container } from '@/components/container';
 import { Button } from '@jsx-mail/ui/button';
 import { useParams } from 'next/navigation';
 import { useUploadFile } from '@/hooks/file';
-import { useCreateContactImport } from '@/hooks/contact-group';
+import { useCreateContactImport } from '@/hooks/bulk-sending';
 import { toast } from '@jsx-mail/ui/sonner';
 import { ArrowLeft, FileUp, Import, MoveRight } from 'lucide-react';
 import {

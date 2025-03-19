@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { Container } from '@/components/container';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useContactGroups } from '@/hooks/contact-group';
+import { useContactGroups } from '@/hooks/bulk-sending';
 import { useSenders } from '@/hooks/sender';
 import {
   Check,
@@ -36,7 +36,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@jsx-mail/ui/dialog';
-import { ContactGroup } from '@/types/contact-group';
+import { ContactGroup } from '@/types/bulk-sending';
 import { RichTextEditor } from '@/components/rich-text-editor';
 
 export default function BulkSendingCreatePage() {

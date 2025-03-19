@@ -7,7 +7,7 @@ import {
   ContactGroupsPagination,
   ContactImport,
   ContactImportFailuresPagination,
-} from '@/types/contact-group';
+} from '@/types/bulk-sending';
 
 export const PER_PAGE = 10;
 
