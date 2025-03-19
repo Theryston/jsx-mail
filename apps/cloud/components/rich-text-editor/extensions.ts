@@ -1,4 +1,4 @@
-import { Placeholder, StarterKit, TaskList, TiptapLink } from 'novel';
+import { Placeholder, StarterKit, TiptapLink } from 'novel';
 
 const placeholder = Placeholder;
 
@@ -34,15 +34,4 @@ const starterKit = StarterKit.configure({
   },
 });
 
-const taskList = TaskList.configure({
-  HTMLAttributes: {
-    style: 'margin-left: 1.5em; list-style-type: disc;',
-  },
-});
-
-export const defaultExtensions = [
-  starterKit,
-  placeholder,
-  tiptapLink,
-  taskList,
-];
+export const defaultExtensions = [starterKit, placeholder, tiptapLink];
