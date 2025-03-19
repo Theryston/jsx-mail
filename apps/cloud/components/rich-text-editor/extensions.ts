@@ -1,10 +1,39 @@
-import { Placeholder, StarterKit, TiptapLink } from 'novel';
+import { cn } from '@jsx-mail/ui/lib/utils';
+import {
+  Placeholder,
+  StarterKit,
+  TiptapImage,
+  TiptapLink,
+  UpdatedImage,
+  UploadImagesPlugin,
+} from 'novel';
 
 const placeholder = Placeholder;
 
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {
     style: 'color: #006fee; text-decoration: underline;',
+  },
+});
+
+const tiptapImage = TiptapImage.extend({
+  addProseMirrorPlugins() {
+    return [
+      UploadImagesPlugin({
+        imageClass: cn('opacity-40 rounded-md border border-stone-200'),
+      }),
+    ];
+  },
+}).configure({
+  allowBase64: true,
+  HTMLAttributes: {
+    style: 'border-radius: 5px;',
+  },
+});
+
+const updatedImage = UpdatedImage.configure({
+  HTMLAttributes: {
+    style: 'border-radius: 5px;',
   },
 });
 
@@ -34,4 +63,10 @@ const starterKit = StarterKit.configure({
   },
 });
 
-export const defaultExtensions = [starterKit, placeholder, tiptapLink];
+export const defaultExtensions = [
+  starterKit,
+  placeholder,
+  tiptapLink,
+  tiptapImage,
+  updatedImage,
+];
