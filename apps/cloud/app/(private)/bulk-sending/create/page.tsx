@@ -102,8 +102,9 @@ export default function BulkSendingCreatePage() {
           <h1 className="text-2xl font-bold">New Bulk Email</h1>
         </div>
 
-        <div className="bg-zinc-900 rounded-xl p-6 flex flex-col gap-6">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="bg-zinc-900 rounded-xl p-6 flex flex-col divide-y divide-zinc-800">
+          <div className="grid grid-cols-[auto_1fr] gap-4 items-center pb-4">
+            <div className="text-sm text-zinc-400 w-20">From</div>
             <SenderSelector
               from={from}
               setFrom={setFrom}
@@ -113,7 +114,10 @@ export default function BulkSendingCreatePage() {
               setFromSearchQuery={setFromSearchQuery}
               setCreateSenderOpen={setCreateSenderOpen}
             />
+          </div>
 
+          <div className="grid grid-cols-[auto_1fr] gap-4 items-center py-4">
+            <div className="text-sm text-zinc-400 w-20">To</div>
             <ContactGroupSelector
               toGroupId={toGroupId}
               setToGroupId={setToGroupId}
@@ -126,36 +130,30 @@ export default function BulkSendingCreatePage() {
             />
           </div>
 
-          <div>
-            <label className="text-sm font-medium mb-2 block">Subject</label>
-            <div className="rounded-xl bg-zinc-900 border border-zinc-700 overflow-hidden">
-              <Input
-                placeholder="Enter email subject. You can use variables from the contact, like {{name}} or {{email}}."
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium mb-2 block">Content</label>
-            <Textarea
-              placeholder="Enter email content (HTML supported). You can use variables from the contact, like {{name}} or {{email}}."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="min-h-[300px] bg-zinc-900 border-zinc-700 rounded-xl resize-none"
+          <div className="grid grid-cols-[auto_1fr] gap-4 items-center py-4">
+            <div className="text-sm text-zinc-400 w-20">Subject</div>
+            <Input
+              placeholder="Enter email subject. You can use variables from the contact, like {{name}} or {{email}}."
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              className="bg-transparent border-0 h-10 px-0 text-sm placeholder:text-zinc-500 focus-visible:ring-0 focus-visible:bg-transparent"
             />
           </div>
 
-          <Button
-            disabled={isSending}
-            onClick={() => setIsOpenSendModal(true)}
-            size="sm"
-            className="ml-auto"
-          >
-            Send bulk email
-            <ArrowRight size={16} />
-          </Button>
+          <div className="pt-4">
+            <ContentEditor content={content} setContent={setContent} />
+          </div>
+
+          <div className="pt-4 flex justify-end">
+            <Button
+              disabled={isSending}
+              onClick={() => setIsOpenSendModal(true)}
+              size="sm"
+            >
+              Send bulk email
+              <ArrowRight size={16} />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -192,6 +190,23 @@ export default function BulkSendingCreatePage() {
         }
       />
     </Container>
+  );
+}
+
+function ContentEditor({
+  content,
+  setContent,
+}: {
+  content: string;
+  setContent: (content: string) => void;
+}) {
+  return (
+    <Textarea
+      placeholder="Enter email content (HTML supported). You can use variables from the contact, like {{name}} or {{email}}."
+      value={content}
+      onChange={(e) => setContent(e.target.value)}
+      className="min-h-[300px] !bg-transparent px-0 border-0 resize-none text-sm placeholder:text-zinc-500 focus-visible:ring-0"
+    />
   );
 }
 
@@ -457,86 +472,83 @@ function SenderSelector({
   }, [senders, fromSearchQueryClean]);
 
   return (
-    <div className="flex-1">
-      <label className="text-sm font-medium mb-2 block">From</label>
-      <Popover open={fromSearchOpen} onOpenChange={setFromSearchOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={fromSearchOpen}
-            className="justify-between bg-zinc-900 border border-zinc-700 h-12 w-full rounded-xl text-sm"
-          >
-            {from ? from : 'Select a sender'}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[400px] p-0" align="start">
-          <Command shouldFilter={false}>
-            <CommandInput
-              placeholder="Search senders..."
-              value={fromSearchQuery}
-              onValueChange={setFromSearchQuery}
-            />
-            <CommandList>
-              {filteredSenders.length > 0 && (
-                <CommandGroup heading="Senders">
-                  {filteredSenders.map((sender) => (
-                    <CommandItem
-                      key={sender.id}
-                      value={sender.email}
-                      onSelect={(value) => {
-                        setFrom(value);
-                        setFromSearchOpen(false);
-                        setFromSearchQuery('');
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
-                        {from === sender.email ? (
-                          <Check className="size-4" />
-                        ) : (
-                          <div className="w-4" />
-                        )}
-                        <div className="flex flex-col">
-                          <span>{sender.email}</span>
-                          <span className="text-xs text-zinc-400">
-                            {sender.name}
-                          </span>
-                        </div>
-                      </div>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-
-              {filteredSenders.length === 0 && (
-                <CommandGroup>
-                  <CommandItem>
-                    <button
-                      className="p-2 w-full flex items-center gap-2 hover:bg-zinc-800"
-                      onClick={() => {
-                        setCreateSenderOpen(true);
-                        setFromSearchOpen(false);
-                      }}
-                    >
-                      <div className="flex text-left">
-                        <span>
-                          Create new sender
-                          {fromSearchQuery.length > 0 ? ': ' : ''}
-                        </span>
-                        <span className="font-medium ml-1">
-                          {fromSearchQuery}
+    <Popover open={fromSearchOpen} onOpenChange={setFromSearchOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          role="combobox"
+          aria-expanded={fromSearchOpen}
+          className="justify-between h-auto w-full px-0 font-normal hover:bg-transparent active:scale-100 text-sm !pl-0"
+        >
+          {from ? from : 'Select a sender'}
+          <ChevronsUpDown className="size-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[400px] p-0" align="start">
+        <Command shouldFilter={false}>
+          <CommandInput
+            placeholder="Search senders..."
+            value={fromSearchQuery}
+            onValueChange={setFromSearchQuery}
+          />
+          <CommandList>
+            {filteredSenders.length > 0 && (
+              <CommandGroup heading="Senders">
+                {filteredSenders.map((sender) => (
+                  <CommandItem
+                    key={sender.id}
+                    value={sender.email}
+                    onSelect={(value) => {
+                      setFrom(value);
+                      setFromSearchOpen(false);
+                      setFromSearchQuery('');
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      {from === sender.email ? (
+                        <Check className="size-4" />
+                      ) : (
+                        <div className="w-4" />
+                      )}
+                      <div className="flex flex-col">
+                        <span>{sender.email}</span>
+                        <span className="text-xs text-zinc-400">
+                          {sender.name}
                         </span>
                       </div>
-                    </button>
+                    </div>
                   </CommandItem>
-                </CommandGroup>
-              )}
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
-    </div>
+                ))}
+              </CommandGroup>
+            )}
+
+            {filteredSenders.length === 0 && (
+              <CommandGroup>
+                <CommandItem>
+                  <button
+                    className="p-2 w-full flex items-center gap-2 hover:bg-zinc-800"
+                    onClick={() => {
+                      setCreateSenderOpen(true);
+                      setFromSearchOpen(false);
+                    }}
+                  >
+                    <div className="flex text-left">
+                      <span>
+                        Create new sender
+                        {fromSearchQuery.length > 0 ? ': ' : ''}
+                      </span>
+                      <span className="font-medium ml-1">
+                        {fromSearchQuery}
+                      </span>
+                    </div>
+                  </button>
+                </CommandItem>
+              </CommandGroup>
+            )}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }
 
@@ -575,90 +587,85 @@ function ContactGroupSelector({
   }, [contactGroupsPagination, toSearchQueryClean]);
 
   return (
-    <div className="flex-1">
-      <label className="text-sm font-medium mb-2 block">To</label>
-      <Popover open={toSearchOpen} onOpenChange={setToSearchOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={toSearchOpen}
-            className="justify-between bg-zinc-900 border border-zinc-700 h-12 w-full rounded-xl text-sm"
-          >
-            {toGroupId
-              ? contactGroupsPagination?.contactGroups.find(
-                  (g) => g.id === toGroupId,
-                )?.name || 'Loading...'
-              : 'Select a contact group'}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[400px] p-0" align="start">
-          <Command shouldFilter={false}>
-            <CommandInput
-              placeholder="Search contact groups..."
-              value={toSearchQuery}
-              onValueChange={setToSearchQuery}
-            />
-            <CommandList>
-              {filteredContactGroups.length > 0 && (
-                <CommandGroup heading="Contact Groups">
-                  {filteredContactGroups.map((group) => (
-                    <CommandItem
-                      key={group.id}
-                      value={group.name}
-                      onSelect={() => {
-                        setToGroupId(group.id);
-                        setToSearchOpen(false);
-                        setToSearchQuery('');
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
-                        {toGroupId === group.id ? (
-                          <Check className="size-4" />
-                        ) : (
-                          <div className="w-4" />
-                        )}
-                        <div className="flex flex-col">
-                          <span>{group.name}</span>
-                          <span className="text-xs text-zinc-400">
-                            {group.contactsCount} contacts
-                          </span>
-                        </div>
-                      </div>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-
-              {filteredContactGroups.length === 0 && (
-                <CommandGroup>
-                  <CommandItem>
-                    <button
-                      className="p-2 w-full flex items-center gap-2 hover:bg-zinc-800"
-                      onClick={() => {
-                        setNewGroupName(toSearchQuery);
-                        setCreateGroupOpen(true);
-                        setToSearchOpen(false);
-                      }}
-                    >
-                      <div className="flex text-left">
-                        <span>
-                          Create new contact group
-                          {toSearchQuery.length > 0 ? ': ' : ''}
-                        </span>
-                        <span className="font-medium ml-1">
-                          {toSearchQuery}
+    <Popover open={toSearchOpen} onOpenChange={setToSearchOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          role="combobox"
+          aria-expanded={toSearchOpen}
+          className="justify-between h-auto w-full px-0 font-normal hover:bg-transparent active:scale-100 text-sm !pl-0"
+        >
+          {toGroupId
+            ? contactGroupsPagination?.contactGroups.find(
+                (g) => g.id === toGroupId,
+              )?.name || 'Loading...'
+            : 'Select a contact group'}
+          <ChevronsUpDown className="size-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[400px] p-0" align="start">
+        <Command shouldFilter={false}>
+          <CommandInput
+            placeholder="Search contact groups..."
+            value={toSearchQuery}
+            onValueChange={setToSearchQuery}
+          />
+          <CommandList>
+            {filteredContactGroups.length > 0 && (
+              <CommandGroup heading="Contact Groups">
+                {filteredContactGroups.map((group) => (
+                  <CommandItem
+                    key={group.id}
+                    value={group.name}
+                    onSelect={() => {
+                      setToGroupId(group.id);
+                      setToSearchOpen(false);
+                      setToSearchQuery('');
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      {toGroupId === group.id ? (
+                        <Check className="size-4" />
+                      ) : (
+                        <div className="w-4" />
+                      )}
+                      <div className="flex flex-col">
+                        <span>{group.name}</span>
+                        <span className="text-xs text-zinc-400">
+                          {group.contactsCount} contacts
                         </span>
                       </div>
-                    </button>
+                    </div>
                   </CommandItem>
-                </CommandGroup>
-              )}
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
-    </div>
+                ))}
+              </CommandGroup>
+            )}
+
+            {filteredContactGroups.length === 0 && (
+              <CommandGroup>
+                <CommandItem>
+                  <button
+                    className="p-2 w-full flex items-center gap-2 hover:bg-zinc-800"
+                    onClick={() => {
+                      setNewGroupName(toSearchQuery);
+                      setCreateGroupOpen(true);
+                      setToSearchOpen(false);
+                    }}
+                  >
+                    <div className="flex text-left">
+                      <span>
+                        Create new contact group
+                        {toSearchQuery.length > 0 ? ': ' : ''}
+                      </span>
+                      <span className="font-medium ml-1">{toSearchQuery}</span>
+                    </div>
+                  </button>
+                </CommandItem>
+              </CommandGroup>
+            )}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }
