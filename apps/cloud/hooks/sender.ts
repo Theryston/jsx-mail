@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '@/utils/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Sender } from '@/types/sender';
+import { Domain } from '@/types/domain';
 
 export function useCreateSender() {
   const queryClient = useQueryClient();
@@ -46,7 +47,7 @@ export function useDeleteSender() {
 }
 
 export function useVerifiedDomains() {
-  return useQuery({
+  return useQuery<Domain[]>({
     queryKey: ['domains', 'verified'],
     queryFn: () =>
       api

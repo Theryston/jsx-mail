@@ -30,6 +30,7 @@ import {
 } from '@jsx-mail/ui/select';
 import { useCreateSender, useVerifiedDomains } from '@/hooks/sender';
 import { Domain } from '@/types/domain';
+import { Sender } from '@/types/sender';
 
 const senderFormSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -40,9 +41,20 @@ const senderFormSchema = z.object({
 interface AddSenderModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onCreated?: (sender: Sender) => void;
+  defaultUsername?: string;
+  defaultName?: string;
+  defaultDomain?: string;
 }
 
-export function AddSenderModal({ isOpen, onClose }: AddSenderModalProps) {
+export function AddSenderModal({
+  isOpen,
+  onClose,
+  onCreated,
+  defaultUsername,
+  defaultName,
+  defaultDomain,
+}: AddSenderModalProps) {
   const { data: verifiedDomains, isPending: isLoadingDomains } =
     useVerifiedDomains();
   const { mutateAsync: createSender } = useCreateSender();
@@ -58,6 +70,24 @@ export function AddSenderModal({ isOpen, onClose }: AddSenderModalProps) {
   });
 
   const realtimeName = form.watch('name');
+
+  useEffect(() => {
+    if (defaultUsername !== undefined) {
+      form.setValue('username', defaultUsername);
+    }
+
+    if (defaultName !== undefined) {
+      form.setValue('name', defaultName);
+    }
+
+    if (defaultDomain !== undefined) {
+      const exists = verifiedDomains?.some(
+        (domain: Domain) => domain.name === defaultDomain,
+      );
+
+      if (exists) form.setValue('domainName', defaultDomain);
+    }
+  }, [defaultUsername, defaultName, defaultDomain, verifiedDomains]);
 
   useEffect(() => {
     if (verifiedDomains) {
@@ -96,7 +126,7 @@ export function AddSenderModal({ isOpen, onClose }: AddSenderModalProps) {
 
   const onSubmit = async (data: z.infer<typeof senderFormSchema>) => {
     try {
-      await createSender({
+      const sender = await createSender({
         name: data.name,
         username: data.username,
         domainName: data.domainName,
@@ -105,6 +135,7 @@ export function AddSenderModal({ isOpen, onClose }: AddSenderModalProps) {
       toast.success('Sender added successfully');
       form.reset();
       onClose();
+      onCreated?.(sender);
     } catch (error) {
       toast.error('Failed to add sender');
       console.error(error);
