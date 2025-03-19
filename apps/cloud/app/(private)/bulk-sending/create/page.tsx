@@ -119,26 +119,33 @@ export default function BulkSendingCreatePage() {
 
           <div>
             <label className="text-sm font-medium mb-2 block">Subject</label>
-            <Input
-              placeholder="Enter email subject"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              className="bg-zinc-900 border-zinc-700 h-12 rounded-xl"
-            />
+            <div className="rounded-xl bg-zinc-900 border border-zinc-700 overflow-hidden">
+              <Input
+                placeholder="Enter email subject. You can use variables from the contact, like {{name}} or {{email}}."
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+              />
+            </div>
           </div>
 
           <div>
             <label className="text-sm font-medium mb-2 block">Content</label>
             <Textarea
-              placeholder="Enter email content (HTML supported)"
+              placeholder="Enter email content (HTML supported). You can use variables from the contact, like {{name}} or {{email}}."
               value={content}
               onChange={(e) => setContent(e.target.value)}
               className="min-h-[300px] bg-zinc-900 border-zinc-700 rounded-xl resize-none"
             />
           </div>
 
-          <Button disabled={isSending} onClick={() => setIsOpenSendModal(true)}>
-            {isSending ? 'Sending...' : 'Send Email'}
+          <Button
+            disabled={isSending}
+            onClick={() => setIsOpenSendModal(true)}
+            size="sm"
+            className="ml-auto"
+          >
+            Send bulk email
+            <ArrowRight size={16} />
           </Button>
         </div>
       </div>
@@ -165,6 +172,10 @@ export default function BulkSendingCreatePage() {
         isOpen={isOpenSendModal}
         onClose={() => setIsOpenSendModal(false)}
         onSend={handleSendEmail}
+        from={from}
+        to={toGroupId}
+        subject={subject}
+        content={content}
         contactGroup={
           contactGroupsPagination?.contactGroups.find(
             (g) => g.id === toGroupId,
@@ -180,27 +191,49 @@ function SendModal({
   onClose,
   onSend,
   contactGroup,
+  from,
+  to,
+  subject,
+  content,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSend: () => void;
   contactGroup: ContactGroup | null;
+  from: string;
+  to: string;
+  subject: string;
+  content: string;
 }) {
-  const getValidationMessages = () => {
+  const [validationMessages, setValidationMessages] = useState<string[]>([]);
+
+  useEffect(() => {
     const messages = [];
+
+    if (!from) {
+      messages.push('No from (sender) selected');
+    }
+
+    if (!to) {
+      messages.push('No to (contact group) selected');
+    }
+
+    if (!subject) {
+      messages.push('No subject selected');
+    }
+
+    if (!content) {
+      messages.push('No content selected');
+    }
 
     if (!contactGroup) {
       messages.push('No contact group selected');
-    }
-
-    if (contactGroup?.contactsCount === 0) {
+    } else if (contactGroup.contactsCount === 0) {
       messages.push(`No contacts in ${contactGroup?.name}`);
     }
 
-    return messages;
-  };
-
-  const validationMessages = getValidationMessages();
+    setValidationMessages(messages);
+  }, [from, to, subject, content, contactGroup]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -215,7 +248,7 @@ function SendModal({
           )}
         </DialogHeader>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           {validationMessages.map((message, index) => (
             <div
               key={index}
