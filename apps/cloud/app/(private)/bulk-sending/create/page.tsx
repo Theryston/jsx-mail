@@ -5,7 +5,14 @@ import { Container } from '@/components/container';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useContactGroups } from '@/hooks/contact-group';
 import { useSenders } from '@/hooks/sender';
-import { Check, ChevronsUpDown, ArrowRight, AlertTriangle } from 'lucide-react';
+import {
+  Check,
+  ChevronsUpDown,
+  ArrowRight,
+  AlertTriangle,
+  CheckCircle,
+  Loader2,
+} from 'lucide-react';
 import { Button } from '@jsx-mail/ui/button';
 import { Input } from '@jsx-mail/ui/input';
 import { Textarea } from '@jsx-mail/ui/textarea';
@@ -57,7 +64,7 @@ export default function BulkSendingCreatePage() {
     }
   }, [initialContactGroupId]);
 
-  const handleSendEmail = useCallback(() => {
+  const handleSendEmail = useCallback(async () => {
     if (!from || !subject || !toGroupId || !content) {
       toast.error('Please fill in all fields');
       return;
@@ -81,6 +88,7 @@ export default function BulkSendingCreatePage() {
 
     try {
       // TODO: Implement bulk sending
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       toast.success('Bulk sending started');
     } finally {
       setIsSending(false);
@@ -199,7 +207,7 @@ function SendModal({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onSend: () => void;
+  onSend: () => Promise<void>;
   contactGroup: ContactGroup | null;
   from: string;
   to: string;
@@ -211,6 +219,7 @@ function SendModal({
   const [dragProgress, setDragProgress] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     const messages = [];
@@ -234,7 +243,7 @@ function SendModal({
     if (!contactGroup) {
       messages.push('No contact group selected');
     } else if (contactGroup.contactsCount === 0) {
-      messages.push(`No contacts in ${contactGroup?.name}`);
+      messages.push(`No contacts in contact group ${contactGroup?.name}`);
     }
 
     setValidationMessages(messages);
@@ -253,12 +262,17 @@ function SendModal({
     [isDragging],
   );
 
-  const handleMouseUp = useCallback(() => {
+  const handleMouseUp = useCallback(async () => {
     if (isDragging) {
       if (dragProgress > 0.9) {
-        // If dragged more than 90% of the way
-        onSend();
-        onClose();
+        setIsSending(true);
+        try {
+          await onSend();
+          onClose();
+        } finally {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          setIsSending(false);
+        }
       }
       setIsDragging(false);
       setDragProgress(0);
@@ -276,7 +290,7 @@ function SendModal({
       0,
       Math.min(clientX - sliderRect.left - buttonRect.width / 2, maxDrag),
     );
-    const progress = dragX / maxDrag;
+    const progress = Math.min(dragX / maxDrag, 1);
     setDragProgress(progress);
   };
 
@@ -315,27 +329,47 @@ function SendModal({
             </div>
           ))}
 
-          {validationMessages.length === 0 && (
+          {isSending && (
+            <div className="flex items-center justify-center gap-2 text-amber-500 text-sm animate-pulse">
+              <Loader2 className="size-5 animate-spin" />
+              <span>Creating sending queue...</span>
+            </div>
+          )}
+
+          {validationMessages.length === 0 && !isSending && (
             <div
               ref={sliderRef}
-              className="relative h-12 bg-zinc-800 rounded-lg overflow-hidden"
+              className="relative h-12 bg-zinc-800 rounded-full overflow-hidden"
             >
-              <div className="absolute inset-0 flex items-center justify-center text-sm text-zinc-400 pointer-events-none">
+              <div
+                className="absolute inset-0 flex items-center justify-center text-sm text-zinc-400 pointer-events-none"
+                style={{
+                  opacity: 1 - dragProgress * 2,
+                }}
+              >
                 Slide to send
               </div>
+
               <button
                 ref={buttonRef}
                 className={cn(
-                  'absolute left-0 top-0 h-full px-4 bg-zinc-700 rounded-lg cursor-grab active:cursor-grabbing transition-colors',
+                  'absolute left-2 top-1/2 -translate-y-1/2 bg-zinc-700 h-8 w-16 rounded-full cursor-grab active:cursor-grabbing transition-colors duration-150 flex items-center justify-center',
                   isDragging && 'bg-zinc-600',
+                  dragProgress === 1 && 'h-7 w-14',
                 )}
                 style={{
-                  transform: `translateX(${dragProgress * (sliderRef.current?.offsetWidth || 0)}px)`,
+                  transform: `translateX(${dragProgress * ((sliderRef.current?.offsetWidth || 0) - (buttonRef.current?.offsetWidth || 0)) * 0.96}px)`,
                   maxWidth: 'calc(100% - 8px)',
+                  backgroundColor:
+                    dragProgress > 0.1
+                      ? `rgba(0, 111, 238, ${dragProgress})`
+                      : undefined,
                 }}
                 onMouseDown={handleMouseDown}
               >
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight
+                  className={cn('size-5', dragProgress === 1 && 'size-4')}
+                />
               </button>
             </div>
           )}
