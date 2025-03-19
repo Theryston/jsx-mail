@@ -217,12 +217,6 @@ function ContentEditor({
           <TabsTrigger value="html">HTML</TabsTrigger>
         </TabsList>
         <TabsContent value="editor">
-          {/* <Textarea
-            placeholder="Enter email content (HTML supported). You can use variables from the contact, like {{name}} or {{email}}."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="min-h-[300px] !bg-transparent px-0 border-0 resize-none text-sm placeholder:text-zinc-500 focus-visible:ring-0 w-full"
-          /> */}
           <RichTextEditor content={content} setContent={setContent} />
         </TabsContent>
         <TabsContent value="html">
@@ -283,10 +277,6 @@ function SendModal({
       messages.push('No from (sender) selected');
     }
 
-    if (!to) {
-      messages.push('No to (contact group) selected');
-    }
-
     if (!subject) {
       messages.push('No subject selected');
     }
@@ -295,7 +285,9 @@ function SendModal({
       messages.push('No content selected');
     }
 
-    if (!contactGroup) {
+    if (!to) {
+      messages.push('No to (contact group) selected');
+    } else if (!contactGroup) {
       messages.push('No contact group selected');
     } else if (contactGroup.contactsCount === 0) {
       messages.push(`No contacts in contact group ${contactGroup?.name}`);

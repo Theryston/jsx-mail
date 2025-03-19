@@ -8,7 +8,10 @@ import {
   UploadImagesPlugin,
 } from 'novel';
 
-const placeholder = Placeholder;
+const placeholder = Placeholder.configure({
+  placeholder:
+    'You can type "/" to get the commands, you can user variables from the contact like {{name}}',
+});
 
 const tiptapLink = TiptapLink.configure({
   HTMLAttributes: {

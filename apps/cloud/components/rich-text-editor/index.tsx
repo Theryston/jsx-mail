@@ -41,7 +41,8 @@ export function RichTextEditor({
         }}
         editorProps={{
           attributes: {
-            class: 'min-h-[300px] outline-none text-sm',
+            class:
+              'prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full',
           },
           handleDOMEvents: {
             keydown: (_view, event) => handleCommandNavigation(event),
@@ -50,6 +51,7 @@ export function RichTextEditor({
           handleDrop: (view, event, _slice, moved) =>
             handleImageDrop(view, event, moved, uploadFn),
         }}
+        className="relative min-h-[500px] w-full max-w-screen-lg"
       >
         <MenuSwitch />
         <EditorCommand className="z-50 h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
