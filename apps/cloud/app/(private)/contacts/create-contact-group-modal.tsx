@@ -23,7 +23,8 @@ import {
 } from '@jsx-mail/ui/form';
 import { Input } from '@jsx-mail/ui/input';
 import { useCreateContactGroup } from '@/hooks/contact-group';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useCallback, useEffect } from 'react';
 
 const formSchema = z.object({
   name: z
@@ -35,11 +36,13 @@ const formSchema = z.object({
 interface CreateContactGroupModalProps {
   isOpen: boolean;
   onClose: () => void;
+  defaultName?: string;
 }
 
 export function CreateContactGroupModal({
   isOpen,
   onClose,
+  defaultName,
 }: CreateContactGroupModalProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,19 +55,38 @@ export function CreateContactGroupModal({
 
   const { mutateAsync: createContactGroup, isPending } =
     useCreateContactGroup();
+  const pathname = usePathname();
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      const contactGroup = await createContactGroup(values.name);
-      toast.success('Contact group created successfully');
-      form.reset();
-      onClose();
-      router.push(`/contacts/${contactGroup.id}`);
-    } catch (error) {
-      toast.error('Failed to create contact group');
-      console.error(error);
-    }
-  };
+  const onSubmit = useCallback(
+    async (values: z.infer<typeof formSchema>) => {
+      try {
+        const contactGroup = await createContactGroup(values.name);
+        toast.success(
+          'Contact group created successfully! Add the contacts to it now.',
+        );
+        form.reset();
+        onClose();
+
+        let customBack = pathname;
+
+        if (pathname === '/bulk-sending/create') {
+          customBack = encodeURIComponent(
+            `${pathname}?contactGroupId=${contactGroup.id}`,
+          );
+        }
+
+        router.push(`/contacts/${contactGroup.id}?back=${customBack}`);
+      } catch (error) {
+        toast.error('Failed to create contact group');
+        console.error(error);
+      }
+    },
+    [createContactGroup, form, onClose, router, pathname],
+  );
+
+  useEffect(() => {
+    if (defaultName !== undefined) form.setValue('name', defaultName);
+  }, [defaultName, form]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Container } from '@/components/container';
 import { Button } from '@jsx-mail/ui/button';
 import { useParams } from 'next/navigation';
@@ -77,6 +77,8 @@ export default function ImportContactsPage() {
   const { mutateAsync: createContactImport, isPending: isCreatingImport } =
     useCreateContactImport(id);
   const inputFileRef = useRef<HTMLInputElement>(null);
+  const searchParams = useSearchParams();
+  const back = searchParams.get('back') || `/contacts/${id}`;
 
   const handleUpload = async () => {
     if (!file) {
@@ -187,7 +189,7 @@ export default function ImportContactsPage() {
       });
 
       toast.success('Contacts import started successfully!');
-      router.push(`/contacts/${id}`);
+      router.push(back);
     } catch (error) {
       toast.error('Failed to start import. Please try again.');
       console.error('Import error:', error);
@@ -200,7 +202,7 @@ export default function ImportContactsPage() {
     if (step === ImportSteps.MAP_COLUMNS) {
       setStep(ImportSteps.UPLOAD);
     } else {
-      router.push(`/contacts/${id}`);
+      router.push(back);
     }
   };
 

@@ -19,7 +19,7 @@ import {
   useContactImportFailures,
 } from '@/hooks/contact-group';
 import { Skeleton } from '@jsx-mail/ui/skeleton';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,6 +65,8 @@ export default function ContactGroupPage({
     refetchInterval: processingImport ? 5000 : false,
   });
   const queryClient = useQueryClient();
+  const searchParams = useSearchParams();
+  const back = searchParams.get('back') || '/contacts';
 
   useEffect(() => {
     queryClient.invalidateQueries({
@@ -135,7 +137,7 @@ export default function ContactGroupPage({
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => router.push('/contacts')}
+                  onClick={() => router.push(back)}
                 >
                   <ArrowLeftIcon className="size-4" />
                 </Button>
@@ -383,9 +385,12 @@ function ContactButtons({
   setIsAddContactManuallyOpen: (open: boolean) => void;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const backSearchParam = searchParams.get('back');
+  const back = `/contacts/${id}${backSearchParam ? `?back=${backSearchParam}` : ''}`;
 
   const handleImportCSV = () => {
-    router.push(`/contacts/${id}/import`);
+    router.push(`/contacts/${id}/import?back=${back}`);
   };
 
   const handleSendEmail = () => {
