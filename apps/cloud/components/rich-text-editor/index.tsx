@@ -49,7 +49,7 @@ export function RichTextEditor({
       >
         <EditorBubble
           tippyOptions={{
-            placement: 'bottom-start',
+            placement: 'top-start',
           }}
           className="flex w-fit max-w-[90vw] overflow-hidden rounded border border-muted bg-background shadow-xl"
         >
