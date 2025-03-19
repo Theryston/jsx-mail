@@ -2,20 +2,33 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { PrismaService } from 'src/services/prisma.service';
 import axios from 'axios';
+import { SenderSendEmailService } from '../sender/services/sender-send-email.service';
 
 @Processor('bulk-sending')
 export class BulkSendingProcessor extends WorkerHost {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly senderSendEmailService: SenderSendEmailService,
+  ) {
     super();
   }
 
   async process(job: Job) {
-    if (job.name === 'create-bulk-contacts') {
-      await this.createBulkContacts(job.data);
-    }
+    try {
+      if (job.name === 'create-bulk-contacts') {
+        await this.createBulkContacts(job.data);
+        return;
+      }
 
-    if (job.name === 'send-bulk-email') {
-      await this.sendBulkEmail(job.data);
+      if (job.name === 'send-bulk-email') {
+        await this.sendBulkEmail(job.data);
+        return;
+      }
+
+      throw new Error('Invalid job name');
+    } catch (error) {
+      console.error(`[BULK_SENDING] error processing job ${job.id}`, error);
+      throw error;
     }
   }
 
@@ -26,17 +39,141 @@ export class BulkSendingProcessor extends WorkerHost {
 
     const bulkSending = await this.prisma.bulkSending.findUnique({
       where: { id: bulkSendingId },
+      include: {
+        sender: true,
+      },
     });
 
     if (!bulkSending) {
       throw new Error('Bulk sending not found');
     }
 
-    const { subject, content, senderId, contactGroupId } = bulkSending;
+    await this.prisma.bulkSending.update({
+      where: { id: bulkSendingId },
+      data: { status: 'processing' },
+    });
+
+    const { subject, content, contactGroupId } = bulkSending;
 
     console.log(
       `[BULK_SENDING] sending email to ${bulkSending.totalContacts} contacts`,
     );
+
+    const PER_PAGE = 100;
+    let page = 1;
+    try {
+      while (true) {
+        const contacts = await this.prisma.contact.findMany({
+          where: { contactGroupId },
+          skip: (page - 1) * PER_PAGE,
+          take: PER_PAGE,
+        });
+
+        if (contacts.length === 0) {
+          console.log(
+            `[BULK_SENDING] no contacts found in page ${page} for bulk sending ${bulkSendingId}`,
+          );
+          break;
+        }
+
+        for (let i = 0; i < contacts.length; i++) {
+          const contact = contacts[i];
+
+          try {
+            const isSent = await this.prisma.message.findFirst({
+              where: {
+                to: {
+                  has: contact.email,
+                },
+                bulkSendingId,
+              },
+            });
+
+            if (isSent) {
+              console.log(
+                `[BULK_SENDING] skipping ${contact.email} because it was already sent`,
+              );
+
+              await this.prisma.bulkSendingFailure.create({
+                data: {
+                  bulkSendingId,
+                  contactId: contact.id,
+                  message: 'Contact already sent',
+                  line: i + 1,
+                },
+              });
+
+              continue;
+            }
+
+            console.log(
+              `[BULK_SENDING] sending email to ${contact.email} for bulk sending ${bulkSendingId}`,
+            );
+
+            const message = await this.senderSendEmailService.execute(
+              {
+                sender: bulkSending.sender.email,
+                subject,
+                html: content,
+                to: [contact.email],
+                bulkSendingId,
+                customPayload: {
+                  name: contact.name || contact.email,
+                  email: contact.email,
+                },
+              },
+              bulkSending.userId,
+            );
+
+            console.log(
+              `[BULK_SENDING] sent email to ${contact.email} with messageId ${message.id}`,
+            );
+          } catch (error) {
+            console.error(
+              `[BULK_SENDING] error sending email to ${contact.email} for bulk sending ${bulkSendingId}`,
+              error,
+            );
+
+            await this.prisma.bulkSendingFailure.create({
+              data: {
+                bulkSendingId,
+                contactId: contact.id,
+                message: error.message,
+                line: i + 1,
+              },
+            });
+          } finally {
+            await this.prisma.bulkSending.update({
+              where: { id: bulkSendingId },
+              data: {
+                processedContacts: {
+                  increment: 1,
+                },
+              },
+            });
+          }
+        }
+
+        page++;
+      }
+
+      await this.prisma.bulkSending.update({
+        where: { id: bulkSendingId },
+        data: { status: 'completed' },
+      });
+    } catch (error) {
+      console.error(
+        `[BULK_SENDING] error sending bulk email for bulk sending ${bulkSendingId}`,
+        error,
+      );
+
+      await this.prisma.bulkSending.update({
+        where: { id: bulkSendingId },
+        data: { status: 'failed' },
+      });
+
+      throw error;
+    }
   }
 
   async createBulkContacts(data: { contactImportId: string }) {

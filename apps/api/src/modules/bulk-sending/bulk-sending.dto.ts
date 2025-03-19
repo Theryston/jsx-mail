@@ -11,6 +11,6 @@ export class CreateBulkContactsDto {
 export class CreateBulkSendingDto {
   subject: string;
   content: string;
-  senderId: string;
+  sender: string;
   contactGroupId: string;
 }

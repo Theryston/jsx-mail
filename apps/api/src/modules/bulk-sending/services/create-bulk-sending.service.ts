@@ -12,10 +12,10 @@ export class CreateBulkSendingService {
   ) {}
 
   async execute(body: CreateBulkSendingDto, userId: string) {
-    const sender = await this.prisma.sender.findUnique({
+    const sender = await this.prisma.sender.findFirst({
       where: {
-        id: body.senderId,
         userId,
+        email: body.sender,
       },
     });
 
@@ -68,9 +68,17 @@ export class CreateBulkSendingService {
         },
         totalContacts: contactGroup._count.contacts,
       },
+      include: {
+        _count: {
+          select: {
+            messages: true,
+            failures: true,
+          },
+        },
+      },
     });
 
-    await this.queue.add('bulk-sending', {
+    await this.queue.add('send-bulk-email', {
       bulkSendingId: bulkSending.id,
     });
 

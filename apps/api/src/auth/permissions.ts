@@ -217,4 +217,14 @@ export const PERMISSIONS: {
     value: 'self:get-contact-import-failures',
     description: 'Can get contact import failures for itself',
   },
+  SELF_CREATE_BULK_SENDING: {
+    title: 'Self Create Bulk Sending',
+    value: 'self:create-bulk-sending',
+    description: 'Can create a bulk sending for itself',
+  },
+  SELF_LIST_BULK_SENDINGS: {
+    title: 'Self List Bulk Sendings',
+    value: 'self:list-bulk-sendings',
+    description: 'Can list bulk sendings for itself',
+  },
 };

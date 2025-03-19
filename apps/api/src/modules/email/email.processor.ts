@@ -6,7 +6,7 @@ import { PrismaService } from 'src/services/prisma.service';
 import { sesClient } from '../domain/ses';
 import nodemailer from 'nodemailer';
 import axios from 'axios';
-
+import handlebars from 'handlebars';
 const transporter = nodemailer.createTransport({
   SES: { aws, ses: sesClient },
 });
@@ -41,7 +41,17 @@ export class EmailProcessor extends WorkerHost {
 
     console.log(`[EMAIL_PROCESSOR] sending email: ${dataLog}`);
 
-    const { subject, html, from, to, messageId, filesIds } = data;
+    const { from, to, messageId, filesIds } = data;
+    let html = data.html;
+    let subject = data.subject;
+
+    if (data.customPayload) {
+      const templateHtml = handlebars.compile(data.html);
+      html = templateHtml(data.customPayload);
+
+      const templateSubject = handlebars.compile(data.subject);
+      subject = templateSubject(data.customPayload);
+    }
 
     let attachments: any[] = [];
 

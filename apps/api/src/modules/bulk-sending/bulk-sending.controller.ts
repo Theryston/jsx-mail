@@ -12,6 +12,7 @@ import {
 import { CreateContactsGroupService } from './services/create-contacts-group.service';
 import {
   CreateBulkContactsDto,
+  CreateBulkSendingDto,
   CreateContactGroupDto,
 } from './bulk-sending.dto';
 import { PERMISSIONS } from 'src/auth/permissions';
@@ -25,6 +26,8 @@ import { CreateBulkContactsService } from './services/create-bulk-contacts.servi
 import { ListContactImportsService } from './services/list-contact-imports.service';
 import { MarkContactImportsAsReadService } from './services/mark-contact-imports-as-read.service';
 import { ListContactImportFailuresSService } from './services/list-contact-import-failures-s.service';
+import { CreateBulkSendingService } from './services/create-bulk-sending.service';
+import { ListBulkSendingsService } from './services/list-bulk-sendings.service';
 
 @Controller('bulk-sending')
 export class BulkSendingController {
@@ -39,7 +42,21 @@ export class BulkSendingController {
     private readonly listContactImportsService: ListContactImportsService,
     private readonly markContactImportAsReadService: MarkContactImportsAsReadService,
     private readonly listContactImportFailuresService: ListContactImportFailuresSService,
+    private readonly createBulkSendingService: CreateBulkSendingService,
+    private readonly listBulkSendingsService: ListBulkSendingsService,
   ) {}
+
+  @Post()
+  @Permissions([PERMISSIONS.SELF_CREATE_BULK_SENDING.value])
+  createBulkSending(@Body() body: CreateBulkSendingDto, @Req() req) {
+    return this.createBulkSendingService.execute(body, req.user.id);
+  }
+
+  @Get()
+  @Permissions([PERMISSIONS.SELF_LIST_BULK_SENDINGS.value])
+  listBulkSendings(@Req() req) {
+    return this.listBulkSendingsService.execute(req.user.id);
+  }
 
   @Post('contact-group')
   @Permissions([PERMISSIONS.SELF_CREATE_CONTACT_GROUP.value])

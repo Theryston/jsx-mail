@@ -20,7 +20,15 @@ export class SenderSendEmailService {
   ) {}
 
   async execute(
-    { sender: senderEmail, html, subject, to, filesIds }: SenderSendEmailDto,
+    {
+      sender: senderEmail,
+      html,
+      subject,
+      to,
+      filesIds,
+      bulkSendingId,
+      customPayload,
+    }: SenderSendEmailDto,
     userId: string,
   ) {
     if (filesIds && filesIds.length > 0) {
@@ -97,6 +105,10 @@ export class SenderSendEmailService {
               })),
             }
           : undefined,
+        bulkSendingId,
+        customPayload: customPayload
+          ? JSON.stringify(customPayload)
+          : undefined,
       },
       select: messageSelect,
     });
@@ -111,6 +123,8 @@ export class SenderSendEmailService {
       to,
       messageId: message.id,
       filesIds,
+      bulkSendingId,
+      customPayload,
     });
 
     return message;

@@ -14,12 +14,15 @@ import { ListContactImportsService } from './services/list-contact-imports.servi
 import { MarkContactImportsAsReadService } from './services/mark-contact-imports-as-read.service';
 import { ListContactImportFailuresSService } from './services/list-contact-import-failures-s.service';
 import { CreateBulkSendingService } from './services/create-bulk-sending.service';
+import { ListBulkSendingsService } from './services/list-bulk-sendings.service';
+import { SenderModule } from '../sender/sender.module';
 
 @Module({
   imports: [
     BullModule.registerQueue({
       name: 'bulk-sending',
     }),
+    SenderModule,
   ],
   controllers: [BulkSendingController],
   providers: [
@@ -36,6 +39,7 @@ import { CreateBulkSendingService } from './services/create-bulk-sending.service
     MarkContactImportsAsReadService,
     ListContactImportFailuresSService,
     CreateBulkSendingService,
+    ListBulkSendingsService,
   ],
 })
 export class BulkSendingModule {}

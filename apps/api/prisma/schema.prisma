@@ -290,6 +290,7 @@ model Message {
   externalId    String?       @map("external_id")
   sentDay       String?       @map("sent_day")
   sentAt        DateTime?     @map("sent_at")
+  customPayload String?       @map("custom_payload")
   chargeMonth   String?       @map("charge_month") // which month the message will be charged (YYYY-MM)
   createdDay    String        @map("created_day")
   createdAt     DateTime      @default(now()) @map("created_at")
@@ -325,8 +326,25 @@ model BulkSending {
   contactGroup ContactGroup @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
 
   messages Message[]
+  failures BulkSendingFailure[]
 
   @@map("bulk_sendings")
+}
+
+model BulkSendingFailure {
+  id            String    @id @default(uuid())
+  bulkSendingId String    @map("bulk_sending_id")
+  message       String
+  contactId     String?   @map("contact_id")
+  line          Int?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  bulkSending BulkSending @relation(fields: [bulkSendingId], references: [id], onDelete: Cascade)
+  contact     Contact?    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@map("bulk_sending_failures")
 }
 
 model MessageFile {
@@ -427,8 +445,9 @@ model Contact {
   updatedAt       DateTime  @updatedAt @map("updated_at")
   deletedAt       DateTime? @map("deleted_at")
 
-  contactGroup  ContactGroup   @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
-  contactImport ContactImport? @relation(fields: [contactImportId], references: [id], onDelete: Cascade)
+  contactGroup        ContactGroup         @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
+  contactImport       ContactImport?       @relation(fields: [contactImportId], references: [id], onDelete: Cascade)
+  bulkSendingFailures BulkSendingFailure[]
 
   @@map("contacts")
 }

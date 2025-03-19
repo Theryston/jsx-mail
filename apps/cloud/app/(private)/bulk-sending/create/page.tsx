@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { Container } from '@/components/container';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useContactGroups } from '@/hooks/bulk-sending';
+import { useContactGroups, useCreateBulkSending } from '@/hooks/bulk-sending';
 import { useSenders } from '@/hooks/sender';
 import {
   Check,
@@ -58,6 +58,7 @@ export default function BulkSendingCreatePage() {
   const [fromSearchQuery, setFromSearchQuery] = useState('');
   const [toSearchQuery, setToSearchQuery] = useState('');
   const { data: contactGroupsPagination } = useContactGroups();
+  const { mutateAsync: createBulkSending } = useCreateBulkSending();
 
   useEffect(() => {
     if (initialContactGroupId) {
@@ -88,9 +89,15 @@ export default function BulkSendingCreatePage() {
     setIsSending(true);
 
     try {
-      // TODO: Implement bulk sending
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await createBulkSending({
+        subject,
+        content,
+        sender: from,
+        contactGroupId: toGroupId,
+      });
+
       toast.success('Bulk sending started');
+      router.push(`/bulk-sending`);
     } finally {
       setIsSending(false);
     }

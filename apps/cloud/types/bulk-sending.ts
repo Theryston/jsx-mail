@@ -64,3 +64,21 @@ export type ContactImportFailure = {
 export type ContactImportFailuresPagination = ContactGroupPagination & {
   failures: ContactImportFailure[];
 };
+
+export type BulkSending = {
+  id: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  subject: string;
+  content: string;
+  senderId: string;
+  totalContacts: number;
+  processedContacts: number;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  contactGroupId: string;
+  _count: {
+    messages: number;
+    failures: number;
+  };
+};
