@@ -376,7 +376,8 @@ function SendModal({
           {contactGroup && (
             <DialogDescription>
               Are you sure you want to send this email to{' '}
-              {contactGroup?.contactsCount} contacts from {contactGroup?.name}?
+              <b>{contactGroup?.contactsCount}</b> contacts from{' '}
+              <b>{contactGroup?.name}</b>?
             </DialogDescription>
           )}
         </DialogHeader>
