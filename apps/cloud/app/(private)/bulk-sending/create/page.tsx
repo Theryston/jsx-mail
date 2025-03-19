@@ -103,41 +103,47 @@ export default function BulkSendingCreatePage() {
         </div>
 
         <div className="bg-zinc-900 rounded-xl p-6 flex flex-col divide-y divide-zinc-800">
-          <div className="grid grid-cols-[auto_1fr] gap-4 items-center pb-4">
-            <div className="text-sm text-zinc-400 w-20">From</div>
-            <SenderSelector
-              from={from}
-              setFrom={setFrom}
-              fromSearchOpen={fromSearchOpen}
-              setFromSearchOpen={setFromSearchOpen}
-              fromSearchQuery={fromSearchQuery}
-              setFromSearchQuery={setFromSearchQuery}
-              setCreateSenderOpen={setCreateSenderOpen}
-            />
+          <div className="grid sm:grid-cols-[auto_1fr] gap-2 sm:gap-4 items-start sm:items-center pb-4">
+            <div className="text-sm text-zinc-400 sm:w-20">From</div>
+            <div className="w-full overflow-hidden">
+              <SenderSelector
+                from={from}
+                setFrom={setFrom}
+                fromSearchOpen={fromSearchOpen}
+                setFromSearchOpen={setFromSearchOpen}
+                fromSearchQuery={fromSearchQuery}
+                setFromSearchQuery={setFromSearchQuery}
+                setCreateSenderOpen={setCreateSenderOpen}
+              />
+            </div>
           </div>
 
-          <div className="grid grid-cols-[auto_1fr] gap-4 items-center py-4">
-            <div className="text-sm text-zinc-400 w-20">To</div>
-            <ContactGroupSelector
-              toGroupId={toGroupId}
-              setToGroupId={setToGroupId}
-              toSearchOpen={toSearchOpen}
-              setToSearchOpen={setToSearchOpen}
-              toSearchQuery={toSearchQuery}
-              setToSearchQuery={setToSearchQuery}
-              setCreateGroupOpen={setCreateGroupOpen}
-              setNewGroupName={setNewGroupName}
-            />
+          <div className="grid sm:grid-cols-[auto_1fr] gap-2 sm:gap-4 items-start sm:items-center py-4">
+            <div className="text-sm text-zinc-400 sm:w-20">To</div>
+            <div className="w-full overflow-hidden">
+              <ContactGroupSelector
+                toGroupId={toGroupId}
+                setToGroupId={setToGroupId}
+                toSearchOpen={toSearchOpen}
+                setToSearchOpen={setToSearchOpen}
+                toSearchQuery={toSearchQuery}
+                setToSearchQuery={setToSearchQuery}
+                setCreateGroupOpen={setCreateGroupOpen}
+                setNewGroupName={setNewGroupName}
+              />
+            </div>
           </div>
 
-          <div className="grid grid-cols-[auto_1fr] gap-4 items-center py-4">
-            <div className="text-sm text-zinc-400 w-20">Subject</div>
-            <Input
-              placeholder="Enter email subject. You can use variables from the contact, like {{name}} or {{email}}."
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              className="bg-transparent border-0 h-10 px-0 text-sm placeholder:text-zinc-500 focus-visible:ring-0 focus-visible:bg-transparent"
-            />
+          <div className="grid sm:grid-cols-[auto_1fr] gap-2 sm:gap-4 items-start sm:items-center py-4">
+            <div className="text-sm text-zinc-400 sm:w-20">Subject</div>
+            <div className="w-full overflow-hidden">
+              <Input
+                placeholder="Enter email subject. You can use variables from the contact, like {{name}} or {{email}}."
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                className="bg-transparent border-0 h-10 px-0 text-sm placeholder:text-zinc-500 focus-visible:ring-0 focus-visible:bg-transparent overflow-ellipsis"
+              />
+            </div>
           </div>
 
           <div className="pt-4">
@@ -201,12 +207,14 @@ function ContentEditor({
   setContent: (content: string) => void;
 }) {
   return (
-    <Textarea
-      placeholder="Enter email content (HTML supported). You can use variables from the contact, like {{name}} or {{email}}."
-      value={content}
-      onChange={(e) => setContent(e.target.value)}
-      className="min-h-[300px] !bg-transparent px-0 border-0 resize-none text-sm placeholder:text-zinc-500 focus-visible:ring-0"
-    />
+    <div className="w-full">
+      <Textarea
+        placeholder="Enter email content (HTML supported). You can use variables from the contact, like {{name}} or {{email}}."
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        className="min-h-[300px] !bg-transparent px-0 border-0 resize-none text-sm placeholder:text-zinc-500 focus-visible:ring-0 w-full"
+      />
+    </div>
   );
 }
 
@@ -478,7 +486,7 @@ function SenderSelector({
           variant="ghost"
           role="combobox"
           aria-expanded={fromSearchOpen}
-          className="justify-between h-auto w-full px-0 font-normal hover:bg-transparent active:scale-100 text-sm !pl-0"
+          className="justify-between h-auto w-full px-0 font-normal hover:bg-transparent active:scale-100 text-sm !pl-0 truncate"
         >
           {from ? from : 'Select a sender'}
           <ChevronsUpDown className="size-4 shrink-0 opacity-50" />
@@ -593,7 +601,7 @@ function ContactGroupSelector({
           variant="ghost"
           role="combobox"
           aria-expanded={toSearchOpen}
-          className="justify-between h-auto w-full px-0 font-normal hover:bg-transparent active:scale-100 text-sm !pl-0"
+          className="justify-between h-auto w-full px-0 font-normal hover:bg-transparent active:scale-100 text-sm !pl-0 truncate"
         >
           {toGroupId
             ? contactGroupsPagination?.contactGroups.find(
