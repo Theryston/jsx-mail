@@ -47,7 +47,7 @@ export const ITEMS = [
     icon: Mail,
   },
   {
-    label: 'Contacts',
+    label: 'Contact Groups',
     href: '/contacts',
     icon: Users,
   },

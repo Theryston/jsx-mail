@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { DeleteConfirmationModal } from '@jsx-mail/ui/delete-confirmation-modal';
 import { useDeleteContactGroup } from '@/hooks/contact-group';
 import { toast } from '@jsx-mail/ui/sonner';
-import { ChevronRightIcon, TrashIcon } from 'lucide-react';
+import { ChevronRightIcon, TrashIcon, UsersIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export const columns: ColumnDef<ContactGroupListItem>[] = [
@@ -58,20 +58,20 @@ export const columns: ColumnDef<ContactGroupListItem>[] = [
         <>
           <div className="flex gap-2">
             <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNavigateToContacts}
+            >
+              <UsersIcon className="size-4" />
+              Contacts
+            </Button>
+            <Button
               variant="destructive"
               size="sm"
               onClick={() => setIsDeleteOpen(true)}
             >
               <TrashIcon className="size-4" />
               Delete
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleNavigateToContacts}
-            >
-              <ChevronRightIcon className="size-4" />
-              More
             </Button>
           </div>
 

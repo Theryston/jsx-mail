@@ -8,6 +8,7 @@ import {
   UserPlusIcon,
   Send,
   Loader2,
+  ArrowLeftIcon,
 } from 'lucide-react';
 import { use, useEffect, useState } from 'react';
 import {
@@ -128,9 +129,18 @@ export default function ContactGroupPage({
         )}
 
         <div className="flex flex-col gap-4 md:flex-row md:items-center justify-between">
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between">
             <div className="flex gap-2 flex-col">
-              <h1 className="text-2xl font-bold">{contactGroup?.name}</h1>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => router.push('/contacts')}
+                >
+                  <ArrowLeftIcon className="size-4" />
+                </Button>
+                <h1 className="text-2xl font-bold">{contactGroup?.name}</h1>
+              </div>
               <Badge variant="outline" className="w-fit h-fit">
                 {contactGroup?.contactsCount || 0} contacts
               </Badge>
