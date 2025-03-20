@@ -22,14 +22,10 @@ const processContent = (content: string) => {
 
 export function RichTextEditor({
   setContent: setContentHtml,
-  content: contentHtml,
 }: {
-  content: string;
   setContent: (content: string) => void;
 }) {
   const extensions = [...defaultExtensions, slashCommand];
-
-  console.log(contentHtml);
 
   return (
     <EditorRoot>
@@ -42,7 +38,7 @@ export function RichTextEditor({
         editorProps={{
           attributes: {
             class:
-              'prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full',
+              'prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full text-sm',
           },
           handleDOMEvents: {
             keydown: (_view, event) => handleCommandNavigation(event),

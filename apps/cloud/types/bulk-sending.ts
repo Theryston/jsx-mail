@@ -82,3 +82,12 @@ export type BulkSending = {
     failures: number;
   };
 };
+
+export type BulkSendingVariable = {
+  key: string;
+  from: string;
+  fromKey: string;
+  isMapped: boolean;
+  customValue?: string;
+  isDefault?: boolean;
+};

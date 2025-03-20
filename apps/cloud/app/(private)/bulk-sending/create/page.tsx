@@ -11,6 +11,7 @@ import {
   ArrowRight,
   AlertTriangle,
   Loader2,
+  X,
 } from 'lucide-react';
 import { Button } from '@jsx-mail/ui/button';
 import { Input } from '@jsx-mail/ui/input';
@@ -36,8 +37,46 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@jsx-mail/ui/dialog';
-import { ContactGroup } from '@/types/bulk-sending';
+import { BulkSendingVariable, ContactGroup } from '@/types/bulk-sending';
 import { RichTextEditor } from '@/components/rich-text-editor';
+import { Badge } from '@jsx-mail/ui/badge';
+import { Label } from '@jsx-mail/ui/label';
+import {
+  Select,
+  SelectItem,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+} from '@jsx-mail/ui/select';
+
+const defaultVariables: BulkSendingVariable[] = [
+  {
+    key: 'name',
+    from: 'contact',
+    fromKey: 'name',
+    isMapped: true,
+    isDefault: true,
+  },
+  {
+    key: 'email',
+    from: 'contact',
+    fromKey: 'email',
+    isMapped: true,
+    isDefault: true,
+  },
+  {
+    key: 'unsubscribe_url',
+    from: 'bulk_sending',
+    fromKey: 'unsubscribe_url',
+    isMapped: true,
+    isDefault: true,
+  },
+];
+
+const AVAILABLE_KEYS = {
+  contact: ['name', 'email'],
+  bulk_sending: ['unsubscribe_url'],
+};
 
 export default function BulkSendingCreatePage() {
   const router = useRouter();
@@ -59,11 +98,72 @@ export default function BulkSendingCreatePage() {
   const [toSearchQuery, setToSearchQuery] = useState('');
   const { data: contactGroupsPagination } = useContactGroups();
   const { mutateAsync: createBulkSending } = useCreateBulkSending();
+  const [isHtml, setIsHtml] = useState(false);
+  const [variables, setVariables] = useState<BulkSendingVariable[]>([]);
+  const [selectedVariable, setSelectedVariable] =
+    useState<BulkSendingVariable | null>(null);
+  const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
+
+  const allVariables = useMemo(() => {
+    const variablesSet = new Set<string>();
+
+    (content.match(/{{[^}]+}}/g) || []).forEach((v) =>
+      variablesSet.add(v.replace(/{{|}}/g, '')),
+    );
+
+    (subject.match(/{{[^}]+}}/g) || []).forEach((v) =>
+      variablesSet.add(v.replace(/{{|}}/g, '')),
+    );
+
+    return Array.from(variablesSet);
+  }, [content, subject]);
 
   useEffect(() => {
-    if (initialContactGroupId) {
-      setToGroupId(initialContactGroupId);
-    }
+    const variablesWithDefault = allVariables
+      .map((v) => {
+        const variable = defaultVariables.find((v2) => v2.key === v);
+
+        if (variable) return variable;
+
+        return false;
+      })
+      .filter((v) => v) as BulkSendingVariable[];
+    const variablesWithoutDefault = allVariables
+      .filter((v) => !defaultVariables.find((v2) => v2.key === v))
+      .map((v) => ({
+        key: v,
+        from: '',
+        fromKey: v,
+        isMapped: false,
+      }));
+
+    setVariables((prev) => {
+      let newVariables = [...prev];
+
+      for (const v of variablesWithDefault) {
+        const existingVariable = newVariables.find((v2) => v2.key === v.key);
+
+        if (existingVariable) continue;
+
+        newVariables.push(v);
+      }
+
+      for (const v of variablesWithoutDefault) {
+        const existingVariable = newVariables.find((v2) => v2.key === v.key);
+
+        if (existingVariable) continue;
+
+        newVariables.push(v);
+      }
+
+      newVariables = newVariables.filter((v) => allVariables.includes(v.key));
+
+      return newVariables;
+    });
+  }, [allVariables]);
+
+  useEffect(() => {
+    if (initialContactGroupId) setToGroupId(initialContactGroupId);
   }, [initialContactGroupId]);
 
   const handleSendEmail = useCallback(async () => {
@@ -102,6 +202,16 @@ export default function BulkSendingCreatePage() {
       setIsSending(false);
     }
   }, [from, subject, toGroupId, content, router, contactGroupsPagination]);
+
+  useEffect(() => {
+    setSelectedVariable((prev) => {
+      const variable = variables.find((v) => prev?.key === v.key);
+
+      if (variable) return variable;
+
+      return prev;
+    });
+  }, [variables]);
 
   return (
     <Container header>
@@ -155,8 +265,37 @@ export default function BulkSendingCreatePage() {
           </div>
 
           <div className="pt-4">
-            <ContentEditor content={content} setContent={setContent} />
+            <ContentEditor
+              content={content}
+              setContent={setContent}
+              setIsHtml={setIsHtml}
+              variables={variables}
+            />
           </div>
+
+          {variables.length > 0 && (
+            <div className="py-2 flex flex-wrap gap-2">
+              <span className="text-sm text-zinc-400">Variables:</span>
+              {variables.map((v) => (
+                <Badge
+                  key={v.key}
+                  className="text-xs text-white cursor-pointer"
+                  variant="outline"
+                  onClick={() => {
+                    setSelectedVariable(v);
+                    setIsVariableModalOpen(true);
+                  }}
+                >
+                  {v.isMapped ? (
+                    <Check size={16} className="text-green-500" />
+                  ) : (
+                    <X size={16} className="text-red-500" />
+                  )}
+                  {v.key}
+                </Badge>
+              ))}
+            </div>
+          )}
 
           <div className="pt-4 flex justify-end">
             <Button
@@ -197,34 +336,208 @@ export default function BulkSendingCreatePage() {
         to={toGroupId}
         subject={subject}
         content={content}
+        isHtml={isHtml}
         contactGroup={
           contactGroupsPagination?.contactGroups.find(
             (g) => g.id === toGroupId,
           ) || null
         }
       />
+
+      <VariableModal
+        isOpen={isVariableModalOpen}
+        onClose={() => setIsVariableModalOpen(false)}
+        variable={selectedVariable}
+        setVariables={setVariables}
+      />
     </Container>
+  );
+}
+
+function VariableModal({
+  isOpen,
+  onClose,
+  variable,
+  setVariables,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  variable: BulkSendingVariable | null;
+  setVariables: React.Dispatch<React.SetStateAction<BulkSendingVariable[]>>;
+}) {
+  const updateVariable = useCallback(
+    (key: string, valueKey: string, value: string) => {
+      setVariables((prev) => {
+        const newVariables = [...prev];
+        const index = newVariables.findIndex((v) => v.key === key);
+
+        if (index === -1) return prev;
+
+        newVariables[index] = {
+          ...newVariables[index],
+          [valueKey]: value,
+        };
+
+        const isCustom = newVariables[index].from === 'custom';
+        const isAValidCustom =
+          isCustom && (newVariables[index].customValue || '').length > 0;
+
+        if (
+          !isCustom
+            ? newVariables[index].from.length > 0 &&
+              newVariables[index].fromKey.length > 0 &&
+              AVAILABLE_KEYS[
+                newVariables[index].from as keyof typeof AVAILABLE_KEYS
+              ]?.includes(newVariables[index].fromKey)
+            : isAValidCustom
+        ) {
+          newVariables[index].isMapped = true;
+        } else {
+          newVariables[index].isMapped = false;
+        }
+
+        return newVariables;
+      });
+    },
+    [setVariables],
+  );
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Variable</DialogTitle>
+          <DialogDescription>
+            Select the variable mapping for variable:
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="flex flex-col gap-4">
+          <pre className="bg-zinc-900 rounded-md h-12 w-full flex items-center justify-center">
+            {`{{${variable?.key}}}`}
+          </pre>
+          {variable?.isDefault ? (
+            <div className="flex flex-col gap-2">
+              <p className="text-sm text-zinc-400">
+                This variable a default variable, which means it is
+                automatically mapped to the contact or bulk sending. So you
+                can't change.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-col gap-2">
+                <Label>From</Label>
+                <Select
+                  defaultValue={variable?.from}
+                  onValueChange={(value) => {
+                    const newFromKey =
+                      value === 'custom'
+                        ? Date.now().toString()
+                        : variable?.fromKey || value;
+
+                    updateVariable(variable?.key || '', 'from', value);
+                    updateVariable(variable?.key || '', 'fromKey', newFromKey);
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a source" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="contact">Contact</SelectItem>
+                    <SelectItem value="bulk_sending">Bulk sending</SelectItem>
+                    <SelectItem value="custom">Custom</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {variable?.from === 'custom' ? (
+                <div className="flex flex-col gap-2">
+                  <Label>Custom value</Label>
+                  <Input
+                    value={variable?.customValue || ''}
+                    onChange={(e) =>
+                      updateVariable(
+                        variable?.key || '',
+                        'customValue',
+                        e.target.value,
+                      )
+                    }
+                    placeholder="Enter a custom value"
+                  />
+                </div>
+              ) : (
+                (variable?.from || '').length > 0 && (
+                  <div className="flex flex-col gap-2">
+                    <Label>From key</Label>
+                    <Select
+                      defaultValue={variable?.fromKey}
+                      onValueChange={(value) => {
+                        updateVariable(variable?.key || '', 'fromKey', value);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select the item witch represent your variable" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {AVAILABLE_KEYS[
+                          variable?.from as keyof typeof AVAILABLE_KEYS
+                        ]?.map((key) => (
+                          <SelectItem key={key} value={key}>
+                            {key}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )
+              )}
+            </>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
 function ContentEditor({
   content,
   setContent,
+  setIsHtml,
+  variables,
 }: {
   content: string;
   setContent: (content: string) => void;
+  setIsHtml: (isHtml: boolean) => void;
+  variables: BulkSendingVariable[];
 }) {
-  console.log(content);
+  const processedContent = useMemo(() => {
+    let processedContent = content;
+
+    variables.forEach((variable) => {
+      if (variable.from === 'custom') {
+        processedContent = processedContent.replaceAll(
+          `{{${variable.key}}}`,
+          variable.customValue || '',
+        );
+      }
+    });
+
+    return processedContent;
+  }, [content, variables]);
 
   return (
     <div className="w-full relative">
-      <Tabs defaultValue="editor">
+      <Tabs
+        defaultValue="editor"
+        onValueChange={(value) => setIsHtml(value === 'html')}
+      >
         <TabsList className="w-fit ml-auto">
           <TabsTrigger value="editor">Editor</TabsTrigger>
           <TabsTrigger value="html">HTML</TabsTrigger>
         </TabsList>
         <TabsContent value="editor">
-          <RichTextEditor content={content} setContent={setContent} />
+          <RichTextEditor setContent={setContent} />
         </TabsContent>
         <TabsContent value="html">
           <div className="w-full h-[200vh] md:h-[500px] flex flex-col md:flex-row gap-4">
@@ -242,7 +555,7 @@ function ContentEditor({
             />
 
             <div className="w-full h-full bg-zinc-900 rounded-xl">
-              <iframe srcDoc={content} className="w-full h-full" />
+              <iframe srcDoc={processedContent} className="w-full h-full" />
             </div>
           </div>
         </TabsContent>
@@ -260,6 +573,7 @@ function SendModal({
   to,
   subject,
   content,
+  isHtml,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -269,6 +583,7 @@ function SendModal({
   to: string;
   subject: string;
   content: string;
+  isHtml: boolean;
 }) {
   const [validationMessages, setValidationMessages] = useState<string[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -300,8 +615,25 @@ function SendModal({
       messages.push(`No contacts in contact group ${contactGroup?.name}`);
     }
 
+    const allATags = content.match(/<a[^>]*>/g);
+    const hasUnsubscribeLink = allATags?.some((tag) =>
+      tag.includes('{{unsubscribe_url}}'),
+    );
+
+    if (isHtml && !hasUnsubscribeLink) {
+      messages.push(
+        'Please add some <a> tag when the href is {{unsubscribe_url}}',
+      );
+    }
+
+    if (!isHtml && !hasUnsubscribeLink) {
+      messages.push(
+        'Please add link to unsubscribe or add a text with the link to {{unsubscribe_url}}',
+      );
+    }
+
     setValidationMessages(messages);
-  }, [from, to, subject, content, contactGroup]);
+  }, [from, to, subject, content, contactGroup, isHtml]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);

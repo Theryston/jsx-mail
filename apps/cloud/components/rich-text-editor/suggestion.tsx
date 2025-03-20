@@ -1,5 +1,11 @@
 import { Command, createSuggestionItems, renderItems } from 'novel';
-import { CodeIcon, Heading1Icon, ListIcon, QuoteIcon } from 'lucide-react';
+import {
+  CodeIcon,
+  Heading1Icon,
+  LinkIcon,
+  ListIcon,
+  QuoteIcon,
+} from 'lucide-react';
 
 export const suggestionItems = createSuggestionItems([
   {
@@ -38,6 +44,20 @@ export const suggestionItems = createSuggestionItems([
     icon: <ListIcon size={18} />,
     command: ({ editor, range }) =>
       editor.chain().focus().deleteRange(range).toggleBulletList().run(),
+  },
+  {
+    title: 'Add unsubscribe link',
+    description: 'Add a link to unsubscribe.',
+    searchTerms: ['unsubscribe'],
+    icon: <LinkIcon size={18} />,
+    command: ({ editor, range }) => {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .insertContent('<a href="{{unsubscribe_url}}">Unsubscribe</a>')
+        .run();
+    },
   },
 ]);
 

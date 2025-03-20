@@ -5,24 +5,6 @@ import { useEffect, useRef } from 'react';
 import { Button } from '@jsx-mail/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@jsx-mail/ui/popover';
 
-export function isValidUrl(url: string) {
-  try {
-    new URL(url);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-export function getUrlFromString(str: string) {
-  if (isValidUrl(str)) return str;
-  try {
-    if (str.includes('.') && !str.includes(' ')) {
-      return new URL(`https://${str}`).toString();
-    }
-  } catch (e) {
-    return null;
-  }
-}
 interface LinkSelectorProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -57,7 +39,7 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
             const target = e.currentTarget as HTMLFormElement;
             e.preventDefault();
             const input = target[0] as HTMLInputElement;
-            const url = getUrlFromString(input.value);
+            const url = input.value;
             url && editor.chain().focus().setLink({ href: url }).run();
           }}
           className="flex  p-1 "
