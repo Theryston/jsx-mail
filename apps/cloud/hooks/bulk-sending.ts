@@ -192,3 +192,24 @@ export function useBulkSending() {
     queryFn: () => api.get('/bulk-sending').then((res) => res.data),
   });
 }
+
+export function useContactUnsubscribe() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (key: string) =>
+      api.post(`/bulk-sending/unsubscribe/${key}`).then((res) => res.data),
+    onSuccess: (_data, key) => {
+      queryClient.invalidateQueries({ queryKey: ['contactExists', key] });
+    },
+  });
+}
+
+export function useContactExists(key: string | null) {
+  return useQuery({
+    queryKey: ['contactExists', key],
+    queryFn: () =>
+      api.get(`/bulk-sending/unsubscribe/${key}`).then((res) => res.data),
+    enabled: !!key,
+  });
+}

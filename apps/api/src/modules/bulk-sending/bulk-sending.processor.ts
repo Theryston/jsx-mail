@@ -4,6 +4,7 @@ import { PrismaService } from 'src/services/prisma.service';
 import axios from 'axios';
 import { SenderSendEmailService } from '../sender/services/sender-send-email.service';
 import moment from 'moment';
+import crypto from 'crypto';
 
 @Processor('bulk-sending')
 export class BulkSendingProcessor extends WorkerHost {
@@ -347,10 +348,15 @@ export class BulkSendingProcessor extends WorkerHost {
           continue;
         }
 
+        const unsubscribeKey = crypto.randomBytes(32).toString('hex');
+        const unsubscribeUrl = `${process.env.CLOUD_FRONTEND_URL}/unsubscribe?key=${unsubscribeKey}`;
+
         await this.prisma.contact.create({
           data: {
             email,
             name,
+            unsubscribeUrl,
+            unsubscribeKey,
             contactGroup: {
               connect: {
                 id: contactImport.contactGroupId,

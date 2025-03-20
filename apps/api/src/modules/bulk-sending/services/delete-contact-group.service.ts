@@ -30,6 +30,11 @@ export class DeleteContactGroupService {
       );
     }
 
+    await this.prisma.contact.updateMany({
+      where: { contactGroupId: id },
+      data: { deletedBy: 'contactGroupOwner' },
+    });
+
     await this.prisma.contactGroup.delete({ where: { id } });
 
     return {

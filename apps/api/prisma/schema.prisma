@@ -68,6 +68,11 @@ enum BulkSendingVariableFrom {
   bulk_sending
 }
 
+enum ContactDeletedBy {
+  contactGroupOwner
+  self
+}
+
 model User {
   id              String         @id @default(uuid())
   name            String
@@ -459,15 +464,17 @@ model ContactImportFailure {
 }
 
 model Contact {
-  id              String    @id @default(uuid())
+  id              String            @id @default(uuid())
   email           String
-  unsubscribeUrl  String    @map("unsubscribe_url")
+  unsubscribeUrl  String            @map("unsubscribe_url")
+  unsubscribeKey  String            @map("unsubscribe_key")
   name            String?
-  contactGroupId  String    @map("contact_group_id")
-  contactImportId String?   @map("contact_import_id")
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
-  deletedAt       DateTime? @map("deleted_at")
+  contactGroupId  String            @map("contact_group_id")
+  contactImportId String?           @map("contact_import_id")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  deletedBy       ContactDeletedBy? @default(contactGroupOwner) @map("deleted_by")
+  deletedAt       DateTime?         @map("deleted_at")
 
   contactGroup        ContactGroup         @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
   contactImport       ContactImport?       @relation(fields: [contactImportId], references: [id], onDelete: Cascade)

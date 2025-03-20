@@ -235,7 +235,7 @@ export default function BulkSendingCreatePage() {
       });
 
       toast.success('Bulk sending started');
-      // router.push(`/bulk-sending`);
+      router.push(`/bulk-sending`);
     } finally {
       setIsSending(false);
     }

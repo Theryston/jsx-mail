@@ -28,6 +28,8 @@ import { MarkContactImportsAsReadService } from './services/mark-contact-imports
 import { ListContactImportFailuresSService } from './services/list-contact-import-failures-s.service';
 import { CreateBulkSendingService } from './services/create-bulk-sending.service';
 import { ListBulkSendingsService } from './services/list-bulk-sendings.service';
+import { ContactUnsubscribeService } from './services/contact-unsubscribe.service';
+import { ContactExistsService } from './services/contact-exists.service';
 
 @Controller('bulk-sending')
 export class BulkSendingController {
@@ -44,6 +46,8 @@ export class BulkSendingController {
     private readonly listContactImportFailuresService: ListContactImportFailuresSService,
     private readonly createBulkSendingService: CreateBulkSendingService,
     private readonly listBulkSendingsService: ListBulkSendingsService,
+    private readonly contactUnsubscribeService: ContactUnsubscribeService,
+    private readonly contactExistsService: ContactExistsService,
   ) {}
 
   @Post()
@@ -150,5 +154,15 @@ export class BulkSendingController {
       contactImportId,
       req.user.id,
     );
+  }
+
+  @Post('unsubscribe/:key')
+  unsubscribe(@Param('key') key: string) {
+    return this.contactUnsubscribeService.execute(key);
+  }
+
+  @Get('unsubscribe/:key')
+  unsubscribeExists(@Param('key') key: string) {
+    return this.contactExistsService.execute(key);
   }
 }
