@@ -21,6 +21,7 @@ export default function UnsubscribePage() {
     }
 
     await unsubscribe(key);
+    setIsUnsubscribed(true);
   }, [key]);
 
   useEffect(() => {

@@ -314,7 +314,7 @@ export default function BulkSendingCreatePage() {
             <div className="text-sm text-zinc-400 sm:w-20">Subject</div>
             <div className="w-full overflow-hidden">
               <Input
-                placeholder="Enter email subject. You can use variables from the contact, like {{name}} or {{email}}."
+                placeholder="Enter email subject. You can use {{name}}... check the variables below."
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 className="bg-transparent border-0 h-10 px-0 text-sm placeholder:text-zinc-500 focus-visible:ring-0 focus-visible:bg-transparent overflow-ellipsis"
@@ -334,7 +334,7 @@ export default function BulkSendingCreatePage() {
           <div className="py-2 flex flex-col gap-2">
             {variables.length > 0 && (
               <div className="flex flex-wrap gap-2 items-center">
-                <span className="text-xs text-zinc-400">Variables:</span>
+                <span className="text-xs text-zinc-400">Using variables:</span>
                 {variables.map((v) => (
                   <Badge
                     key={v.key}
@@ -588,6 +588,11 @@ function ContentEditor({
           variable.customValue || '',
         );
       }
+
+      processedContent = processedContent.replaceAll(
+        `{{unsubscribeUrl}}`,
+        '/unsubscribe?key=sample-key',
+      );
     });
 
     return processedContent;

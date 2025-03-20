@@ -10,7 +10,7 @@ import {
 
 const placeholder = Placeholder.configure({
   placeholder:
-    'You can type "/" to get the commands, you can user variables from the contact like {{name}}',
+    'You can type "/" to get the commands, you can use {{name}}... check the variables below.',
 });
 
 const tiptapLink = TiptapLink.configure({
