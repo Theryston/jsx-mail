@@ -30,6 +30,7 @@ import { CreateBulkSendingService } from './services/create-bulk-sending.service
 import { ListBulkSendingsService } from './services/list-bulk-sendings.service';
 import { ContactUnsubscribeService } from './services/contact-unsubscribe.service';
 import { ContactExistsService } from './services/contact-exists.service';
+import { ListBulkSendingFailuresService } from './services/list-bulk-sending-failures.service';
 
 @Controller('bulk-sending')
 export class BulkSendingController {
@@ -48,6 +49,7 @@ export class BulkSendingController {
     private readonly listBulkSendingsService: ListBulkSendingsService,
     private readonly contactUnsubscribeService: ContactUnsubscribeService,
     private readonly contactExistsService: ContactExistsService,
+    private readonly listBulkSendingFailuresService: ListBulkSendingFailuresService,
   ) {}
 
   @Post()
@@ -58,8 +60,18 @@ export class BulkSendingController {
 
   @Get()
   @Permissions([PERMISSIONS.SELF_LIST_BULK_SENDINGS.value])
-  listBulkSendings(@Req() req) {
-    return this.listBulkSendingsService.execute(req.user.id);
+  listBulkSendings(@Req() req, @Query() query: any) {
+    return this.listBulkSendingsService.execute(req.user.id, query);
+  }
+
+  @Get(':id/failures')
+  @Permissions([PERMISSIONS.SELF_GET_BULK_SENDING_FAILURES.value])
+  listBulkSendingFailures(
+    @Param('id') id: string,
+    @Req() req,
+    @Query() query: any,
+  ) {
+    return this.listBulkSendingFailuresService.execute(id, req.user.id, query);
   }
 
   @Post('contact-group')

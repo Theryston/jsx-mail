@@ -93,3 +93,27 @@ export type BulkSendingVariable = {
   customValue?: string;
   isDefault?: boolean;
 };
+
+export type BulkSendingPagination = {
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+};
+
+export type BulkSendingsPagination = BulkSendingPagination & {
+  bulkSendings: BulkSending[];
+};
+
+export type BulkSendingFailuresPagination = BulkSendingPagination & {
+  failures: BulkSendingFailure[];
+};
+
+export type BulkSendingFailure = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  bulkSendingId: string;
+  message: string;
+  contactId: string | null;
+  line: number | null;
+};

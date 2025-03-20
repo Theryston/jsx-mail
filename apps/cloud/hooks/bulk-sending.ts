@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '@/utils/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  BulkSending,
+  BulkSendingsPagination,
   ContactGroup,
   ContactGroupContactsPagination,
   ContactGroupsPagination,
@@ -186,10 +186,23 @@ export function useCreateBulkSending() {
   });
 }
 
-export function useBulkSending() {
-  return useQuery<BulkSending[]>({
-    queryKey: ['bulkSending'],
-    queryFn: () => api.get('/bulk-sending').then((res) => res.data),
+export function useBulkSending(
+  {
+    page = 1,
+    take = PER_PAGE,
+  }: {
+    page?: number;
+    take?: number;
+  },
+  refetchInterval?: number | false,
+) {
+  return useQuery<BulkSendingsPagination>({
+    queryKey: ['bulkSending', page, take],
+    queryFn: () =>
+      api
+        .get(`/bulk-sending?page=${page}&take=${take}`)
+        .then((res) => res.data),
+    ...(refetchInterval ? { refetchInterval } : {}),
   });
 }
 

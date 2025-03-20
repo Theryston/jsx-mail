@@ -227,4 +227,9 @@ export const PERMISSIONS: {
     value: 'self:list-bulk-sendings',
     description: 'Can list bulk sendings for itself',
   },
+  SELF_GET_BULK_SENDING_FAILURES: {
+    title: 'Self Get Bulk Sending Failures',
+    value: 'self:get-bulk-sending-failures',
+    description: 'Can get bulk sending failures for itself',
+  },
 };

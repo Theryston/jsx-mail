@@ -18,6 +18,7 @@ import { ListBulkSendingsService } from './services/list-bulk-sendings.service';
 import { SenderModule } from '../sender/sender.module';
 import { ContactUnsubscribeService } from './services/contact-unsubscribe.service';
 import { ContactExistsService } from './services/contact-exists.service';
+import { ListBulkSendingFailuresService } from './services/list-bulk-sending-failures.service';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { ContactExistsService } from './services/contact-exists.service';
     ListBulkSendingsService,
     ContactUnsubscribeService,
     ContactExistsService,
+    ListBulkSendingFailuresService,
   ],
 })
 export class BulkSendingModule {}
