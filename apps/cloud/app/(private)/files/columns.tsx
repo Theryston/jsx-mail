@@ -9,7 +9,13 @@ import { DeleteConfirmationModal } from '@jsx-mail/ui/delete-confirmation-modal'
 import { useDeleteFile } from '@/hooks/file';
 import { toast } from '@jsx-mail/ui/sonner';
 import { formatSize } from '@/utils/format';
-import { DownloadIcon, TrashIcon } from 'lucide-react';
+import { DownloadIcon, TrashIcon, MoreHorizontal } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@jsx-mail/ui/dropdown-menu';
 
 export const columns: ColumnDef<File>[] = [
   {
@@ -58,20 +64,23 @@ export const columns: ColumnDef<File>[] = [
 
       return (
         <>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={handleDownload}>
-              <DownloadIcon className="size-4" />
-              Download
-            </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => setIsDeleteOpen(true)}
-            >
-              <TrashIcon className="size-4" />
-              Delete
-            </Button>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <MoreHorizontal className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleDownload}>
+                <DownloadIcon className="size-4" />
+                Download
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsDeleteOpen(true)}>
+                <TrashIcon className="size-4" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <DeleteConfirmationModal
             isOpen={isDeleteOpen}

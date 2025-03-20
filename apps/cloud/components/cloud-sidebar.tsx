@@ -26,6 +26,7 @@ import {
   Key,
   Users,
   Mail,
+  Home,
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@jsx-mail/ui/lib/utils';
@@ -41,6 +42,11 @@ import {
 } from '@jsx-mail/ui/dropdown-menu';
 
 export const ITEMS = [
+  {
+    label: 'Dashboard',
+    href: '/',
+    icon: Home,
+  },
   {
     label: 'Bulk Sending',
     href: '/bulk-sending',
@@ -115,7 +121,7 @@ export function CloudSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent className="mt-8">
-            <SidebarMenu className="flex flex-col gap-3">
+            <SidebarMenu className="flex flex-col gap-2">
               {items.map((item) => (
                 <SidebarMenuItem key={item.label}>
                   <SidebarMenuButton asChild isActive={pathname === item.href}>

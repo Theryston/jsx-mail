@@ -8,8 +8,20 @@ import { useState } from 'react';
 import { DeleteConfirmationModal } from '@jsx-mail/ui/delete-confirmation-modal';
 import { useDeleteContactGroup } from '@/hooks/bulk-sending';
 import { toast } from '@jsx-mail/ui/sonner';
-import { ChevronRightIcon, TrashIcon, UsersIcon } from 'lucide-react';
+import {
+  ChevronRightIcon,
+  MoreHorizontal,
+  TrashIcon,
+  UsersIcon,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@jsx-mail/ui/dropdown-menu';
 
 export const columns: ColumnDef<ContactGroupListItem>[] = [
   {
@@ -56,24 +68,23 @@ export const columns: ColumnDef<ContactGroupListItem>[] = [
 
       return (
         <>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleNavigateToContacts}
-            >
-              <UsersIcon className="size-4" />
-              Contacts
-            </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => setIsDeleteOpen(true)}
-            >
-              <TrashIcon className="size-4" />
-              Delete
-            </Button>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <MoreHorizontal className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleNavigateToContacts}>
+                <UsersIcon className="size-4" />
+                View Contacts
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsDeleteOpen(true)}>
+                <TrashIcon className="size-4" />
+                Delete Group
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <DeleteConfirmationModal
             isOpen={isDeleteOpen}

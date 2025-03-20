@@ -9,8 +9,15 @@ import { ViewDNSModal } from './view-dns-modal';
 import { DeleteConfirmationModal } from '@jsx-mail/ui/delete-confirmation-modal';
 import { useDeleteDomain } from '@/hooks/domain';
 import { toast } from '@jsx-mail/ui/sonner';
-import { ClockIcon, EyeIcon, TrashIcon } from 'lucide-react';
+import { ClockIcon, EyeIcon, TrashIcon, MoreHorizontal } from 'lucide-react';
 import { DomainStatus } from '@/components/domain-status';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@jsx-mail/ui/dropdown-menu';
 
 export const columns: ColumnDef<Domain>[] = [
   {
@@ -58,33 +65,48 @@ export const columns: ColumnDef<Domain>[] = [
 
       return (
         <>
-          <div className="flex gap-2">
-            <Button
-              variant={domain.status === 'pending' ? 'pending' : 'outline'}
-              size="sm"
-              onClick={() => setIsViewDNSOpen(true)}
-            >
-              {domain.status === 'verified' ? (
-                <>
-                  <EyeIcon className="size-4" />
-                  View DNS
-                </>
-              ) : (
-                <>
-                  <ClockIcon className="size-4" />
-                  Verify
-                </>
-              )}
-            </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => setIsDeleteOpen(true)}
-            >
-              <TrashIcon className="size-4" />
-              Delete
-            </Button>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className={
+                  domain.status !== 'verified'
+                    ? 'bg-amber-500/10 text-amber-500 hover:!bg-amber-500/20 hover:!text-amber-500 !border-none'
+                    : ''
+                }
+              >
+                <MoreHorizontal className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => setIsViewDNSOpen(true)}
+                className={
+                  domain.status !== 'verified'
+                    ? 'bg-amber-500/10 text-amber-500 hover:!bg-amber-500/20 hover:!text-amber-500'
+                    : ''
+                }
+              >
+                {domain.status === 'verified' ? (
+                  <>
+                    <EyeIcon className="size-4" />
+                    View DNS
+                  </>
+                ) : (
+                  <>
+                    <ClockIcon className="size-4 text-amber-500" />
+                    Verify
+                  </>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setIsDeleteOpen(true)}>
+                <TrashIcon className="size-4" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <ViewDNSModal
             isOpen={isViewDNSOpen}

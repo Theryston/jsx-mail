@@ -12,6 +12,9 @@ export const columns: ColumnDef<Message>[] = [
   {
     accessorKey: 'sender.email',
     header: 'Sender',
+    cell: ({ row }) => {
+      return <span>{row.original.sender?.email || 'Maybe deleted'}</span>;
+    },
   },
   {
     accessorKey: 'to',
