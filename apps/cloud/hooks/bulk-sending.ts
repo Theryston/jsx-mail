@@ -173,6 +173,12 @@ export function useCreateBulkSending() {
       content: string;
       sender: string;
       contactGroupId: string;
+      variables: {
+        key: string;
+        from: string;
+        fromKey: string;
+        customValue?: string;
+      }[];
     }) => api.post('/bulk-sending', body).then((res) => res.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bulkSending'] });

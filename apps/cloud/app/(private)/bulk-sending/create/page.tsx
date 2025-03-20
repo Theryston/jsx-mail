@@ -49,13 +49,14 @@ import {
   SelectValue,
 } from '@jsx-mail/ui/select';
 
-const defaultVariables: BulkSendingVariable[] = [
+const defaultVariables: Omit<BulkSendingVariable, 'placements'>[] = [
   {
     key: 'name',
     from: 'contact',
     fromKey: 'name',
     isMapped: true,
     isDefault: true,
+    description: 'The name of the contact',
   },
   {
     key: 'email',
@@ -63,19 +64,37 @@ const defaultVariables: BulkSendingVariable[] = [
     fromKey: 'email',
     isMapped: true,
     isDefault: true,
+    description: 'The email of the contact',
   },
   {
-    key: 'unsubscribe_url',
-    from: 'bulk_sending',
-    fromKey: 'unsubscribe_url',
+    key: 'unsubscribeUrl',
+    from: 'contact',
+    fromKey: 'unsubscribeUrl',
     isMapped: true,
     isDefault: true,
+    description: 'The unsubscribe url of the contact',
+  },
+  {
+    key: 'contactCreatedAt',
+    from: 'contact',
+    fromKey: 'createdAt',
+    isMapped: true,
+    isDefault: true,
+    description: 'The created at date of the contact',
+  },
+  {
+    key: 'bulkSendingCreatedAt',
+    from: 'bulk_sending',
+    fromKey: 'createdAt',
+    isMapped: true,
+    isDefault: true,
+    description: 'The created at date of the bulk sending',
   },
 ];
 
 const AVAILABLE_KEYS = {
-  contact: ['name', 'email'],
-  bulk_sending: ['unsubscribe_url'],
+  contact: ['name', 'email', 'unsubscribeUrl', 'createdAt'],
+  bulk_sending: ['createdAt'],
 };
 
 export default function BulkSendingCreatePage() {
@@ -145,7 +164,10 @@ export default function BulkSendingCreatePage() {
 
         if (existingVariable) continue;
 
-        newVariables.push(v);
+        newVariables.push({
+          ...v,
+          placements: [],
+        });
       }
 
       for (const v of variablesWithoutDefault) {
@@ -153,7 +175,10 @@ export default function BulkSendingCreatePage() {
 
         if (existingVariable) continue;
 
-        newVariables.push(v);
+        newVariables.push({
+          ...v,
+          placements: [],
+        });
       }
 
       newVariables = newVariables.filter((v) => allVariables.includes(v.key));
@@ -186,6 +211,13 @@ export default function BulkSendingCreatePage() {
       return;
     }
 
+    if (
+      variables.some((v) => v.placements.includes('subject') && !v.isMapped)
+    ) {
+      toast.error('Please map all variables in the subject');
+      return;
+    }
+
     setIsSending(true);
 
     try {
@@ -194,14 +226,28 @@ export default function BulkSendingCreatePage() {
         content,
         sender: from,
         contactGroupId: toGroupId,
+        variables: variables.map((v) => ({
+          key: v.key,
+          from: v.from,
+          fromKey: v.fromKey,
+          customValue: v.customValue,
+        })),
       });
 
       toast.success('Bulk sending started');
-      router.push(`/bulk-sending`);
+      // router.push(`/bulk-sending`);
     } finally {
       setIsSending(false);
     }
-  }, [from, subject, toGroupId, content, router, contactGroupsPagination]);
+  }, [
+    from,
+    subject,
+    toGroupId,
+    content,
+    router,
+    contactGroupsPagination,
+    variables,
+  ]);
 
   useEffect(() => {
     setSelectedVariable((prev) => {
@@ -212,6 +258,18 @@ export default function BulkSendingCreatePage() {
       return prev;
     });
   }, [variables]);
+
+  useEffect(() => {
+    setVariables((prev) => {
+      return prev.map((v) => ({
+        ...v,
+        placements: [
+          subject.includes(`{{${v.key}}}`) ? 'subject' : null,
+          content.includes(`{{${v.key}}}`) ? 'content' : null,
+        ].filter(Boolean) as ('subject' | 'content')[],
+      }));
+    });
+  }, [content, subject]);
 
   return (
     <Container header>
@@ -273,29 +331,37 @@ export default function BulkSendingCreatePage() {
             />
           </div>
 
-          {variables.length > 0 && (
-            <div className="py-2 flex flex-wrap gap-2">
-              <span className="text-sm text-zinc-400">Variables:</span>
-              {variables.map((v) => (
-                <Badge
-                  key={v.key}
-                  className="text-xs text-white cursor-pointer"
-                  variant="outline"
-                  onClick={() => {
-                    setSelectedVariable(v);
-                    setIsVariableModalOpen(true);
-                  }}
-                >
-                  {v.isMapped ? (
-                    <Check size={16} className="text-green-500" />
-                  ) : (
-                    <X size={16} className="text-red-500" />
-                  )}
-                  {v.key}
-                </Badge>
-              ))}
+          <div className="py-2 flex flex-col gap-2">
+            {variables.length > 0 && (
+              <div className="flex flex-wrap gap-2 items-center">
+                <span className="text-xs text-zinc-400">Variables:</span>
+                {variables.map((v) => (
+                  <Badge
+                    key={v.key}
+                    className="!text-xs text-white cursor-pointer"
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedVariable(v);
+                      setIsVariableModalOpen(true);
+                    }}
+                  >
+                    {v.isMapped ? (
+                      <Check size={16} className="text-green-500" />
+                    ) : (
+                      <X size={16} className="text-red-500" />
+                    )}
+                    {v.key}
+                  </Badge>
+                ))}
+              </div>
+            )}
+            <div className="flex flex-col gap-2">
+              <p className="text-xs text-zinc-400">
+                Available default variables:{' '}
+                {defaultVariables.map((v) => v.key).join(', ')}
+              </p>
             </div>
-          )}
+          </div>
 
           <div className="pt-4 flex justify-end">
             <Button
@@ -342,6 +408,7 @@ export default function BulkSendingCreatePage() {
             (g) => g.id === toGroupId,
           ) || null
         }
+        variables={variables}
       />
 
       <VariableModal
@@ -574,6 +641,7 @@ function SendModal({
   subject,
   content,
   isHtml,
+  variables,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -584,6 +652,7 @@ function SendModal({
   subject: string;
   content: string;
   isHtml: boolean;
+  variables: BulkSendingVariable[];
 }) {
   const [validationMessages, setValidationMessages] = useState<string[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -615,25 +684,34 @@ function SendModal({
       messages.push(`No contacts in contact group ${contactGroup?.name}`);
     }
 
-    const allATags = content.match(/<a[^>]*>/g);
-    const hasUnsubscribeLink = allATags?.some((tag) =>
-      tag.includes('{{unsubscribe_url}}'),
+    const hasUnsubscribeLink = variables?.some(
+      (v) => v.placements.includes('content') && v.key === 'unsubscribeUrl',
     );
 
     if (isHtml && !hasUnsubscribeLink) {
       messages.push(
-        'Please add some <a> tag when the href is {{unsubscribe_url}}',
+        'Please add some <a> tag when the href is {{unsubscribeUrl}}',
       );
     }
 
     if (!isHtml && !hasUnsubscribeLink) {
       messages.push(
-        'Please add link to unsubscribe or add a text with the link to {{unsubscribe_url}}',
+        'Please add in the content a link to unsubscribe or add a text with the link to {{unsubscribeUrl}}',
+      );
+    }
+
+    const notMappedVariables = variables.filter(
+      (v) => !v.isMapped,
+    ) as BulkSendingVariable[];
+
+    if (notMappedVariables.length > 0) {
+      messages.push(
+        `Please map the following variables: ${notMappedVariables.map((v) => v.key).join(', ')}`,
       );
     }
 
     setValidationMessages(messages);
-  }, [from, to, subject, content, contactGroup, isHtml]);
+  }, [from, to, subject, content, contactGroup, isHtml, variables]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);

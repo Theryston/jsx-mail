@@ -3,6 +3,7 @@ import { Job } from 'bullmq';
 import { PrismaService } from 'src/services/prisma.service';
 import axios from 'axios';
 import { SenderSendEmailService } from '../sender/services/sender-send-email.service';
+import moment from 'moment';
 
 @Processor('bulk-sending')
 export class BulkSendingProcessor extends WorkerHost {
@@ -41,6 +42,7 @@ export class BulkSendingProcessor extends WorkerHost {
       where: { id: bulkSendingId },
       include: {
         sender: true,
+        variables: true,
       },
     });
 
@@ -110,6 +112,28 @@ export class BulkSendingProcessor extends WorkerHost {
               `[BULK_SENDING] sending email to ${contact.email} for bulk sending ${bulkSendingId}`,
             );
 
+            let customPayload = {};
+
+            for (const variable of bulkSending.variables) {
+              if (variable.from === 'custom') {
+                customPayload[variable.key] = variable.customValue;
+              }
+
+              if (variable.from === 'contact' && variable.fromKey) {
+                customPayload[variable.key] = contact[variable.fromKey];
+              }
+
+              if (variable.from === 'bulk_sending' && variable.fromKey) {
+                customPayload[variable.key] = bulkSending[variable.fromKey];
+              }
+
+              if (variable.fromKey === 'createdAt') {
+                customPayload[variable.key] = moment(
+                  customPayload[variable.key],
+                ).format('DD/MM/YYYY');
+              }
+            }
+
             const message = await this.senderSendEmailService.execute(
               {
                 sender: bulkSending.sender.email,
@@ -117,10 +141,7 @@ export class BulkSendingProcessor extends WorkerHost {
                 html: content,
                 to: [contact.email],
                 bulkSendingId,
-                customPayload: {
-                  name: contact.name || contact.email,
-                  email: contact.email,
-                },
+                customPayload,
               },
               bulkSending.userId,
             );

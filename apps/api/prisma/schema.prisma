@@ -62,6 +62,12 @@ enum BulkSendingStatus {
   failed
 }
 
+enum BulkSendingVariableFrom {
+  custom
+  contact
+  bulk_sending
+}
+
 model User {
   id              String         @id @default(uuid())
   name            String
@@ -325,10 +331,27 @@ model BulkSending {
   sender       Sender       @relation(fields: [senderId], references: [id], onDelete: Cascade)
   contactGroup ContactGroup @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
 
-  messages Message[]
-  failures BulkSendingFailure[]
+  messages  Message[]
+  failures  BulkSendingFailure[]
+  variables BulkSendingVariable[]
 
   @@map("bulk_sendings")
+}
+
+model BulkSendingVariable {
+  id            String                  @id @default(uuid())
+  bulkSendingId String                  @map("bulk_sending_id")
+  key           String
+  from          BulkSendingVariableFrom
+  fromKey       String
+  customValue   String?
+  createdAt     DateTime                @default(now()) @map("created_at")
+  updatedAt     DateTime                @updatedAt @map("updated_at")
+  deletedAt     DateTime?               @map("deleted_at")
+
+  bulkSending BulkSending @relation(fields: [bulkSendingId], references: [id], onDelete: Cascade)
+
+  @@map("bulk_sending_variables")
 }
 
 model BulkSendingFailure {
@@ -438,6 +461,7 @@ model ContactImportFailure {
 model Contact {
   id              String    @id @default(uuid())
   email           String
+  unsubscribeUrl  String    @map("unsubscribe_url")
   name            String?
   contactGroupId  String    @map("contact_group_id")
   contactImportId String?   @map("contact_import_id")

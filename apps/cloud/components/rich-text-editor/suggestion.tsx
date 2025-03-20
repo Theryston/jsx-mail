@@ -55,7 +55,7 @@ export const suggestionItems = createSuggestionItems([
         .chain()
         .focus()
         .deleteRange(range)
-        .insertContent('<a href="{{unsubscribe_url}}">Unsubscribe</a>')
+        .insertContent('<a href="{{unsubscribeUrl}}">Unsubscribe</a>')
         .run();
     },
   },

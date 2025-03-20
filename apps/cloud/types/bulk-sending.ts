@@ -88,6 +88,8 @@ export type BulkSendingVariable = {
   from: string;
   fromKey: string;
   isMapped: boolean;
+  description?: string;
+  placements: ('subject' | 'content')[];
   customValue?: string;
   isDefault?: boolean;
 };
