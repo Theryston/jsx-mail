@@ -41,6 +41,10 @@ export class CreateBulkSendingVariableDto {
 export class CreateBulkSendingDto {
   @IsString()
   @IsNotEmpty()
+  title: string;
+
+  @IsString()
+  @IsNotEmpty()
   subject: string;
 
   @IsString()

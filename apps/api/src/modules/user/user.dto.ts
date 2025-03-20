@@ -135,6 +135,10 @@ export class MessagesInsightsDto {
   @IsOptional()
   @IsString()
   statuses?: string;
+
+  @IsOptional()
+  @IsString()
+  bulkSending?: string;
 }
 
 export class ListMessagesDto extends MessagesInsightsDto {

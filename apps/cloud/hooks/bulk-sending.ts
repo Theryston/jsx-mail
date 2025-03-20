@@ -8,6 +8,7 @@ import {
   ContactGroupsPagination,
   ContactImport,
   ContactImportFailuresPagination,
+  BulkSendingFailuresPagination,
 } from '@/types/bulk-sending';
 
 export const PER_PAGE = 10;
@@ -169,6 +170,7 @@ export function useCreateBulkSending() {
 
   return useMutation({
     mutationFn: (body: {
+      title: string;
       subject: string;
       content: string;
       sender: string;
@@ -203,6 +205,21 @@ export function useBulkSending(
         .get(`/bulk-sending?page=${page}&take=${take}`)
         .then((res) => res.data),
     ...(refetchInterval ? { refetchInterval } : {}),
+  });
+}
+
+export function useBulkSendingFailures(bulkSendingId?: string, page?: number) {
+  if (!page) page = 1;
+
+  return useQuery<BulkSendingFailuresPagination>({
+    queryKey: ['bulkSendingFailures', bulkSendingId, page],
+    queryFn: () =>
+      api
+        .get(
+          `/bulk-sending/${bulkSendingId}/failures?page=${page}&take=${PER_PAGE}`,
+        )
+        .then((res) => res.data),
+    enabled: !!bulkSendingId && !!page,
   });
 }
 

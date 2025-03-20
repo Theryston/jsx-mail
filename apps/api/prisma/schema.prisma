@@ -320,6 +320,7 @@ model Message {
 
 model BulkSending {
   id                String            @id @default(uuid())
+  title             String            @map("title")
   userId            String            @map("user_id")
   subject           String
   content           String

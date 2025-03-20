@@ -95,6 +95,7 @@ export class CreateBulkSendingService {
 
     const bulkSending = await this.prisma.bulkSending.create({
       data: {
+        title: body.title,
         sender: {
           connect: {
             id: sender.id,

@@ -68,6 +68,7 @@ export type ContactImportFailuresPagination = ContactGroupPagination & {
 export type BulkSending = {
   id: string;
   userId: string;
+  title: string;
   createdAt: string;
   updatedAt: string;
   subject: string;

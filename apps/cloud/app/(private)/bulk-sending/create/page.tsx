@@ -12,6 +12,7 @@ import {
   AlertTriangle,
   Loader2,
   X,
+  ArrowLeftIcon,
 } from 'lucide-react';
 import { Button } from '@jsx-mail/ui/button';
 import { Input } from '@jsx-mail/ui/input';
@@ -121,6 +122,7 @@ export default function BulkSendingCreatePage() {
   const [variables, setVariables] = useState<BulkSendingVariable[]>([]);
   const [selectedVariable, setSelectedVariable] =
     useState<BulkSendingVariable | null>(null);
+  const [bulkSendingTitle, setBulkSendingTitle] = useState('');
   const [isVariableModalOpen, setIsVariableModalOpen] = useState(false);
 
   const allVariables = useMemo(() => {
@@ -197,6 +199,11 @@ export default function BulkSendingCreatePage() {
       return;
     }
 
+    if (!bulkSendingTitle) {
+      toast.error('Please enter a title for the bulk sending');
+      return;
+    }
+
     const contactGroup = contactGroupsPagination?.contactGroups.find(
       (g) => g.id === toGroupId,
     );
@@ -222,6 +229,7 @@ export default function BulkSendingCreatePage() {
 
     try {
       await createBulkSending({
+        title: bulkSendingTitle,
         subject,
         content,
         sender: from,
@@ -247,6 +255,7 @@ export default function BulkSendingCreatePage() {
     router,
     contactGroupsPagination,
     variables,
+    bulkSendingTitle,
   ]);
 
   useEffect(() => {
@@ -274,12 +283,27 @@ export default function BulkSendingCreatePage() {
   return (
     <Container header>
       <div className="flex flex-col gap-6 max-w-5xl mx-auto pb-10">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="icon" onClick={() => router.back()}>
+            <ArrowLeftIcon className="size-4" />
+          </Button>
           <h1 className="text-2xl font-bold">New Bulk Email</h1>
         </div>
 
         <div className="bg-zinc-900 rounded-xl p-6 flex flex-col divide-y divide-zinc-800">
           <div className="grid sm:grid-cols-[auto_1fr] gap-2 sm:gap-4 items-start sm:items-center pb-4">
+            <div className="text-sm text-zinc-400 sm:w-20">Title</div>
+            <div className="w-full overflow-hidden">
+              <Input
+                placeholder="Enter a title (only for your reference)"
+                value={bulkSendingTitle}
+                onChange={(e) => setBulkSendingTitle(e.target.value)}
+                className="bg-transparent border-0 h-10 px-0 text-sm placeholder:text-zinc-500 focus-visible:ring-0 focus-visible:bg-transparent overflow-ellipsis"
+              />
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-[auto_1fr] gap-2 sm:gap-4 items-start sm:items-center py-4">
             <div className="text-sm text-zinc-400 sm:w-20">From</div>
             <div className="w-full overflow-hidden">
               <SenderSelector
@@ -395,6 +419,7 @@ export default function BulkSendingCreatePage() {
       />
 
       <SendModal
+        title={bulkSendingTitle}
         isOpen={isOpenSendModal}
         onClose={() => setIsOpenSendModal(false)}
         onSend={handleSendEmail}
@@ -647,6 +672,7 @@ function SendModal({
   content,
   isHtml,
   variables,
+  title,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -657,6 +683,7 @@ function SendModal({
   subject: string;
   content: string;
   isHtml: boolean;
+  title: string;
   variables: BulkSendingVariable[];
 }) {
   const [validationMessages, setValidationMessages] = useState<string[]>([]);
@@ -665,9 +692,14 @@ function SendModal({
   const sliderRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isSending, setIsSending] = useState(false);
+  const isSendingRef = useRef(false);
 
   useEffect(() => {
     const messages = [];
+
+    if (!title) {
+      messages.push('Type a title for this bulk sending');
+    }
 
     if (!from) {
       messages.push('No from (sender) selected');
@@ -739,13 +771,18 @@ function SendModal({
   const handleTouchEnd = useCallback(async () => {
     if (isDragging) {
       if (dragProgress > 0.9) {
+        if (isSendingRef.current) return;
+
         setIsSending(true);
+
         try {
+          isSendingRef.current = true;
           await onSend();
           onClose();
         } finally {
           await new Promise((resolve) => setTimeout(resolve, 500));
           setIsSending(false);
+          isSendingRef.current = false;
         }
       }
       setIsDragging(false);

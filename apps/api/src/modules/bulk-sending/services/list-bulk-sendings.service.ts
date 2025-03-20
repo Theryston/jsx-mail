@@ -13,17 +13,19 @@ export class ListBulkSendingsService {
       where: { userId },
       skip: (page - 1) * take,
       take,
-      orderBy: [
-        {
-          status: 'desc',
-        },
-        {
-          createdAt: 'desc',
-        },
-      ],
+      orderBy: { createdAt: 'desc' },
       include: {
         _count: {
-          select: { messages: true, failures: true },
+          select: {
+            messages: {
+              where: {
+                sentAt: {
+                  not: null,
+                },
+              },
+            },
+            failures: true,
+          },
         },
       },
     });
