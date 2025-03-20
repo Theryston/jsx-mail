@@ -41,7 +41,11 @@ export class CreateBulkSendingService {
       include: {
         _count: {
           select: {
-            contacts: true,
+            contacts: {
+              where: {
+                deletedAt: null,
+              },
+            },
           },
         },
       },
