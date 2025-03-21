@@ -56,6 +56,6 @@ import { ImpersonateUserService } from './services/impersonate-user.service';
     ImpersonateUserService,
   ],
   imports: [EmailModule, SessionModule],
-  exports: [BetaPermissionCheckService],
+  exports: [BetaPermissionCheckService, GetBalanceService],
 })
 export class UserModule {}

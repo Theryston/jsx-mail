@@ -20,9 +20,11 @@ import { ContactUnsubscribeService } from './services/contact-unsubscribe.servic
 import { ContactExistsService } from './services/contact-exists.service';
 import { ListBulkSendingFailuresService } from './services/list-bulk-sending-failures.service';
 import { CreateContactService } from './services/create-contact.service';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
+    UserModule,
     BullModule.registerQueue({
       name: 'bulk-sending',
     }),

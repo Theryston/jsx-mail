@@ -5,12 +5,17 @@ import axios from 'axios';
 import { SenderSendEmailService } from '../sender/services/sender-send-email.service';
 import moment from 'moment';
 import { CreateContactService } from './services/create-contact.service';
+import { HttpStatus } from '@nestjs/common';
+import { HttpException } from '@nestjs/common';
+import { FREE_EMAILS_PER_MONTH, PRICE_PER_MESSAGE } from 'src/utils/constants';
+import { GetBalanceService } from '../user/services/get-balance.service';
 @Processor('bulk-sending')
 export class BulkSendingProcessor extends WorkerHost {
   constructor(
     private readonly prisma: PrismaService,
     private readonly senderSendEmailService: SenderSendEmailService,
     private readonly createContactService: CreateContactService,
+    private readonly getBalanceService: GetBalanceService,
   ) {
     super();
   }
@@ -64,8 +69,9 @@ export class BulkSendingProcessor extends WorkerHost {
 
     const PER_PAGE = 100;
     let page = 1;
+    let insufficientBalance = false;
     try {
-      while (true) {
+      while (!insufficientBalance) {
         const contacts = await this.prisma.contact.findMany({
           where: { contactGroupId },
           skip: (page - 1) * PER_PAGE,
@@ -81,6 +87,13 @@ export class BulkSendingProcessor extends WorkerHost {
 
         for (let i = 0; i < contacts.length; i++) {
           const contact = contacts[i];
+
+          if (insufficientBalance) {
+            console.log(
+              `[BULK_SENDING] stopped sending emails because of insufficient balance ${bulkSendingId}`,
+            );
+            break;
+          }
 
           try {
             const isSent = await this.prisma.message.findFirst({
@@ -120,6 +133,46 @@ export class BulkSendingProcessor extends WorkerHost {
                 customPayload[variable.key] = moment(
                   customPayload[variable.key],
                 ).format('DD/MM/YYYY');
+              }
+            }
+
+            const messagesCount = await this.prisma.message.count({
+              where: {
+                userId: bulkSending.userId,
+                deletedAt: null,
+                sentAt: {
+                  gte: moment().startOf('month').toDate(),
+                  not: null,
+                },
+              },
+            });
+
+            if (messagesCount + 1 > FREE_EMAILS_PER_MONTH) {
+              const balance = await this.getBalanceService.execute(
+                bulkSending.userId,
+              );
+
+              if (balance.amount < PRICE_PER_MESSAGE) {
+                console.log(
+                  `[BULK_SENDING] insufficient balance for bulk sending ${bulkSendingId} ${balance.amount}`,
+                );
+
+                await this.prisma.bulkSending.update({
+                  where: { id: bulkSendingId },
+                  data: { status: 'failed' },
+                });
+
+                await this.prisma.bulkSendingFailure.create({
+                  data: {
+                    bulkSendingId,
+                    contactId: contact.id,
+                    message: `Insufficient balance: ${balance.amount}`,
+                    line: i + 1,
+                  },
+                });
+
+                insufficientBalance = true;
+                break;
               }
             }
 
