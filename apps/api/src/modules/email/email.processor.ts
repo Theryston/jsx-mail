@@ -91,7 +91,16 @@ export class EmailProcessor extends WorkerHost {
 
     console.log(`[EMAIL_PROCESSOR] sending email: ${dataLog}`);
 
-    const { from, to, filesIds } = data;
+    const { from, filesIds } = data;
+
+    let to: string[] = data.to;
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log(
+        `[EMAIL_PROCESSOR] changing to to ${to} to success@simulator.amazonses.com in development mode`,
+      );
+      to = ['success@simulator.amazonses.com'];
+    }
 
     let messageId: string | null = data.messageId || null;
     let message: Message | null = null;
@@ -119,7 +128,7 @@ export class EmailProcessor extends WorkerHost {
       }
     } else {
       console.log(
-        `[EMAIL_PROCESSOR] creating message for ${data.to} with default sender ${process.env.DEFAULT_SENDER_EMAIL} and domain ${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`,
+        `[EMAIL_PROCESSOR] creating message for ${to} with default sender ${process.env.DEFAULT_SENDER_EMAIL} and domain ${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`,
       );
 
       message = await this.prisma.message.create({
@@ -171,7 +180,7 @@ export class EmailProcessor extends WorkerHost {
       messageId = message.id;
 
       console.log(
-        `[EMAIL_PROCESSOR] created message: ${messageId} for ${data.to} with default sender ${process.env.DEFAULT_SENDER_EMAIL} and domain ${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`,
+        `[EMAIL_PROCESSOR] created message: ${messageId} for ${to} with default sender ${process.env.DEFAULT_SENDER_EMAIL} and domain ${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`,
       );
     }
 
