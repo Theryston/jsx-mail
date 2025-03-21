@@ -22,10 +22,24 @@ export class GetAvailableUserFreeLimitService {
       },
     });
 
+    const notChargedMessages = await this.prisma.message.count({
+      where: {
+        userId,
+        deletedAt: null,
+        createdAt: {
+          gte: moment().startOf('month').toDate(),
+        },
+        hasCharged: false,
+      },
+    });
+
     const balance = await this.getBalanceService.execute(userId);
+    const projectedBalance =
+      balance.amount - notChargedMessages * PRICE_PER_MESSAGE;
+
     const availableFreeMessages = FREE_EMAILS_PER_MONTH - messagesCount;
     const availableMessagesByBalance = Math.floor(
-      balance.amount / PRICE_PER_MESSAGE,
+      projectedBalance / PRICE_PER_MESSAGE,
     );
 
     const availableMessages =

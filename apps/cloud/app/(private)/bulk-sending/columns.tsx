@@ -4,7 +4,7 @@ import { BulkSending } from '@/types/bulk-sending';
 import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
 import { Button } from '@jsx-mail/ui/button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AlertCircleIcon,
   MailIcon,
@@ -28,6 +28,7 @@ import {
 } from '@jsx-mail/ui/dropdown-menu';
 import { DropdownMenu } from '@jsx-mail/ui/dropdown-menu';
 import Link from 'next/link';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const columns: ColumnDef<BulkSending>[] = [
   {
@@ -175,10 +176,20 @@ function ErrorsDialog({
   bulkSendingId: string;
 }) {
   const [page, setPage] = useState(1);
+  const queryClient = useQueryClient();
   const { data: failuresPagination, isPending } = useBulkSendingFailures(
     bulkSendingId,
     page,
   );
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // invalidate the query when the dialog is opened
+    queryClient.invalidateQueries({
+      queryKey: ['bulkSendingFailures', bulkSendingId],
+    });
+  }, [isOpen, bulkSendingId]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
