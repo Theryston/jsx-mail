@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import moment from 'moment';
 import { PrismaService } from 'src/services/prisma.service';
-import { GetBalanceService } from './get-balance.service';
 import { formatNumber } from 'src/utils/format';
 import { GetAvailableUserFreeLimitService } from './get-available-user-free-limit.service';
+import { friendlyMoney } from 'src/utils/format-money';
+
 @Injectable()
 export class GetInsightsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly getBalanceService: GetBalanceService,
     private readonly getAvailableUserFreeLimitService: GetAvailableUserFreeLimitService,
   ) {}
 
@@ -57,15 +57,13 @@ export class GetInsightsService {
       },
     });
 
-    const balance = await this.getBalanceService.execute(userId);
+    const { availableFreeMessages, projectedBalance } =
+      await this.getAvailableUserFreeLimitService.execute(userId);
 
     let balanceData = {
-      title: 'Your balance',
-      value: balance.friendlyAmount,
+      title: 'Projected balance',
+      value: friendlyMoney(projectedBalance),
     };
-
-    const { availableFreeMessages } =
-      await this.getAvailableUserFreeLimitService.execute(userId);
 
     if (availableFreeMessages > 0) {
       balanceData = {

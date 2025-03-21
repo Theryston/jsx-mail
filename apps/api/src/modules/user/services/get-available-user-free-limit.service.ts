@@ -60,6 +60,7 @@ export class GetAvailableUserFreeLimitService {
       availableMessagesByBalance,
       balance: balance.amount,
       availableMessages,
+      projectedBalance,
     };
   }
 }
