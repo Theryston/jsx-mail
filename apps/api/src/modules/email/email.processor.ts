@@ -126,18 +126,6 @@ export class EmailProcessor extends WorkerHost {
         where: { id: messageId },
         data: { status: 'processing' },
       });
-
-      if (message.bulkSendingId) {
-        await this.prisma.bulkSending.update({
-          where: { id: message.bulkSendingId },
-          data: {
-            status: 'processing',
-            processedContacts: {
-              increment: 1,
-            },
-          },
-        });
-      }
     } else {
       console.log(
         `[EMAIL_PROCESSOR] creating message for ${to} with default sender ${process.env.DEFAULT_SENDER_EMAIL} and domain ${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`,

@@ -5,10 +5,9 @@ import axios from 'axios';
 import { SenderSendEmailService } from '../sender/services/sender-send-email.service';
 import moment from 'moment';
 import { CreateContactService } from './services/create-contact.service';
-import { HttpStatus } from '@nestjs/common';
-import { HttpException } from '@nestjs/common';
 import { FREE_EMAILS_PER_MONTH, PRICE_PER_MESSAGE } from 'src/utils/constants';
 import { GetBalanceService } from '../user/services/get-balance.service';
+
 @Processor('bulk-sending')
 export class BulkSendingProcessor extends WorkerHost {
   constructor(
@@ -211,12 +210,17 @@ export class BulkSendingProcessor extends WorkerHost {
             await this.prisma.bulkSending.update({
               where: { id: bulkSendingId },
               data: {
-                processedContacts: {
-                  increment: 1,
-                },
+                processedContacts: i + 1,
               },
             });
           }
+        }
+
+        if (insufficientBalance) {
+          console.log(
+            `[BULK_SENDING] stopping bulk process due to insufficient balance for ${bulkSendingId}`,
+          );
+          break;
         }
 
         page++;
