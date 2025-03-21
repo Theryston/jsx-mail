@@ -30,6 +30,9 @@ export class GetAvailableUserFreeLimitService {
           gte: moment().startOf('month').toDate(),
         },
         hasCharged: false,
+        sentAt: {
+          not: null,
+        },
       },
     });
 
