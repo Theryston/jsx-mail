@@ -60,8 +60,8 @@ export default function BulkSendingPage() {
                 </p>
               </div>
               <p className="text-xs">
-                {bulkSending.processedContacts}/{bulkSending.totalContacts}{' '}
-                contacts processed
+                {bulkSending._count.messages}/{bulkSending.totalContacts}{' '}
+                messages sent
               </p>
               <p className="text-xs">
                 You can close this tab, the bulk sending will continue to
