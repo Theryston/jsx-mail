@@ -9,12 +9,26 @@ export async function scheduled(
   const promises = [];
 
   for (const route of WORKERS_TO_RUN) {
+    console.log(`[WORKER] fetching ${route} from ${env.BASE_API_URL}`);
+
     promises.push(
       fetch(`${env.BASE_API_URL}/worker/${route}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${env.JSXMAIL_API_TOKEN}`,
+        },
+      }),
+    );
+
+    console.log(`[WORKER] fetching ${route} from ${env.DEV_BASE_API_URL}`);
+
+    promises.push(
+      fetch(`${env.DEV_BASE_API_URL}/worker/${route}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${env.DEV_JSXMAIL_API_TOKEN}`,
         },
       }),
     );
