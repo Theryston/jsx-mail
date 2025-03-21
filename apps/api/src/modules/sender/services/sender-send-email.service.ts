@@ -29,6 +29,7 @@ export class SenderSendEmailService {
       bulkSendingId,
       customPayload,
       contactId,
+      delay,
     }: SenderSendEmailDto,
     userId: string,
   ) {
@@ -127,6 +128,7 @@ export class SenderSendEmailService {
       filesIds,
       bulkSendingId,
       customPayload,
+      delay,
     });
 
     return message;

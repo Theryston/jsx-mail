@@ -132,6 +132,7 @@ export class BulkSendingProcessor extends WorkerHost {
                 bulkSendingId,
                 customPayload,
                 contactId: contact.id,
+                delay: 1000,
               },
               bulkSending.userId,
             );

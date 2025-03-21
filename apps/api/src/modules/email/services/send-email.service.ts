@@ -8,7 +8,10 @@ export class SendEmailService {
   constructor(@InjectQueue('email') private readonly sendEmailQueue: Queue) {}
 
   async execute(data: SendEmailDto) {
-    await this.sendEmailQueue.add('send-email', data, { attempts: 3 });
+    await this.sendEmailQueue.add('send-email', data, {
+      attempts: 3,
+      delay: data.delay,
+    });
     const newData = { ...data };
     delete newData.html;
     console.log(

@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   IsObject,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateSenderDto {
@@ -53,4 +54,8 @@ export class SenderSendEmailDto {
   @IsOptional()
   @IsString()
   contactId?: string;
+
+  @IsOptional()
+  @IsNumber()
+  delay?: number;
 }

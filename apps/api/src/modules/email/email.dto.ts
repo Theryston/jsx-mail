@@ -5,6 +5,7 @@ import {
   IsString,
   Length,
   IsObject,
+  IsNumber,
 } from 'class-validator';
 
 export class FromDto {
@@ -49,4 +50,8 @@ export class SendEmailDto {
   @IsOptional()
   @IsObject()
   customPayload?: Record<string, any>;
+
+  @IsOptional()
+  @IsNumber()
+  delay?: number;
 }
