@@ -63,6 +63,10 @@ export default function BulkSendingPage() {
                 {bulkSending.processedContacts}/{bulkSending.totalContacts}{' '}
                 contacts processed
               </p>
+              <p className="text-xs">
+                You can close this tab, the bulk sending will continue to
+                process in the background
+              </p>
             </div>
           </div>
         ))}

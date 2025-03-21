@@ -270,6 +270,11 @@ function ImportsBanner({ imports }: { imports: ContactImport[] }) {
                 processed
               </p>
             )}
+
+            <p className="text-xs">
+              You can close this tab, the import will continue to process in the
+              background
+            </p>
           </div>
 
           <div className="flex gap-2">
