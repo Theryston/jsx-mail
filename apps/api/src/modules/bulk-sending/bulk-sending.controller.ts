@@ -13,6 +13,7 @@ import { CreateContactsGroupService } from './services/create-contacts-group.ser
 import {
   CreateBulkContactsDto,
   CreateBulkSendingDto,
+  CreateContactDto,
   CreateContactGroupDto,
 } from './bulk-sending.dto';
 import { PERMISSIONS } from 'src/auth/permissions';
@@ -31,6 +32,7 @@ import { ListBulkSendingsService } from './services/list-bulk-sendings.service';
 import { ContactUnsubscribeService } from './services/contact-unsubscribe.service';
 import { ContactExistsService } from './services/contact-exists.service';
 import { ListBulkSendingFailuresService } from './services/list-bulk-sending-failures.service';
+import { CreateContactService } from './services/create-contact.service';
 
 @Controller('bulk-sending')
 export class BulkSendingController {
@@ -50,6 +52,7 @@ export class BulkSendingController {
     private readonly contactUnsubscribeService: ContactUnsubscribeService,
     private readonly contactExistsService: ContactExistsService,
     private readonly listBulkSendingFailuresService: ListBulkSendingFailuresService,
+    private readonly createContactService: CreateContactService,
   ) {}
 
   @Post()
@@ -124,6 +127,16 @@ export class BulkSendingController {
       contactId,
       req.user.id,
     );
+  }
+
+  @Post('contact-group/:id/contacts')
+  @Permissions([PERMISSIONS.SELF_CREATE_CONTACT_GROUP_CONTACTS.value])
+  createContactGroupContacts(
+    @Param('id') id: string,
+    @Body() body: CreateContactDto,
+    @Req() req,
+  ) {
+    return this.createContactService.execute(body, req.user.id);
   }
 
   @Post('contact-import/:id')

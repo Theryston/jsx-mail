@@ -4,13 +4,13 @@ import { PrismaService } from 'src/services/prisma.service';
 import axios from 'axios';
 import { SenderSendEmailService } from '../sender/services/sender-send-email.service';
 import moment from 'moment';
-import crypto from 'crypto';
-
+import { CreateContactService } from './services/create-contact.service';
 @Processor('bulk-sending')
 export class BulkSendingProcessor extends WorkerHost {
   constructor(
     private readonly prisma: PrismaService,
     private readonly senderSendEmailService: SenderSendEmailService,
+    private readonly createContactService: CreateContactService,
   ) {
     super();
   }
@@ -321,7 +321,7 @@ export class BulkSendingProcessor extends WorkerHost {
           await this.prisma.contactImportFailure.create({
             data: {
               contactImportId,
-              message: `The contact ${email} already exists`,
+              message: `The contact ${email} already exists in the contact group`,
               line: i + 1,
             },
           });
@@ -336,27 +336,15 @@ export class BulkSendingProcessor extends WorkerHost {
           continue;
         }
 
-        const unsubscribeKey = crypto.randomBytes(32).toString('hex');
-        const unsubscribeUrl = `${process.env.CLOUD_FRONTEND_URL}/unsubscribe?key=${unsubscribeKey}`;
-
-        await this.prisma.contact.create({
-          data: {
+        await this.createContactService.execute(
+          {
             email,
             name,
-            unsubscribeUrl,
-            unsubscribeKey,
-            contactGroup: {
-              connect: {
-                id: contactImport.contactGroupId,
-              },
-            },
-            contactImport: {
-              connect: {
-                id: contactImportId,
-              },
-            },
+            contactGroupId: contactImport.contactGroupId,
+            contactImportId,
           },
-        });
+          contactImport.userId,
+        );
 
         await this.prisma.contactImport.update({
           where: { id: contactImportId },

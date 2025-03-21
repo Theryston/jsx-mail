@@ -232,4 +232,9 @@ export const PERMISSIONS: {
     value: 'self:get-bulk-sending-failures',
     description: 'Can get bulk sending failures for itself',
   },
+  SELF_CREATE_CONTACT_GROUP_CONTACTS: {
+    title: 'Self Create Contact Group Contacts',
+    value: 'self:create-contact-group-contacts',
+    description: 'Can create contacts for a contact group for itself',
+  },
 };

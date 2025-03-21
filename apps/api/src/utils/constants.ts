@@ -18,6 +18,12 @@ export const MESSAGES_STATUS = [
     color: 'rgb(234 179 8)',
   },
   {
+    value: 'processing',
+    label: 'Processing',
+    description: 'The message is being processed',
+    color: 'rgb(234 179 8)',
+  },
+  {
     value: 'sent',
     label: 'Sent',
     description:

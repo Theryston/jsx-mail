@@ -63,3 +63,21 @@ export class CreateBulkSendingDto {
   @IsNotEmpty({ each: true })
   variables: CreateBulkSendingVariableDto[];
 }
+
+export class CreateContactDto {
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  contactGroupId: string;
+
+  @IsString()
+  @IsOptional()
+  contactImportId?: string;
+}
