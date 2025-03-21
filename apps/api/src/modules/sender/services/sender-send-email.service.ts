@@ -3,12 +3,12 @@ import { SendEmailService } from 'src/modules/email/services/send-email.service'
 import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { SenderSendEmailDto } from '../sender.dto';
-import { FREE_EMAILS_PER_MONTH, PRICE_PER_MESSAGE } from 'src/utils/constants';
 import { messageSelect } from 'src/utils/public-selects';
 import moment from 'moment';
 import { Sender } from '@prisma/client';
 import { BetaPermissionCheckService } from 'src/modules/user/services/beta-permission-check.service';
 import { PERMISSIONS } from 'src/auth/permissions';
+import { GetAvailableUserFreeLimitService } from 'src/modules/user/services/get-available-user-free-limit.service';
 
 @Injectable()
 export class SenderSendEmailService {
@@ -17,6 +17,7 @@ export class SenderSendEmailService {
     private readonly getBalanceService: GetBalanceService,
     private readonly sendEmailService: SendEmailService,
     private readonly betaPermissionCheckService: BetaPermissionCheckService,
+    private readonly getAvailableUserFreeLimitService: GetAvailableUserFreeLimitService,
   ) {}
 
   async execute(
@@ -68,23 +69,11 @@ export class SenderSendEmailService {
       );
     }
 
-    const messagesCount = await this.prisma.message.count({
-      where: {
-        userId,
-        deletedAt: null,
-        sentAt: {
-          gte: moment().startOf('month').toDate(),
-          not: null,
-        },
-      },
-    });
+    const { availableMessages } =
+      await this.getAvailableUserFreeLimitService.execute(userId);
 
-    if (messagesCount + 1 > FREE_EMAILS_PER_MONTH) {
-      const balance = await this.getBalanceService.execute(userId);
-
-      if (balance.amount < PRICE_PER_MESSAGE) {
-        throw new HttpException('Insufficient balance', HttpStatus.BAD_REQUEST);
-      }
+    if (availableMessages <= 0) {
+      throw new HttpException('Insufficient balance', HttpStatus.BAD_REQUEST);
     }
 
     let message = await this.prisma.message.create({

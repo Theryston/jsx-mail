@@ -26,6 +26,7 @@ import { UpdateOnboardingStepService } from './services/update-onboarding-step.s
 import { BetaPermissionCheckService } from './services/beta-permission-check.service';
 import { GetUsersService } from './services/get-users.service';
 import { ImpersonateUserService } from './services/impersonate-user.service';
+import { GetAvailableUserFreeLimitService } from './services/get-available-user-free-limit.service';
 
 @Module({
   controllers: [UserController],
@@ -54,8 +55,13 @@ import { ImpersonateUserService } from './services/impersonate-user.service';
     BetaPermissionCheckService,
     GetUsersService,
     ImpersonateUserService,
+    GetAvailableUserFreeLimitService,
   ],
   imports: [EmailModule, SessionModule],
-  exports: [BetaPermissionCheckService, GetBalanceService],
+  exports: [
+    BetaPermissionCheckService,
+    GetBalanceService,
+    GetAvailableUserFreeLimitService,
+  ],
 })
 export class UserModule {}

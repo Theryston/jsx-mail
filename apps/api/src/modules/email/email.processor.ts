@@ -12,11 +12,10 @@ import {
   MAX_MESSAGES_PER_DAY,
   MAX_MESSAGES_PER_SECOND,
   PRICE_PER_MESSAGE,
-  FREE_EMAILS_PER_MONTH,
 } from 'src/utils/constants';
 import { Worker } from 'bullmq';
 import { Message } from '@prisma/client';
-import { GetBalanceService } from '../user/services/get-balance.service';
+import { GetAvailableUserFreeLimitService } from '../user/services/get-available-user-free-limit.service';
 
 const transporter = nodemailer.createTransport({
   SES: { aws, ses: sesClient },
@@ -27,7 +26,7 @@ export class EmailProcessor extends WorkerHost {
   constructor(
     private readonly prisma: PrismaService,
     @InjectQueue('email') private readonly queue: Queue,
-    private readonly getBalanceService: GetBalanceService,
+    private readonly getAvailableUserFreeLimitService: GetAvailableUserFreeLimitService,
   ) {
     super();
   }
@@ -192,32 +191,20 @@ export class EmailProcessor extends WorkerHost {
       return;
     }
 
-    const messagesCount = await this.prisma.message.count({
-      where: {
-        userId,
-        deletedAt: null,
-        sentAt: {
-          gte: moment().startOf('month').toDate(),
-          not: null,
-        },
-      },
-    });
+    const { availableMessages } =
+      await this.getAvailableUserFreeLimitService.execute(userId);
 
-    if (messagesCount + 1 > FREE_EMAILS_PER_MONTH) {
-      const balance = await this.getBalanceService.execute(userId);
+    if (availableMessages <= 0) {
+      console.log(
+        `[EMAIL_PROCESSOR] insufficient balance for user ${userId}, not sending email`,
+      );
 
-      if (balance.amount < PRICE_PER_MESSAGE) {
-        console.log(
-          `[EMAIL_PROCESSOR] insufficient balance for user ${userId}, not sending email`,
-        );
+      await this.prisma.message.update({
+        where: { id: messageId },
+        data: { status: 'failed' },
+      });
 
-        await this.prisma.message.update({
-          where: { id: messageId },
-          data: { status: 'failed' },
-        });
-
-        return;
-      }
+      return;
     }
 
     let html = data.html;

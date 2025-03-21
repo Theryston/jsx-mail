@@ -2,15 +2,14 @@ import { Injectable } from '@nestjs/common';
 import moment from 'moment';
 import { PrismaService } from 'src/services/prisma.service';
 import { GetBalanceService } from './get-balance.service';
-import { FREE_EMAILS_PER_MONTH } from 'src/utils/constants';
-import { friendlyMoney } from 'src/utils/format-money';
 import { formatNumber } from 'src/utils/format';
-
+import { GetAvailableUserFreeLimitService } from './get-available-user-free-limit.service';
 @Injectable()
 export class GetInsightsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly getBalanceService: GetBalanceService,
+    private readonly getAvailableUserFreeLimitService: GetAvailableUserFreeLimitService,
   ) {}
 
   async execute(userId: string) {
@@ -65,10 +64,13 @@ export class GetInsightsService {
       value: balance.friendlyAmount,
     };
 
-    if (totalMessages < FREE_EMAILS_PER_MONTH) {
+    const { availableFreeMessages } =
+      await this.getAvailableUserFreeLimitService.execute(userId);
+
+    if (availableFreeMessages > 0) {
       balanceData = {
         title: 'Free emails left',
-        value: (FREE_EMAILS_PER_MONTH - totalMessages).toLocaleString('en-US'),
+        value: availableFreeMessages.toLocaleString('en-US'),
       };
     }
 
