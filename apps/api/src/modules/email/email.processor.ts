@@ -184,6 +184,13 @@ export class EmailProcessor extends WorkerHost {
       );
     }
 
+    if (!message || !messageId) {
+      console.error(
+        `[EMAIL_PROCESSOR] message or messageId not found: ${messageId}`,
+      );
+      return;
+    }
+
     let html = data.html;
     let subject = data.subject;
 
