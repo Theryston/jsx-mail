@@ -303,27 +303,29 @@ export class BulkSendingProcessor extends WorkerHost {
           name = null;
         }
 
-        const existingContact = await this.prisma.contact.findFirst({
-          where: { email, contactGroupId: contactImport.contactGroupId },
-        });
-
-        if (existingContact) {
-          await this.prisma.contactImportFailure.create({
-            data: {
-              contactImportId,
-              message: `The contact ${email} already exists in the contact group`,
-              line: i + 1,
-            },
+        if (!email.includes('@simulator.amazonses.com')) {
+          const existingContact = await this.prisma.contact.findFirst({
+            where: { email, contactGroupId: contactImport.contactGroupId },
           });
 
-          await this.prisma.contactImport.update({
-            where: { id: contactImportId },
-            data: {
-              processedLines: i + 1,
-            },
-          });
+          if (existingContact) {
+            await this.prisma.contactImportFailure.create({
+              data: {
+                contactImportId,
+                message: `The contact ${email} already exists in the contact group`,
+                line: i + 1,
+              },
+            });
 
-          continue;
+            await this.prisma.contactImport.update({
+              where: { id: contactImportId },
+              data: {
+                processedLines: i + 1,
+              },
+            });
+
+            continue;
+          }
         }
 
         await this.createContactService.execute(
