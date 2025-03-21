@@ -69,6 +69,8 @@ export class BulkSendingProcessor extends WorkerHost {
     const PER_PAGE = 100;
     let page = 1;
     let insufficientBalance = false;
+    let currentLine = 0;
+
     try {
       while (!insufficientBalance) {
         const contacts = await this.prisma.contact.findMany({
@@ -86,6 +88,7 @@ export class BulkSendingProcessor extends WorkerHost {
 
         for (let i = 0; i < contacts.length; i++) {
           const contact = contacts[i];
+          currentLine++;
 
           if (insufficientBalance) {
             console.log(
@@ -166,7 +169,7 @@ export class BulkSendingProcessor extends WorkerHost {
                     bulkSendingId,
                     contactId: contact.id,
                     message: `Insufficient balance: ${balance.amount}`,
-                    line: i + 1,
+                    line: currentLine,
                   },
                 });
 
@@ -203,14 +206,14 @@ export class BulkSendingProcessor extends WorkerHost {
                 bulkSendingId,
                 contactId: contact.id,
                 message: error.message,
-                line: i + 1,
+                line: currentLine,
               },
             });
 
             await this.prisma.bulkSending.update({
               where: { id: bulkSendingId },
               data: {
-                processedContacts: i + 1,
+                processedContacts: currentLine,
               },
             });
           }
