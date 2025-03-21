@@ -170,7 +170,7 @@ export class BulkSendingController {
   }
 
   @Put('contact-import/:contactImportId/read')
-  @Permissions([PERMISSIONS.MARK_CONTACT_IMPORT_AS_READ.value])
+  @Permissions([PERMISSIONS.SELF_MARK_CONTACT_IMPORT_AS_READ.value])
   readContactImport(
     @Param('contactImportId') contactImportId: string,
     @Req() req,
