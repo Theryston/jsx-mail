@@ -27,13 +27,22 @@ import {
   DropdownMenuTrigger,
 } from '@jsx-mail/ui/dropdown-menu';
 import { DropdownMenu } from '@jsx-mail/ui/dropdown-menu';
+import Link from 'next/link';
 
 export const columns: ColumnDef<BulkSending>[] = [
   {
     accessorKey: 'title',
     header: 'Title',
     cell: ({ row }) => {
-      return <span>{row.original.title}</span>;
+      const bulkSending = row.original;
+      return (
+        <Link
+          href={`/sending-history?page=1&startDate=${moment(bulkSending.createdAt).add(1, 'day').subtract(30, 'days').format('YYYY-MM-DD')}&endDate=${moment(bulkSending.createdAt).add(1, 'day').format('YYYY-MM-DD')}&bulkSending=${bulkSending.id}`}
+          className="hover:underline"
+        >
+          {bulkSending.title}
+        </Link>
+      );
     },
   },
   {
@@ -44,21 +53,28 @@ export const columns: ColumnDef<BulkSending>[] = [
     accessorKey: 'totalContacts',
     header: 'Total contacts',
     cell: ({ row }) => {
-      return <span>{row.original.totalContacts}</span>;
-    },
-  },
-  {
-    accessorKey: 'processedContacts',
-    header: 'Processed contacts',
-    cell: ({ row }) => {
-      return <span>{row.original.processedContacts}</span>;
+      return (
+        <Link
+          href={`/contacts/${row.original.contactGroupId}?back=/bulk-sending`}
+          className="hover:underline"
+        >
+          {row.original.totalContacts}
+        </Link>
+      );
     },
   },
   {
     accessorKey: 'messages',
     header: 'Sent messages',
     cell: ({ row }) => {
-      return <span>{row.original._count.messages}</span>;
+      return (
+        <Link
+          href={`/sending-history?page=1&startDate=${moment(row.original.createdAt).add(1, 'day').subtract(30, 'days').format('YYYY-MM-DD')}&endDate=${moment(row.original.createdAt).add(1, 'day').format('YYYY-MM-DD')}&bulkSending=${row.original.id}`}
+          className="hover:underline"
+        >
+          {row.original._count.messages}
+        </Link>
+      );
     },
   },
   {

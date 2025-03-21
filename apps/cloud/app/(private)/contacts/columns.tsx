@@ -8,12 +8,7 @@ import { useState } from 'react';
 import { DeleteConfirmationModal } from '@jsx-mail/ui/delete-confirmation-modal';
 import { useDeleteContactGroup } from '@/hooks/bulk-sending';
 import { toast } from '@jsx-mail/ui/sonner';
-import {
-  ChevronRightIcon,
-  MoreHorizontal,
-  TrashIcon,
-  UsersIcon,
-} from 'lucide-react';
+import { MoreHorizontal, TrashIcon, UsersIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import {
   DropdownMenu,
@@ -22,15 +17,30 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@jsx-mail/ui/dropdown-menu';
+import Link from 'next/link';
 
 export const columns: ColumnDef<ContactGroupListItem>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
+    cell: ({ row }) => {
+      return (
+        <Link href={`/contacts/${row.original.id}`} className="hover:underline">
+          {row.original.id}
+        </Link>
+      );
+    },
   },
   {
     accessorKey: 'name',
     header: 'Name',
+    cell: ({ row }) => {
+      return (
+        <Link href={`/contacts/${row.original.id}`} className="hover:underline">
+          {row.original.name}
+        </Link>
+      );
+    },
   },
   {
     accessorKey: 'contactsCount',
