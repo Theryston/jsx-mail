@@ -19,6 +19,9 @@ export class GetAvailableUserFreeLimitService {
         createdAt: {
           gte: moment().startOf('month').toDate(),
         },
+        status: {
+          notIn: ['bonce', 'failed', 'reject', 'complaint'],
+        },
       },
     });
 
