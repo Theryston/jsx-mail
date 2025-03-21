@@ -40,6 +40,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@jsx-mail/ui/dropdown-menu';
+import { Badge } from '@jsx-mail/ui/badge';
 
 export const ITEMS = [
   {
@@ -51,6 +52,7 @@ export const ITEMS = [
     label: 'Bulk Sending',
     href: '/bulk-sending',
     icon: Mail,
+    isBeta: true,
   },
   {
     label: 'Contact Groups',
@@ -143,6 +145,11 @@ export function CloudSidebar() {
                       >
                         {item.label}
                       </span>
+                      {item.isBeta && (
+                        <Badge className="!text-xs !font-normal bg-primary/10 text-primary">
+                          beta
+                        </Badge>
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
