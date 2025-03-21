@@ -37,13 +37,16 @@ export class GetAvailableUserFreeLimitService {
     const projectedBalance =
       balance.amount - notChargedMessages * PRICE_PER_MESSAGE;
 
-    const availableFreeMessages = FREE_EMAILS_PER_MONTH - messagesCount;
-    const availableMessagesByBalance = Math.floor(
+    let availableFreeMessages = FREE_EMAILS_PER_MONTH - messagesCount;
+    if (availableFreeMessages < 0) availableFreeMessages = 0;
+
+    let availableMessagesByBalance = Math.floor(
       projectedBalance / PRICE_PER_MESSAGE,
     );
+    if (availableMessagesByBalance < 0) availableMessagesByBalance = 0;
 
-    const availableMessages =
-      availableFreeMessages + availableMessagesByBalance;
+    let availableMessages = availableFreeMessages + availableMessagesByBalance;
+    if (availableMessages < 0) availableMessages = 0;
 
     return {
       availableFreeMessages,
