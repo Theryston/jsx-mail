@@ -29,7 +29,7 @@ export class EmailProcessor extends WorkerHost {
   }
 
   async process(job: Job<SendEmailDto>): Promise<void> {
-    console.log(`[EMAIL_PROCESSOR] received job: ${JSON.stringify(job.id)}`);
+    console.log(`[EMAIL_PROCESSOR] received job id: ${job.id}`);
 
     if (job.name === 'send-email') {
       await this.sendEmail(job.data);
