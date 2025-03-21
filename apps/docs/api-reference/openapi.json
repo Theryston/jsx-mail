@@ -465,6 +465,131 @@
           }
         }
       }
+    },
+    "/bulk-sending": {
+      "post": {
+        "description": "Create a new bulk sending campaign to send personalized emails to a contact group",
+        "requestBody": {
+          "description": "The data of the bulk sending campaign to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBulkSending"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Bulk sending created and queued for processing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkSending"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing unsubscribeUrl, empty contact group, or invalid variables",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sender or contact group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "List all bulk sending campaigns for the authenticated user",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "description": "Number of items to return per page",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of bulk sending campaigns",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkSendingPagination"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -735,6 +860,142 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "CreateBulkSendingVariable": {
+        "required": ["key", "from", "fromKey"],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The variable name used in the template (e.g. 'firstName')"
+          },
+          "from": {
+            "type": "string",
+            "description": "The source of the variable value - 'contact', 'bulk_sending', or 'custom'",
+            "enum": ["contact", "bulk_sending", "custom"]
+          },
+          "fromKey": {
+            "type": "string",
+            "description": "The key to get the value from the source (e.g. 'name' for contact source)"
+          },
+          "customValue": {
+            "type": "string",
+            "description": "Required when from='custom', the static value to use"
+          }
+        }
+      },
+      "CreateBulkSending": {
+        "required": [
+          "title",
+          "subject",
+          "content",
+          "sender",
+          "contactGroupId",
+          "variables"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the bulk sending campaign"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject line"
+          },
+          "content": {
+            "type": "string",
+            "description": "HTML content of the email with variable placeholders (must include {{unsubscribeUrl}})"
+          },
+          "sender": {
+            "type": "string",
+            "description": "Email address of the sender"
+          },
+          "contactGroupId": {
+            "type": "string",
+            "description": "ID of the contact group to send to"
+          },
+          "variables": {
+            "type": "array",
+            "description": "Variables for personalization",
+            "items": {
+              "$ref": "#/components/schemas/CreateBulkSendingVariable"
+            }
+          }
+        }
+      },
+      "BulkSending": {
+        "required": [
+          "id",
+          "title",
+          "subject",
+          "content",
+          "totalContacts",
+          "userId",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "totalContacts": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "_count": {
+            "type": "object",
+            "properties": {
+              "messages": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "failures": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        }
+      },
+      "BulkSendingPagination": {
+        "type": "object",
+        "properties": {
+          "bulkSendings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BulkSending"
+            }
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currentPage": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       }
