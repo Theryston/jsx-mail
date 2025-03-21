@@ -272,7 +272,7 @@ model Sender {
   id        String    @id @default(uuid())
   username  String
   name      String
-  email     String
+  email     String    @unique
   userId    String    @map("user_id")
   domainId  String    @map("domain_id")
   createdAt DateTime  @default(now()) @map("created_at")

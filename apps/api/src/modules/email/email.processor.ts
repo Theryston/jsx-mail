@@ -91,9 +91,11 @@ export class EmailProcessor extends WorkerHost {
 
     console.log(`[EMAIL_PROCESSOR] sending email: ${dataLog}`);
 
-    const { from, to, messageId, filesIds } = data;
+    const { from, to, filesIds } = data;
 
+    let messageId: string | null = data.messageId || null;
     let message: Message | null = null;
+
     if (messageId) {
       message = await this.prisma.message.findUnique({
         where: { id: messageId },
@@ -115,6 +117,62 @@ export class EmailProcessor extends WorkerHost {
           },
         });
       }
+    } else {
+      console.log(
+        `[EMAIL_PROCESSOR] creating message for ${data.to} with default sender ${process.env.DEFAULT_SENDER_EMAIL} and domain ${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`,
+      );
+
+      message = await this.prisma.message.create({
+        data: {
+          body: data.html,
+          subject: data.subject,
+          to,
+          status: 'processing',
+          domain: {
+            connect: {
+              name: process.env.DEFAULT_EMAIL_DOMAIN_NAME as string,
+            },
+          },
+          sender: {
+            connect: {
+              email: process.env.DEFAULT_SENDER_EMAIL as string,
+            },
+          },
+          user: {
+            connect: {
+              email: process.env.DEFAULT_USER_EMAIL as string,
+            },
+          },
+          createdDay: moment().format('YYYY-MM-DD'),
+          messageFiles: filesIds
+            ? {
+                create: filesIds.map((fileId) => ({
+                  file: {
+                    connect: {
+                      id: fileId,
+                    },
+                  },
+                })),
+              }
+            : undefined,
+          bulkSending: data.bulkSendingId
+            ? {
+                connect: {
+                  id: data.bulkSendingId,
+                },
+              }
+            : undefined,
+          customPayload: data.customPayload
+            ? JSON.stringify(data.customPayload)
+            : undefined,
+        },
+      });
+
+      messageId = message.id;
+
+      console.log(
+        `[EMAIL_PROCESSOR] created message: ${messageId} for ${data.to} with default sender ${process.env.DEFAULT_SENDER_EMAIL} and domain ${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`,
+      );
     }
 
     let html = data.html;
