@@ -10,6 +10,8 @@ enabled = true
 
 [vars]
 BASE_API_URL = "https://api.jsxmail.org"
+DEV_BASE_API_URL = "https://dev-api.jsxmail.org"
 
 # [secrets]
 # JSXMAIL_API_TOKEN = "..."
+# DEV_JSXMAIL_API_TOKEN = "..."
