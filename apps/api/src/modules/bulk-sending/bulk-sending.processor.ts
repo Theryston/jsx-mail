@@ -94,16 +94,6 @@ export class BulkSendingProcessor extends WorkerHost {
               console.log(
                 `[BULK_SENDING] skipping ${contact.email} because it was already sent`,
               );
-
-              await this.prisma.bulkSendingFailure.create({
-                data: {
-                  bulkSendingId,
-                  contactId: contact.id,
-                  message: 'Contact already sent',
-                  line: i + 1,
-                },
-              });
-
               continue;
             }
 
