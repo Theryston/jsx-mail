@@ -239,16 +239,6 @@ export class EmailProcessor extends WorkerHost {
       `[EMAIL_PROCESSOR] email sent from ${from.email} to ${to} with subject ${subject}`,
     );
 
-    if (!messageId) {
-      console.log(`[EMAIL_PROCESSOR] messageId not found, ignoring`);
-      return;
-    }
-
-    if (!message) {
-      console.error(`[EMAIL_PROCESSOR] message not found: ${messageId}`);
-      return;
-    }
-
     await this.prisma.message.update({
       where: {
         id: messageId,
