@@ -37,8 +37,12 @@ export class GetAvailableUserFreeLimitService {
     });
 
     const balance = await this.getBalanceService.execute(userId);
+
+    let missingChargeMessages = notChargedMessages - FREE_EMAILS_PER_MONTH;
+    if (missingChargeMessages < 0) missingChargeMessages = 0;
+
     const projectedBalance =
-      balance.amount - notChargedMessages * PRICE_PER_MESSAGE;
+      balance.amount - missingChargeMessages * PRICE_PER_MESSAGE;
 
     let availableFreeMessages = FREE_EMAILS_PER_MONTH - messagesCount;
     if (availableFreeMessages < 0) availableFreeMessages = 0;
