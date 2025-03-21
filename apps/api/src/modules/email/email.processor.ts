@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
   SES: { aws, ses: sesClient },
 });
 
-@Processor('email', { concurrency: 1, limiter: { max: 10000, duration: 100 } })
+@Processor('email', { concurrency: 10, limiter: { max: 10000, duration: 100 } })
 export class EmailProcessor extends WorkerHost {
   constructor(
     private readonly prisma: PrismaService,
@@ -44,7 +44,8 @@ export class EmailProcessor extends WorkerHost {
     delete dataLog.html;
 
     const currentSecond = moment().startOf('second');
-    const timeToWait = moment().diff(currentSecond, 'milliseconds');
+    const nextSecond = moment().add(1, 'second').startOf('second');
+    const timeToWait = nextSecond.diff(moment(), 'milliseconds');
 
     const messagesSentThisSecond = await this.prisma.message.count({
       where: {
@@ -59,14 +60,16 @@ export class EmailProcessor extends WorkerHost {
 
     if (messagesSentThisSecond >= MAX_MESSAGES_PER_SECOND) {
       console.log(
-        `[EMAIL_PROCESSOR] rate second limit exceeded, waiting ${timeToWait} milliseconds`,
+        `[EMAIL_PROCESSOR] rate second limit exceeded, waiting ${timeToWait} milliseconds. Will reset at ${moment(Date.now() + timeToWait).format('DD/MM/YYYY HH:mm:ss')}`,
       );
       await this.queue.rateLimit(timeToWait);
       throw Worker.RateLimitError();
     }
 
     const currentDay = moment().startOf('day');
-    const timeToWaitDay = moment().diff(currentDay, 'milliseconds');
+    const tomorrow = moment().add(1, 'day').startOf('day');
+    const timeToWaitDay = tomorrow.diff(moment(), 'milliseconds');
+
     const messagesSentThisDay = await this.prisma.message.count({
       where: {
         status: {
@@ -78,7 +81,7 @@ export class EmailProcessor extends WorkerHost {
 
     if (messagesSentThisDay >= MAX_MESSAGES_PER_DAY) {
       console.log(
-        `[EMAIL_PROCESSOR] rate day limit exceeded, waiting ${timeToWaitDay} milliseconds`,
+        `[EMAIL_PROCESSOR] rate day limit exceeded, waiting ${timeToWaitDay} milliseconds. Will reset at ${moment(Date.now() + timeToWaitDay).format('DD/MM/YYYY HH:mm:ss')}`,
       );
       await this.queue.rateLimit(timeToWaitDay);
       throw Worker.RateLimitError();
