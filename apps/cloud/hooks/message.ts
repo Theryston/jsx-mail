@@ -16,6 +16,7 @@ export interface MessageFilters {
   fromEmail?: string;
   toEmail?: string;
   statuses?: string[];
+  bulkSending?: string;
 }
 
 export function useMessages(filters: MessageFilters) {
@@ -35,6 +36,10 @@ export function useMessages(filters: MessageFilters) {
 
   if (filters.toEmail) {
     searchParams.set('toEmail', filters.toEmail);
+  }
+
+  if (filters.bulkSending) {
+    searchParams.set('bulkSending', filters.bulkSending);
   }
 
   return useQuery<MessagesPagination>({
@@ -61,6 +66,10 @@ export function useMessageInsights(filters: Omit<MessageFilters, 'page'>) {
 
   if (filters.toEmail) {
     searchParams.set('toEmail', filters.toEmail);
+  }
+
+  if (filters.bulkSending) {
+    searchParams.set('bulkSending', filters.bulkSending);
   }
 
   return useQuery<MessageInsightsResponse>({

@@ -167,4 +167,74 @@ export const PERMISSIONS: {
     value: 'other:impersonate-user',
     description: 'Can impersonate a user',
   },
+  SELF_CREATE_CONTACT_GROUP: {
+    title: 'Self Create Contact Group',
+    value: 'self:create-contact-group',
+    description: 'Can create a contact group for itself',
+  },
+  SELF_LIST_CONTACT_GROUPS: {
+    title: 'Self List Contact Groups',
+    value: 'self:list-contact-groups',
+    description: 'Can list contact groups for itself',
+  },
+  SELF_DELETE_CONTACT_GROUP: {
+    title: 'Self Delete Contact Group',
+    value: 'self:delete-contact-group',
+    description: 'Can delete a contact group for itself',
+  },
+  SELF_GET_CONTACT_GROUP: {
+    title: 'Self Get Contact Group',
+    value: 'self:get-contact-group',
+    description: 'Can get a contact group for itself',
+  },
+  SELF_GET_CONTACT_GROUP_CONTACTS: {
+    title: 'Self Get Contact Group Contacts',
+    value: 'self:get-contact-group-contacts',
+    description: 'Can get contacts for a contact group for itself',
+  },
+  SELF_DELETE_CONTACT_GROUP_CONTACTS: {
+    title: 'Self Delete Contact Group Contacts',
+    value: 'self:delete-contact-group-contacts',
+    description: 'Can delete contacts from a contact group for itself',
+  },
+  SELF_CREATE_CONTACT_IMPORT: {
+    title: 'Self Create Contact Import',
+    value: 'self:create-contact-import',
+    description: 'Can create a contact import for itself',
+  },
+  SELF_GET_CONTACT_IMPORT: {
+    title: 'Self Get Contact Import',
+    value: 'self:get-contact-import',
+    description: 'Can get a contact import for itself',
+  },
+  MARK_CONTACT_IMPORT_AS_READ: {
+    title: 'Mark Contact Import As Read',
+    value: 'mark-contact-import-as-read',
+    description: 'Can mark a contact import as read',
+  },
+  SELF_GET_CONTACT_IMPORT_FAILURES: {
+    title: 'Self Get Contact Import Failures',
+    value: 'self:get-contact-import-failures',
+    description: 'Can get contact import failures for itself',
+  },
+  SELF_CREATE_BULK_SENDING: {
+    title: 'Self Create Bulk Sending',
+    value: 'self:create-bulk-sending',
+    description: 'Can create a bulk sending for itself',
+  },
+  SELF_LIST_BULK_SENDINGS: {
+    title: 'Self List Bulk Sendings',
+    value: 'self:list-bulk-sendings',
+    description: 'Can list bulk sendings for itself',
+  },
+  SELF_GET_BULK_SENDING_FAILURES: {
+    title: 'Self Get Bulk Sending Failures',
+    value: 'self:get-bulk-sending-failures',
+    description: 'Can get bulk sending failures for itself',
+  },
+  SELF_CREATE_CONTACT_GROUP_CONTACTS: {
+    title: 'Self Create Contact Group Contacts',
+    value: 'self:create-contact-group-contacts',
+    description: 'Can create contacts for a contact group for itself',
+  },
 };

@@ -7,12 +7,20 @@ export const MINIMUM_ADD_BALANCE = 1 * MONEY_SCALE; // $1.00
 export const STORAGE_GB_PRICE = 0.025 * MONEY_SCALE; // $0.025
 export const PRICE_PER_MESSAGE = 0.0002 * MONEY_SCALE; // $0.0002
 export const MAXIMUM_STORAGE = 5 * 1024 * 1024 * 1024 * 1024; // 5GB
+export const MAX_MESSAGES_PER_SECOND = 14;
+export const MAX_MESSAGES_PER_DAY = 50_000;
 
 export const MESSAGES_STATUS = [
   {
     value: 'queued',
     label: 'Queued',
     description: 'The message is waiting to be sent',
+    color: 'rgb(234 179 8)',
+  },
+  {
+    value: 'processing',
+    label: 'Processing',
+    description: 'The message is being processed',
     color: 'rgb(234 179 8)',
   },
   {

@@ -19,6 +19,22 @@ const domain: Prisma.DomainCreateInput = {
   },
 };
 
+const sender: Prisma.SenderCreateInput = {
+  name: 'JSX Mail Cloud',
+  email: 'cloud@jsxmail.org',
+  username: 'jsxmail',
+  domain: {
+    connect: {
+      name: 'jsxmail.org',
+    },
+  },
+  user: {
+    connect: {
+      email: 'jsxmailorg@gmail.com',
+    },
+  },
+};
+
 const transaction: Prisma.TransactionCreateInput = {
   id: '3450254d-5f48-40af-918b-5c6a26baa4ca',
   amount: 100 * MONEY_SCALE,
@@ -46,6 +62,11 @@ const data = [
     modelName: 'transaction',
     data: transaction,
     uniqueField: 'id',
+  },
+  {
+    modelName: 'sender',
+    data: sender,
+    uniqueField: 'email',
   },
 ];
 

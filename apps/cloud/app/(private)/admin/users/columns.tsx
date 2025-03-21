@@ -92,7 +92,7 @@ export const columns: ColumnDef<User>[] = [
       };
 
       const handleBlock = () => {
-        toast.info(`Blocking user: ${user.name}`);
+        toast.info('Not implemented yet');
         // Implement blocking logic here
       };
 
@@ -100,17 +100,17 @@ export const columns: ColumnDef<User>[] = [
         <div className="flex gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <MoreHorizontal className="size-3" />
+              <Button variant="outline" size="icon">
+                <MoreHorizontal className="size-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem onClick={handleImpersonate}>
-                <ShieldIcon className="size-4 mr-2" />
+                <ShieldIcon className="size-4" />
                 Impersonate
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleBlock}>
-                <BanIcon className="size-4 mr-2" />
+                <BanIcon className="size-4" />
                 Block
               </DropdownMenuItem>
             </DropdownMenuContent>

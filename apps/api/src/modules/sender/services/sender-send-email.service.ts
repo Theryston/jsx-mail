@@ -20,7 +20,16 @@ export class SenderSendEmailService {
   ) {}
 
   async execute(
-    { sender: senderEmail, html, subject, to, filesIds }: SenderSendEmailDto,
+    {
+      sender: senderEmail,
+      html,
+      subject,
+      to,
+      filesIds,
+      bulkSendingId,
+      customPayload,
+      contactId,
+    }: SenderSendEmailDto,
     userId: string,
   ) {
     if (filesIds && filesIds.length > 0) {
@@ -85,6 +94,7 @@ export class SenderSendEmailService {
         domainId: sender.domainId,
         senderId: sender.id,
         userId,
+        contactId,
         createdDay: moment().format('YYYY-MM-DD'),
         messageFiles: filesIds
           ? {
@@ -96,6 +106,10 @@ export class SenderSendEmailService {
                 },
               })),
             }
+          : undefined,
+        bulkSendingId,
+        customPayload: customPayload
+          ? JSON.stringify(customPayload)
           : undefined,
       },
       select: messageSelect,
@@ -111,6 +125,8 @@ export class SenderSendEmailService {
       to,
       messageId: message.id,
       filesIds,
+      bulkSendingId,
+      customPayload,
     });
 
     return message;

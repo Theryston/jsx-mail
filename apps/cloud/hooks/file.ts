@@ -5,21 +5,23 @@ import { FilesPagination } from '@/types/file';
 
 export const PER_PAGE = 10;
 
+export const uploadFile = async (file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return api
+    .post('/file', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    .then((res) => res.data);
+};
+
 export function useUploadFile() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (file: File) => {
-      const formData = new FormData();
-      formData.append('file', file);
-      return api
-        .post('/file', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-        .then((res) => res.data);
-    },
+    mutationFn: uploadFile,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['files'] });
     },

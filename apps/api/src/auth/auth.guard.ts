@@ -90,7 +90,12 @@ export class AuthGuard implements CanActivate {
 
     const route = context.switchToHttp().getRequest().route.path;
 
-    if (!user.isEmailVerified && route !== '/user/validate-email') {
+    if (
+      !user.isEmailVerified &&
+      !['/user/validate-email', '/user/auth', '/user/security-code'].includes(
+        route,
+      )
+    ) {
       return false;
     }
 
