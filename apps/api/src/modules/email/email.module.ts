@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { SendEmailService } from './services/send-email.service';
 import { BullModule } from '@nestjs/bullmq';
 import { EmailProcessor } from './email.processor';
@@ -9,7 +9,7 @@ import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
-    UserModule,
+    forwardRef(() => UserModule),
     BullModule.registerQueue({
       name: 'email',
     }),
