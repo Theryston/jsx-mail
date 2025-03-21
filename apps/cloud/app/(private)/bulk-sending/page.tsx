@@ -16,19 +16,20 @@ import { Loader2 } from 'lucide-react';
 
 export default function BulkSendingPage() {
   const [page, setPage] = useState(1);
-  const [processingBulkSending, setProcessingBulkSending] =
-    useState<BulkSending | null>(null);
+  const [processingBulkSending, setProcessingBulkSending] = useState<
+    BulkSending[]
+  >([]);
   const { data: bulkSendingPagination, isPending: isBulkSendingPending } =
-    useBulkSending({ page }, processingBulkSending ? 5000 : false);
+    useBulkSending({ page }, processingBulkSending.length > 0 ? 1000 : false);
   const router = useRouter();
 
   useEffect(() => {
     if (!bulkSendingPagination) return;
 
     setProcessingBulkSending(
-      bulkSendingPagination.bulkSendings.find((bulkSending) =>
+      bulkSendingPagination.bulkSendings.filter((bulkSending) =>
         ['processing', 'pending'].includes(bulkSending.status),
-      ) || null,
+      ),
     );
   }, [bulkSendingPagination]);
 
@@ -43,8 +44,9 @@ export default function BulkSendingPage() {
   return (
     <Container header>
       <div className="flex flex-col gap-4">
-        {processingBulkSending && (
+        {processingBulkSending.map((bulkSending) => (
           <div
+            key={bulkSending.id}
             className={cn(
               'rounded-md p-4 flex flex-col md:flex-row justify-between md:items-center gap-2',
               'bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse',
@@ -54,16 +56,16 @@ export default function BulkSendingPage() {
               <div className="flex items-center gap-2">
                 <Loader2 className="size-4 animate-spin" />
                 <p className="text-sm">
-                  Processing bulk sending: {processingBulkSending.title}
+                  Processing bulk sending: {bulkSending.title}
                 </p>
               </div>
               <p className="text-xs">
-                {processingBulkSending.processedContacts}/
-                {processingBulkSending.totalContacts} contacts processed
+                {bulkSending.processedContacts}/{bulkSending.totalContacts}{' '}
+                contacts processed
               </p>
             </div>
           </div>
-        )}
+        ))}
 
         <div className="flex items-center justify-between">
           <h1 className="text-2xl">

@@ -62,7 +62,7 @@ export default function ContactGroupPage({
     ContactImport[]
   >([]);
   const { data: contactImports } = useContactImports(id, {
-    refetchInterval: processingImport ? 5000 : false,
+    refetchInterval: processingImport ? 1000 : false,
   });
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();

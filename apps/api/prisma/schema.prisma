@@ -28,6 +28,7 @@ enum TransactionStyle {
 
 enum MessageStatus {
   queued
+  processing
   sent
   bonce
   failed
