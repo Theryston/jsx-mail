@@ -85,10 +85,8 @@ export class BulkSendingProcessor extends WorkerHost {
           try {
             const isSent = await this.prisma.message.findFirst({
               where: {
-                to: {
-                  has: contact.email,
-                },
                 bulkSendingId,
+                contactId: contact.id,
               },
             });
 
@@ -143,6 +141,7 @@ export class BulkSendingProcessor extends WorkerHost {
                 to: [contact.email],
                 bulkSendingId,
                 customPayload,
+                contactId: contact.id,
               },
               bulkSending.userId,
             );

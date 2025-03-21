@@ -28,6 +28,7 @@ export class SenderSendEmailService {
       filesIds,
       bulkSendingId,
       customPayload,
+      contactId,
     }: SenderSendEmailDto,
     userId: string,
   ) {
@@ -93,6 +94,7 @@ export class SenderSendEmailService {
         domainId: sender.domainId,
         senderId: sender.id,
         userId,
+        contactId,
         createdDay: moment().format('YYYY-MM-DD'),
         messageFiles: filesIds
           ? {

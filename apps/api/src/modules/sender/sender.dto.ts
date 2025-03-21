@@ -49,4 +49,8 @@ export class SenderSendEmailDto {
   @IsOptional()
   @IsObject()
   customPayload?: Record<string, any>;
+
+  @IsOptional()
+  @IsString()
+  contactId?: string;
 }

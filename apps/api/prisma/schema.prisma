@@ -297,6 +297,7 @@ model Message {
   subject       String
   body          String
   to            String[]
+  contactId     String?       @map("contact_id")
   status        MessageStatus @default(queued)
   bulkSendingId String?       @map("bulk_sending_id")
   externalId    String?       @map("external_id")
@@ -309,12 +310,13 @@ model Message {
   updatedAt     DateTime      @updatedAt @map("updated_at")
   deletedAt     DateTime?     @map("deleted_at")
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sender Sender @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sender      Sender       @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  domain      Domain       @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  bulkSending BulkSending? @relation(fields: [bulkSendingId], references: [id], onDelete: Cascade)
+  contact     Contact?     @relation(fields: [contactId], references: [id], onDelete: Cascade)
 
   messageFiles MessageFile[]
-  bulkSending  BulkSending?  @relation(fields: [bulkSendingId], references: [id], onDelete: Cascade)
 
   @@map("messages")
 }
@@ -481,6 +483,7 @@ model Contact {
   contactGroup        ContactGroup         @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
   contactImport       ContactImport?       @relation(fields: [contactImportId], references: [id], onDelete: Cascade)
   bulkSendingFailures BulkSendingFailure[]
+  messages            Message[]
 
   @@map("contacts")
 }
