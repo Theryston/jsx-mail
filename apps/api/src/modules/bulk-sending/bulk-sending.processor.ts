@@ -7,7 +7,7 @@ import moment from 'moment';
 import { CreateContactService } from './services/create-contact.service';
 import { GetAvailableUserFreeLimitService } from '../user/services/get-available-user-free-limit.service';
 
-@Processor('bulk-sending')
+@Processor('bulk-sending', { concurrency: 10 })
 export class BulkSendingProcessor extends WorkerHost {
   constructor(
     private readonly prisma: PrismaService,
