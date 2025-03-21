@@ -330,10 +330,10 @@ export class BulkSendingProcessor extends WorkerHost {
           {
             email,
             name,
-            contactGroupId: contactImport.contactGroupId,
             contactImportId,
           },
           contactImport.userId,
+          contactImport.contactGroupId,
         );
 
         await this.prisma.contactImport.update({

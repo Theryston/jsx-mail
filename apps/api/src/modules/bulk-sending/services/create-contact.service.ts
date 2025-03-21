@@ -12,8 +12,9 @@ export class CreateContactService {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(
-    { email, name, contactGroupId, contactImportId }: CreateContactDto,
+    { email, name, contactImportId }: CreateContactDto,
     userId: string,
+    contactGroupId: string,
   ) {
     if (!email.includes('@simulator.amazonses.com')) {
       const existingContact = await this.prisma.contact.findFirst({

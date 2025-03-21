@@ -590,6 +590,85 @@
           }
         }
       }
+    },
+    "/bulk-sending/contact-group/{id}/contacts": {
+      "post": {
+        "description": "Add a single contact to an existing contact group",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the contact group to add a contact to",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The contact data to add to the group",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContact"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Contact created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Contact"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - contact already exists in the group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Contact group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -996,6 +1075,62 @@
           "currentPage": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "CreateContact": {
+        "required": ["email", "name"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address of the contact",
+            "example": "john@example.com"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the contact",
+            "example": "John Doe"
+          },
+          "contactImportId": {
+            "type": "string",
+            "description": "Optional ID of a contact import to associate with this contact"
+          }
+        }
+      },
+      "Contact": {
+        "required": ["id", "email", "name", "unsubscribeUrl", "unsubscribeKey"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unsubscribeUrl": {
+            "type": "string"
+          },
+          "unsubscribeKey": {
+            "type": "string"
+          },
+          "contactGroupId": {
+            "type": "string"
+          },
+          "contactImportId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         }
       }

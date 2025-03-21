@@ -74,10 +74,6 @@ export class CreateContactDto {
   name: string;
 
   @IsString()
-  @IsNotEmpty()
-  contactGroupId: string;
-
-  @IsString()
   @IsOptional()
   contactImportId?: string;
 }

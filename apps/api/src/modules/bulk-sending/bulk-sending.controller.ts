@@ -136,7 +136,7 @@ export class BulkSendingController {
     @Body() body: CreateContactDto,
     @Req() req,
   ) {
-    return this.createContactService.execute(body, req.user.id);
+    return this.createContactService.execute(body, req.user.id, id);
   }
 
   @Post('contact-import/:id')

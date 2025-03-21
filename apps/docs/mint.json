@@ -133,7 +133,8 @@
       "pages": [
         "api-reference/endpoint/bulk-sending/create",
         "api-reference/endpoint/bulk-sending/list",
-        "api-reference/endpoint/bulk-sending/contact-group/create"
+        "api-reference/endpoint/bulk-sending/contact-group/create",
+        "api-reference/endpoint/bulk-sending/contact-group/contact/create"
       ]
     }
   ],
