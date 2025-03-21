@@ -11,9 +11,12 @@ import moment from 'moment';
 import {
   MAX_MESSAGES_PER_DAY,
   MAX_MESSAGES_PER_SECOND,
+  PRICE_PER_MESSAGE,
+  FREE_EMAILS_PER_MONTH,
 } from 'src/utils/constants';
 import { Worker } from 'bullmq';
 import { Message } from '@prisma/client';
+import { GetBalanceService } from '../user/services/get-balance.service';
 
 const transporter = nodemailer.createTransport({
   SES: { aws, ses: sesClient },
@@ -24,6 +27,7 @@ export class EmailProcessor extends WorkerHost {
   constructor(
     private readonly prisma: PrismaService,
     @InjectQueue('email') private readonly queue: Queue,
+    private readonly getBalanceService: GetBalanceService,
   ) {
     super();
   }
@@ -104,11 +108,19 @@ export class EmailProcessor extends WorkerHost {
 
     let messageId: string | null = data.messageId || null;
     let message: Message | null = null;
+    let userId: string | null = null;
 
     if (messageId) {
       message = await this.prisma.message.findUnique({
         where: { id: messageId },
       });
+
+      if (!message) {
+        console.error(`[EMAIL_PROCESSOR] message not found: ${messageId}`);
+        return;
+      }
+
+      userId = message.userId;
 
       await this.prisma.message.update({
         where: { id: messageId },
@@ -178,17 +190,46 @@ export class EmailProcessor extends WorkerHost {
       });
 
       messageId = message.id;
+      userId = message.userId;
 
       console.log(
         `[EMAIL_PROCESSOR] created message: ${messageId} for ${to} with default sender ${process.env.DEFAULT_SENDER_EMAIL} and domain ${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`,
       );
     }
 
-    if (!message || !messageId) {
+    if (!message || !messageId || !userId) {
       console.error(
-        `[EMAIL_PROCESSOR] message or messageId not found: ${messageId}`,
+        `[EMAIL_PROCESSOR] message or messageId or userId not found: ${messageId}`,
       );
       return;
+    }
+
+    const messagesCount = await this.prisma.message.count({
+      where: {
+        userId,
+        deletedAt: null,
+        sentAt: {
+          gte: moment().startOf('month').toDate(),
+          not: null,
+        },
+      },
+    });
+
+    if (messagesCount + 1 > FREE_EMAILS_PER_MONTH) {
+      const balance = await this.getBalanceService.execute(userId);
+
+      if (balance.amount < PRICE_PER_MESSAGE) {
+        console.log(
+          `[EMAIL_PROCESSOR] insufficient balance for user ${userId}, not sending email`,
+        );
+
+        await this.prisma.message.update({
+          where: { id: messageId },
+          data: { status: 'failed' },
+        });
+
+        return;
+      }
     }
 
     let html = data.html;
