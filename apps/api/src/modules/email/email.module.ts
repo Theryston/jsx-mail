@@ -5,14 +5,21 @@ import { EmailProcessor } from './email.processor';
 import { PrismaService } from 'src/services/prisma.service';
 import { EmailController } from './email.controller';
 import { EmailWebhookService } from './services/email-webhook.service';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
+    UserModule,
     BullModule.registerQueue({
       name: 'email',
     }),
   ],
-  providers: [PrismaService, SendEmailService, EmailProcessor, EmailWebhookService],
+  providers: [
+    PrismaService,
+    SendEmailService,
+    EmailProcessor,
+    EmailWebhookService,
+  ],
   exports: [SendEmailService],
   controllers: [EmailController],
 })
