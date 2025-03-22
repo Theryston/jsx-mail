@@ -104,7 +104,7 @@ export class CreateBulkSendingService {
 
     if (availableMessages < contactGroup._count.contacts) {
       throw new BadRequestException(
-        `You have ${availableMessages} emails left (counted as free + balance), but you are trying to send ${contactGroup._count.contacts} emails`,
+        `You have ${availableMessages} emails left (counted as free + balance), but you are trying to send ${contactGroup._count.contacts} emails. Add more balance to your account to send more emails.`,
       );
     }
 
