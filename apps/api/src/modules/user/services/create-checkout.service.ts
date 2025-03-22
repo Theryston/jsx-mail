@@ -84,7 +84,8 @@ export class CreateCheckoutService {
         },
       ],
       customer: user.gatewayId,
-      success_url: `${process.env.FRONTEND_URL}/app/billing`,
+      success_url: `${process.env.CLOUD_FRONTEND_URL}/billing`,
+      cancel_url: `${process.env.CLOUD_FRONTEND_URL}/billing`,
     });
 
     await this.prisma.checkout.create({
