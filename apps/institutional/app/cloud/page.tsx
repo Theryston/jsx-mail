@@ -213,13 +213,13 @@ export default function CloudPage() {
               color="primary"
               variant="shadow"
               as={Link}
-              href="https://cloud.jsxmail.org/app"
+              href="https://cloud.jsxmail.org/sign-up"
               target="_blank"
               fullWidth
               className="font-medium"
-              aria-label="Go to JSX Mail Cloud Dashboard"
+              aria-label="Sign Up for JSX Mail Cloud"
             >
-              Dashboard
+              Sign Up
             </Button>
             <Button
               color="primary"
@@ -1058,6 +1058,7 @@ export default function CloudPage() {
                 title: 'Sign Up',
                 description:
                   'Create an account on JSX Mail Cloud and get your API key.',
+                href: 'https://cloud.jsxmail.org/sign-up',
                 icon: (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -1083,6 +1084,7 @@ export default function CloudPage() {
                 title: 'Integrate',
                 description:
                   'Use our API to send emails from your application or use the JSX Mail framework for a seamless experience.',
+                href: 'https://docs.jsxmail.org/api-reference/introduction',
                 icon: (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -1108,6 +1110,7 @@ export default function CloudPage() {
                 title: 'Monitor',
                 description:
                   'Track your email performance with our comprehensive analytics dashboard.',
+                href: 'https://cloud.jsxmail.org',
                 icon: (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -1159,6 +1162,13 @@ export default function CloudPage() {
                     <p className="text-sm text-zinc-400">{item.description}</p>
                   </div>
                 </div>
+                {item.href && (
+                  <Link href={item.href} className="absolute inset-0">
+                    <span className="sr-only">
+                      Learn more about {item.title}
+                    </span>
+                  </Link>
+                )}
               </motion.div>
             ))}
           </motion.div>
