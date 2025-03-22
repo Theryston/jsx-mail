@@ -288,7 +288,7 @@ export class BulkSendingProcessor extends WorkerHost {
       } else {
         if (emailColumn === -1) {
           throw new Error(
-            `Invalid email column add ${contactImport.emailColumn} to the file header`,
+            `Invalid email column! Add ${contactImport.emailColumn} to the file header`,
           );
         }
       }
