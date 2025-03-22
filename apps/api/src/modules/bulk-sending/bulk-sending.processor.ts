@@ -264,8 +264,10 @@ export class BulkSendingProcessor extends WorkerHost {
       const csv = new TextDecoder().decode(fileContent);
 
       const lines = csv.split('\n');
-      const headers = lines[0].split(',');
-      const rows = lines.slice(1).map((line) => line.split(','));
+      const headers = lines[0].split(',').map((header) => header.trim());
+      const rows = lines
+        .slice(1)
+        .map((line) => line.split(',').map((cell) => cell.trim()));
 
       await this.prisma.contactImport.update({
         where: { id: contactImportId },
