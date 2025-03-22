@@ -6,8 +6,7 @@ import {
   Status,
 } from '@/types/message';
 import moment from 'moment';
-
-export const PER_PAGE = 10;
+import { PER_PAGE } from '@/utils/constants';
 
 export interface MessageFilters {
   page: number;
@@ -16,9 +15,13 @@ export interface MessageFilters {
   fromEmail?: string;
   toEmail?: string;
   statuses?: string[];
+  bulkSending?: string;
 }
 
-export function useMessages(filters: MessageFilters) {
+export function useMessages(
+  filters: MessageFilters,
+  refreshInterval: number | false,
+) {
   const searchParams = new URLSearchParams();
   searchParams.set('page', filters.page.toString());
   searchParams.set('take', PER_PAGE.toString());
@@ -37,16 +40,24 @@ export function useMessages(filters: MessageFilters) {
     searchParams.set('toEmail', filters.toEmail);
   }
 
+  if (filters.bulkSending) {
+    searchParams.set('bulkSending', filters.bulkSending);
+  }
+
   return useQuery<MessagesPagination>({
     queryKey: ['messages', filters],
     queryFn: () =>
       api
         .get(`/user/messages?${searchParams.toString()}`)
         .then((res) => res.data),
+    refetchInterval: refreshInterval,
   });
 }
 
-export function useMessageInsights(filters: Omit<MessageFilters, 'page'>) {
+export function useMessageInsights(
+  filters: Omit<MessageFilters, 'page'>,
+  refreshInterval: number | false,
+) {
   const searchParams = new URLSearchParams();
   searchParams.set('startDate', filters.startDate.format('YYYY-MM-DD'));
   searchParams.set('endDate', filters.endDate.format('YYYY-MM-DD'));
@@ -63,12 +74,17 @@ export function useMessageInsights(filters: Omit<MessageFilters, 'page'>) {
     searchParams.set('toEmail', filters.toEmail);
   }
 
+  if (filters.bulkSending) {
+    searchParams.set('bulkSending', filters.bulkSending);
+  }
+
   return useQuery<MessageInsightsResponse>({
     queryKey: ['messages-insights', filters],
     queryFn: () =>
       api
         .get(`/user/messages/insights?${searchParams.toString()}`)
         .then((res) => res.data),
+    refetchInterval: refreshInterval,
   });
 }
 

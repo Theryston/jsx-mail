@@ -26,5 +26,6 @@ import { UserModule } from '../user/user.module';
     GetBalanceService,
     SendEmailService,
   ],
+  exports: [SenderSendEmailService],
 })
 export class SenderModule {}

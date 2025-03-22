@@ -38,6 +38,7 @@ export default function Home() {
                   key={insight.title}
                   title={insight.title}
                   value={insight.value}
+                  description={insight.description}
                 />
               ))}
             </div>

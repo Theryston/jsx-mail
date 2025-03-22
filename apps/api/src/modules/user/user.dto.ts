@@ -135,6 +135,10 @@ export class MessagesInsightsDto {
   @IsOptional()
   @IsString()
   statuses?: string;
+
+  @IsOptional()
+  @IsString()
+  bulkSending?: string;
 }
 
 export class ListMessagesDto extends MessagesInsightsDto {
@@ -181,4 +185,18 @@ export class ImpersonateUserDto {
   @IsNotEmpty()
   @IsString()
   userId: string;
+}
+
+export class InsightsItemDto {
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+
+  @IsNotEmpty()
+  @IsString()
+  value: string;
+
+  @IsNotEmpty()
+  @IsString()
+  description: string;
 }

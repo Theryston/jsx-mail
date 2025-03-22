@@ -4,6 +4,7 @@ import { PERMISSIONS } from 'src/auth/permissions';
 import { ChargeService } from './services/charge.service';
 import { StorageSizeService } from './services/storage-size.service';
 import { UpdateChargeMonthService } from './services/update-charge-month.service';
+import { DeadMessagesService } from './services/dead-messages.service';
 
 @Controller('worker')
 export class WorkerController {
@@ -11,6 +12,7 @@ export class WorkerController {
     private readonly chargeService: ChargeService,
     private readonly storageSizeService: StorageSizeService,
     private readonly updateChargeMonthService: UpdateChargeMonthService,
+    private readonly deadMessagesService: DeadMessagesService,
   ) {}
 
   @Post('update-charge-month')
@@ -29,5 +31,11 @@ export class WorkerController {
   @Permissions([PERMISSIONS.OTHER_RUN_WORKERS.value])
   storageSize() {
     return this.storageSizeService.execute();
+  }
+
+  @Post('dead-messages')
+  @Permissions([PERMISSIONS.OTHER_RUN_WORKERS.value])
+  deadMessages() {
+    return this.deadMessagesService.execute();
   }
 }

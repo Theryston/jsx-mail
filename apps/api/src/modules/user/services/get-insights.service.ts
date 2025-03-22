@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import moment from 'moment';
 import { PrismaService } from 'src/services/prisma.service';
-import { GetBalanceService } from './get-balance.service';
-import { FREE_EMAILS_PER_MONTH } from 'src/utils/constants';
-import { friendlyMoney } from 'src/utils/format-money';
 import { formatNumber } from 'src/utils/format';
+import { GetUserLimitsService } from './get-user-limits.service';
+import { friendlyMoney } from 'src/utils/format-money';
+import { InsightsItemDto } from '../user.dto';
 
 @Injectable()
 export class GetInsightsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly getBalanceService: GetBalanceService,
+    private readonly getUserLimitsService: GetUserLimitsService,
   ) {}
 
   async execute(userId: string) {
@@ -58,32 +58,49 @@ export class GetInsightsService {
       },
     });
 
-    const balance = await this.getBalanceService.execute(userId);
+    const { availableFreeMessages, projectedBalance } =
+      await this.getUserLimitsService.execute(userId);
 
-    let balanceData = {
-      title: 'Your balance',
-      value: balance.friendlyAmount,
+    let balanceData: InsightsItemDto = {
+      title: 'Projected balance',
+      value: friendlyMoney(projectedBalance, true),
+      description:
+        'The messages charge runs out every day, this is the projected balance to the next charge action',
     };
 
-    if (totalMessages < FREE_EMAILS_PER_MONTH) {
+    if (availableFreeMessages > 0) {
       balanceData = {
         title: 'Free emails left',
-        value: (FREE_EMAILS_PER_MONTH - totalMessages).toLocaleString('en-US'),
+        value: availableFreeMessages.toLocaleString('en-US'),
+        description:
+          'The number of free emails you have left this month, if you run out, you will be charged for the messages you send and if you have no balance, you will not be able to send emails',
       };
     }
 
     return {
-      MESSAGES_SENT_BY_DAY: messagesSentByDay.map((m) => ({
-        sentDay: m.sentDay,
-        count: m._count.id || 0,
-      })),
+      MESSAGES_SENT_BY_DAY: messagesSentByDay
+        .map((m) => ({
+          sentDay: m.sentDay,
+          count: m._count.id || 0,
+        }))
+        .sort((a, b) => a.sentDay.localeCompare(b.sentDay)),
       DATA: [
         balanceData,
-        { title: 'Emails sent this month', value: formatNumber(totalMessages) },
-        { title: 'Open rate', value: `${((openRate || 0) * 100).toFixed(2)}%` },
+        {
+          title: 'Emails sent this month',
+          value: formatNumber(totalMessages),
+          description: 'The number of emails you have sent this month',
+        },
+        {
+          title: 'Open rate',
+          value: `${((openRate || 0) * 100).toFixed(2)}%`,
+          description: 'The percentage of recipients who opened your email',
+        },
         {
           title: 'Click rate',
           value: `${((clickRate || 0) * 100).toFixed(2)}%`,
+          description:
+            'The percentage of recipients who clicked on links within your email content. This metric helps measure engagement and the effectiveness of your call-to-action elements.',
         },
       ],
     };

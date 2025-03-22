@@ -4,6 +4,9 @@ import {
   IsEmail,
   IsArray,
   IsOptional,
+  IsString,
+  IsObject,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateSenderDto {
@@ -39,4 +42,20 @@ export class SenderSendEmailDto {
   @IsOptional()
   @IsArray()
   filesIds?: string[];
+
+  @IsOptional()
+  @IsString()
+  bulkSendingId?: string;
+
+  @IsOptional()
+  @IsObject()
+  customPayload?: Record<string, any>;
+
+  @IsOptional()
+  @IsString()
+  contactId?: string;
+
+  @IsOptional()
+  @IsNumber()
+  delay?: number;
 }

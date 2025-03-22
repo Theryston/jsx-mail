@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSessions, useDeleteSession } from '@/hooks/user';
 import { toast } from '@jsx-mail/ui/sonner';
 import { Button } from '@jsx-mail/ui/button';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon, MoreHorizontal } from 'lucide-react';
 import { Session } from '@/types/user';
 import { DeleteConfirmationModal } from '@jsx-mail/ui/delete-confirmation-modal';
 import { CreateSessionModal } from './create-session-modal';
@@ -20,6 +20,11 @@ import {
 import { format } from 'date-fns';
 import { Skeleton } from '@jsx-mail/ui/skeleton';
 import { useRouter } from 'next/navigation';
+import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@jsx-mail/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuTrigger } from '@jsx-mail/ui/dropdown-menu';
 
 export function Sessions() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -143,13 +148,21 @@ export function SessionTable({
                     : 'Never'}
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDeleteSession(session.id)}
-                  >
-                    {session.id === currentSessionId ? 'Logout' : 'Delete'}
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <MoreHorizontal className="size-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => handleDeleteSession(session.id)}
+                      >
+                        <TrashIcon className="size-4" />
+                        {session.id === currentSessionId ? 'Logout' : 'Delete'}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))

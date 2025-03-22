@@ -14,7 +14,6 @@ import {
 import { CloudLogo } from '@/components/cloud-logo';
 import { usePathname } from 'next/navigation';
 import {
-  Home,
   Cloud,
   Send,
   File,
@@ -25,6 +24,9 @@ import {
   UserIcon,
   Shield,
   Key,
+  Users,
+  Mail,
+  Home,
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@jsx-mail/ui/lib/utils';
@@ -38,22 +40,34 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@jsx-mail/ui/dropdown-menu';
+import { Badge } from '@jsx-mail/ui/badge';
 
 export const ITEMS = [
   {
-    label: 'Home',
+    label: 'Dashboard',
     href: '/',
     icon: Home,
   },
   {
-    label: 'Billing',
-    href: '/billing',
-    icon: Wallet,
+    label: 'Bulk Sending',
+    href: '/bulk-sending',
+    icon: Mail,
+    isBeta: true,
+  },
+  {
+    label: 'Contact Groups',
+    href: '/contacts',
+    icon: Users,
   },
   {
     label: 'Domains',
     href: '/domains',
     icon: Cloud,
+  },
+  {
+    label: 'Billing',
+    href: '/billing',
+    icon: Wallet,
   },
   {
     label: 'Senders',
@@ -109,7 +123,7 @@ export function CloudSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent className="mt-8">
-            <SidebarMenu className="flex flex-col gap-3">
+            <SidebarMenu className="flex flex-col gap-2">
               {items.map((item) => (
                 <SidebarMenuItem key={item.label}>
                   <SidebarMenuButton asChild isActive={pathname === item.href}>
@@ -131,6 +145,11 @@ export function CloudSidebar() {
                       >
                         {item.label}
                       </span>
+                      {item.isBeta && (
+                        <Badge className="!text-xs !font-normal bg-primary/10 text-primary">
+                          beta
+                        </Badge>
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

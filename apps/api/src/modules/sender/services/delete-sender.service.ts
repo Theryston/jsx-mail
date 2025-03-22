@@ -18,6 +18,15 @@ export class DeleteSenderService {
       throw new HttpException('Sender not found', HttpStatus.NOT_FOUND);
     }
 
+    await this.prisma.sender.update({
+      where: {
+        id: sender.id,
+      },
+      data: {
+        email: `${sender.email}-${sender.id}`,
+      },
+    });
+
     await this.prisma.sender.delete({
       where: {
         id: sender.id,

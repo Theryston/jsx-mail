@@ -42,10 +42,21 @@ export class MessagesInsightsService {
       };
     });
 
+    const processingMessages = await this.prisma.message.count({
+      where: {
+        status: {
+          in: ['queued', 'processing'],
+        },
+        userId,
+        deletedAt: null,
+      },
+    });
+
     return {
       DAYS: days,
       STATUSES: allStatuses,
       MESSAGES: messagesResult,
+      PROCESSING_MESSAGES: processingMessages,
     };
   }
 

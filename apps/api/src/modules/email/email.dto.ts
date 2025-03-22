@@ -4,6 +4,8 @@ import {
   IsOptional,
   IsString,
   Length,
+  IsObject,
+  IsNumber,
 } from 'class-validator';
 
 export class FromDto {
@@ -40,4 +42,16 @@ export class SendEmailDto {
   @IsOptional()
   @IsArray()
   filesIds?: string[];
+
+  @IsOptional()
+  @IsString()
+  bulkSendingId?: string;
+
+  @IsOptional()
+  @IsObject()
+  customPayload?: Record<string, any>;
+
+  @IsOptional()
+  @IsNumber()
+  delay?: number;
 }

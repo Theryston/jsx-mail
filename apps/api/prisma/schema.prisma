@@ -28,6 +28,7 @@ enum TransactionStyle {
 
 enum MessageStatus {
   queued
+  processing
   sent
   bonce
   failed
@@ -46,6 +47,31 @@ enum OnboardingStep {
   create_sender
   send_test_email
   completed
+}
+
+enum ContactImportStatus {
+  pending
+  processing
+  completed
+  failed
+}
+
+enum BulkSendingStatus {
+  pending
+  processing
+  completed
+  failed
+}
+
+enum BulkSendingVariableFrom {
+  custom
+  contact
+  bulk_sending
+}
+
+enum ContactDeletedBy {
+  contactGroupOwner
+  self
 }
 
 model User {
@@ -75,6 +101,9 @@ model User {
   userBetaPermissions UserBetaPermission[]
   sessions            Session[]            @relation("Session")
   impersonatedBy      Session[]            @relation("ImpersonatedBy")
+  contactGroups       ContactGroup[]
+  contactImports      ContactImport[]
+  bulkSendings        BulkSending[]
 
   @@map("users")
 }
@@ -218,7 +247,8 @@ model File {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  messageFiles MessageFile[]
+  messageFiles   MessageFile[]
+  contactImports ContactImport[]
 
   @@map("files")
 }
@@ -242,7 +272,7 @@ model Sender {
   id        String    @id @default(uuid())
   username  String
   name      String
-  email     String
+  email     String    @unique
   userId    String    @map("user_id")
   domainId  String    @map("domain_id")
   createdAt DateTime  @default(now()) @map("created_at")
@@ -252,37 +282,101 @@ model Sender {
   domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  messages Message[]
+  messages     Message[]
+  bulkSendings BulkSending[]
 
   @@map("senders")
 }
 
 model Message {
-  id          String        @id @default(uuid())
-  userId      String        @map("user_id")
-  senderId    String        @map("sender_id")
-  domainId    String        @map("domain_id")
-  hasCharged  Boolean       @default(false) @map("has_charged")
-  subject     String
-  body        String
-  to          String[]
-  status      MessageStatus @default(queued)
-  externalId  String?       @map("external_id")
-  sentDay     String?       @map("sent_day")
-  sentAt      DateTime?     @map("sent_at")
-  chargeMonth String?       @map("charge_month") // which month the message will be charged (YYYY-MM)
-  createdDay  String        @map("created_day")
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-  deletedAt   DateTime?     @map("deleted_at")
+  id            String        @id @default(uuid())
+  userId        String        @map("user_id")
+  senderId      String        @map("sender_id")
+  domainId      String        @map("domain_id")
+  hasCharged    Boolean       @default(false) @map("has_charged")
+  subject       String
+  body          String
+  to            String[]
+  contactId     String?       @map("contact_id")
+  status        MessageStatus @default(queued)
+  bulkSendingId String?       @map("bulk_sending_id")
+  externalId    String?       @map("external_id")
+  sentDay       String?       @map("sent_day")
+  sentAt        DateTime?     @map("sent_at")
+  customPayload String?       @map("custom_payload")
+  chargeMonth   String?       @map("charge_month") // which month the message will be charged (YYYY-MM)
+  createdDay    String        @map("created_day")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  deletedAt     DateTime?     @map("deleted_at")
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sender Sender @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sender      Sender       @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  domain      Domain       @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  bulkSending BulkSending? @relation(fields: [bulkSendingId], references: [id], onDelete: Cascade)
+  contact     Contact?     @relation(fields: [contactId], references: [id], onDelete: Cascade)
 
   messageFiles MessageFile[]
 
   @@map("messages")
+}
+
+model BulkSending {
+  id                String            @id @default(uuid())
+  title             String            @map("title")
+  userId            String            @map("user_id")
+  subject           String
+  content           String
+  senderId          String            @map("sender_id")
+  totalContacts     Int               @default(0) @map("total_contacts")
+  processedContacts Int               @default(0) @map("processed_contacts")
+  status            BulkSendingStatus @default(pending) @map("status")
+  contactGroupId    String            @map("contact_group_id")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+  deletedAt         DateTime?         @map("deleted_at")
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sender       Sender       @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  contactGroup ContactGroup @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
+
+  messages  Message[]
+  failures  BulkSendingFailure[]
+  variables BulkSendingVariable[]
+
+  @@map("bulk_sendings")
+}
+
+model BulkSendingVariable {
+  id            String                  @id @default(uuid())
+  bulkSendingId String                  @map("bulk_sending_id")
+  key           String
+  from          BulkSendingVariableFrom
+  fromKey       String
+  customValue   String?
+  createdAt     DateTime                @default(now()) @map("created_at")
+  updatedAt     DateTime                @updatedAt @map("updated_at")
+  deletedAt     DateTime?               @map("deleted_at")
+
+  bulkSending BulkSending @relation(fields: [bulkSendingId], references: [id], onDelete: Cascade)
+
+  @@map("bulk_sending_variables")
+}
+
+model BulkSendingFailure {
+  id            String    @id @default(uuid())
+  bulkSendingId String    @map("bulk_sending_id")
+  message       String
+  contactId     String?   @map("contact_id")
+  line          Int?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  bulkSending BulkSending @relation(fields: [bulkSendingId], references: [id], onDelete: Cascade)
+  contact     Contact?    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@map("bulk_sending_failures")
 }
 
 model MessageFile {
@@ -315,4 +409,81 @@ model Checkout {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("checkouts")
+}
+
+model ContactGroup {
+  id        String    @id @default(uuid())
+  name      String
+  userId    String    @map("user_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  contacts       Contact[]
+  contactImports ContactImport[]
+  bulkSendings   BulkSending[]
+
+  @@map("contact_groups")
+}
+
+model ContactImport {
+  id                String              @id @default(uuid())
+  fileId            String              @map("file_id")
+  emailColumn       String              @map("email_column")
+  nameColumn        String              @map("name_column")
+  userId            String              @map("user_id")
+  contactGroupId    String              @map("contact_group_id")
+  totalLines        Int                 @default(0) @map("total_lines")
+  readFinalStatusAt DateTime?           @map("read_final_status_at")
+  processedLines    Int                 @default(0) @map("processed_lines")
+  status            ContactImportStatus @default(pending) @map("status")
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+  deletedAt         DateTime?           @map("deleted_at")
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contactGroup ContactGroup @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
+  file         File         @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  failures ContactImportFailure[]
+  contacts Contact[]
+
+  @@map("contact_imports")
+}
+
+model ContactImportFailure {
+  id              String    @id @default(uuid())
+  contactImportId String    @map("contact_import_id")
+  line            Int?
+  message         String
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+
+  contactImport ContactImport @relation(fields: [contactImportId], references: [id], onDelete: Cascade)
+
+  @@map("contact_import_failures")
+}
+
+model Contact {
+  id              String            @id @default(uuid())
+  email           String
+  unsubscribeUrl  String            @map("unsubscribe_url")
+  unsubscribeKey  String            @map("unsubscribe_key")
+  name            String?
+  contactGroupId  String            @map("contact_group_id")
+  contactImportId String?           @map("contact_import_id")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  deletedBy       ContactDeletedBy? @default(contactGroupOwner) @map("deleted_by")
+  deletedAt       DateTime?         @map("deleted_at")
+
+  contactGroup        ContactGroup         @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
+  contactImport       ContactImport?       @relation(fields: [contactImportId], references: [id], onDelete: Cascade)
+  bulkSendingFailures BulkSendingFailure[]
+  messages            Message[]
+
+  @@map("contacts")
 }

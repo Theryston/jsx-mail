@@ -2,21 +2,20 @@
 
 import { Container } from '@/components/container';
 import { useState, useEffect } from 'react';
-import {
-  useMessages,
-  useMessageInsights,
-  useMessageStatuses,
-} from '@/hooks/message';
+import { useMessages, useMessageInsights } from '@/hooks/message';
 import { Skeleton } from '@jsx-mail/ui/skeleton';
 import { DateFilter } from './date-filter';
 import { Filters } from './filters';
 import { DataTable } from './data-table';
-import { createColumns } from './columns';
+import { columns } from './columns';
 import { InsightsChart } from './insights-chart';
 import { PaginationControls } from '@jsx-mail/ui/pagination-controls';
 import { useSearchParams, useRouter } from 'next/navigation';
 import moment from 'moment';
 import { DateRange } from 'react-day-picker';
+import { ArrowLeftIcon } from 'lucide-react';
+import { Button } from '@jsx-mail/ui/button';
+import { Alert, AlertDescription } from '@jsx-mail/ui/alert';
 
 export default function SendingHistoryPage() {
   const router = useRouter();
@@ -52,32 +51,46 @@ export default function SendingHistoryPage() {
     const statusesParam = searchParams?.get('statuses');
     return statusesParam ? JSON.parse(statusesParam) : [];
   });
+  const bulkSending = searchParams?.get('bulkSending') || '';
 
   const startDate = moment(
     dateRange?.from || moment().subtract(30, 'days').toDate(),
   );
   const endDate = moment(dateRange?.to || new Date());
+  const [hasProcessingMessages, setHasProcessingMessages] = useState(false);
 
   const { data: messagesPagination, isPending: isLoadingMessages } =
-    useMessages({
-      page,
-      startDate,
-      endDate,
-      fromEmail,
-      toEmail,
-      statuses,
-    });
+    useMessages(
+      {
+        page,
+        startDate,
+        endDate,
+        fromEmail,
+        toEmail,
+        statuses,
+        bulkSending,
+      },
+      hasProcessingMessages ? 1000 : false,
+    );
 
   const { data: messageInsights, isPending: isLoadingInsights } =
-    useMessageInsights({
-      startDate,
-      endDate,
-      fromEmail,
-      toEmail,
-      statuses,
-    });
+    useMessageInsights(
+      {
+        startDate,
+        endDate,
+        fromEmail,
+        toEmail,
+        statuses,
+        bulkSending,
+      },
+      hasProcessingMessages ? 1000 : false,
+    );
 
-  const { data: messageStatuses } = useMessageStatuses();
+  useEffect(() => {
+    if ((messageInsights?.PROCESSING_MESSAGES || 0) > 0) {
+      setHasProcessingMessages(true);
+    }
+  }, [messageInsights]);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -103,8 +116,12 @@ export default function SendingHistoryPage() {
       params.set('statuses', JSON.stringify(statuses));
     }
 
-    router.push(`/sending-history?${params.toString()}`);
-  }, [page, dateRange, fromEmail, toEmail, statuses, router]);
+    if (bulkSending) {
+      params.set('bulkSending', bulkSending);
+    }
+
+    router.replace(`/sending-history?${params.toString()}`);
+  }, [page, dateRange, fromEmail, toEmail, statuses, bulkSending, router]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -126,11 +143,29 @@ export default function SendingHistoryPage() {
     setPage(1);
   };
 
-  const columns = createColumns(messageStatuses);
-
   return (
     <Container header>
       <div className="flex flex-col gap-4">
+        {bulkSending && (
+          <Alert className="bg-amber-500/10 text-amber-500 border border-amber-500/20">
+            <AlertDescription className="flex flex-col md:flex-row gap-2 items-start md:items-center justify-between">
+              <div className="overflow-hidden text-ellipsis">
+                Viewing messages from bulk sending:{' '}
+                <strong>{bulkSending}</strong>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.back()}
+                className="text-amber-500 border-amber-500/20 hover:bg-amber-500/10 hover:text-amber-500"
+              >
+                <ArrowLeftIcon className="size-4" />
+                Back to bulk sending
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="flex items-center justify-between flex-wrap gap-2">
           <h1 className="text-2xl">
             <span className="font-bold">Your</span> sending history

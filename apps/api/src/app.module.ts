@@ -13,6 +13,7 @@ import { StripeService } from './services/stripe.service';
 import { WorkerModule } from './modules/worker/worker.module';
 import { BullModule } from '@nestjs/bullmq';
 import { BetaPermissionCheckService } from './modules/user/services/beta-permission-check.service';
+import { BulkSendingModule } from './modules/bulk-sending/bulk-sending.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { BetaPermissionCheckService } from './modules/user/services/beta-permiss
     FileModule,
     SenderModule,
     WorkerModule,
+    BulkSendingModule,
   ],
   controllers: [],
   providers: [

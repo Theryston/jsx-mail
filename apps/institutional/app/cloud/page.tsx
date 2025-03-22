@@ -88,7 +88,7 @@ export default function CloudPage() {
   };
 
   return (
-    <main className="flex flex-col">
+    <main className="flex flex-col overflow-x-hidden overflow-y-hidden h-full">
       <Header
         menuItems={[
           { label: 'Home', href: '/' },
@@ -99,7 +99,7 @@ export default function CloudPage() {
         ]}
       />
 
-      <div className="flex flex-col px-6">
+      <div className="flex flex-col px-6 overflow-x-hidden overflow-y-hidden h-full">
         {/* Botão de Scroll to Top */}
         <AnimatePresence>
           {showScrollTop && (
@@ -427,6 +427,410 @@ export default function CloudPage() {
               </motion.div>
             ))}
           </motion.div>
+        </motion.div>
+
+        {/* Bulk Sending Section */}
+        <motion.div
+          className="my-16 md:my-32 w-full overflow-x-hidden overflow-y-hidden h-full"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: false, amount: 0.05 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="flex flex-col gap-12 items-center w-full overflow-x-hidden overflow-y-hidden h-full">
+            <motion.div
+              className="flex flex-col gap-4 items-center w-full md:w-7/12 2xl:w-5/12"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.5 }}
+            >
+              <motion.div
+                className="flex items-center gap-2"
+                initial={{ opacity: 0, width: 0 }}
+                whileInView={{ opacity: 1, width: 'auto' }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <motion.div
+                  className="h-px w-12 bg-gradient-to-r from-transparent via-primary-500 to-transparent"
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.8 }}
+                />
+                <motion.h2
+                  className="text-sm font-medium text-primary-400"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                  Mass Communications
+                </motion.h2>
+                <motion.div
+                  className="h-px w-12 bg-gradient-to-r from-transparent via-primary-500 to-transparent"
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.8 }}
+                />
+              </motion.div>
+              <motion.h1
+                className="text-4xl font-bold text-center bg-gradient-to-br from-zinc-100 to-zinc-400 text-transparent bg-clip-text"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                Bulk Sending Made Simple
+              </motion.h1>
+              <motion.p
+                className="text-center text-sm text-zinc-400"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                Reach thousands of recipients with just a few clicks
+              </motion.p>
+            </motion.div>
+
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 overflow-x-hidden overflow-y-hidden h-full">
+              {/* Left side - Visual/Features */}
+              <motion.div
+                className="relative overflow-hidden rounded-3xl w-full"
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <div className="relative overflow-hidden bg-gradient-to-br from-zinc-900 to-zinc-800 p-8 h-full rounded-3xl border border-zinc-800/50">
+                  <motion.div
+                    className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_var(--tw-gradient-stops))] from-primary-500/10 via-transparent to-transparent"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: false }}
+                    transition={{ duration: 1.2 }}
+                  />
+
+                  <motion.div
+                    className="flex flex-col gap-4 mb-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: false }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                  >
+                    <div className="h-14 w-14 bg-primary-900/30 rounded-2xl flex items-center justify-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="28"
+                        height="28"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-primary-400"
+                      >
+                        <path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h1" />
+                        <path d="M17 3h1a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1" />
+                        <path d="M3 19h18" />
+                        <path d="M9 3v18" />
+                        <path d="M16 3v18" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl md:text-2xl font-semibold">
+                      Powerful Contact Management
+                    </h3>
+                  </motion.div>
+
+                  <motion.div
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: false }}
+                    transition={{ staggerChildren: 0.1, delayChildren: 0.3 }}
+                  >
+                    {[
+                      {
+                        title: 'Import CSV',
+                        description:
+                          'Upload thousands of contacts at once with a simple CSV import',
+                        icon: (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="text-primary-400"
+                          >
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                          </svg>
+                        ),
+                      },
+                      {
+                        title: 'Group Management',
+                        description:
+                          'Organize contacts into targeted groups for precise segmentation',
+                        icon: (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="text-primary-400"
+                          >
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                          </svg>
+                        ),
+                      },
+                      {
+                        title: 'Automatic Deduplication',
+                        description:
+                          'Smart system removes duplicates to maintain clean contact lists',
+                        icon: (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="text-primary-400"
+                          >
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                          </svg>
+                        ),
+                      },
+                      {
+                        title: 'Advanced Filtering',
+                        description:
+                          'Target specific segments based on behavior or demographics',
+                        icon: (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="text-primary-400"
+                          >
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                          </svg>
+                        ),
+                      },
+                    ].map((feature, index) => (
+                      <motion.div
+                        key={index}
+                        className="flex flex-col gap-2 p-4 bg-zinc-800/30 rounded-xl border border-zinc-700/30 hover:border-primary-500/30 transition-all duration-300"
+                        variants={{
+                          hidden: { opacity: 0, y: 20 },
+                          visible: {
+                            opacity: 1,
+                            y: 0,
+                            transition: { duration: 0.4 },
+                          },
+                        }}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: false }}
+                        whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                      >
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <div className="p-1.5 bg-primary-900/50 rounded-lg">
+                            {feature.icon}
+                          </div>
+                          <h4 className="text-sm font-medium text-zinc-200">
+                            {feature.title}
+                          </h4>
+                        </div>
+                        <p className="text-xs text-zinc-400">
+                          {feature.description}
+                        </p>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </div>
+              </motion.div>
+
+              {/* Right side - Process Flow */}
+              <motion.div
+                className="flex flex-col gap-6 w-full overflow-x-hidden overflow-y-hidden h-full"
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: false }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <div className="relative z-10 overflow-x-hidden overflow-y-hidden h-full">
+                  <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-zinc-100 to-zinc-400 text-transparent bg-clip-text">
+                    From Hundreds to Thousands in Minutes
+                  </h3>
+                  <p className="text-zinc-400 text-sm mb-6">
+                    Our bulk email system is designed for scale, letting you
+                    reach your entire audience without the complexity. Perfect
+                    for newsletters, announcements, or marketing campaigns.
+                  </p>
+
+                  <div className="flex flex-col gap-8 overflow-x-hidden overflow-y-hidden h-full">
+                    {[
+                      {
+                        step: '01',
+                        title: 'Create Your Contact Group',
+                        description:
+                          'Start by creating a new contact group in your dashboard. Give it a meaningful name that reflects your audience segment.',
+                      },
+                      {
+                        step: '02',
+                        title: 'Import Your Contacts',
+                        description:
+                          'Upload your contact list via CSV file or use our API to programmatically add subscribers. Our system automatically handles duplicates and validates email formats.',
+                      },
+                      {
+                        step: '03',
+                        title: 'Design Your Campaign',
+                        description:
+                          'Use our intuitive editor, JSX Mail Framework or HTML to craft beautiful, responsive emails that look great on any device.',
+                      },
+                      {
+                        step: '04',
+                        title: 'Send and Track',
+                        description:
+                          'Send your campaign and watch real-time analytics as your audience engages with your content.',
+                      },
+                    ].map((step, index) => (
+                      <motion.div
+                        key={index}
+                        className="relative flex gap-4"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: false }}
+                        transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+                      >
+                        {/* Connector line */}
+                        {index < 3 && (
+                          <div
+                            className="absolute left-6 top-12 w-0.5 h-14 bg-gradient-to-b from-primary-500/50 to-zinc-800/50"
+                            style={{ transform: 'translateX(-50%)' }}
+                          />
+                        )}
+
+                        {/* Step number */}
+                        <div className="flex-shrink-0 h-12 w-12 bg-primary-900/30 rounded-full flex items-center justify-center border border-primary-700/30">
+                          <span className="text-sm font-bold text-primary-400">
+                            {step.step}
+                          </span>
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex flex-col gap-1">
+                          <h4 className="text-lg font-medium text-zinc-100">
+                            {step.title}
+                          </h4>
+                          <p className="text-sm text-zinc-400">
+                            {step.description}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+
+                <motion.div
+                  className="mt-4 p-6 bg-gradient-to-br from-primary-900/20 to-primary-800/10 rounded-2xl border border-primary-800/30 w-full"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
+                >
+                  <div className="flex items-start gap-4 flex-wrap">
+                    <div className="p-2 bg-primary-900/50 rounded-lg flex-shrink-0">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-primary-400"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 16v-4" />
+                        <path d="M12 8h.01" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-base font-medium text-primary-300 mb-1">
+                        Automatic Delivery Optimization
+                      </h4>
+                      <p className="text-sm text-zinc-400">
+                        Our system intelligently manages sending rates to
+                        maximize deliverability, automatically throttling when
+                        needed to ensure your emails reach the inbox, not the
+                        spam folder.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            </div>
+
+            <motion.div
+              className="mt-12 flex flex-col md:flex-row gap-6 justify-center items-center w-full"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              >
+                <Button
+                  color="primary"
+                  variant="shadow"
+                  as={Link}
+                  href="https://cloud.jsxmail.org/sign-up"
+                  target="_blank"
+                  className="font-medium px-10 py-6 text-base relative overflow-hidden group"
+                  aria-label="Start sending bulk emails"
+                >
+                  <span className="relative z-10">
+                    Start Sending Bulk Emails
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-500 transition-opacity opacity-0 group-hover:opacity-100" />
+                </Button>
+              </motion.div>
+            </motion.div>
+          </div>
         </motion.div>
 
         {/* Why Choose JSX Mail Cloud Section */}
@@ -1148,7 +1552,7 @@ export default function CloudPage() {
                 color="primary"
                 variant="shadow"
                 as={Link}
-                href="https://cloud.jsxmail.org/app/register"
+                href="https://cloud.jsxmail.org/sign-up"
                 target="_blank"
                 fullWidth
                 size="lg"
@@ -1276,8 +1680,7 @@ function CloudPricing() {
     if (!emailPricing || !data) return;
 
     let jsxMailCloudPricing =
-      ((value - data.FREE_EMAILS_PER_MONTH) *
-        ((emailPricing.price || 0) / emailPricing.unit)) /
+      (value * ((emailPricing.price || 0) / emailPricing.unit)) /
       data.MONEY_SCALE;
 
     if (value <= data.FREE_EMAILS_PER_MONTH) jsxMailCloudPricing = 0;
@@ -1376,8 +1779,9 @@ function CloudPricing() {
       >
         <motion.div
           className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary-500/5 via-transparent to-transparent"
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: false }}
           transition={{ duration: 1.5 }}
         />
 

@@ -3,12 +3,12 @@ import { SendEmailService } from 'src/modules/email/services/send-email.service'
 import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { SenderSendEmailDto } from '../sender.dto';
-import { FREE_EMAILS_PER_MONTH, PRICE_PER_MESSAGE } from 'src/utils/constants';
 import { messageSelect } from 'src/utils/public-selects';
 import moment from 'moment';
 import { Sender } from '@prisma/client';
 import { BetaPermissionCheckService } from 'src/modules/user/services/beta-permission-check.service';
 import { PERMISSIONS } from 'src/auth/permissions';
+import { GetUserLimitsService } from 'src/modules/user/services/get-user-limits.service';
 
 @Injectable()
 export class SenderSendEmailService {
@@ -17,10 +17,21 @@ export class SenderSendEmailService {
     private readonly getBalanceService: GetBalanceService,
     private readonly sendEmailService: SendEmailService,
     private readonly betaPermissionCheckService: BetaPermissionCheckService,
+    private readonly getUserLimitsService: GetUserLimitsService,
   ) {}
 
   async execute(
-    { sender: senderEmail, html, subject, to, filesIds }: SenderSendEmailDto,
+    {
+      sender: senderEmail,
+      html,
+      subject,
+      to,
+      filesIds,
+      bulkSendingId,
+      customPayload,
+      contactId,
+      delay,
+    }: SenderSendEmailDto,
     userId: string,
   ) {
     if (filesIds && filesIds.length > 0) {
@@ -58,23 +69,11 @@ export class SenderSendEmailService {
       );
     }
 
-    const messagesCount = await this.prisma.message.count({
-      where: {
-        userId,
-        deletedAt: null,
-        sentAt: {
-          gte: moment().startOf('month').toDate(),
-          not: null,
-        },
-      },
-    });
+    const { availableMessages } =
+      await this.getUserLimitsService.execute(userId);
 
-    if (messagesCount + 1 > FREE_EMAILS_PER_MONTH) {
-      const balance = await this.getBalanceService.execute(userId);
-
-      if (balance.amount < PRICE_PER_MESSAGE) {
-        throw new HttpException('Insufficient balance', HttpStatus.BAD_REQUEST);
-      }
+    if (availableMessages <= 0) {
+      throw new HttpException('Insufficient balance', HttpStatus.BAD_REQUEST);
     }
 
     let message = await this.prisma.message.create({
@@ -85,6 +84,7 @@ export class SenderSendEmailService {
         domainId: sender.domainId,
         senderId: sender.id,
         userId,
+        contactId,
         createdDay: moment().format('YYYY-MM-DD'),
         messageFiles: filesIds
           ? {
@@ -96,6 +96,10 @@ export class SenderSendEmailService {
                 },
               })),
             }
+          : undefined,
+        bulkSendingId,
+        customPayload: customPayload
+          ? JSON.stringify(customPayload)
           : undefined,
       },
       select: messageSelect,
@@ -111,6 +115,9 @@ export class SenderSendEmailService {
       to,
       messageId: message.id,
       filesIds,
+      bulkSendingId,
+      customPayload,
+      delay,
     });
 
     return message;

@@ -17,11 +17,18 @@ type Message = {
   userId: string;
   to: string[];
   sentAt?: Date;
-  status: 'queued' | 'sent' | 'failed' | 'delivered' | 'opened' | 'clicked';
-}
+  status:
+    | 'queued'
+    | 'processing'
+    | 'sent'
+    | 'failed'
+    | 'delivered'
+    | 'opened'
+    | 'clicked';
+};
 
 export default async function send(templateName: string, data: Data) {
-  await requestLogin()
+  await requestLogin();
   const html = await render(templateName, data.props);
   const config = getJsxMailConfig();
   const sender = data.sender || config.defaultSender;
@@ -30,17 +37,17 @@ export default async function send(templateName: string, data: Data) {
     subject: data.subject,
     html,
     sender,
-    to: data.to
-  })
+    to: data.to,
+  });
 
   const newMessage: Message = {
     ...message,
-    sentAt: new Date(message.sentAt)
-  }
+    sentAt: new Date(message.sentAt),
+  };
 
   if (!message.sentAt) {
-    delete newMessage.sentAt
+    delete newMessage.sentAt;
   }
 
-  return newMessage
+  return newMessage;
 }

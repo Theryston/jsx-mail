@@ -7,7 +7,6 @@ export class EmailController {
 
   @Post('webhook')
   async emailWebhook(@Body() data: any) {
-    console.log('[EMAIL_WEBHOOK] received data: ', data);
     const result = await this.emailWebhookService.execute(data);
     console.log('[EMAIL_WEBHOOK] result: ', result);
     return result;

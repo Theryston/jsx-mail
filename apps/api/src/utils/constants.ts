@@ -2,17 +2,27 @@ export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 export const MONEY_SCALE = 1000000;
 export const GATEWAY_SCALE = 100;
 export const CURRENCY = 'USD';
+// export const FREE_EMAILS_PER_MONTH = 100;
+export const MAX_BALANCE_TO_BE_ELIGIBLE_FOR_FREE = 0.05 * MONEY_SCALE; // $0.05 | if the user balance is more then this amount, the user is not eligible for free emails
 export const FREE_EMAILS_PER_MONTH = 10_000;
 export const MINIMUM_ADD_BALANCE = 1 * MONEY_SCALE; // $1.00
 export const STORAGE_GB_PRICE = 0.025 * MONEY_SCALE; // $0.025
 export const PRICE_PER_MESSAGE = 0.0002 * MONEY_SCALE; // $0.0002
 export const MAXIMUM_STORAGE = 5 * 1024 * 1024 * 1024 * 1024; // 5GB
+export const MAX_MESSAGES_PER_SECOND = 14;
+export const MAX_MESSAGES_PER_DAY = 50_000;
 
 export const MESSAGES_STATUS = [
   {
     value: 'queued',
     label: 'Queued',
     description: 'The message is waiting to be sent',
+    color: 'rgb(234 179 8)',
+  },
+  {
+    value: 'processing',
+    label: 'Processing',
+    description: 'The message is being processed',
     color: 'rgb(234 179 8)',
   },
   {

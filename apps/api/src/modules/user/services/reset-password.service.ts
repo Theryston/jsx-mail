@@ -66,7 +66,7 @@ export class ResetPasswordService {
     await this.sendEmailService.execute({
       from: {
         name: 'JSX Mail Cloud',
-        email: `jsxmail@${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`,
+        email: process.env.DEFAULT_SENDER_EMAIL,
       },
       to: [user.email],
       subject: 'Your password has been reset',

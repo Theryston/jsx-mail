@@ -1,18 +1,10 @@
 'use client';
 
-import { Message, Status } from '@/types/message';
+import { Message } from '@/types/message';
 import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@jsx-mail/ui/tooltip';
 
-export const createColumns = (
-  statuses: Status[] = [],
-): ColumnDef<Message>[] => [
+export const columns: ColumnDef<Message>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -20,6 +12,9 @@ export const createColumns = (
   {
     accessorKey: 'sender.email',
     header: 'Sender',
+    cell: ({ row }) => {
+      return <span>{row.original.sender?.email || 'Maybe deleted'}</span>;
+    },
   },
   {
     accessorKey: 'to',
@@ -37,7 +32,13 @@ export const createColumns = (
     accessorKey: 'sentAt',
     header: 'Sent At',
     cell: ({ row }) => {
-      return <span>{moment(row.original.sentAt).format('DD MMM YY')}</span>;
+      return (
+        <span>
+          {row.original.sentAt
+            ? moment(row.original.sentAt).format('DD MMM YY')
+            : 'N/A'}
+        </span>
+      );
     },
   },
 ];

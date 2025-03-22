@@ -127,7 +127,7 @@
     },
     "/sender/send": {
       "post": {
-        "description": "Send an email using the JSX Mail Cloud",
+        "description": "Send an email using the JSX Mail Cloud. Supports file attachments, bulk sending, custom payloads, and contact association.",
         "requestBody": {
           "description": "The data of the email to send",
           "content": {
@@ -146,6 +146,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request or insufficient balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -407,6 +417,258 @@
           }
         }
       }
+    },
+    "/bulk-sending/contact-group": {
+      "post": {
+        "description": "Create a new contact group",
+        "requestBody": {
+          "description": "The data of the contact group to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContactGroup"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Contact group created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactGroup"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bulk-sending": {
+      "post": {
+        "description": "Create a new bulk sending campaign to send personalized emails to a contact group",
+        "requestBody": {
+          "description": "The data of the bulk sending campaign to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBulkSending"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Bulk sending created and queued for processing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkSending"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing unsubscribeUrl, empty contact group, or invalid variables",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sender or contact group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "List all bulk sending campaigns for the authenticated user",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "description": "Number of items to return per page",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of bulk sending campaigns",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkSendingPagination"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bulk-sending/contact-group/{id}/contacts": {
+      "post": {
+        "description": "Add a single contact to an existing contact group",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the contact group to add a contact to",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The contact data to add to the group",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContact"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Contact created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Contact"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - contact already exists in the group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Contact group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -580,28 +842,51 @@
         "properties": {
           "subject": {
             "type": "string",
-            "example": "Hello, world!"
+            "example": "Hello, world!",
+            "description": "The subject line of the email."
           },
           "html": {
             "type": "string",
-            "example": "<h1>Hello, world!</h1>"
+            "example": "<h1>Hello, world!</h1>",
+            "description": "The HTML content of the email body."
           },
           "to": {
             "type": "array",
             "items": {
               "type": "string",
               "example": "test@example.com"
-            }
+            },
+            "description": "Array of recipient email addresses."
           },
           "sender": {
             "type": "string",
-            "example": "sender@jsxmail.org"
+            "example": "sender@jsxmail.org",
+            "description": "Optional email address of the sender. If not provided, the most recently created sender will be used."
           },
           "filesIds": {
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "description": "Optional array of file IDs to attach to the email. This is in a close beta and requires a special permission. Contact support to get access."
+          },
+          "bulkSendingId": {
+            "type": "string",
+            "example": "b4f8d8c4-3c2e-4f2a-9f2e-3c2e4f2a9f2e",
+            "description": "Optional ID to associate the email with a bulk sending operation."
+          },
+          "customPayload": {
+            "type": "object",
+            "example": {
+              "key1": "value1",
+              "key2": "value2"
+            },
+            "description": "Optional custom data to associate with the message. This is used to pass data like {{variable}} to the email body or subject."
+          },
+          "contactId": {
+            "type": "string",
+            "example": "a1b2c3d4-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
+            "description": "Optional ID of a contact to associate the email with."
           }
         }
       },
@@ -625,6 +910,227 @@
           },
           "path": {
             "type": "string"
+          }
+        }
+      },
+      "CreateContactGroup": {
+        "required": ["name"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the contact group."
+          }
+        }
+      },
+      "ContactGroup": {
+        "required": ["id", "name", "userId"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreateBulkSendingVariable": {
+        "required": ["key", "from", "fromKey"],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The variable name used in the template (e.g. 'firstName')"
+          },
+          "from": {
+            "type": "string",
+            "description": "The source of the variable value - 'contact', 'bulk_sending', or 'custom'",
+            "enum": ["contact", "bulk_sending", "custom"]
+          },
+          "fromKey": {
+            "type": "string",
+            "description": "The key to get the value from the source (e.g. 'name' for contact source)"
+          },
+          "customValue": {
+            "type": "string",
+            "description": "Required when from='custom', the static value to use"
+          }
+        }
+      },
+      "CreateBulkSending": {
+        "required": [
+          "title",
+          "subject",
+          "content",
+          "sender",
+          "contactGroupId",
+          "variables"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the bulk sending campaign"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject line"
+          },
+          "content": {
+            "type": "string",
+            "description": "HTML content of the email with variable placeholders (must include {{unsubscribeUrl}})"
+          },
+          "sender": {
+            "type": "string",
+            "description": "Email address of the sender"
+          },
+          "contactGroupId": {
+            "type": "string",
+            "description": "ID of the contact group to send to"
+          },
+          "variables": {
+            "type": "array",
+            "description": "Variables for personalization",
+            "items": {
+              "$ref": "#/components/schemas/CreateBulkSendingVariable"
+            }
+          }
+        }
+      },
+      "BulkSending": {
+        "required": [
+          "id",
+          "title",
+          "subject",
+          "content",
+          "totalContacts",
+          "userId",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "totalContacts": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "_count": {
+            "type": "object",
+            "properties": {
+              "messages": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "failures": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        }
+      },
+      "BulkSendingPagination": {
+        "type": "object",
+        "properties": {
+          "bulkSendings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BulkSending"
+            }
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currentPage": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CreateContact": {
+        "required": ["email", "name"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address of the contact",
+            "example": "john@example.com"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the contact",
+            "example": "John Doe"
+          },
+          "contactImportId": {
+            "type": "string",
+            "description": "Optional ID of a contact import to associate with this contact"
+          }
+        }
+      },
+      "Contact": {
+        "required": ["id", "email", "name", "unsubscribeUrl", "unsubscribeKey"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unsubscribeUrl": {
+            "type": "string"
+          },
+          "unsubscribeKey": {
+            "type": "string"
+          },
+          "contactGroupId": {
+            "type": "string"
+          },
+          "contactImportId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         }
       }
