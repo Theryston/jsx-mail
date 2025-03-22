@@ -5,7 +5,7 @@ import axios from 'axios';
 import { SenderSendEmailService } from '../sender/services/sender-send-email.service';
 import moment from 'moment';
 import { CreateContactService } from './services/create-contact.service';
-import { GetAvailableUserFreeLimitService } from '../user/services/get-available-user-free-limit.service';
+import { GetUserLimitsService } from '../user/services/get-user-limits.service';
 
 @Processor('bulk-sending', { concurrency: 10 })
 export class BulkSendingProcessor extends WorkerHost {
@@ -13,7 +13,7 @@ export class BulkSendingProcessor extends WorkerHost {
     private readonly prisma: PrismaService,
     private readonly senderSendEmailService: SenderSendEmailService,
     private readonly createContactService: CreateContactService,
-    private readonly getAvailableUserFreeLimitService: GetAvailableUserFreeLimitService,
+    private readonly getUserLimitsService: GetUserLimitsService,
   ) {
     super();
   }
@@ -138,9 +138,7 @@ export class BulkSendingProcessor extends WorkerHost {
             }
 
             const { availableMessages, balance } =
-              await this.getAvailableUserFreeLimitService.execute(
-                bulkSending.userId,
-              );
+              await this.getUserLimitsService.execute(bulkSending.userId);
 
             if (availableMessages <= 0) {
               console.log(

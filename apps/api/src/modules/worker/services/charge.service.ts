@@ -5,13 +5,13 @@ import { FREE_EMAILS_PER_MONTH, PRICE_PER_MESSAGE } from 'src/utils/constants';
 import { formatSize } from 'src/utils/format';
 import { storageToMoney } from 'src/utils/format-money';
 import moment from 'moment';
-import { GetAvailableUserFreeLimitService } from 'src/modules/user/services/get-available-user-free-limit.service';
+import { GetUserLimitsService } from 'src/modules/user/services/get-user-limits.service';
 
 @Injectable()
 export class ChargeService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly getAvailableUserFreeLimitService: GetAvailableUserFreeLimitService,
+    private readonly getUserLimitsService: GetUserLimitsService,
   ) {}
 
   async execute() {
@@ -57,7 +57,7 @@ export class ChargeService {
         });
 
         const { isEligibleForFree } =
-          await this.getAvailableUserFreeLimitService.execute(userId);
+          await this.getUserLimitsService.execute(userId);
 
         let price = 0;
         let description = '';

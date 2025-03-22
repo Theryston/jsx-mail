@@ -8,7 +8,7 @@ import { CreateBulkSendingDto } from '../bulk-sending.dto';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BulkSendingVariableFrom } from '@prisma/client';
-import { GetAvailableUserFreeLimitService } from 'src/modules/user/services/get-available-user-free-limit.service';
+import { GetUserLimitsService } from 'src/modules/user/services/get-user-limits.service';
 
 const AVAILABLE_KEYS = {
   contact: ['name', 'email', 'unsubscribeUrl', 'createdAt'],
@@ -20,7 +20,7 @@ export class CreateBulkSendingService {
   constructor(
     private readonly prisma: PrismaService,
     @InjectQueue('bulk-sending') private readonly queue: Queue,
-    private readonly getAvailableUserFreeLimitService: GetAvailableUserFreeLimitService,
+    private readonly getUserLimitsService: GetUserLimitsService,
   ) {}
 
   async execute(body: CreateBulkSendingDto, userId: string) {
@@ -100,11 +100,11 @@ export class CreateBulkSendingService {
     });
 
     const { availableMessages } =
-      await this.getAvailableUserFreeLimitService.execute(userId);
+      await this.getUserLimitsService.execute(userId);
 
     if (availableMessages < contactGroup._count.contacts) {
       throw new BadRequestException(
-        `You have ${availableMessages} emails left (counted as free + balance), but you are trying to send ${contactGroup._count.contacts} emails. Add more balance to your account to send more emails.`,
+        `You have ${availableMessages} emails left (counted as free or balance), but you are trying to send ${contactGroup._count.contacts} emails. Add more balance to your account to send more emails.`,
       );
     }
 

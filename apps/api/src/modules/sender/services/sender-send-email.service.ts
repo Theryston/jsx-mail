@@ -8,7 +8,7 @@ import moment from 'moment';
 import { Sender } from '@prisma/client';
 import { BetaPermissionCheckService } from 'src/modules/user/services/beta-permission-check.service';
 import { PERMISSIONS } from 'src/auth/permissions';
-import { GetAvailableUserFreeLimitService } from 'src/modules/user/services/get-available-user-free-limit.service';
+import { GetUserLimitsService } from 'src/modules/user/services/get-user-limits.service';
 
 @Injectable()
 export class SenderSendEmailService {
@@ -17,7 +17,7 @@ export class SenderSendEmailService {
     private readonly getBalanceService: GetBalanceService,
     private readonly sendEmailService: SendEmailService,
     private readonly betaPermissionCheckService: BetaPermissionCheckService,
-    private readonly getAvailableUserFreeLimitService: GetAvailableUserFreeLimitService,
+    private readonly getUserLimitsService: GetUserLimitsService,
   ) {}
 
   async execute(
@@ -70,7 +70,7 @@ export class SenderSendEmailService {
     }
 
     const { availableMessages } =
-      await this.getAvailableUserFreeLimitService.execute(userId);
+      await this.getUserLimitsService.execute(userId);
 
     if (availableMessages <= 0) {
       throw new HttpException('Insufficient balance', HttpStatus.BAD_REQUEST);

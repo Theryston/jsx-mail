@@ -11,11 +11,10 @@ import moment from 'moment';
 import {
   MAX_MESSAGES_PER_DAY,
   MAX_MESSAGES_PER_SECOND,
-  PRICE_PER_MESSAGE,
 } from 'src/utils/constants';
 import { Worker } from 'bullmq';
 import { Message } from '@prisma/client';
-import { GetAvailableUserFreeLimitService } from '../user/services/get-available-user-free-limit.service';
+import { GetUserLimitsService } from '../user/services/get-user-limits.service';
 
 const transporter = nodemailer.createTransport({
   SES: { aws, ses: sesClient },
@@ -26,7 +25,7 @@ export class EmailProcessor extends WorkerHost {
   constructor(
     private readonly prisma: PrismaService,
     @InjectQueue('email') private readonly queue: Queue,
-    private readonly getAvailableUserFreeLimitService: GetAvailableUserFreeLimitService,
+    private readonly getUserLimitsService: GetUserLimitsService,
   ) {
     super();
   }
@@ -192,7 +191,7 @@ export class EmailProcessor extends WorkerHost {
     }
 
     const { availableMessages } =
-      await this.getAvailableUserFreeLimitService.execute(userId);
+      await this.getUserLimitsService.execute(userId);
 
     if (availableMessages <= 0) {
       console.log(

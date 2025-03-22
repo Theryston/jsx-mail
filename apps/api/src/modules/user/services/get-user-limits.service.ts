@@ -9,7 +9,7 @@ import {
 import { GetBalanceService } from './get-balance.service';
 
 @Injectable()
-export class GetAvailableUserFreeLimitService {
+export class GetUserLimitsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly getBalanceService: GetBalanceService,
