@@ -31,8 +31,7 @@ export default function Pricing() {
     if (!emailPricing || !data) return;
 
     let jsxMailCloudPricing =
-      ((value - data.FREE_EMAILS_PER_MONTH) *
-        ((emailPricing.price || 0) / emailPricing.unit)) /
+      (value * ((emailPricing.price || 0) / emailPricing.unit)) /
       data.MONEY_SCALE;
 
     if (value <= data.FREE_EMAILS_PER_MONTH) jsxMailCloudPricing = 0;
