@@ -32,4 +32,5 @@ export type MessageInsightsResponse = {
   DAYS: string[];
   STATUSES: string[];
   MESSAGES: MessageInsight[];
+  PROCESSING_MESSAGES: number;
 };

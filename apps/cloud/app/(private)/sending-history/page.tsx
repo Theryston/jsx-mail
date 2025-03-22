@@ -87,14 +87,10 @@ export default function SendingHistoryPage() {
     );
 
   useEffect(() => {
-    if (
-      messagesPagination?.messages.some((message) =>
-        ['queued', 'processing'].includes(message.status),
-      )
-    ) {
+    if ((messageInsights?.PROCESSING_MESSAGES || 0) > 0) {
       setHasProcessingMessages(true);
     }
-  }, [messagesPagination]);
+  }, [messageInsights]);
 
   useEffect(() => {
     const params = new URLSearchParams();
