@@ -20,7 +20,7 @@ export class EmailWebhookService {
       const status: MessageStatus | undefined = {
         Send: 'sent',
         RenderingFailure: 'failed',
-        reject: 'reject',
+        Reject: 'reject',
         Delivery: 'delivered',
         Bounce: 'bonce',
         Complaint: 'complaint',
