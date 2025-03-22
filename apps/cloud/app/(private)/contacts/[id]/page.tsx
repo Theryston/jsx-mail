@@ -141,7 +141,9 @@ export default function ContactGroupPage({
                 >
                   <ArrowLeftIcon className="size-4" />
                 </Button>
-                <h1 className="text-2xl font-bold">{contactGroup?.name}</h1>
+                <h1 className="text-2xl font-bold">
+                  Contacts - {contactGroup?.name}
+                </h1>
               </div>
               <Badge variant="outline" className="w-fit h-fit">
                 {contactGroup?.contactsCount || 0} contacts
