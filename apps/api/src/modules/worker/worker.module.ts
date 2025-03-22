@@ -5,6 +5,7 @@ import { ChargeService } from './services/charge.service';
 import { WorkerController } from './worker.controller';
 import { UpdateChargeMonthService } from './services/update-charge-month.service';
 import { UserModule } from '../user/user.module';
+import { DeadMessagesService } from './services/dead-messages.service';
 
 @Module({
   imports: [UserModule],
@@ -13,6 +14,7 @@ import { UserModule } from '../user/user.module';
     StorageSizeService,
     ChargeService,
     UpdateChargeMonthService,
+    DeadMessagesService,
   ],
   controllers: [WorkerController],
 })

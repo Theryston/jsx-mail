@@ -1,4 +1,9 @@
-const WORKERS_TO_RUN = ['update-charge-month', 'charge', 'storage-size'];
+const WORKERS_TO_RUN = [
+  'update-charge-month',
+  'charge',
+  'storage-size',
+  'dead-messages',
+];
 
 export async function scheduled(
   event: ScheduledEvent,
