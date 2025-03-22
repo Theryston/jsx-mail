@@ -42,6 +42,7 @@ export type MessagesSentByDay = {
 export type InsightData = {
   title: string;
   value: string;
+  description: string;
 };
 
 export type Insight = {

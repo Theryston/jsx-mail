@@ -186,3 +186,17 @@ export class ImpersonateUserDto {
   @IsString()
   userId: string;
 }
+
+export class InsightsItemDto {
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+
+  @IsNotEmpty()
+  @IsString()
+  value: string;
+
+  @IsNotEmpty()
+  @IsString()
+  description: string;
+}
