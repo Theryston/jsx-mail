@@ -274,27 +274,30 @@ export class BulkSendingProcessor extends WorkerHost {
         },
       });
 
-      const emailColumn = headers.findIndex(
+      let emailColumn = headers.findIndex(
         (header) => header === contactImport.emailColumn,
       );
 
-      const nameColumn = headers.findIndex(
+      let nameColumn = headers.findIndex(
         (header) => header === contactImport.nameColumn,
       );
 
-      if (emailColumn === -1) {
-        throw new Error('Invalid email column');
-      }
-
-      if (nameColumn === -1) {
-        throw new Error('Invalid name column');
+      if (headers.length === 1) {
+        emailColumn = 0;
+        nameColumn = -1;
+      } else {
+        if (emailColumn === -1) {
+          throw new Error(
+            `Invalid email column add ${contactImport.emailColumn} to the file header`,
+          );
+        }
       }
 
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
 
         let email = row[emailColumn];
-        let name = row[nameColumn];
+        let name = nameColumn === -1 ? null : row[nameColumn];
 
         if (row.length === 1) {
           email = row[0];

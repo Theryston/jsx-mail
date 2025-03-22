@@ -16,8 +16,8 @@ export class CreateBulkContactsDto {
   emailColumn: string;
 
   @IsString()
-  @IsNotEmpty()
-  nameColumn: string;
+  @IsOptional()
+  nameColumn?: string;
 }
 
 export class CreateBulkSendingVariableDto {
