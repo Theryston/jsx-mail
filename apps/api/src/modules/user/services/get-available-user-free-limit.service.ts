@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import moment from 'moment';
 import { PrismaService } from 'src/services/prisma.service';
-import { FREE_EMAILS_PER_MONTH, PRICE_PER_MESSAGE } from 'src/utils/constants';
+import {
+  FREE_EMAILS_PER_MONTH,
+  PRICE_PER_MESSAGE,
+  MAX_BALANCE_TO_BE_ELIGIBLE_FOR_FREE,
+} from 'src/utils/constants';
 import { GetBalanceService } from './get-balance.service';
 
 @Injectable()
@@ -12,6 +16,8 @@ export class GetAvailableUserFreeLimitService {
   ) {}
 
   async execute(userId: string) {
+    const balance = await this.getBalanceService.execute(userId);
+
     const messagesCount = await this.prisma.message.count({
       where: {
         userId,
@@ -39,15 +45,19 @@ export class GetAvailableUserFreeLimitService {
       },
     });
 
-    const balance = await this.getBalanceService.execute(userId);
+    const isEligibleForFree =
+      balance.amount <= MAX_BALANCE_TO_BE_ELIGIBLE_FOR_FREE;
 
-    let missingChargeMessages = notChargedMessages - FREE_EMAILS_PER_MONTH;
+    let missingChargeMessages =
+      notChargedMessages - (isEligibleForFree ? FREE_EMAILS_PER_MONTH : 0);
     if (missingChargeMessages < 0) missingChargeMessages = 0;
 
     const projectedBalance =
       balance.amount - missingChargeMessages * PRICE_PER_MESSAGE;
 
-    let availableFreeMessages = FREE_EMAILS_PER_MONTH - messagesCount;
+    let availableFreeMessages = isEligibleForFree
+      ? FREE_EMAILS_PER_MONTH - messagesCount
+      : 0;
     if (availableFreeMessages < 0) availableFreeMessages = 0;
 
     let availableMessagesByBalance = Math.floor(
@@ -64,6 +74,7 @@ export class GetAvailableUserFreeLimitService {
       balance: balance.amount,
       availableMessages,
       projectedBalance,
+      isEligibleForFree,
     };
   }
 }

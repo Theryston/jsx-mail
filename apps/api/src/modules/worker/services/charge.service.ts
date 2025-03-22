@@ -5,10 +5,14 @@ import { FREE_EMAILS_PER_MONTH, PRICE_PER_MESSAGE } from 'src/utils/constants';
 import { formatSize } from 'src/utils/format';
 import { storageToMoney } from 'src/utils/format-money';
 import moment from 'moment';
+import { GetAvailableUserFreeLimitService } from 'src/modules/user/services/get-available-user-free-limit.service';
 
 @Injectable()
 export class ChargeService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly getAvailableUserFreeLimitService: GetAvailableUserFreeLimitService,
+  ) {}
 
   async execute() {
     console.log(`[CHARGE] started at: ${new Date()}`);
@@ -52,12 +56,19 @@ export class ChargeService {
           },
         });
 
+        const { isEligibleForFree } =
+          await this.getAvailableUserFreeLimitService.execute(userId);
+
         let price = 0;
-        let description = `Ignored charge of ${notChargedMessagesAmount} message because the free messages limit was not reached`;
+        let description = '';
         let chargedMessages = notChargedMessagesAmount;
         let restFreeMessages = 0;
 
-        if (currentMonthMessagesAmount > FREE_EMAILS_PER_MONTH) {
+        if (!isEligibleForFree) {
+          // If user is not eligible for free messages, charge for all messages
+          price = notChargedMessagesAmount * PRICE_PER_MESSAGE;
+          description = `Charge for ${notChargedMessagesAmount} messages (not eligible for free messages)`;
+        } else if (currentMonthMessagesAmount > FREE_EMAILS_PER_MONTH) {
           // Calculate the remaining free messages for the user in the current month
           restFreeMessages =
             FREE_EMAILS_PER_MONTH -
@@ -75,7 +86,9 @@ export class ChargeService {
           price = chargedMessages * PRICE_PER_MESSAGE;
 
           // Set the description for the charge
-          description = `Charge for ${chargedMessages} messages${restFreeMessages !== 0 ? ` ignored ${restFreeMessages} free messages` : ''}`;
+          description = `Charge for ${chargedMessages} messages${restFreeMessages !== 0 ? ` and ignored ${restFreeMessages} free messages` : ''}`;
+        } else {
+          description = `Ignored charge of ${notChargedMessagesAmount} message because the free messages limit was not reached`;
         }
 
         await this.removeBalance({
@@ -103,6 +116,7 @@ export class ChargeService {
           chargedMessages,
           restFreeMessages,
           price,
+          isEligibleForFree,
         });
 
         console.log(`[CHARGE_MESSAGE] ${userId} - ${price}`);
