@@ -78,10 +78,12 @@ export class GetInsightsService {
     }
 
     return {
-      MESSAGES_SENT_BY_DAY: messagesSentByDay.map((m) => ({
-        sentDay: m.sentDay,
-        count: m._count.id || 0,
-      })),
+      MESSAGES_SENT_BY_DAY: messagesSentByDay
+        .map((m) => ({
+          sentDay: m.sentDay,
+          count: m._count.id || 0,
+        }))
+        .sort((a, b) => a.sentDay.localeCompare(b.sentDay)),
       DATA: [
         balanceData,
         {
