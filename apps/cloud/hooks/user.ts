@@ -8,9 +8,8 @@ import {
   AdminUsersPagination,
 } from '@/types/user';
 import api from '@/utils/api';
+import { PER_PAGE } from '@/utils/constants';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-
-export const PER_PAGE = 10;
 
 export function useSignIn() {
   const queryClient = useQueryClient();

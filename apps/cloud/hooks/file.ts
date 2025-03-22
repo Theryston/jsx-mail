@@ -2,8 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '@/utils/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FilesPagination } from '@/types/file';
-
-export const PER_PAGE = 10;
+import { PER_PAGE } from '@/utils/constants';
 
 export const uploadFile = async (file: File) => {
   const formData = new FormData();

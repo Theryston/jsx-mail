@@ -10,8 +10,7 @@ import {
   ContactImportFailuresPagination,
   BulkSendingFailuresPagination,
 } from '@/types/bulk-sending';
-
-export const PER_PAGE = 10;
+import { PER_PAGE } from '@/utils/constants';
 
 export function useCreateContactGroup() {
   const queryClient = useQueryClient();

@@ -6,8 +6,7 @@ import {
   Status,
 } from '@/types/message';
 import moment from 'moment';
-
-export const PER_PAGE = 10;
+import { PER_PAGE } from '@/utils/constants';
 
 export interface MessageFilters {
   page: number;
