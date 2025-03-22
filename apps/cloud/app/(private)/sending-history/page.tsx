@@ -57,27 +57,44 @@ export default function SendingHistoryPage() {
     dateRange?.from || moment().subtract(30, 'days').toDate(),
   );
   const endDate = moment(dateRange?.to || new Date());
+  const [hasProcessingMessages, setHasProcessingMessages] = useState(false);
 
   const { data: messagesPagination, isPending: isLoadingMessages } =
-    useMessages({
-      page,
-      startDate,
-      endDate,
-      fromEmail,
-      toEmail,
-      statuses,
-      bulkSending,
-    });
+    useMessages(
+      {
+        page,
+        startDate,
+        endDate,
+        fromEmail,
+        toEmail,
+        statuses,
+        bulkSending,
+      },
+      hasProcessingMessages ? 1000 : false,
+    );
 
   const { data: messageInsights, isPending: isLoadingInsights } =
-    useMessageInsights({
-      startDate,
-      endDate,
-      fromEmail,
-      toEmail,
-      statuses,
-      bulkSending,
-    });
+    useMessageInsights(
+      {
+        startDate,
+        endDate,
+        fromEmail,
+        toEmail,
+        statuses,
+        bulkSending,
+      },
+      hasProcessingMessages ? 1000 : false,
+    );
+
+  useEffect(() => {
+    if (
+      messagesPagination?.messages.some((message) =>
+        ['queued', 'processing'].includes(message.status),
+      )
+    ) {
+      setHasProcessingMessages(true);
+    }
+  }, [messagesPagination]);
 
   useEffect(() => {
     const params = new URLSearchParams();

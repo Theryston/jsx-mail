@@ -18,7 +18,10 @@ export interface MessageFilters {
   bulkSending?: string;
 }
 
-export function useMessages(filters: MessageFilters) {
+export function useMessages(
+  filters: MessageFilters,
+  refreshInterval: number | false,
+) {
   const searchParams = new URLSearchParams();
   searchParams.set('page', filters.page.toString());
   searchParams.set('take', PER_PAGE.toString());
@@ -47,10 +50,14 @@ export function useMessages(filters: MessageFilters) {
       api
         .get(`/user/messages?${searchParams.toString()}`)
         .then((res) => res.data),
+    refetchInterval: refreshInterval,
   });
 }
 
-export function useMessageInsights(filters: Omit<MessageFilters, 'page'>) {
+export function useMessageInsights(
+  filters: Omit<MessageFilters, 'page'>,
+  refreshInterval: number | false,
+) {
   const searchParams = new URLSearchParams();
   searchParams.set('startDate', filters.startDate.format('YYYY-MM-DD'));
   searchParams.set('endDate', filters.endDate.format('YYYY-MM-DD'));
@@ -77,6 +84,7 @@ export function useMessageInsights(filters: Omit<MessageFilters, 'page'>) {
       api
         .get(`/user/messages/insights?${searchParams.toString()}`)
         .then((res) => res.data),
+    refetchInterval: refreshInterval,
   });
 }
 
