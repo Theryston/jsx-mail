@@ -77,16 +77,6 @@ export class GetInsightsService {
       };
     }
 
-    const processingMessages = await this.prisma.message.count({
-      where: {
-        deletedAt: null,
-        status: {
-          in: ['queued', 'processing'],
-        },
-        userId,
-      },
-    });
-
     return {
       MESSAGES_SENT_BY_DAY: messagesSentByDay
         .map((m) => ({
@@ -113,7 +103,6 @@ export class GetInsightsService {
             'The percentage of recipients who clicked on links within your email content. This metric helps measure engagement and the effectiveness of your call-to-action elements.',
         },
       ],
-      PROCESSING_MESSAGES: processingMessages,
     };
   }
 }
