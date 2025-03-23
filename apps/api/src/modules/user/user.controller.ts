@@ -51,6 +51,7 @@ import { UpdateOnboardingStepService } from './services/update-onboarding-step.s
 import { GetUsersService } from './services/get-users.service';
 import { ImpersonateUserService } from './services/impersonate-user.service';
 import { Fingerprint, IFingerprint } from 'nestjs-fingerprint';
+import { RealIP } from 'nestjs-real-ip';
 
 @Controller('user')
 export class UserController {
@@ -101,11 +102,15 @@ export class UserController {
   }
 
   @Post()
-  createUser(@Body() data: CreateUserDto, @Fingerprint() fp: IFingerprint) {
+  createUser(
+    @Body() data: CreateUserDto,
+    @Fingerprint() fp: IFingerprint,
+    @RealIP() ipAddress: string,
+  ) {
     return this.createUserService.execute({
       ...data,
       fingerprint: fp.id,
-      ipAddress: fp.ipAddress.value,
+      ipAddress,
     });
   }
 
