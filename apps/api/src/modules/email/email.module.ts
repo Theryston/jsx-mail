@@ -6,6 +6,7 @@ import { PrismaService } from 'src/services/prisma.service';
 import { EmailController } from './email.controller';
 import { EmailWebhookService } from './services/email-webhook.service';
 import { UserModule } from '../user/user.module';
+import { CheckUserEmailStatsService } from './services/check-user-email-stats.service';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UserModule } from '../user/user.module';
     SendEmailService,
     EmailProcessor,
     EmailWebhookService,
+    CheckUserEmailStatsService,
   ],
   exports: [SendEmailService],
   controllers: [EmailController],

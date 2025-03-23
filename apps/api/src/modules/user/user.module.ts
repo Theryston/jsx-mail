@@ -60,6 +60,10 @@ import { BlockPermissionService } from './services/block-permission.service';
     BlockPermissionService,
   ],
   imports: [EmailModule, SessionModule],
-  exports: [BetaPermissionCheckService, GetUserLimitsService],
+  exports: [
+    BetaPermissionCheckService,
+    GetUserLimitsService,
+    BlockPermissionService,
+  ],
 })
 export class UserModule {}
