@@ -78,6 +78,7 @@ model User {
   id              String         @id @default(uuid())
   name            String
   email           String         @unique
+  ipAddress       String?        @map("ip_address")
   onboardingStep  OnboardingStep @default(create_domain) @map("onboarding_step")
   phone           String?
   birthdate       DateTime?

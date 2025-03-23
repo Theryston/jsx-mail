@@ -12,7 +12,8 @@ export class CreateUserService {
     password,
     name,
     fingerprint,
-  }: CreateUserDto & { fingerprint: string }) {
+    ipAddress,
+  }: CreateUserDto & { fingerprint: string; ipAddress: string }) {
     email = email.toLocaleLowerCase().trim();
     name = name.toLocaleLowerCase().trim();
 
@@ -61,6 +62,7 @@ export class CreateUserService {
         name,
         password: hashPassword,
         fingerprint,
+        ipAddress,
       },
     });
 

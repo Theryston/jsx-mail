@@ -105,6 +105,7 @@ export class UserController {
     return this.createUserService.execute({
       ...data,
       fingerprint: fp.id,
+      ipAddress: fp.ipAddress.value,
     });
   }
 
