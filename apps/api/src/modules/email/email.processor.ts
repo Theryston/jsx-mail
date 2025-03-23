@@ -31,14 +31,22 @@ export class EmailProcessor extends WorkerHost {
   }
 
   async process(job: Job<SendEmailDto>): Promise<void> {
-    console.log(`[EMAIL_PROCESSOR] received job id: ${job.id}`);
+    try {
+      console.log(`[EMAIL_PROCESSOR] received job id: ${job.id}`);
 
-    if (job.name === 'send-email') {
-      await this.sendEmail(job.data);
-      return;
+      if (job.name === 'send-email') {
+        await this.sendEmail(job.data);
+        return;
+      }
+
+      throw new Error('Invalid job name');
+    } catch (error) {
+      console.error(
+        `[EMAIL_PROCESSOR] error processing job ${job.id}: `,
+        error,
+      );
+      throw error;
     }
-
-    throw new Error('Invalid job name');
   }
 
   async sendEmail(data: SendEmailDto) {
