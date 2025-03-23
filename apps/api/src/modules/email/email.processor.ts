@@ -15,6 +15,7 @@ import {
 import { Worker } from 'bullmq';
 import { Message } from '@prisma/client';
 import { GetUserLimitsService } from '../user/services/get-user-limits.service';
+import { PERMISSIONS } from 'src/auth/permissions';
 
 const transporter = nodemailer.createTransport({
   SES: { aws, ses: sesClient },
@@ -195,6 +196,26 @@ export class EmailProcessor extends WorkerHost {
       console.error(
         `[EMAIL_PROCESSOR] message or messageId or userId not found: ${messageId}`,
       );
+      return;
+    }
+
+    const isBlockedToSendEmail = await this.prisma.blockedPermission.findFirst({
+      where: {
+        userId,
+        permission: PERMISSIONS.SELF_SEND_EMAIL.value,
+      },
+    });
+
+    if (isBlockedToSendEmail) {
+      await this.prisma.message.update({
+        where: { id: messageId },
+        data: { status: 'failed' },
+      });
+
+      console.log(
+        `[EMAIL_PROCESSOR] user ${userId} is blocked to send email, not sending email`,
+      );
+
       return;
     }
 
