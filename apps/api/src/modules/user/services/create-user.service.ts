@@ -2,11 +2,20 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../user.dto';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'src/services/prisma.service';
+import axios, { AxiosInstance } from 'axios';
 
 @Injectable()
 export class CreateUserService {
-  constructor(private readonly prisma: PrismaService) {}
+  ipHubClient: AxiosInstance;
 
+  constructor(private readonly prisma: PrismaService) {
+    this.ipHubClient = axios.create({
+      baseURL: 'http://v2.api.iphub.info',
+      headers: {
+        'X-Key': process.env.IP_HUB_API_KEY,
+      },
+    });
+  }
   async execute({
     email,
     password,
@@ -44,6 +53,17 @@ export class CreateUserService {
 
     if (fingerprintExists) {
       throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);
+    }
+
+    const { data: ipHubResponse } = await this.ipHubClient.get(
+      `/ip/${ipAddress}`,
+    );
+
+    if (ipHubResponse.block === 1) {
+      throw new HttpException(
+        'Seems you are using a proxy, please turn off and try again',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const userExists = await this.prisma.user.findFirst({
