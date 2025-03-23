@@ -14,16 +14,11 @@ export class CreateUserService {
     fingerprint,
     ipAddress,
   }: CreateUserDto & { fingerprint: string; ipAddress: string }) {
-    throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);
-
     email = email.toLocaleLowerCase().trim();
     name = name.toLocaleLowerCase().trim();
 
     if (!fingerprint) {
-      throw new HttpException(
-        'Fingerprint is required',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);
     }
 
     if (!ipAddress) {
@@ -40,17 +35,6 @@ export class CreateUserService {
       throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);
     }
 
-    const userExists = await this.prisma.user.findFirst({
-      where: {
-        email: email,
-        deletedAt: null,
-      },
-    });
-
-    if (userExists) {
-      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
-    }
-
     const fingerprintExists = await this.prisma.user.findFirst({
       where: {
         fingerprint,
@@ -60,6 +44,17 @@ export class CreateUserService {
 
     if (fingerprintExists) {
       throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);
+    }
+
+    const userExists = await this.prisma.user.findFirst({
+      where: {
+        email: email,
+        deletedAt: null,
+      },
+    });
+
+    if (userExists) {
+      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
 
     const salt = await bcrypt.genSalt(10);
