@@ -14,6 +14,8 @@ export class CreateUserService {
     fingerprint,
     ipAddress,
   }: CreateUserDto & { fingerprint: string; ipAddress: string }) {
+    throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);
+
     email = email.toLocaleLowerCase().trim();
     name = name.toLocaleLowerCase().trim();
 
@@ -25,7 +27,7 @@ export class CreateUserService {
     }
 
     if (!ipAddress) {
-      throw new HttpException('IP address is required', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);
     }
 
     const blockedIpAddress = await this.prisma.blockedIpAddress.findFirst({
@@ -35,7 +37,7 @@ export class CreateUserService {
     });
 
     if (blockedIpAddress) {
-      throw new HttpException('IP address is blocked', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);
     }
 
     const userExists = await this.prisma.user.findFirst({
@@ -57,14 +59,7 @@ export class CreateUserService {
     });
 
     if (fingerprintExists) {
-      const secretEmail = fingerprintExists.email.replace(
-        /(.{2})(.*)(.{2}@.*)/,
-        '$1***$3',
-      );
-      throw new HttpException(
-        `The account ${secretEmail} is already registered with this device. You can login with the email ${secretEmail}`,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);
     }
 
     const salt = await bcrypt.genSalt(10);
