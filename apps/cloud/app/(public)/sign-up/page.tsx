@@ -60,18 +60,14 @@ export default function SignUp() {
 
   const onSubmit = useCallback(
     async ({ name, email, password }: SignUpForm) => {
-      try {
-        await signUp({ name, email, password });
+      await signUp({ name, email, password });
 
-        sendGTMEvent({ event: 'sign_up' });
+      sendGTMEvent({ event: 'sign_up' });
 
-        toast.success('Account created successfully');
-        router.push(
-          `/security-code?permission=self:email-validate&email=${email}&redirect=${encodeURIComponent(`/verify-email?redirect=${redirect}`)}`,
-        );
-      } catch (error) {
-        toast.error('Failed to create account');
-      }
+      toast.success('Account created successfully');
+      router.push(
+        `/security-code?permission=self:email-validate&email=${email}&redirect=${encodeURIComponent(`/verify-email?redirect=${redirect}`)}`,
+      );
     },
     [router, redirect, signUp],
   );

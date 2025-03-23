@@ -14,9 +14,13 @@ import { WorkerModule } from './modules/worker/worker.module';
 import { BullModule } from '@nestjs/bullmq';
 import { BetaPermissionCheckService } from './modules/user/services/beta-permission-check.service';
 import { BulkSendingModule } from './modules/bulk-sending/bulk-sending.module';
+import { NestjsFingerprintModule } from 'nestjs-fingerprint';
 
 @Module({
   imports: [
+    NestjsFingerprintModule.forRoot({
+      params: ['userAgent', 'ipAddress'],
+    }),
     BullModule.forRoot({
       connection: {
         host: process.env.REDIS_HOST,

@@ -47,7 +47,7 @@ export class CreateUserService {
         '$1***$3',
       );
       throw new HttpException(
-        `The account ${secretEmail} is already registered with this device. You can login with the email ${fingerprintExists.email}`,
+        `The account ${secretEmail} is already registered with this device. You can login with the email ${secretEmail}`,
         HttpStatus.BAD_REQUEST,
       );
     }
