@@ -82,6 +82,7 @@ model User {
   phone           String?
   birthdate       DateTime?
   gatewayId       String?        @map("gateway_id")
+  fingerprint     String?        @map("fingerprint")
   isEmailVerified Boolean        @default(false) @map("is_email_verified")
   accessLevel     AccessLevel    @default(self) @map("access_level")
   password        String

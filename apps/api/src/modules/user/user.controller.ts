@@ -50,6 +50,7 @@ import { MESSAGES_STATUS } from '../../utils/constants';
 import { UpdateOnboardingStepService } from './services/update-onboarding-step.service';
 import { GetUsersService } from './services/get-users.service';
 import { ImpersonateUserService } from './services/impersonate-user.service';
+import { Fingerprint, IFingerprint } from 'nestjs-fingerprint';
 
 @Controller('user')
 export class UserController {
@@ -100,8 +101,11 @@ export class UserController {
   }
 
   @Post()
-  createUser(@Body() data: CreateUserDto) {
-    return this.createUserService.execute(data);
+  createUser(@Body() data: CreateUserDto, @Fingerprint() fp: IFingerprint) {
+    return this.createUserService.execute({
+      ...data,
+      fingerprint: fp.id,
+    });
   }
 
   @Post('security-code')

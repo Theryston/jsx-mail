@@ -7,9 +7,21 @@ import { PrismaService } from 'src/services/prisma.service';
 export class CreateUserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute({ email, password, name }: CreateUserDto) {
+  async execute({
+    email,
+    password,
+    name,
+    fingerprint,
+  }: CreateUserDto & { fingerprint: string }) {
     email = email.toLocaleLowerCase().trim();
     name = name.toLocaleLowerCase().trim();
+
+    if (!fingerprint) {
+      throw new HttpException(
+        'Fingerprint is required',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     const userExists = await this.prisma.user.findFirst({
       where: {
@@ -22,6 +34,24 @@ export class CreateUserService {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
 
+    const fingerprintExists = await this.prisma.user.findFirst({
+      where: {
+        fingerprint,
+        deletedAt: null,
+      },
+    });
+
+    if (fingerprintExists) {
+      const secretEmail = fingerprintExists.email.replace(
+        /(.{2})(.*)(.{2}@.*)/,
+        '$1***$3',
+      );
+      throw new HttpException(
+        `The account ${secretEmail} is already registered with this device. You can login with the email ${fingerprintExists.email}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
 
@@ -30,6 +60,7 @@ export class CreateUserService {
         email,
         name,
         password: hashPassword,
+        fingerprint,
       },
     });
 
