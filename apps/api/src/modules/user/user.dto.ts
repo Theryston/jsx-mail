@@ -209,4 +209,8 @@ export class BlockPermissionDto {
   @IsNotEmpty()
   @IsString()
   userId: string;
+
+  @IsOptional()
+  @IsString()
+  reason?: string;
 }

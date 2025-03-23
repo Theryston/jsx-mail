@@ -7,12 +7,13 @@ export class BlockPermissionService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: BlockPermissionDto) {
-    const { permission, userId } = data;
+    const { permission, userId, reason } = data;
 
     await this.prisma.blockedPermission.create({
       data: {
         permission,
         userId,
+        reason,
       },
     });
 

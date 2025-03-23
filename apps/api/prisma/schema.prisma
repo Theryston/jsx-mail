@@ -114,6 +114,7 @@ model User {
 model BlockedPermission {
   id         String    @id @default(uuid())
   permission String
+  reason     String?
   userId     String    @map("user_id")
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")

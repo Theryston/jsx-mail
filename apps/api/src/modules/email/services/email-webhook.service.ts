@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { MessageStatus } from '@prisma/client';
 import moment from 'moment';
 import { PrismaService } from 'src/services/prisma.service';
+import { CheckUserEmailStatsService } from './check-user-email-stats.service';
 
 @Injectable()
 export class EmailWebhookService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private checkUserEmailStatsService: CheckUserEmailStatsService,
+  ) {}
 
   async execute(data: any) {
     try {
@@ -55,6 +59,11 @@ export class EmailWebhookService {
             : {}),
         },
       });
+
+      // Verifica as taxas de bounce e complaint quando esses eventos ocorrem
+      if (status === 'bonce' || status === 'complaint') {
+        await this.checkUserEmailStatsService.execute(message.userId);
+      }
     } catch (error) {
       console.log('[EMAIL_WEBHOOK_SERVICE] error: ', error);
       return 'event processed but there was an error';
