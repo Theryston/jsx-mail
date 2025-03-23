@@ -24,6 +24,20 @@ export class CreateUserService {
       );
     }
 
+    if (!ipAddress) {
+      throw new HttpException('IP address is required', HttpStatus.BAD_REQUEST);
+    }
+
+    const blockedIpAddress = await this.prisma.blockedIpAddress.findFirst({
+      where: {
+        ipAddress,
+      },
+    });
+
+    if (blockedIpAddress) {
+      throw new HttpException('IP address is blocked', HttpStatus.BAD_REQUEST);
+    }
+
     const userExists = await this.prisma.user.findFirst({
       where: {
         email: email,
