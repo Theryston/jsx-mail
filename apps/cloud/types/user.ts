@@ -9,6 +9,7 @@ export type User = {
   name: string;
   email: string;
   isEmailVerified: boolean;
+  blockedPermissions: string[];
   onboardingStep:
     | 'create_domain'
     | 'verify_domain'

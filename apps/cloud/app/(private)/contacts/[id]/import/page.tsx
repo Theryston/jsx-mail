@@ -127,7 +127,6 @@ export default function ImportContactsPage() {
       };
       reader.readAsText(file);
     } catch (error) {
-      toast.error('Failed to upload file. Please try again.');
       console.error('Upload error:', error);
     } finally {
       setIsProcessing(false);

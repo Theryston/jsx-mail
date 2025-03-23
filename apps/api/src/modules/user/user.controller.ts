@@ -9,10 +9,13 @@ import {
   Query,
   Headers,
   ValidationPipe,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import { CreateUserService } from './services/create-user.service';
 import {
   AuthUserDto,
+  BlockPermissionDto,
   CreateCheckoutDto,
   CreateSecurityCodeDto,
   CreateUserDto,
@@ -52,6 +55,7 @@ import { GetUsersService } from './services/get-users.service';
 import { ImpersonateUserService } from './services/impersonate-user.service';
 import { Fingerprint, IFingerprint } from 'nestjs-fingerprint';
 import { RealIP } from 'nestjs-real-ip';
+import { BlockPermissionService } from './services/block-permission.service';
 
 @Controller('user')
 export class UserController {
@@ -74,6 +78,7 @@ export class UserController {
     private readonly updateOnboardingService: UpdateOnboardingStepService,
     private readonly getUsersService: GetUsersService,
     private readonly impersonateUserService: ImpersonateUserService,
+    private readonly blockPermissionService: BlockPermissionService,
   ) {}
 
   @Get('admin/users')
@@ -150,6 +155,9 @@ export class UserController {
   getMe(@Request() req) {
     return {
       ...req.user,
+      blockedPermissions: req.blockedPermissions.map(
+        (permission) => permission.permission,
+      ),
       session: {
         id: req.session.id,
         createdAt: req.session.createdAt,
@@ -247,5 +255,23 @@ export class UserController {
   @Permissions([PERMISSIONS.SELF_UPDATE_ONBOARDING.value])
   updateOnboarding(@Request() req, @Body() data: UpdateOnboardingDto) {
     return this.updateOnboardingService.execute(data, req.user.id);
+  }
+
+  @Post('block-permission')
+  @Permissions([PERMISSIONS.OTHER_BLOCK_PERMISSION.value])
+  blockPermission(@Body() data: BlockPermissionDto) {
+    return this.blockPermissionService.create(data);
+  }
+
+  @Delete('block-permission')
+  @Permissions([PERMISSIONS.OTHER_BLOCK_PERMISSION.value])
+  deleteBlockPermission(@Body() data: BlockPermissionDto) {
+    return this.blockPermissionService.delete(data);
+  }
+
+  @Get('blocked-permissions/:userId')
+  @Permissions([PERMISSIONS.OTHER_BLOCK_PERMISSION.value])
+  getBlockedPermissions(@Param('userId') userId: string) {
+    return this.blockPermissionService.get(userId);
   }
 }

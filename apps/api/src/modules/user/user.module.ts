@@ -27,6 +27,7 @@ import { BetaPermissionCheckService } from './services/beta-permission-check.ser
 import { GetUsersService } from './services/get-users.service';
 import { ImpersonateUserService } from './services/impersonate-user.service';
 import { GetUserLimitsService } from './services/get-user-limits.service';
+import { BlockPermissionService } from './services/block-permission.service';
 
 @Module({
   controllers: [UserController],
@@ -56,6 +57,7 @@ import { GetUserLimitsService } from './services/get-user-limits.service';
     GetUsersService,
     ImpersonateUserService,
     GetUserLimitsService,
+    BlockPermissionService,
   ],
   imports: [EmailModule, SessionModule],
   exports: [BetaPermissionCheckService, GetUserLimitsService],

@@ -7,6 +7,8 @@ import { CloudLogo } from './cloud-logo';
 import { SidebarTrigger } from '@jsx-mail/ui/sidebar';
 import { useMe } from '@/hooks/user';
 import { titleCase } from '@/utils/title-case';
+import { Alert, AlertDescription, AlertTitle } from '@jsx-mail/ui/alert';
+import { Crisp } from 'crisp-sdk-web';
 
 type ContainerProps = {
   children: React.ReactNode;
@@ -26,7 +28,10 @@ export function Container({
       {anonymousHeader && <AnonymousHeader />}
       {header && <Header />}
       {loggedHeaderNoActions && <LoggedHeaderNoActions />}
-      <main className="container mx-auto p-4 py-8">{children}</main>
+      <main className="container mx-auto p-4 py-8">
+        {!anonymousHeader && <BlockedPermissions />}
+        {children}
+      </main>
     </div>
   );
 }
@@ -67,6 +72,36 @@ function AnonymousHeader() {
         </Link>
       </div>
     </div>
+  );
+}
+
+function BlockedPermissions() {
+  const { data: me } = useMe();
+
+  if (!me?.blockedPermissions?.length) return null;
+
+  return (
+    <Alert variant="destructive" className="mb-4">
+      <AlertTitle>
+        You have been blocked from using these permissions:
+      </AlertTitle>
+      <AlertDescription>
+        <div className="flex md:items-center justify-between gap-2 flex-col md:flex-row w-full">
+          <span>
+            {me?.blockedPermissions.map((permission) => permission).join(', ')}
+          </span>
+          <Button
+            size="sm"
+            className="w-fit"
+            onClick={() => {
+              Crisp.chat.open();
+            }}
+          >
+            Contact support
+          </Button>
+        </div>
+      </AlertDescription>
+    </Alert>
   );
 }
 

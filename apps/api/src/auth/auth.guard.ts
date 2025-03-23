@@ -1,8 +1,9 @@
 import {
   CanActivate,
   ExecutionContext,
+  HttpException,
+  HttpStatus,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Permissions } from './permissions.decorator';
@@ -101,6 +102,26 @@ export class AuthGuard implements CanActivate {
 
     if (!permissions) {
       return true;
+    }
+
+    const blockedPermissions = await this.prisma.blockedPermission.findMany({
+      where: {
+        userId: user.id,
+        deletedAt: null,
+      },
+    });
+
+    request.blockedPermissions = blockedPermissions;
+
+    if (
+      blockedPermissions.find((permission) =>
+        permissions.includes(permission.permission),
+      )
+    ) {
+      throw new HttpException(
+        `You was blocked from using this permission: ${blockedPermissions[0].permission}`,
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     if (

@@ -200,3 +200,13 @@ export class InsightsItemDto {
   @IsString()
   description: string;
 }
+
+export class BlockPermissionDto {
+  @IsNotEmpty()
+  @IsString()
+  permission: string;
+
+  @IsNotEmpty()
+  @IsString()
+  userId: string;
+}

@@ -15,6 +15,8 @@ import { DropdownMenuTrigger } from '@jsx-mail/ui/dropdown-menu';
 import { useImpersonateUser } from '@/hooks/user';
 import handleRedirectUrl from '@/utils/handle-redirect-url';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { BlockPermissionsModal } from './block-permissions-modal';
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -62,6 +64,7 @@ export const columns: ColumnDef<User>[] = [
       const { mutateAsync: impersonateUser } = useImpersonateUser();
       const searchParams = useSearchParams();
       const router = useRouter();
+      const [blockModalOpen, setBlockModalOpen] = useState(false);
 
       const handleImpersonate = async () => {
         const id = toast.loading('Impersonating user...');
@@ -92,8 +95,7 @@ export const columns: ColumnDef<User>[] = [
       };
 
       const handleBlock = () => {
-        toast.info('Not implemented yet');
-        // Implement blocking logic here
+        setBlockModalOpen(true);
       };
 
       return (
@@ -115,6 +117,14 @@ export const columns: ColumnDef<User>[] = [
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {blockModalOpen && (
+            <BlockPermissionsModal
+              isOpen={blockModalOpen}
+              onClose={() => setBlockModalOpen(false)}
+              user={user}
+            />
+          )}
         </div>
       );
     },

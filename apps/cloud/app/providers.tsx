@@ -10,12 +10,9 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { useState, useEffect } from 'react';
 import { Crisp } from 'crisp-sdk-web';
+import { useSearchParams } from 'next/navigation';
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    Crisp.configure(process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID || '');
-  }, []);
-
   return (
     <Suspense>
       <ThemeProvider>
@@ -25,11 +22,30 @@ export function Providers({ children }: { children: React.ReactNode }) {
           options={{ showSpinner: false }}
         />
 
-        <QueryClientProvider>{children}</QueryClientProvider>
+        <QueryClientProvider>
+          <CrispProvider>{children}</CrispProvider>
+        </QueryClientProvider>
         <Toaster />
       </ThemeProvider>
     </Suspense>
   );
+}
+
+function CrispProvider({ children }: { children: React.ReactNode }) {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    Crisp.configure(process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID || '');
+  }, []);
+
+  useEffect(() => {
+    const support = searchParams.get('support') === 'true';
+    if (!support) return;
+
+    Crisp.chat.open();
+  }, [searchParams]);
+
+  return <>{children}</>;
 }
 
 function QueryClientProvider({ children }: { children: React.ReactNode }) {

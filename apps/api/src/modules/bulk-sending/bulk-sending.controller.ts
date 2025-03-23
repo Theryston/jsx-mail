@@ -56,7 +56,10 @@ export class BulkSendingController {
   ) {}
 
   @Post()
-  @Permissions([PERMISSIONS.SELF_CREATE_BULK_SENDING.value])
+  @Permissions([
+    PERMISSIONS.SELF_CREATE_BULK_SENDING.value,
+    PERMISSIONS.SELF_SEND_EMAIL.value,
+  ])
   createBulkSending(@Body() body: CreateBulkSendingDto, @Req() req) {
     return this.createBulkSendingService.execute(body, req.user.id);
   }

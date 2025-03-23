@@ -200,3 +200,25 @@ export function useImpersonateUser() {
       api.post('/user/admin/users/impersonate', data).then((res) => res.data),
   });
 }
+
+export function useCreateBlockPermission() {
+  return useMutation({
+    mutationFn: (data: { permission: string; userId: string }) =>
+      api.post('/user/block-permission', data).then((res) => res.data),
+  });
+}
+
+export function useDeleteBlockPermission() {
+  return useMutation({
+    mutationFn: (data: { permission: string; userId: string }) =>
+      api.delete('/user/block-permission', { data }).then((res) => res.data),
+  });
+}
+
+export function useGetBlockedPermissions(userId: string) {
+  return useQuery<string[]>({
+    queryKey: ['blocked-permissions', userId],
+    queryFn: () =>
+      api.get(`/user/blocked-permissions/${userId}`).then((res) => res.data),
+  });
+}

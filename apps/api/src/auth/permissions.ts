@@ -237,4 +237,9 @@ export const PERMISSIONS: {
     value: 'self:create-contact-group-contacts',
     description: 'Can create contacts for a contact group for itself',
   },
+  OTHER_BLOCK_PERMISSION: {
+    title: 'Other Block Permission',
+    value: 'other:block-permission',
+    description: 'Can block a permission for a user',
+  },
 };

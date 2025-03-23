@@ -42,7 +42,6 @@ export function UploadFileModal({ isOpen, onClose }: UploadFileModalProps) {
       }
       onClose();
     } catch (error) {
-      toast.error('Failed to upload file');
       console.error(error);
     }
   };
