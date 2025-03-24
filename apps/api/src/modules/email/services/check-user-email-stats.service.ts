@@ -9,6 +9,12 @@ import {
   MIN_EMAILS_FOR_RATE_CALCULATION,
 } from 'src/utils/constants';
 
+const EMAIL_SENDING_PERMISSIONS = [
+  PERMISSIONS.SELF_SEND_EMAIL.value,
+  PERMISSIONS.SELF_SEND_EMAIL_WITH_ATTACHMENTS.value,
+  PERMISSIONS.SELF_CREATE_BULK_SENDING.value,
+];
+
 @Injectable()
 export class CheckUserEmailStatsService {
   constructor(
@@ -75,13 +81,7 @@ export class CheckUserEmailStatsService {
           `[CHECK_USER_EMAIL_STATS] Blocking user ${userId} due to high bounce rate (${(bounceRate * 100).toFixed(2)}%) or complaint rate (${(complaintRate * 100).toFixed(2)}%)`,
         );
 
-        const emailSendingPermissions = [
-          PERMISSIONS.SELF_SEND_EMAIL.value,
-          PERMISSIONS.SELF_SEND_EMAIL_WITH_ATTACHMENTS.value,
-          PERMISSIONS.SELF_CREATE_BULK_SENDING.value,
-        ];
-
-        for (const permission of emailSendingPermissions) {
+        for (const permission of EMAIL_SENDING_PERMISSIONS) {
           await this.blockPermissionService.create({
             userId,
             permission,
