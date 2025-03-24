@@ -7,9 +7,10 @@ import { UpdateChargeMonthService } from './services/update-charge-month.service
 import { UserModule } from '../user/user.module';
 import { DeadMessagesService } from './services/dead-messages.service';
 import { ResendProcessingMessagesService } from './services/resend-processing-messages.service';
+import { EmailModule } from '../email/email.module';
 
 @Module({
-  imports: [UserModule],
+  imports: [UserModule, EmailModule],
   providers: [
     PrismaService,
     StorageSizeService,
