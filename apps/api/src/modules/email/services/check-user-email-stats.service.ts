@@ -118,7 +118,7 @@ export class CheckUserEmailStatsService {
           await this.blockPermissionService.create({
             userId,
             permission,
-            reason: `Account automatically blocked due to bounce rate (${(bounceRate * 100).toFixed(2)}%) or complaint rate (${(complaintRate * 100).toFixed(2)}%) above the limit in the last 5 days.`,
+            reason: `Account automatically blocked due to bounce rate (${(bounceRate * 100).toFixed(2)}%) or complaint rate (${(complaintRate * 100).toFixed(2)}%)`,
           });
         }
 
@@ -138,7 +138,7 @@ export class CheckUserEmailStatsService {
           await this.prisma.bulkSendingFailure.create({
             data: {
               bulkSendingId: bulkSending.id,
-              message: `Account automatically blocked due to bounce rate (${(bounceRate * 100).toFixed(2)}%) or complaint rate (${(complaintRate * 100).toFixed(2)}%) above the limit in the last 5 days.`,
+              message: `Account automatically blocked due to bounce rate (${(bounceRate * 100).toFixed(2)}%) or complaint rate (${(complaintRate * 100).toFixed(2)}%)`,
             },
           });
         }
