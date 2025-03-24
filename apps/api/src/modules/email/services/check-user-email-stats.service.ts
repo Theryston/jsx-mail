@@ -58,6 +58,7 @@ export class CheckUserEmailStatsService {
 
       const gapToCheckSecurityInsights = moment()
         .subtract(daysToCheck, 'days')
+        .startOf('day')
         .toDate();
 
       const totalSentMessages = await this.prisma.message.count({
