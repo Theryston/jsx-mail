@@ -6,6 +6,7 @@ import { PERMISSIONS } from 'src/auth/permissions';
 import {
   BOUNCE_RATE_LIMIT,
   COMPLAINT_RATE_LIMIT,
+  GAP_TO_CHECK_SECURITY_INSIGHTS,
   MIN_EMAILS_FOR_RATE_CALCULATION,
 } from 'src/utils/constants';
 
@@ -23,14 +24,16 @@ export class CheckUserEmailStatsService {
 
   async execute(userId: string) {
     try {
-      const fiveDaysAgo = moment().subtract(5, 'days').toDate();
+      const gapToCheckSecurityInsights = moment()
+        .subtract(GAP_TO_CHECK_SECURITY_INSIGHTS, 'days')
+        .toDate();
 
       const totalSentMessages = await this.prisma.message.count({
         where: {
           userId,
           deletedAt: null,
           sentAt: {
-            gte: fiveDaysAgo,
+            gte: gapToCheckSecurityInsights,
           },
           status: {
             in: [
@@ -52,7 +55,7 @@ export class CheckUserEmailStatsService {
           userId,
           deletedAt: null,
           sentAt: {
-            gte: fiveDaysAgo,
+            gte: gapToCheckSecurityInsights,
           },
           status: 'bonce',
         },
@@ -63,7 +66,7 @@ export class CheckUserEmailStatsService {
           userId,
           deletedAt: null,
           sentAt: {
-            gte: fiveDaysAgo,
+            gte: gapToCheckSecurityInsights,
           },
           status: 'complaint',
         },

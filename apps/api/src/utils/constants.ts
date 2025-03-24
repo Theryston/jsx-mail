@@ -11,8 +11,9 @@ export const PRICE_PER_MESSAGE = 0.0002 * MONEY_SCALE; // $0.0002
 export const MAXIMUM_STORAGE = 5 * 1024 * 1024 * 1024 * 1024; // 5GB
 export const MAX_MESSAGES_PER_SECOND = 14;
 export const MAX_MESSAGES_PER_DAY = 50_000;
-export const BOUNCE_RATE_LIMIT = 0.03; // 3%
+export const BOUNCE_RATE_LIMIT = 0.05; // 5%
 export const COMPLAINT_RATE_LIMIT = 0.01; // 1%
+export const GAP_TO_CHECK_SECURITY_INSIGHTS = 5; // 5 days
 export const MIN_EMAILS_FOR_RATE_CALCULATION = 10; // 10 emails
 
 export const MESSAGES_STATUS = [
