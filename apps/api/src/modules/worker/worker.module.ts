@@ -6,6 +6,7 @@ import { WorkerController } from './worker.controller';
 import { UpdateChargeMonthService } from './services/update-charge-month.service';
 import { UserModule } from '../user/user.module';
 import { DeadMessagesService } from './services/dead-messages.service';
+import { ResendProcessingMessagesService } from './services/resend-processing-messages.service';
 
 @Module({
   imports: [UserModule],
@@ -15,6 +16,7 @@ import { DeadMessagesService } from './services/dead-messages.service';
     ChargeService,
     UpdateChargeMonthService,
     DeadMessagesService,
+    ResendProcessingMessagesService,
   ],
   controllers: [WorkerController],
 })

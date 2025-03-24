@@ -5,6 +5,7 @@ import { ChargeService } from './services/charge.service';
 import { StorageSizeService } from './services/storage-size.service';
 import { UpdateChargeMonthService } from './services/update-charge-month.service';
 import { DeadMessagesService } from './services/dead-messages.service';
+import { ResendProcessingMessagesService } from './services/resend-processing-messages.service';
 
 @Controller('worker')
 export class WorkerController {
@@ -13,6 +14,7 @@ export class WorkerController {
     private readonly storageSizeService: StorageSizeService,
     private readonly updateChargeMonthService: UpdateChargeMonthService,
     private readonly deadMessagesService: DeadMessagesService,
+    private readonly resendProcessingMessagesService: ResendProcessingMessagesService,
   ) {}
 
   @Post('update-charge-month')
@@ -37,5 +39,11 @@ export class WorkerController {
   @Permissions([PERMISSIONS.OTHER_RUN_WORKERS.value])
   deadMessages() {
     return this.deadMessagesService.execute();
+  }
+
+  @Post('resend-processing-messages')
+  @Permissions([PERMISSIONS.OTHER_RUN_WORKERS.value])
+  resendProcessingMessages() {
+    return this.resendProcessingMessagesService.execute();
   }
 }
