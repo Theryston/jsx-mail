@@ -60,7 +60,6 @@ export class EmailWebhookService {
         },
       });
 
-      // Verifica as taxas de bounce e complaint quando esses eventos ocorrem
       if (status === 'bonce' || status === 'complaint') {
         await this.checkUserEmailStatsService.execute(message.userId);
       }

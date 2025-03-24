@@ -9,6 +9,20 @@ export class BlockPermissionService {
   async create(data: BlockPermissionDto) {
     const { permission, userId, reason } = data;
 
+    const isUserAlreadyBlocked = await this.prisma.blockedPermission.findFirst({
+      where: {
+        userId,
+        permission,
+        deletedAt: null,
+      },
+    });
+
+    if (isUserAlreadyBlocked) {
+      return {
+        message: 'Permission already blocked',
+      };
+    }
+
     await this.prisma.blockedPermission.create({
       data: {
         permission,
