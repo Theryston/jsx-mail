@@ -34,9 +34,7 @@ export class BlockPermissionService {
     });
 
     if (isUserAlreadyBlocked) {
-      return {
-        message: 'Permission already blocked',
-      };
+      throw new BadRequestException('Permission already blocked');
     }
 
     await this.prisma.blockedPermission.create({
