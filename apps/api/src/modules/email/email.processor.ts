@@ -107,10 +107,20 @@ export class EmailProcessor extends WorkerHost {
     let to: string[] = data.to;
 
     if (process.env.NODE_ENV === 'development') {
+      let newTo = 'success@simulator.amazonses.com';
+
+      if (data.to.find((t) => t.includes('bounce'))) {
+        newTo = 'bounce@simulator.amazonses.com';
+      }
+
+      if (data.to.find((t) => t.includes('complaint'))) {
+        newTo = 'complaint@simulator.amazonses.com';
+      }
+
       console.log(
-        `[EMAIL_PROCESSOR] changing to to ${to} to success@simulator.amazonses.com in development mode`,
+        `[EMAIL_PROCESSOR] changing to to ${to} to ${newTo} in development mode`,
       );
-      to = ['success@simulator.amazonses.com'];
+      to = [newTo];
     }
 
     let messageId: string | null = data.messageId || null;

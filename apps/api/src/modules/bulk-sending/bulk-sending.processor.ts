@@ -76,6 +76,9 @@ export class BulkSendingProcessor extends WorkerHost {
           where: { contactGroupId },
           skip: (page - 1) * PER_PAGE,
           take: PER_PAGE,
+          orderBy: {
+            createdAt: 'desc',
+          },
         });
 
         if (contacts.length === 0) {
