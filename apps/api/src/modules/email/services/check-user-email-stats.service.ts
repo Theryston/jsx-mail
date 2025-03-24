@@ -122,6 +122,31 @@ export class CheckUserEmailStatsService {
             reason: `Account automatically blocked due to bounce rate (${(bounceRate * 100).toFixed(2)}%) or complaint rate (${(complaintRate * 100).toFixed(2)}%) above the limit in the last 5 days.`,
           });
         }
+
+        const processingBulkSending = await this.prisma.bulkSending.findMany({
+          where: {
+            userId,
+            status: 'processing',
+          },
+        });
+
+        for (const bulkSending of processingBulkSending) {
+          await this.prisma.bulkSending.update({
+            where: { id: bulkSending.id },
+            data: { status: 'failed' },
+          });
+
+          await this.prisma.bulkSendingFailure.create({
+            data: {
+              bulkSendingId: bulkSending.id,
+              message: `Account automatically blocked due to bounce rate (${(bounceRate * 100).toFixed(2)}%) or complaint rate (${(complaintRate * 100).toFixed(2)}%) above the limit in the last 5 days.`,
+            },
+          });
+        }
+
+        console.log(
+          `[CHECK_USER_EMAIL_STATS] Blocked ${processingBulkSending.length} bulk sending for user ${userId}`,
+        );
       }
     } catch (error) {
       console.error('[CHECK_USER_EMAIL_STATS] Error:', error);
