@@ -24,8 +24,6 @@ export class CheckUserEmailStatsService {
 
   async execute(userId: string) {
     try {
-      let daysToCheck = GAP_TO_CHECK_SECURITY_INSIGHTS;
-
       const lastSendingBlockedPermissionEvent =
         await this.prisma.blockedPermissionEvent.findFirst({
           where: {
@@ -40,26 +38,26 @@ export class CheckUserEmailStatsService {
           },
         });
 
+      let gapToCheckSecurityInsights = moment()
+        .subtract(GAP_TO_CHECK_SECURITY_INSIGHTS, 'days')
+        .startOf('day')
+        .toDate();
+
       if (lastSendingBlockedPermissionEvent) {
         const daysSinceLastBlock = moment().diff(
           lastSendingBlockedPermissionEvent.createdAt,
           'days',
         );
 
-        daysToCheck = Math.min(
-          GAP_TO_CHECK_SECURITY_INSIGHTS,
-          daysSinceLastBlock,
-        );
+        if (daysSinceLastBlock < GAP_TO_CHECK_SECURITY_INSIGHTS) {
+          gapToCheckSecurityInsights =
+            lastSendingBlockedPermissionEvent.createdAt;
+        }
       }
 
       console.log(
-        `[CHECK_USER_EMAIL_STATS] Checking user ${userId} in the last ${daysToCheck} days`,
+        `[CHECK_USER_EMAIL_STATS] Checking user ${userId} in the last ${moment(gapToCheckSecurityInsights).format('DD/MM/YYYY')} days`,
       );
-
-      const gapToCheckSecurityInsights = moment()
-        .subtract(daysToCheck, 'days')
-        .startOf('day')
-        .toDate();
 
       const totalSentMessages = await this.prisma.message.count({
         where: {
