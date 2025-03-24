@@ -47,6 +47,14 @@ export class BlockPermissionService {
       },
     });
 
+    await this.prisma.blockedPermissionEvent.create({
+      data: {
+        permission,
+        userId,
+        style: 'block',
+      },
+    });
+
     return {
       message: 'Permission blocked successfully',
     };
@@ -57,6 +65,14 @@ export class BlockPermissionService {
 
     await this.prisma.blockedPermission.deleteMany({
       where: { permission, userId },
+    });
+
+    await this.prisma.blockedPermissionEvent.create({
+      data: {
+        permission,
+        userId,
+        style: 'unblock',
+      },
     });
 
     return {
