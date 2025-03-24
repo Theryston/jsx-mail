@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { BlockPermissionDto } from '../user.dto';
 
@@ -8,6 +12,18 @@ export class BlockPermissionService {
 
   async create(data: BlockPermissionDto) {
     const { permission, userId, reason } = data;
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.email === process.env.DEFAULT_USER_EMAIL) {
+      throw new BadRequestException('Cannot block the default user');
+    }
 
     const isUserAlreadyBlocked = await this.prisma.blockedPermission.findFirst({
       where: {
