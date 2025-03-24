@@ -26,6 +26,8 @@ export class DeadMessagesService {
       `[DEAD_MESSAGES] found ${messages.length} messages created before ${thirtyDaysAgo} and still in processing or queued`,
     );
 
+    const failedMessages = [];
+
     for (const message of messages) {
       await this.prisma.message.update({
         where: { id: message.id },
@@ -34,9 +36,15 @@ export class DeadMessagesService {
         },
       });
 
+      failedMessages.push(message.id);
+
       console.log(`[DEAD_MESSAGES] updated message ${message.id} to failed`);
     }
 
     console.log(`[DEAD_MESSAGES] finished at: ${new Date()}`);
+
+    return {
+      failedMessages,
+    };
   }
 }
