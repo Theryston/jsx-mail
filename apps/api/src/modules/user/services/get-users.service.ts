@@ -30,6 +30,12 @@ export class GetUsersService {
             deletedAt: null,
           },
         },
+        userUtm: {
+          select: {
+            utmName: true,
+            utmValue: true,
+          },
+        },
       },
     });
 

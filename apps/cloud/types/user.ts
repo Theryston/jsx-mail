@@ -79,8 +79,17 @@ export type Permission = {
   description: string;
 };
 
+export type UserUtm = {
+  utmName: string;
+  utmValue: string;
+};
+
+export type UserAdmin = User & {
+  userUtm: UserUtm[];
+};
+
 export type AdminUsersPagination = {
-  users: User[];
+  users: UserAdmin[];
   totalPages: number;
   total: number;
   hasNext: boolean;

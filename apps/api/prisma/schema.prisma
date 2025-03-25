@@ -113,8 +113,23 @@ model User {
   bulkSendings            BulkSending[]
   blockedPermissions      BlockedPermission[]
   blockedPermissionEvents BlockedPermissionEvent[]
+  userUtm                 UserUtm[]
 
   @@map("users")
+}
+
+model UserUtm {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  utmName   String    @map("utm_name")
+  utmValue  String    @map("utm_value")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("users_utm")
 }
 
 model BlockedPermission {
