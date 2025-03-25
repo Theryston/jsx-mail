@@ -24,6 +24,13 @@ export class GetUsersService {
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        blockedPermissions: {
+          where: {
+            deletedAt: null,
+          },
+        },
+      },
     });
 
     const count = await this.prisma.user.count({

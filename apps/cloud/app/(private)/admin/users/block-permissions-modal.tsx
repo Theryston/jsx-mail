@@ -20,6 +20,7 @@ import {
 import { Permission, User } from '@/types/user';
 import { Checkbox } from '@jsx-mail/ui/checkbox';
 import { Skeleton } from '@jsx-mail/ui/skeleton';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface BlockPermissionsModalProps {
   isOpen: boolean;
@@ -39,6 +40,7 @@ export function BlockPermissionsModal({
     useGetBlockedPermissions(user.id);
   const { mutateAsync: createBlockPermission } = useCreateBlockPermission();
   const { mutateAsync: deleteBlockPermission } = useDeleteBlockPermission();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (blockedPermissions) {
@@ -55,29 +57,26 @@ export function BlockPermissionsModal({
     const toastId = toast.loading('Updating permissions...');
 
     try {
-      // Find permissions to add (in selectedPermissions but not in blockedPermissions)
       const permissionsToAdd = selectedPermissions.filter(
         (permission) => !blockedPermissions?.includes(permission),
       );
 
-      // Find permissions to remove (in blockedPermissions but not in selectedPermissions)
       const permissionsToRemove =
         blockedPermissions?.filter(
           (permission) => !selectedPermissions.includes(permission),
         ) || [];
 
-      // Add new blocked permissions
       for (const permission of permissionsToAdd) {
         await createBlockPermission({ permission, userId: user.id });
       }
 
-      // Remove blocked permissions
       for (const permission of permissionsToRemove) {
         await deleteBlockPermission({ permission, userId: user.id });
       }
 
       toast.success('Permissions updated successfully', { id: toastId });
       onClose();
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
     } catch (error) {
       console.error('Failed to update permissions:', error);
       toast.error('Failed to update permissions', { id: toastId });

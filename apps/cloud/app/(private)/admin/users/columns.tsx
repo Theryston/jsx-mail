@@ -17,19 +17,36 @@ import handleRedirectUrl from '@/utils/handle-redirect-url';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { BlockPermissionsModal } from './block-permissions-modal';
+import { Badge } from '@jsx-mail/ui/badge';
 
 export const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
+    cell: ({ row }) => {
+      return (
+        <div className="flex items-center gap-2">
+          <span>{row.original.id}</span>
+          {row.original.blockedPermissions.length > 0 && (
+            <Badge variant="destructive">Blocked</Badge>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'name',
     header: 'Name',
+    cell: ({ row }) => {
+      return <span>{row.original.name || 'N/A'}</span>;
+    },
   },
   {
     accessorKey: 'email',
     header: 'Email',
+    cell: ({ row }) => {
+      return <span>{row.original.email || 'N/A'}</span>;
+    },
   },
   {
     accessorKey: 'phone',
