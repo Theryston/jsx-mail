@@ -25,7 +25,7 @@ export default function CloudPage() {
   const [cloudUrl, setCloudUrl] = useState('');
 
   useEffect(() => {
-    setCloudUrl(getCloudUrl('/app'));
+    setCloudUrl(getCloudUrl('/sign-up'));
   }, []);
 
   // Refs para animações de scroll
