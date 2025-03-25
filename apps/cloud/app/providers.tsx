@@ -23,7 +23,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         />
 
         <QueryClientProvider>
-          <CrispProvider>{children}</CrispProvider>
+          <UTMProvider>
+            <CrispProvider>{children}</CrispProvider>
+          </UTMProvider>
         </QueryClientProvider>
         <Toaster />
       </ThemeProvider>
@@ -43,6 +45,26 @@ function CrispProvider({ children }: { children: React.ReactNode }) {
     if (!support) return;
 
     Crisp.chat.open();
+  }, [searchParams]);
+
+  return <>{children}</>;
+}
+
+function UTMProvider({ children }: { children: React.ReactNode }) {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const utmParams: Record<string, string> = {};
+
+    searchParams.forEach((value, key) => {
+      if (key.startsWith('utm_')) {
+        utmParams[key] = value;
+      }
+    });
+
+    if (Object.keys(utmParams).length > 0) {
+      localStorage.setItem('utm_params', JSON.stringify(utmParams));
+    }
   }, [searchParams]);
 
   return <>{children}</>;

@@ -60,7 +60,10 @@ export default function SignUp() {
 
   const onSubmit = useCallback(
     async ({ name, email, password }: SignUpForm) => {
-      await signUp({ name, email, password });
+      const utmParams = localStorage.getItem('utm_params');
+      const utm = utmParams ? JSON.parse(utmParams) : undefined;
+
+      await signUp({ name, email, password, utm });
 
       sendGTMEvent({ event: 'sign_up' });
 

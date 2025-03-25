@@ -34,9 +34,7 @@ export class BlockPermissionService {
     });
 
     if (isUserAlreadyBlocked) {
-      return {
-        message: 'Permission already blocked',
-      };
+      throw new BadRequestException('Permission already blocked');
     }
 
     await this.prisma.blockedPermission.create({
@@ -44,6 +42,14 @@ export class BlockPermissionService {
         permission,
         userId,
         reason,
+      },
+    });
+
+    await this.prisma.blockedPermissionEvent.create({
+      data: {
+        permission,
+        userId,
+        style: 'block',
       },
     });
 
@@ -57,6 +63,14 @@ export class BlockPermissionService {
 
     await this.prisma.blockedPermission.deleteMany({
       where: { permission, userId },
+    });
+
+    await this.prisma.blockedPermissionEvent.create({
+      data: {
+        permission,
+        userId,
+        style: 'unblock',
+      },
     });
 
     return {

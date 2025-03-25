@@ -1,11 +1,16 @@
 'use client';
 
-import { User } from '@/types/user';
+import { UserAdmin } from '@/types/user';
 import { ColumnDef } from '@tanstack/react-table';
 import moment from 'moment';
 import { Button } from '@jsx-mail/ui/button';
 import { toast } from '@jsx-mail/ui/sonner';
-import { ShieldIcon, BanIcon, MoreHorizontal } from 'lucide-react';
+import {
+  ShieldIcon,
+  BanIcon,
+  MoreHorizontal,
+  BarChartIcon,
+} from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,19 +22,37 @@ import handleRedirectUrl from '@/utils/handle-redirect-url';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { BlockPermissionsModal } from './block-permissions-modal';
+import { UtmsModal } from './utms-modal';
+import { Badge } from '@jsx-mail/ui/badge';
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<UserAdmin>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
+    cell: ({ row }) => {
+      return (
+        <div className="flex items-center gap-2">
+          <span>{row.original.id}</span>
+          {row.original.blockedPermissions.length > 0 && (
+            <Badge variant="destructive">Blocked</Badge>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'name',
     header: 'Name',
+    cell: ({ row }) => {
+      return <span>{row.original.name || 'N/A'}</span>;
+    },
   },
   {
     accessorKey: 'email',
     header: 'Email',
+    cell: ({ row }) => {
+      return <span>{row.original.email || 'N/A'}</span>;
+    },
   },
   {
     accessorKey: 'phone',
@@ -65,6 +88,7 @@ export const columns: ColumnDef<User>[] = [
       const searchParams = useSearchParams();
       const router = useRouter();
       const [blockModalOpen, setBlockModalOpen] = useState(false);
+      const [utmsModalOpen, setUtmsModalOpen] = useState(false);
 
       const handleImpersonate = async () => {
         const id = toast.loading('Impersonating user...');
@@ -98,6 +122,10 @@ export const columns: ColumnDef<User>[] = [
         setBlockModalOpen(true);
       };
 
+      const handleUtms = () => {
+        setUtmsModalOpen(true);
+      };
+
       return (
         <div className="flex gap-2">
           <DropdownMenu>
@@ -115,6 +143,10 @@ export const columns: ColumnDef<User>[] = [
                 <BanIcon className="size-4" />
                 Block
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleUtms}>
+                <BarChartIcon className="size-4" />
+                View UTMs
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -122,6 +154,14 @@ export const columns: ColumnDef<User>[] = [
             <BlockPermissionsModal
               isOpen={blockModalOpen}
               onClose={() => setBlockModalOpen(false)}
+              user={user}
+            />
+          )}
+
+          {utmsModalOpen && (
+            <UtmsModal
+              isOpen={utmsModalOpen}
+              onClose={() => setUtmsModalOpen(false)}
               user={user}
             />
           )}

@@ -12,6 +12,8 @@ import {
   Matches,
   Max,
   Min,
+  IsObject,
+  ValidateNested,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -29,6 +31,11 @@ export class CreateUserDto {
   @IsNotEmpty()
   @Length(6, 100)
   password: string;
+
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  utm?: Record<string, string>;
 }
 
 export class UseSecurityCodeDto {

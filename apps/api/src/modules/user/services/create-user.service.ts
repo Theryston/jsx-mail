@@ -22,6 +22,7 @@ export class CreateUserService {
     name,
     fingerprint,
     ipAddress,
+    utm,
   }: CreateUserDto & { fingerprint: string; ipAddress: string }) {
     email = email.toLocaleLowerCase().trim();
     name = name.toLocaleLowerCase().trim();
@@ -92,6 +93,18 @@ export class CreateUserService {
 
     delete user.password;
     delete user.deletedAt;
+
+    if (utm) {
+      for (const [key, value] of Object.entries(utm)) {
+        await this.prisma.userUtm.create({
+          data: {
+            userId: user.id,
+            utmName: key,
+            utmValue: value,
+          },
+        });
+      }
+    }
 
     return {
       message: 'User created successfully',

@@ -74,6 +74,11 @@ enum ContactDeletedBy {
   self
 }
 
+enum BlockedPermissionEventStyle {
+  block
+  unblock
+}
+
 model User {
   id              String         @id @default(uuid())
   name            String
@@ -92,23 +97,39 @@ model User {
   updatedAt       DateTime       @updatedAt @map("updated_at")
   deletedAt       DateTime?      @map("deleted_at")
 
-  transactions        Transaction[]
-  securityCodes       SecurityCode[]
-  domains             Domain[]
-  files               File[]
-  senders             Sender[]
-  messages            Message[]
-  storageSizes        StorageSize[]
-  checkouts           Checkout[]
-  userBetaPermissions UserBetaPermission[]
-  sessions            Session[]            @relation("Session")
-  impersonatedBy      Session[]            @relation("ImpersonatedBy")
-  contactGroups       ContactGroup[]
-  contactImports      ContactImport[]
-  bulkSendings        BulkSending[]
-  blockedPermissions  BlockedPermission[]
+  transactions            Transaction[]
+  securityCodes           SecurityCode[]
+  domains                 Domain[]
+  files                   File[]
+  senders                 Sender[]
+  messages                Message[]
+  storageSizes            StorageSize[]
+  checkouts               Checkout[]
+  userBetaPermissions     UserBetaPermission[]
+  sessions                Session[]                @relation("Session")
+  impersonatedBy          Session[]                @relation("ImpersonatedBy")
+  contactGroups           ContactGroup[]
+  contactImports          ContactImport[]
+  bulkSendings            BulkSending[]
+  blockedPermissions      BlockedPermission[]
+  blockedPermissionEvents BlockedPermissionEvent[]
+  userUtm                 UserUtm[]
 
   @@map("users")
+}
+
+model UserUtm {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  utmName   String    @map("utm_name")
+  utmValue  String    @map("utm_value")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("users_utm")
 }
 
 model BlockedPermission {
@@ -123,6 +144,20 @@ model BlockedPermission {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("blocked_permissions")
+}
+
+model BlockedPermissionEvent {
+  id         String                      @id @default(uuid())
+  permission String
+  userId     String                      @map("user_id")
+  style      BlockedPermissionEventStyle
+  createdAt  DateTime                    @default(now()) @map("created_at")
+  updatedAt  DateTime                    @updatedAt @map("updated_at")
+  deletedAt  DateTime?                   @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("blocked_permission_events")
 }
 
 model BlockedIpAddress {

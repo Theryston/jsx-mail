@@ -3,9 +3,11 @@
 import { Link } from '@heroui/link';
 import { Button } from '@heroui/button';
 import { useEffect, useState } from 'react';
+import { getCloudUrl } from '@/lib/utils';
 
 export default function Hero() {
   const [bottom, setBottom] = useState(0);
+  const [cloudUrl, setCloudUrl] = useState('');
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -31,6 +33,10 @@ export default function Hero() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
+  }, []);
+
+  useEffect(() => {
+    setCloudUrl(getCloudUrl('/app'));
   }, []);
 
   return (
@@ -77,7 +83,7 @@ export default function Hero() {
           color="primary"
           variant="shadow"
           as={Link}
-          href="https://cloud.jsxmail.org/app"
+          href={cloudUrl}
           target="_blank"
           fullWidth
           size="sm"

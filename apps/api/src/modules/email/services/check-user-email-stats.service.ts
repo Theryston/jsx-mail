@@ -6,6 +6,7 @@ import { PERMISSIONS } from 'src/auth/permissions';
 import {
   BOUNCE_RATE_LIMIT,
   COMPLAINT_RATE_LIMIT,
+  GAP_TO_CHECK_SECURITY_INSIGHTS,
   MIN_EMAILS_FOR_RATE_CALCULATION,
 } from 'src/utils/constants';
 
@@ -23,14 +24,47 @@ export class CheckUserEmailStatsService {
 
   async execute(userId: string) {
     try {
-      const fiveDaysAgo = moment().subtract(5, 'days').toDate();
+      const lastSendingBlockedPermissionEvent =
+        await this.prisma.blockedPermissionEvent.findFirst({
+          where: {
+            userId,
+            style: 'block',
+            permission: {
+              in: EMAIL_SENDING_PERMISSIONS,
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        });
+
+      let gapToCheckSecurityInsights = moment()
+        .subtract(GAP_TO_CHECK_SECURITY_INSIGHTS, 'days')
+        .startOf('day')
+        .toDate();
+
+      if (lastSendingBlockedPermissionEvent) {
+        const daysSinceLastBlock = moment().diff(
+          lastSendingBlockedPermissionEvent.createdAt,
+          'days',
+        );
+
+        if (daysSinceLastBlock < GAP_TO_CHECK_SECURITY_INSIGHTS) {
+          gapToCheckSecurityInsights =
+            lastSendingBlockedPermissionEvent.createdAt;
+        }
+      }
+
+      console.log(
+        `[CHECK_USER_EMAIL_STATS] Checking user ${userId} in the last ${moment(gapToCheckSecurityInsights).format('DD/MM/YYYY')} days`,
+      );
 
       const totalSentMessages = await this.prisma.message.count({
         where: {
           userId,
           deletedAt: null,
           sentAt: {
-            gte: fiveDaysAgo,
+            gte: gapToCheckSecurityInsights,
           },
           status: {
             in: [
@@ -52,7 +86,7 @@ export class CheckUserEmailStatsService {
           userId,
           deletedAt: null,
           sentAt: {
-            gte: fiveDaysAgo,
+            gte: gapToCheckSecurityInsights,
           },
           status: 'bonce',
         },
@@ -63,7 +97,7 @@ export class CheckUserEmailStatsService {
           userId,
           deletedAt: null,
           sentAt: {
-            gte: fiveDaysAgo,
+            gte: gapToCheckSecurityInsights,
           },
           status: 'complaint',
         },
@@ -84,9 +118,34 @@ export class CheckUserEmailStatsService {
           await this.blockPermissionService.create({
             userId,
             permission,
-            reason: `Account automatically blocked due to bounce rate (${(bounceRate * 100).toFixed(2)}%) or complaint rate (${(complaintRate * 100).toFixed(2)}%) above the limit in the last 5 days.`,
+            reason: `Account automatically blocked due to bounce rate (${(bounceRate * 100).toFixed(2)}%) or complaint rate (${(complaintRate * 100).toFixed(2)}%)`,
           });
         }
+
+        const processingBulkSending = await this.prisma.bulkSending.findMany({
+          where: {
+            userId,
+            status: 'processing',
+          },
+        });
+
+        for (const bulkSending of processingBulkSending) {
+          await this.prisma.bulkSending.update({
+            where: { id: bulkSending.id },
+            data: { status: 'failed' },
+          });
+
+          await this.prisma.bulkSendingFailure.create({
+            data: {
+              bulkSendingId: bulkSending.id,
+              message: `Account automatically blocked due to bounce rate (${(bounceRate * 100).toFixed(2)}%) or complaint rate (${(complaintRate * 100).toFixed(2)}%)`,
+            },
+          });
+        }
+
+        console.log(
+          `[CHECK_USER_EMAIL_STATS] Blocked ${processingBulkSending.length} bulk sending for user ${userId}`,
+        );
       }
     } catch (error) {
       console.error('[CHECK_USER_EMAIL_STATS] Error:', error);

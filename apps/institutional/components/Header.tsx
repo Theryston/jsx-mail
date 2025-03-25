@@ -11,8 +11,9 @@ import {
   Link,
   Button,
 } from '@heroui/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { getCloudUrl } from '@/lib/utils';
 
 export default function Header({
   menuItems,
@@ -20,6 +21,11 @@ export default function Header({
   menuItems: { label: string; href: string }[];
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [cloudUrl, setCloudUrl] = useState('');
+
+  useEffect(() => {
+    setCloudUrl(getCloudUrl('/app'));
+  }, []);
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen} maxWidth="2xl">
@@ -58,7 +64,7 @@ export default function Header({
             as={Link}
             className="w-28"
             color="primary"
-            href="https://cloud.jsxmail.org/app"
+            href={cloudUrl}
             variant="shadow"
             isExternal
             size="sm"
@@ -92,7 +98,7 @@ export default function Header({
             as={Link}
             className="w-28"
             color="primary"
-            href="https://cloud.jsxmail.org/app"
+            href={cloudUrl}
             variant="shadow"
             isExternal
             size="sm"
