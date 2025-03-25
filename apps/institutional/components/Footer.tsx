@@ -1,7 +1,17 @@
+'use client';
+
 import { Link } from '@heroui/link';
 import Image from 'next/image';
+import { getCloudUrl } from '@/lib/utils';
+import { useState, useEffect } from 'react';
 
 export default function Footer() {
+  const [cloudUrl, setCloudUrl] = useState('');
+
+  useEffect(() => {
+    setCloudUrl(getCloudUrl('/app'));
+  }, []);
+
   return (
     <footer className="bg-zinc-900/30 text-foreground py-5 px-6 flex flex-col md:flex-row gap-4 items-center justify-between">
       <Image
@@ -14,7 +24,7 @@ export default function Footer() {
       <div className="flex gap-4">
         <Link
           color="foreground"
-          href="https://cloud.jsxmail.org/app"
+          href={cloudUrl}
           isExternal
           size="sm"
           aria-label="Go to JSX Mail Cloud"

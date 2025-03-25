@@ -18,9 +18,15 @@ import {
   useInView,
   AnimatePresence,
 } from 'framer-motion';
+import { getCloudUrl } from '@/lib/utils';
 
 export default function CloudPage() {
   const { data } = usePricing();
+  const [cloudUrl, setCloudUrl] = useState('');
+
+  useEffect(() => {
+    setCloudUrl(getCloudUrl('/app'));
+  }, []);
 
   // Refs para animações de scroll
   const heroRef = useRef(null);
@@ -213,7 +219,7 @@ export default function CloudPage() {
               color="primary"
               variant="shadow"
               as={Link}
-              href="https://cloud.jsxmail.org/sign-up"
+              href={cloudUrl}
               target="_blank"
               fullWidth
               className="font-medium"
@@ -818,7 +824,7 @@ export default function CloudPage() {
                   color="primary"
                   variant="shadow"
                   as={Link}
-                  href="https://cloud.jsxmail.org/sign-up"
+                  href={cloudUrl}
                   target="_blank"
                   className="font-medium px-10 py-6 text-base relative overflow-hidden group"
                   aria-label="Start sending bulk emails"
@@ -1562,7 +1568,7 @@ export default function CloudPage() {
                 color="primary"
                 variant="shadow"
                 as={Link}
-                href="https://cloud.jsxmail.org/sign-up"
+                href={cloudUrl}
                 target="_blank"
                 fullWidth
                 size="lg"
@@ -1652,7 +1658,7 @@ export default function CloudPage() {
           </motion.div>
 
           <motion.div variants={fadeInUp} className="w-full">
-            <CloudPricing />
+            <CloudPricing cloudUrl={cloudUrl} />
           </motion.div>
         </motion.div>
 
@@ -1667,8 +1673,7 @@ export default function CloudPage() {
   );
 }
 
-// Componente CloudPricing específico para a página da Cloud
-function CloudPricing() {
+function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
   const { data, isPending: isLoadingPricing } = usePricing();
   const emailPricing = data?.EMAIL_PRICING;
 
@@ -2204,7 +2209,7 @@ function CloudPricing() {
         >
           <Button
             as={Link}
-            href="https://cloud.jsxmail.org/sign-up"
+            href={cloudUrl}
             target="_blank"
             color="primary"
             variant="shadow"

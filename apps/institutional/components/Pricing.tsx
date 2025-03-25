@@ -1,13 +1,13 @@
 'use client';
 
 import { usePricing } from '@/lib/hooks';
-import { Button } from '@heroui/button';
+import { Button, Link } from '@heroui/react';
 import { Input } from '@heroui/input';
-import { Link } from '@heroui/link';
 import { Slider } from '@heroui/slider';
 import { Spinner } from '@heroui/spinner';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+import { getCloudUrl } from '@/lib/utils';
 
 type Price = {
   amount: number;
@@ -19,6 +19,7 @@ type Price = {
 export default function Pricing() {
   const { data, isPending: isLoadingPricing } = usePricing();
   const emailPricing = data?.EMAIL_PRICING;
+  const [cloudUrl, setCloudUrl] = useState('');
 
   const [prices, setPrices] = useState<Price[]>([]);
   const [value, setValue] = useState(0);
@@ -115,6 +116,10 @@ export default function Pricing() {
     setPrices(newPricing);
   }, [value, emailPricing]);
 
+  useEffect(() => {
+    setCloudUrl(getCloudUrl('/app'));
+  }, []);
+
   return (
     <div id="pricing" className="flex flex-col gap-9 items-center w-full mb-20">
       <h2 className="text-4xl font-bold text-center">Pricing</h2>
@@ -190,7 +195,7 @@ export default function Pricing() {
                 color="primary"
                 variant="flat"
                 className="w-fit"
-                href="https://cloud.jsxmail.org/app"
+                href={cloudUrl}
                 target="_blank"
                 aria-label="Go to JSX Mail Cloud"
               >
