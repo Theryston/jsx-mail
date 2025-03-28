@@ -669,6 +669,180 @@
           }
         }
       }
+    },
+    "/user/messages": {
+      "get": {
+        "description": "List all messages for the authenticated user with pagination and filtering options",
+        "parameters": [
+          {
+            "name": "take",
+            "in": "query",
+            "description": "Number of items to return per page (1-100)",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Filter messages from this date",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "Filter messages until this date",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "fromEmail",
+            "in": "query",
+            "description": "Filter messages by sender email",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            }
+          },
+          {
+            "name": "toEmail",
+            "in": "query",
+            "description": "Filter messages by recipient email",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            }
+          },
+          {
+            "name": "statuses",
+            "in": "query",
+            "description": "Filter messages by status (comma-separated list)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bulkSending",
+            "in": "query",
+            "description": "Filter messages by bulk sending ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of messages with pagination information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Message"
+                      }
+                    },
+                    "take": {
+                      "type": "integer",
+                      "description": "Number of items per page"
+                    },
+                    "page": {
+                      "type": "integer",
+                      "description": "Current page number"
+                    },
+                    "skip": {
+                      "type": "integer",
+                      "description": "Number of items skipped"
+                    },
+                    "total": {
+                      "type": "integer",
+                      "description": "Total number of messages"
+                    },
+                    "endDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "End date filter applied"
+                    },
+                    "startDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Start date filter applied"
+                    },
+                    "fromEmail": {
+                      "type": "string",
+                      "format": "email",
+                      "description": "Sender email filter applied"
+                    },
+                    "toEmail": {
+                      "type": "string",
+                      "format": "email",
+                      "description": "Recipient email filter applied"
+                    },
+                    "statuses": {
+                      "type": "string",
+                      "description": "Status filter applied"
+                    },
+                    "bulkSending": {
+                      "type": "string",
+                      "description": "Bulk sending ID filter applied"
+                    },
+                    "hasNext": {
+                      "type": "boolean",
+                      "description": "Whether there are more pages"
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "description": "Total number of pages"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - User does not have permission to list messages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

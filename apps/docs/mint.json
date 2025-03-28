@@ -112,6 +112,10 @@
       "pages": ["api-reference/introduction", "api-reference/authentication"]
     },
     {
+      "group": "User",
+      "pages": ["api-reference/endpoint/user/messages/list"]
+    },
+    {
       "group": "Sender",
       "pages": [
         "api-reference/endpoint/sender/send",
@@ -121,20 +125,20 @@
       ]
     },
     {
-      "group": "File",
-      "pages": [
-        "api-reference/endpoint/file/upload",
-        "api-reference/endpoint/file/list",
-        "api-reference/endpoint/file/delete"
-      ]
-    },
-    {
       "group": "Bulk Sending",
       "pages": [
         "api-reference/endpoint/bulk-sending/create",
         "api-reference/endpoint/bulk-sending/list",
         "api-reference/endpoint/bulk-sending/contact-group/create",
         "api-reference/endpoint/bulk-sending/contact-group/contact/create"
+      ]
+    },
+    {
+      "group": "File",
+      "pages": [
+        "api-reference/endpoint/file/upload",
+        "api-reference/endpoint/file/list",
+        "api-reference/endpoint/file/delete"
       ]
     }
   ],

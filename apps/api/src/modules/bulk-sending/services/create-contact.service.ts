@@ -7,6 +7,8 @@ import { PrismaService } from 'src/services/prisma.service';
 import { CreateContactDto } from '../bulk-sending.dto';
 import crypto from 'crypto';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 @Injectable()
 export class CreateContactService {
   constructor(private readonly prisma: PrismaService) {}
@@ -16,6 +18,12 @@ export class CreateContactService {
     userId: string,
     contactGroupId: string,
   ) {
+    email = email.toLowerCase().trim();
+
+    if (!EMAIL_REGEX.test(email)) {
+      throw new BadRequestException('Invalid email address');
+    }
+
     if (!email.includes('@simulator.amazonses.com')) {
       const existingContact = await this.prisma.contact.findFirst({
         where: { email, contactGroupId },
