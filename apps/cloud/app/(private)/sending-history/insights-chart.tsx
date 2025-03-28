@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import * as React from 'react';
@@ -11,9 +12,9 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from 'recharts';
+import moment from 'moment';
 
 interface InsightsChartProps {
   data: MessageInsightsResponse | undefined;
@@ -25,10 +26,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return (
       <div className="bg-zinc-800 p-3 rounded-lg border border-zinc-700 shadow-md">
         <p className="text-xs text-zinc-400 mb-1">
-          {new Date(label).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-          })}
+          {moment(label).format('MMM D')}
         </p>
         {payload.map((entry: any) => (
           <div key={entry.name} className="flex items-center gap-2">
@@ -114,13 +112,7 @@ export function InsightsChart({ data, isLoading }: InsightsChartProps) {
                 tickMargin={8}
                 minTickGap={32}
                 tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
-                tickFormatter={(value) => {
-                  const date = new Date(value);
-                  return date.toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                  });
-                }}
+                tickFormatter={(value) => moment(value).format('MMM D')}
               />
               <YAxis
                 tickLine={false}

@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-import moment from 'moment';
 
 export function getFilterWhereMessages(
   {
@@ -14,18 +13,12 @@ export function getFilterWhereMessages(
   }: any,
   userId: string,
 ) {
-  let statuses: string[] = statusesParam ? JSON.parse(statusesParam) : [];
+  let statuses: string[] = statusesParam
+    ? statusesParam.split(',').map((status: string) => status.trim())
+    : [];
 
-  if (endDate) {
-    endDate = new Date(
-      moment(endDate).add(2, 'day').endOf('day').format('YYYY-MM-DD'),
-    );
-  }
-  if (startDate) {
-    startDate = new Date(
-      moment(startDate).add(1, 'day').startOf('day').format('YYYY-MM-DD'),
-    );
-  }
+  if (endDate) endDate = new Date(endDate);
+  if (startDate) startDate = new Date(startDate);
 
   let where: Prisma.MessageWhereInput = {
     userId,
@@ -38,14 +31,17 @@ export function getFilterWhereMessages(
     where.createdAt = { ...(where.createdAt as any), gte: startDate } as any;
 
   if (fromEmail) where.sender = { ...where.sender, email: fromEmail } as any;
-  if (toEmail)
+
+  if (toEmail) {
     where.to = {
       ...where.to,
       equals: [...((where.to?.equals || []) as any), toEmail],
     } as any;
+  }
 
-  if (statuses.length)
+  if (statuses.length) {
     where.status = { ...(where.status as any), in: statuses as any } as any;
+  }
 
   if (bulkSending) where.bulkSendingId = bulkSending;
 

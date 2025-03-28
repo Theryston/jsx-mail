@@ -18,18 +18,21 @@ export interface MessageFilters {
   bulkSending?: string;
 }
 
-export function useMessages(
-  filters: MessageFilters,
-  refreshInterval: number | false,
+export function useMessagesFilters(
+  filters: MessageFilters | Omit<MessageFilters, 'page'>,
 ) {
   const searchParams = new URLSearchParams();
-  searchParams.set('page', filters.page.toString());
-  searchParams.set('take', PER_PAGE.toString());
-  searchParams.set('startDate', filters.startDate.format('YYYY-MM-DD'));
-  searchParams.set('endDate', filters.endDate.format('YYYY-MM-DD'));
+
+  searchParams.set('startDate', filters.startDate.toISOString());
+  searchParams.set('endDate', filters.endDate.toISOString());
+
+  if ('page' in filters) {
+    searchParams.set('page', filters.page.toString());
+    searchParams.set('take', PER_PAGE.toString());
+  }
 
   if (filters.statuses && filters.statuses.length > 0) {
-    searchParams.set('statuses', JSON.stringify(filters.statuses));
+    searchParams.set('statuses', filters.statuses.join(','));
   }
 
   if (filters.fromEmail) {
@@ -43,6 +46,15 @@ export function useMessages(
   if (filters.bulkSending) {
     searchParams.set('bulkSending', filters.bulkSending);
   }
+
+  return searchParams;
+}
+
+export function useMessages(
+  filters: MessageFilters,
+  refreshInterval: number | false,
+) {
+  const searchParams = useMessagesFilters(filters);
 
   return useQuery<MessagesPagination>({
     queryKey: ['messages', filters],
@@ -58,25 +70,7 @@ export function useMessageInsights(
   filters: Omit<MessageFilters, 'page'>,
   refreshInterval: number | false,
 ) {
-  const searchParams = new URLSearchParams();
-  searchParams.set('startDate', filters.startDate.format('YYYY-MM-DD'));
-  searchParams.set('endDate', filters.endDate.format('YYYY-MM-DD'));
-
-  if (filters.statuses && filters.statuses.length > 0) {
-    searchParams.set('statuses', JSON.stringify(filters.statuses));
-  }
-
-  if (filters.fromEmail) {
-    searchParams.set('fromEmail', filters.fromEmail);
-  }
-
-  if (filters.toEmail) {
-    searchParams.set('toEmail', filters.toEmail);
-  }
-
-  if (filters.bulkSending) {
-    searchParams.set('bulkSending', filters.bulkSending);
-  }
+  const searchParams = useMessagesFilters(filters);
 
   return useQuery<MessageInsightsResponse>({
     queryKey: ['messages-insights', filters],
