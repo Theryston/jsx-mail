@@ -740,6 +740,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "bulkSending",
+            "in": "query",
+            "description": "Filter messages by bulk sending ID",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -795,6 +803,10 @@
                     "statuses": {
                       "type": "string",
                       "description": "Status filter applied"
+                    },
+                    "bulkSending": {
+                      "type": "string",
+                      "description": "Bulk sending ID filter applied"
                     },
                     "hasNext": {
                       "type": "boolean",
