@@ -53,19 +53,21 @@ export class CreateSecurityCodeService {
     }
 
     const startOfHour = moment().startOf('hour').toDate();
+    const nextHour = moment().add(1, 'hour').startOf('hour').toDate();
 
     const securityCodesThisHour = await this.prisma.securityCode.count({
       where: {
         userId: user.id,
         createdAt: {
-          gt: startOfHour,
+          gte: startOfHour,
+          lte: nextHour,
         },
       },
     });
 
     if (securityCodesThisHour >= MAX_SECURITY_CODES_PER_HOUR) {
       throw new BadRequestException(
-        `Too many security codes, please try again in the next hour`,
+        `You can send a security code at ${moment(nextHour).format('HH:mm')}`,
       );
     }
 
