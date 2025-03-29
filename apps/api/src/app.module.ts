@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { UserModule } from './modules/user/user.module';
 import { AuthGuard } from './auth/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
@@ -15,6 +15,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { BetaPermissionCheckService } from './modules/user/services/beta-permission-check.service';
 import { BulkSendingModule } from './modules/bulk-sending/bulk-sending.module';
 import { NestjsFingerprintModule } from 'nestjs-fingerprint';
+import { CloudflareIpMiddleware } from './middleware/cloudflare-ip.middleware';
 
 @Module({
   imports: [
@@ -51,4 +52,8 @@ import { NestjsFingerprintModule } from 'nestjs-fingerprint';
     BetaPermissionCheckService,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CloudflareIpMiddleware).forRoutes('*');
+  }
+}

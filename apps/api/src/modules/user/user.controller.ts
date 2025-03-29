@@ -111,11 +111,12 @@ export class UserController {
     @Body() data: CreateUserDto,
     @Fingerprint() fp: IFingerprint,
     @RealIP() ipAddress: string,
+    @Request() req,
   ) {
     return this.createUserService.execute({
       ...data,
       fingerprint: fp.id,
-      ipAddress,
+      ipAddress: req.realIp || ipAddress,
     });
   }
 
