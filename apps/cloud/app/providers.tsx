@@ -24,12 +24,26 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
         <QueryClientProvider>
           <UTMProvider>
-            <CrispProvider>{children}</CrispProvider>
+            <CrispProvider>
+              <TurnstileProvider>{children}</TurnstileProvider>
+            </CrispProvider>
           </UTMProvider>
         </QueryClientProvider>
         <Toaster />
       </ThemeProvider>
     </Suspense>
+  );
+}
+
+function TurnstileProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback"
+        defer
+      />
+      {children}
+    </>
   );
 }
 

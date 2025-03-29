@@ -3,12 +3,15 @@ import { CreateUserDto } from '../user.dto';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'src/services/prisma.service';
 import axios, { AxiosInstance } from 'axios';
-
+import { VerifyTurnstileService } from './verify-turnstile.service';
 @Injectable()
 export class CreateUserService {
   ipHubClient: AxiosInstance;
 
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly verifyTurnstileService: VerifyTurnstileService,
+  ) {
     this.ipHubClient = axios.create({
       baseURL: 'http://v2.api.iphub.info',
       headers: {
@@ -23,9 +26,12 @@ export class CreateUserService {
     fingerprint,
     ipAddress,
     utm,
+    turnstileToken,
   }: CreateUserDto & { fingerprint: string; ipAddress: string }) {
     email = email.toLocaleLowerCase().trim();
     name = name.toLocaleLowerCase().trim();
+
+    await this.verifyTurnstileService.execute(turnstileToken);
 
     if (!fingerprint) {
       throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);

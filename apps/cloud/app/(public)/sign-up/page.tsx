@@ -45,6 +45,8 @@ type SignUpForm = z.infer<typeof signUpScheme>;
 export default function SignUp() {
   const [redirect, setRedirect] = useState('' as string);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileKey, setTurnstileKey] = useState<number>(0);
   const searchParams = useSearchParams();
   const form = useForm<SignUpForm>({
     resolver: zodResolver(signUpScheme),
@@ -56,23 +58,54 @@ export default function SignUp() {
     setRedirect(handleRedirectUrl(searchParams));
   }, [searchParams]);
 
+  const renderTurnstile = () => {
+    const turnstile = window.turnstile;
+    turnstile.render('#turnstile-signup', {
+      sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+      callback: (token: string) => {
+        setTurnstileToken(token);
+      },
+      size: 'flexible',
+    });
+  };
+
+  useEffect(() => {
+    window.onloadTurnstileCallback = () => renderTurnstile();
+  }, []);
+
   const togglePasswordVisibility = () => setIsPasswordVisible((prev) => !prev);
+
+  const resetTurnstile = () => {
+    setTurnstileToken(null);
+    setTurnstileKey((prev) => prev + 1);
+    setTimeout(() => renderTurnstile(), 100);
+  };
 
   const onSubmit = useCallback(
     async ({ name, email, password }: SignUpForm) => {
-      const utmParams = localStorage.getItem('utm_params');
-      const utm = utmParams ? JSON.parse(utmParams) : undefined;
+      if (!turnstileToken) {
+        toast.error('Please complete the captcha');
+        return;
+      }
 
-      await signUp({ name, email, password, utm });
+      try {
+        const utmParams = localStorage.getItem('utm_params');
+        const utm = utmParams ? JSON.parse(utmParams) : undefined;
 
-      sendGTMEvent({ event: 'sign_up' });
+        await signUp({ name, email, password, utm, turnstileToken });
 
-      toast.success('Account created successfully');
-      router.push(
-        `/security-code?permission=self:email-validate&email=${email}&redirect=${encodeURIComponent(`/verify-email?redirect=${redirect}`)}`,
-      );
+        sendGTMEvent({ event: 'sign_up' });
+
+        toast.success('Account created successfully');
+        router.push(
+          `/security-code?permission=self:email-validate&email=${email}&redirect=${encodeURIComponent(`/verify-email?redirect=${redirect}`)}`,
+        );
+      } catch (error) {
+        resetTurnstile();
+        throw error;
+      }
     },
-    [router, redirect, signUp],
+    [router, redirect, signUp, turnstileToken],
   );
 
   return (
@@ -175,10 +208,13 @@ export default function SignUp() {
             )}
           />
 
+          <div className="w-full" id="turnstile-signup" key={turnstileKey} />
+
           <Button
             type="submit"
             className="w-full"
             isLoading={form.formState.isSubmitting}
+            disabled={!turnstileToken}
           >
             Sign up
           </Button>

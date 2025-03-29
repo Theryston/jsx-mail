@@ -1,8 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
 import { CreateSecurityCodeDto } from '../user.dto';
 import { render as jsxMailRender } from 'jsx-mail';
+import moment from 'moment';
+import {
+  MAX_SECURITY_CODES_PER_HOUR,
+  MAX_SECURITY_CODES_PER_MINUTE,
+} from 'src/utils/constants';
 
 @Injectable()
 export class CreateSecurityCodeService {
@@ -26,6 +31,42 @@ export class CreateSecurityCodeService {
       return {
         message: 'Security code sent successfully',
       };
+    }
+
+    const oneMinuteAgo = moment().startOf('minute').toDate();
+    const nextMinute = moment().add(1, 'minute').startOf('minute').toDate();
+
+    const securityCodesInLastMinute = await this.prisma.securityCode.count({
+      where: {
+        userId: user.id,
+        createdAt: {
+          gte: oneMinuteAgo,
+          lte: nextMinute,
+        },
+      },
+    });
+
+    if (securityCodesInLastMinute >= MAX_SECURITY_CODES_PER_MINUTE) {
+      throw new BadRequestException(
+        `You can send a security code at ${moment(nextMinute).format('HH:mm')}`,
+      );
+    }
+
+    const startOfHour = moment().startOf('hour').toDate();
+
+    const securityCodesThisHour = await this.prisma.securityCode.count({
+      where: {
+        userId: user.id,
+        createdAt: {
+          gt: startOfHour,
+        },
+      },
+    });
+
+    if (securityCodesThisHour >= MAX_SECURITY_CODES_PER_HOUR) {
+      throw new BadRequestException(
+        `Too many security codes, please try again in the next hour`,
+      );
     }
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();

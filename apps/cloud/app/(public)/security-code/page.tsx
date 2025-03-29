@@ -81,7 +81,7 @@ export default function SecurityCode() {
     const sendCode = async () => {
       await createSecurityCode({ email });
 
-      let pageUrl = new URL(window.location.href);
+      const pageUrl = new URL(window.location.href);
       pageUrl.searchParams.set('isSubmitted', 'true');
       router.push(pageUrl.toString());
 
