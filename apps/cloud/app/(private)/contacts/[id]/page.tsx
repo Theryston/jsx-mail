@@ -217,105 +217,110 @@ function ImportsBanner({ imports }: { imports: ContactImport[] }) {
 
   return (
     <div className="flex flex-col gap-2">
-      {imports.map((importItem) => (
-        <div
-          key={importItem.id}
-          className={cn(
-            'rounded-md p-4 flex flex-col md:flex-row justify-between md:items-center gap-2',
-            {
-              'bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse':
-                importItem.status === 'pending' ||
-                importItem.status === 'processing',
-              'bg-green-500/10 text-green-500 border border-green-500/20':
-                importItem.status === 'completed',
-              'bg-red-500/10 text-red-500 border border-red-500/20':
-                importItem.status === 'failed',
-            },
-          )}
-        >
-          <div className="flex flex-col gap-1">
-            {(importItem.status === 'pending' ||
-              importItem.status === 'processing') && (
-              <div className="flex items-center gap-2">
-                <Loader2 className="size-4 animate-spin" />
-                <p className="text-sm">Importing your contacts...</p>
-              </div>
-            )}
+      {imports.map((importItem) => {
+        const isProcessing =
+          importItem.status === 'pending' || importItem.status === 'processing';
 
-            {importItem.status === 'failed' && (
-              <p className="text-sm">
-                There was an error importing the contacts.
-              </p>
+        return (
+          <div
+            key={importItem.id}
+            className={cn(
+              'rounded-md p-4 flex flex-col md:flex-row justify-between md:items-center gap-2',
+              {
+                'bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse':
+                  isProcessing,
+                'bg-green-500/10 text-green-500 border border-green-500/20':
+                  importItem.status === 'completed',
+                'bg-red-500/10 text-red-500 border border-red-500/20':
+                  importItem.status === 'failed',
+              },
             )}
+          >
+            <div className="flex flex-col gap-1">
+              {isProcessing && (
+                <div className="flex items-center gap-2">
+                  <Loader2 className="size-4 animate-spin" />
+                  <p className="text-sm">Importing your contacts...</p>
+                </div>
+              )}
 
-            {importItem.status === 'completed' && (
-              <p className="text-sm">
-                The contacts were imported successfully.
-              </p>
-            )}
+              {importItem.status === 'failed' && (
+                <p className="text-sm">
+                  There was an error importing the contacts.
+                </p>
+              )}
 
-            {importItem._count.failures > 0 && (
-              <p className="text-xs">
-                {importItem._count.failures} failures found.
-              </p>
-            )}
+              {importItem.status === 'completed' && (
+                <p className="text-sm">
+                  The contacts were imported successfully.
+                </p>
+              )}
 
-            {importItem._count.contacts > 0 && (
-              <p className="text-xs">
-                {importItem._count.contacts} contacts imported.
-              </p>
-            )}
+              {importItem._count.failures > 0 && (
+                <p className="text-xs">
+                  {importItem._count.failures} failures found.
+                </p>
+              )}
 
-            {importItem.totalLines > 0 && (
-              <p className="text-xs">
-                {importItem.processedLines}/{importItem.totalLines} lines
-                processed
-              </p>
-            )}
+              {importItem._count.contacts > 0 && (
+                <p className="text-xs">
+                  {importItem._count.contacts} contacts imported.
+                </p>
+              )}
 
-            <p className="text-xs">
-              You can close this tab, the import will continue to process in the
-              background
-            </p>
+              {importItem.totalLines > 0 && (
+                <p className="text-xs">
+                  {importItem.processedLines}/{importItem.totalLines} lines
+                  processed
+                </p>
+              )}
+
+              {isProcessing && (
+                <p className="text-xs">
+                  You can close this tab, the import will continue to process in
+                  the background
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              {(importItem.status === 'completed' ||
+                importItem.status === 'failed') && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-white"
+                  onClick={() => {
+                    setSelectedImport(importItem);
+                    markContactImportAsRead(importItem.id);
+                  }}
+                  disabled={
+                    isMarkingAsRead && selectedImport?.id === importItem.id
+                  }
+                >
+                  {isMarkingAsRead && selectedImport?.id === importItem.id
+                    ? 'Ignoring...'
+                    : 'Ignore'}
+                </Button>
+              )}
+
+              {importItem._count.failures > 0 && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-white"
+                  onClick={() => {
+                    setSelectedImport(importItem);
+                    setIsViewingErrors(true);
+                  }}
+                >
+                  View errors
+                </Button>
+              )}
+            </div>
           </div>
-
-          <div className="flex gap-2">
-            {(importItem.status === 'completed' ||
-              importItem.status === 'failed') && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-white"
-                onClick={() => {
-                  setSelectedImport(importItem);
-                  markContactImportAsRead(importItem.id);
-                }}
-                disabled={
-                  isMarkingAsRead && selectedImport?.id === importItem.id
-                }
-              >
-                {isMarkingAsRead && selectedImport?.id === importItem.id
-                  ? 'Ignoring...'
-                  : 'Ignore'}
-              </Button>
-            )}
-
-            {importItem._count.failures > 0 && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-white"
-                onClick={() => {
-                  setSelectedImport(importItem);
-                  setIsViewingErrors(true);
-                }}
-              >
-                View errors
-              </Button>
-            )}
-          </div>
-        </div>
-      ))}
+        );
+      })}
 
       <ViewErrorsDialog
         isOpen={isViewingErrors}
