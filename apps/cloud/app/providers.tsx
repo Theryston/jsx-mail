@@ -11,6 +11,7 @@ import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { useState, useEffect } from 'react';
 import { Crisp } from 'crisp-sdk-web';
 import { useSearchParams } from 'next/navigation';
+import Script from 'next/script';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -38,7 +39,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 function TurnstileProvider({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <script
+      <Script
         src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback"
         defer
       />
