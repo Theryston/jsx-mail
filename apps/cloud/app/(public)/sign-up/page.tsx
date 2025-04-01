@@ -21,6 +21,7 @@ import { useSignUp } from '@/hooks/user';
 import { toast } from '@jsx-mail/ui/sonner';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { sendGTMEvent } from '@next/third-parties/google';
+import Script from 'next/script';
 
 const signUpScheme = z
   .object({
@@ -110,6 +111,8 @@ export default function SignUp() {
 
   return (
     <Container anonymousHeader>
+      <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback" />
+
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
