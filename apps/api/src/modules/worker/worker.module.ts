@@ -8,9 +8,17 @@ import { UserModule } from '../user/user.module';
 import { DeadMessagesService } from './services/dead-messages.service';
 import { ResendProcessingMessagesService } from './services/resend-processing-messages.service';
 import { EmailModule } from '../email/email.module';
+import { BullModule } from '@nestjs/bullmq';
+import { WorkerProcessor } from './worker.processor';
 
 @Module({
-  imports: [UserModule, EmailModule],
+  imports: [
+    BullModule.registerQueue({
+      name: 'worker',
+    }),
+    UserModule,
+    EmailModule,
+  ],
   providers: [
     PrismaService,
     StorageSizeService,
@@ -18,6 +26,7 @@ import { EmailModule } from '../email/email.module';
     UpdateChargeMonthService,
     DeadMessagesService,
     ResendProcessingMessagesService,
+    WorkerProcessor,
   ],
   controllers: [WorkerController],
 })
