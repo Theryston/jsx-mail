@@ -12,6 +12,7 @@ export function useSecurityCodeTiming() {
   const [timeUntilNext, setTimeUntilNext] = useState<string>('');
   const [history, setHistory] = useState<SecurityCodeHistory[]>([]);
   const [lastSentAt, setLastSentAt] = useState<number | null>(null);
+  const [isClearingLastSentAt, setIsClearingLastSentAt] = useState(false);
 
   useEffect(() => {
     const savedHistory = localStorage.getItem('securityCodeHistory');
@@ -37,6 +38,10 @@ export function useSecurityCodeTiming() {
 
   useEffect(() => {
     const checkTiming = () => {
+      if (isClearingLastSentAt) {
+        return;
+      }
+
       const now = moment();
       const nextMinute = moment().add(1, 'minute').startOf('minute');
       const nextHour = moment().add(1, 'hour').startOf('hour');
@@ -53,9 +58,11 @@ export function useSecurityCodeTiming() {
         if (minutesSinceLastSent < 1) {
           const secondsUntilNext = nextMinute.diff(now, 'seconds');
           if (secondsUntilNext <= 0) {
+            setIsClearingLastSentAt(true);
             setLastSentAt(null);
             setCanSendCode(true);
             setTimeUntilNext('');
+            setTimeout(() => setIsClearingLastSentAt(false), 100);
           } else {
             setTimeUntilNext(
               `${Math.floor(secondsUntilNext / 60)}m ${secondsUntilNext % 60}s`,
@@ -69,17 +76,21 @@ export function useSecurityCodeTiming() {
           const minutesUntilNext = nextHour.diff(now, 'minutes');
           const secondsUntilNext = nextHour.diff(now, 'seconds') % 60;
           if (minutesUntilNext <= 0 && secondsUntilNext <= 0) {
+            setIsClearingLastSentAt(true);
             setLastSentAt(null);
             setCanSendCode(true);
             setTimeUntilNext('');
+            setTimeout(() => setIsClearingLastSentAt(false), 100);
           } else {
             setTimeUntilNext(`${minutesUntilNext}m ${secondsUntilNext}s`);
             setCanSendCode(false);
           }
         } else {
+          setIsClearingLastSentAt(true);
           setLastSentAt(null);
           setCanSendCode(true);
           setTimeUntilNext('');
+          setTimeout(() => setIsClearingLastSentAt(false), 100);
         }
       } else {
         setCanSendCode(true);
@@ -91,7 +102,7 @@ export function useSecurityCodeTiming() {
     const interval = setInterval(checkTiming, 1000);
 
     return () => clearInterval(interval);
-  }, [history, lastSentAt]);
+  }, [history, lastSentAt, isClearingLastSentAt]);
 
   const recordCodeSent = () => {
     const now = moment().valueOf();
