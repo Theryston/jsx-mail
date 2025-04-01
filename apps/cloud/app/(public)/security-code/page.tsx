@@ -22,7 +22,6 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from '@jsx-mail/ui/input-otp';
-import { useSecurityCodeTiming } from '@/hooks/use-security-code-timing';
 
 const securityCodeSchema = z.object({
   code: z
@@ -39,8 +38,6 @@ export default function SecurityCode() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { canSendCode, timeUntilNext, recordCodeSent } =
-    useSecurityCodeTiming();
 
   const form = useForm<SecurityCodeForm>({
     resolver: zodResolver(securityCodeSchema),
@@ -82,15 +79,7 @@ export default function SecurityCode() {
     }
 
     const sendCode = async () => {
-      if (!canSendCode) {
-        toast.error(
-          `Please wait ${timeUntilNext} before requesting another code`,
-        );
-        return;
-      }
-
       await createSecurityCode({ email });
-      recordCodeSent();
 
       const pageUrl = new URL(window.location.href);
       pageUrl.searchParams.set('isSubmitted', 'true');
@@ -100,15 +89,7 @@ export default function SecurityCode() {
     };
 
     sendCode();
-  }, [
-    email,
-    isSubmitted,
-    router,
-    createSecurityCode,
-    canSendCode,
-    timeUntilNext,
-    recordCodeSent,
-  ]);
+  }, [email, isSubmitted, router, createSecurityCode]);
 
   const onSubmit = useCallback(
     async ({ code }: SecurityCodeForm) => {
@@ -133,17 +114,9 @@ export default function SecurityCode() {
   const handleResendCode = useCallback(async () => {
     if (!email) return;
 
-    if (!canSendCode) {
-      toast.error(
-        `Please wait ${timeUntilNext} before requesting another code`,
-      );
-      return;
-    }
-
     await createSecurityCode({ email });
-    recordCodeSent();
     toast.success('Security code resent');
-  }, [email, createSecurityCode, canSendCode, timeUntilNext, recordCodeSent]);
+  }, [email, createSecurityCode]);
 
   return (
     <Container anonymousHeader>
@@ -207,9 +180,8 @@ export default function SecurityCode() {
             onClick={handleResendCode}
             size="sm"
             className="text-xs"
-            disabled={!canSendCode}
           >
-            {canSendCode ? 'Resend code' : `Resend code in ${timeUntilNext}`}
+            Resend code
           </Button>
         </form>
       </Form>
