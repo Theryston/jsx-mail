@@ -23,18 +23,10 @@ export class WorkerProcessor extends WorkerHost {
 
   async process(job: Job): Promise<void> {
     const start = moment();
-    console.log(
-      `[WORKER] ${job.name} started at ${start.format('YYYY-MM-DD HH:mm:ss')}`,
-    );
 
     const result = await this.run(job);
 
     const end = moment();
-
-    console.log(
-      `[WORKER] ${job.name} finished with result: ${JSON.stringify(result)} in ${end.diff(start, 'seconds')}s`,
-    );
-
     const duration = end.diff(start, 'seconds');
 
     console.log(
