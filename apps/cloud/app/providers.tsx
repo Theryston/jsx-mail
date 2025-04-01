@@ -41,7 +41,7 @@ function TurnstileProvider({ children }: { children: React.ReactNode }) {
     <>
       <Script
         src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback"
-        defer
+        strategy="beforeInteractive"
       />
       {children}
     </>
