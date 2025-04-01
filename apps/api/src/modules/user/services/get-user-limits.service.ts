@@ -35,9 +35,6 @@ export class GetUserLimitsService {
       where: {
         userId,
         deletedAt: null,
-        createdAt: {
-          gte: moment().startOf('month').toDate(),
-        },
         hasCharged: false,
         sentAt: {
           not: null,
