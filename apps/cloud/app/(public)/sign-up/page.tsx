@@ -21,7 +21,7 @@ import { useSignUp } from '@/hooks/user';
 import { toast } from '@jsx-mail/ui/sonner';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { sendGTMEvent } from '@next/third-parties/google';
-import Script from 'next/script';
+import { Turnstile } from 'next-turnstile';
 
 const signUpScheme = z
   .object({
@@ -59,27 +59,11 @@ export default function SignUp() {
     setRedirect(handleRedirectUrl(searchParams));
   }, [searchParams]);
 
-  const renderTurnstile = () => {
-    const turnstile = window.turnstile;
-    turnstile.render('#turnstile-signup', {
-      sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
-      callback: (token: string) => {
-        setTurnstileToken(token);
-      },
-      size: 'flexible',
-    });
-  };
-
-  useEffect(() => {
-    window.onloadTurnstileCallback = () => renderTurnstile();
-  }, []);
-
   const togglePasswordVisibility = () => setIsPasswordVisible((prev) => !prev);
 
   const resetTurnstile = () => {
     setTurnstileToken(null);
     setTurnstileKey((prev) => prev + 1);
-    setTimeout(() => renderTurnstile(), 100);
   };
 
   const onSubmit = useCallback(
@@ -111,8 +95,6 @@ export default function SignUp() {
 
   return (
     <Container anonymousHeader>
-      <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback" />
-
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -211,7 +193,14 @@ export default function SignUp() {
             )}
           />
 
-          <div className="w-full" id="turnstile-signup" key={turnstileKey} />
+          <div className="w-full" key={turnstileKey}>
+            <Turnstile
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              size={'flexible' as any}
+              onVerify={(token) => setTurnstileToken(token)}
+            />
+          </div>
 
           <Button
             type="submit"
