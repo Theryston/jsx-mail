@@ -39,10 +39,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 function TurnstileProvider({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback"
-        strategy="beforeInteractive"
-      />
+      <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback" />
       {children}
     </>
   );
