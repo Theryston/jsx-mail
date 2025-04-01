@@ -2,7 +2,6 @@ export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 export const MONEY_SCALE = 1000000;
 export const GATEWAY_SCALE = 100;
 export const CURRENCY = 'USD';
-// export const FREE_EMAILS_PER_MONTH = 100;
 export const MAX_BALANCE_TO_BE_ELIGIBLE_FOR_FREE = 0.05 * MONEY_SCALE; // $0.05 | if the user balance is more then this amount, the user is not eligible for free emails
 export const FREE_EMAILS_PER_MONTH = 10_000;
 export const MINIMUM_ADD_BALANCE = 1 * MONEY_SCALE; // $1.00
@@ -15,7 +14,8 @@ export const BOUNCE_RATE_LIMIT = 0.05; // 5%
 export const COMPLAINT_RATE_LIMIT = 0.01; // 1%
 export const GAP_TO_CHECK_SECURITY_INSIGHTS = 5; // 5 days
 export const MIN_EMAILS_FOR_RATE_CALCULATION = 10; // 10 emails
-
+export const MAX_SECURITY_CODES_PER_HOUR = 10; // 10 security codes per hour
+export const MAX_SECURITY_CODES_PER_MINUTE = 1; // 1 security code per minute
 export const MESSAGES_STATUS = [
   {
     value: 'queued',

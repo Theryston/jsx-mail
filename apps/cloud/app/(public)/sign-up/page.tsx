@@ -21,6 +21,7 @@ import { useSignUp } from '@/hooks/user';
 import { toast } from '@jsx-mail/ui/sonner';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { sendGTMEvent } from '@next/third-parties/google';
+import { Turnstile } from 'next-turnstile';
 
 const signUpScheme = z
   .object({
@@ -45,6 +46,8 @@ type SignUpForm = z.infer<typeof signUpScheme>;
 export default function SignUp() {
   const [redirect, setRedirect] = useState('' as string);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileKey, setTurnstileKey] = useState<number>(0);
   const searchParams = useSearchParams();
   const form = useForm<SignUpForm>({
     resolver: zodResolver(signUpScheme),
@@ -58,21 +61,36 @@ export default function SignUp() {
 
   const togglePasswordVisibility = () => setIsPasswordVisible((prev) => !prev);
 
+  const resetTurnstile = () => {
+    setTurnstileToken(null);
+    setTurnstileKey((prev) => prev + 1);
+  };
+
   const onSubmit = useCallback(
     async ({ name, email, password }: SignUpForm) => {
-      const utmParams = localStorage.getItem('utm_params');
-      const utm = utmParams ? JSON.parse(utmParams) : undefined;
+      if (!turnstileToken) {
+        toast.error('Please complete the captcha');
+        return;
+      }
 
-      await signUp({ name, email, password, utm });
+      try {
+        const utmParams = localStorage.getItem('utm_params');
+        const utm = utmParams ? JSON.parse(utmParams) : undefined;
 
-      sendGTMEvent({ event: 'sign_up' });
+        await signUp({ name, email, password, utm, turnstileToken });
 
-      toast.success('Account created successfully');
-      router.push(
-        `/security-code?permission=self:email-validate&email=${email}&redirect=${encodeURIComponent(`/verify-email?redirect=${redirect}`)}`,
-      );
+        sendGTMEvent({ event: 'sign_up' });
+
+        toast.success('Account created successfully');
+        router.push(
+          `/security-code?permission=self:email-validate&email=${email}&redirect=${encodeURIComponent(`/verify-email?redirect=${redirect}`)}`,
+        );
+      } catch (error) {
+        resetTurnstile();
+        throw error;
+      }
     },
-    [router, redirect, signUp],
+    [router, redirect, signUp, turnstileToken],
   );
 
   return (
@@ -175,10 +193,20 @@ export default function SignUp() {
             )}
           />
 
+          <div className="w-full" key={turnstileKey}>
+            <Turnstile
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              size={'flexible' as any}
+              onVerify={(token) => setTurnstileToken(token)}
+            />
+          </div>
+
           <Button
             type="submit"
             className="w-full"
             isLoading={form.formState.isSubmitting}
+            disabled={!turnstileToken}
           >
             Sign up
           </Button>

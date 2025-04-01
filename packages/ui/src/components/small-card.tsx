@@ -20,8 +20,8 @@ export function SmallCard({
 }) {
   return (
     <div className="flex flex-col gap-8 bg-zinc-900 p-4 rounded-2xl">
-      <div className="flex items-center gap-1">
-        <h2 className="text-xs font-medium">{title}</h2>
+      <div className="flex items-start gap-1">
+        <h2 className="text-xs font-medium leading-3">{title}</h2>
         {description && (
           <TooltipProvider>
             <Tooltip>

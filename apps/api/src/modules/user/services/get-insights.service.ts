@@ -14,13 +14,14 @@ export class GetInsightsService {
   ) {}
 
   async execute(userId: string) {
-    const monthStart = moment().startOf('month');
+    const last30Days = moment().subtract(30, 'days');
+
     const messagesCount = await this.prisma.message.groupBy({
       by: ['status'],
       where: {
         deletedAt: null,
         sentAt: {
-          gte: monthStart.toDate(),
+          gte: last30Days.toDate(),
         },
         userId,
       },
@@ -46,7 +47,7 @@ export class GetInsightsService {
       where: {
         deletedAt: null,
         sentAt: {
-          gte: monthStart.toDate(),
+          gte: last30Days.toDate(),
         },
         sentDay: {
           not: null,
@@ -87,20 +88,21 @@ export class GetInsightsService {
       DATA: [
         balanceData,
         {
-          title: 'Emails sent this month',
+          title: 'Recently sent emails',
           value: formatNumber(totalMessages),
-          description: 'The number of emails you have sent this month',
+          description: 'The number of emails you have sent in the last 30 days',
         },
         {
-          title: 'Open rate',
+          title: 'Recently opened emails',
           value: `${((openRate || 0) * 100).toFixed(2)}%`,
-          description: 'The percentage of recipients who opened your email',
+          description:
+            'The percentage of recipients who opened your email in the last 30 days. This metric helps measure the effectiveness of your email campaigns and the engagement of your audience.',
         },
         {
-          title: 'Click rate',
+          title: 'Recently clicked emails',
           value: `${((clickRate || 0) * 100).toFixed(2)}%`,
           description:
-            'The percentage of recipients who clicked on links within your email content. This metric helps measure engagement and the effectiveness of your call-to-action elements.',
+            'The percentage of recipients who clicked on links within your email content in the last 30 days. This metric helps measure engagement and the effectiveness of your call-to-action elements.',
         },
       ],
     };

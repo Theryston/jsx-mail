@@ -1,49 +1,60 @@
 import { Controller, Post } from '@nestjs/common';
 import { Permissions } from 'src/auth/permissions.decorator';
 import { PERMISSIONS } from 'src/auth/permissions';
-import { ChargeService } from './services/charge.service';
-import { StorageSizeService } from './services/storage-size.service';
-import { UpdateChargeMonthService } from './services/update-charge-month.service';
-import { DeadMessagesService } from './services/dead-messages.service';
-import { ResendProcessingMessagesService } from './services/resend-processing-messages.service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Controller('worker')
 export class WorkerController {
-  constructor(
-    private readonly chargeService: ChargeService,
-    private readonly storageSizeService: StorageSizeService,
-    private readonly updateChargeMonthService: UpdateChargeMonthService,
-    private readonly deadMessagesService: DeadMessagesService,
-    private readonly resendProcessingMessagesService: ResendProcessingMessagesService,
-  ) {}
+  constructor(@InjectQueue('worker') private readonly workerQueue: Queue) {}
 
   @Post('update-charge-month')
   @Permissions([PERMISSIONS.OTHER_RUN_WORKERS.value])
-  updateChargeMonth() {
-    return this.updateChargeMonthService.execute();
+  async updateChargeMonth() {
+    await this.workerQueue.add('update-charge-month', {});
+
+    return {
+      message: 'Update charge month job added to queue',
+    };
   }
 
   @Post('charge')
   @Permissions([PERMISSIONS.OTHER_RUN_WORKERS.value])
-  charge() {
-    return this.chargeService.execute();
+  async charge() {
+    await this.workerQueue.add('charge', {});
+
+    return {
+      message: 'Charge job added to queue',
+    };
   }
 
   @Post('storage-size')
   @Permissions([PERMISSIONS.OTHER_RUN_WORKERS.value])
-  storageSize() {
-    return this.storageSizeService.execute();
+  async storageSize() {
+    await this.workerQueue.add('storage-size', {});
+
+    return {
+      message: 'Storage size job added to queue',
+    };
   }
 
   @Post('dead-messages')
   @Permissions([PERMISSIONS.OTHER_RUN_WORKERS.value])
-  deadMessages() {
-    return this.deadMessagesService.execute();
+  async deadMessages() {
+    await this.workerQueue.add('dead-messages', {});
+
+    return {
+      message: 'Dead messages job added to queue',
+    };
   }
 
   @Post('resend-processing-messages')
   @Permissions([PERMISSIONS.OTHER_RUN_WORKERS.value])
-  resendProcessingMessages() {
-    return this.resendProcessingMessagesService.execute();
+  async resendProcessingMessages() {
+    await this.workerQueue.add('resend-processing-messages', {});
+
+    return {
+      message: 'Resend processing messages job added to queue',
+    };
   }
 }

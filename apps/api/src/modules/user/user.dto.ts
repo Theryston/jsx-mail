@@ -32,6 +32,9 @@ export class CreateUserDto {
   @Length(6, 100)
   password: string;
 
+  @IsNotEmpty()
+  turnstileToken: string;
+
   @IsOptional()
   @IsObject()
   @ValidateNested()
