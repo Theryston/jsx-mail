@@ -14,6 +14,9 @@ export class EmailWebhookService {
 
   async execute(data: any) {
     try {
+      console.log(
+        `[EMAIL_WEBHOOK_SERVICE] received data: ${JSON.stringify(data, null, 2)}`,
+      );
       const externalId = data?.mail?.messageId;
       if (!externalId) return 'ignored because the externalId is missing';
       console.log(`[EMAIL_WEBHOOK_SERVICE] received data from: ${externalId}`);
