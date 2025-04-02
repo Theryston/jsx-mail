@@ -698,6 +698,15 @@
             }
           },
           {
+            "name": "includeStatusHistory",
+            "in": "query",
+            "description": "Include status history in the response",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
             "name": "startDate",
             "in": "query",
             "description": "Filter messages from this date",
