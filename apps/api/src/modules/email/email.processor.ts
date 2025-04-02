@@ -106,7 +106,10 @@ export class EmailProcessor extends WorkerHost {
 
     let to: string[] = data.to;
 
-    if (process.env.NODE_ENV === 'development') {
+    if (
+      process.env.NODE_ENV === 'development' &&
+      !to.find((t) => t.includes(process.env.DEFAULT_USER_EMAIL as string))
+    ) {
       let newTo = 'success@simulator.amazonses.com';
 
       if (data.to.find((t) => t.includes('bounce'))) {
