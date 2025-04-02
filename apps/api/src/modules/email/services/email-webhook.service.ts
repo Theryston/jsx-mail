@@ -21,7 +21,7 @@ export class EmailWebhookService {
       if (!externalId) return 'ignored because the externalId is missing';
       console.log(`[EMAIL_WEBHOOK_SERVICE] received data from: ${externalId}`);
 
-      const newStatus: MessageStatus | undefined = {
+      let newStatus: MessageStatus | undefined = {
         Send: 'sent',
         RenderingFailure: 'failed',
         Reject: 'reject',
@@ -48,7 +48,26 @@ export class EmailWebhookService {
 
       if (!message) return 'ignored because the message was not found';
 
-      await this.updateMessageStatusService.execute(message.id, newStatus);
+      let description: string | undefined;
+
+      if (newStatus === 'clicked') {
+        const link = data?.click?.url;
+
+        if (link.startsWith(`${process.env.CLOUD_FRONTEND_URL}/unsubscribe`)) {
+          console.log(`[EMAIL_WEBHOOK_SERVICE] unsubscribe link: ${link}`);
+
+          description = 'The recipient clicked the unsubscribe link';
+          newStatus = message.status;
+        } else {
+          description = `The recipient clicked the link in the email: ${link}`;
+        }
+      }
+
+      await this.updateMessageStatusService.execute(
+        message.id,
+        newStatus,
+        description,
+      );
 
       if (newStatus === 'bonce' || newStatus === 'complaint') {
         await this.checkUserEmailStatsService.execute(message.userId);
