@@ -78,6 +78,7 @@ export class SenderSendEmailService {
 
     let message = await this.prisma.message.create({
       data: {
+        status: 'queued',
         body: html,
         subject,
         to,
@@ -103,6 +104,14 @@ export class SenderSendEmailService {
           : undefined,
       },
       select: messageSelect,
+    });
+
+    await this.prisma.messageStatusHistory.create({
+      data: {
+        messageId: message.id,
+        status: 'queued',
+        description: 'Added email to queue',
+      },
     });
 
     await this.sendEmailService.execute({

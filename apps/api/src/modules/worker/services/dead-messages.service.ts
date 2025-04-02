@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import moment from 'moment';
 import { PrismaService } from 'src/services/prisma.service';
-
+import { UpdateMessageStatusService } from 'src/modules/email/services/update-message-status.service';
 @Injectable()
 export class DeadMessagesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly updateMessageStatusService: UpdateMessageStatusService,
+  ) {}
 
   async execute() {
     console.log(`[DEAD_MESSAGES] started at: ${new Date()}`);
@@ -29,12 +32,11 @@ export class DeadMessagesService {
     const failedMessages = [];
 
     for (const message of messages) {
-      await this.prisma.message.update({
-        where: { id: message.id },
-        data: {
-          status: 'failed',
-        },
-      });
+      await this.updateMessageStatusService.execute(
+        message.id,
+        'failed',
+        'Failed because message was created before 30 days ago and still in processing or queued',
+      );
 
       failedMessages.push(message.id);
 
