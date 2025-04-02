@@ -215,8 +215,8 @@ export class UserController {
 
   @Get('messages/:id')
   @Permissions([PERMISSIONS.SELF_GET_MESSAGE.value])
-  getMessage(@Param('id') id: string) {
-    return this.getMessageService.execute(id);
+  getMessage(@Param('id') id: string, @Request() req) {
+    return this.getMessageService.execute(id, req.user.id);
   }
 
   @Post('checkout')
