@@ -29,6 +29,7 @@ import { ImpersonateUserService } from './services/impersonate-user.service';
 import { GetUserLimitsService } from './services/get-user-limits.service';
 import { BlockPermissionService } from './services/block-permission.service';
 import { VerifyTurnstileService } from './services/verify-turnstile.service';
+import { GetMessageService } from './services/get-message.service';
 
 @Module({
   controllers: [UserController],
@@ -60,6 +61,7 @@ import { VerifyTurnstileService } from './services/verify-turnstile.service';
     GetUserLimitsService,
     BlockPermissionService,
     VerifyTurnstileService,
+    GetMessageService,
   ],
   imports: [EmailModule, SessionModule],
   exports: [

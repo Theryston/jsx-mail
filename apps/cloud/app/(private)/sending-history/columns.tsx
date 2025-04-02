@@ -19,6 +19,9 @@ export const columns: ColumnDef<Message>[] = [
   {
     accessorKey: 'to',
     header: 'To',
+    cell: ({ row }) => {
+      return <span>{row.original.to.join(', ')}</span>;
+    },
   },
   {
     accessorKey: 'subject',

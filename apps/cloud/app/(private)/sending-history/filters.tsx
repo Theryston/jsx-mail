@@ -153,7 +153,7 @@ export function Filters({
             <div>
               <FormLabel>Status</FormLabel>
               <div className="mt-2 space-y-2 max-h-[150px] overflow-y-auto">
-                {messageStatuses?.map((status: Status) => (
+                {(messageStatuses || []).map((status: Status) => (
                   <div
                     key={status.value}
                     className="flex items-center space-x-2"

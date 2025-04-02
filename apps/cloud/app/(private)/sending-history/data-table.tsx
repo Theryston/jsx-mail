@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from '@jsx-mail/ui/table';
-
+import { useRouter } from 'next/navigation';
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -30,6 +30,8 @@ export function DataTable<TData, TValue>({
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  const router = useRouter();
 
   return (
     <Table>
@@ -57,6 +59,11 @@ export function DataTable<TData, TValue>({
             <TableRow
               key={row.id}
               data-state={row.getIsSelected() && 'selected'}
+              onClick={() => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                router.push(`/sending-history/${(row.original as any).id}`);
+              }}
+              className="cursor-pointer hover:underline"
             >
               {row.getVisibleCells().map((cell) => (
                 <TableCell key={cell.id}>

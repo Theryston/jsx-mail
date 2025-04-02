@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '@/utils/api';
 import {
+  FullMessage,
   MessageInsightsResponse,
   MessagesPagination,
   Status,
@@ -86,5 +87,12 @@ export function useMessageStatuses() {
   return useQuery<Status[]>({
     queryKey: ['message-statuses'],
     queryFn: () => api.get('/user/messages/status').then((res) => res.data),
+  });
+}
+
+export function useMessage(id: string) {
+  return useQuery<FullMessage>({
+    queryKey: ['message', id],
+    queryFn: () => api.get(`/user/messages/${id}`).then((res) => res.data),
   });
 }

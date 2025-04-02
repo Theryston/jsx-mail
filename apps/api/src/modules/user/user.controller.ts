@@ -56,6 +56,7 @@ import { ImpersonateUserService } from './services/impersonate-user.service';
 import { Fingerprint, IFingerprint } from 'nestjs-fingerprint';
 import { RealIP } from 'nestjs-real-ip';
 import { BlockPermissionService } from './services/block-permission.service';
+import { GetMessageService } from './services/get-message.service';
 
 @Controller('user')
 export class UserController {
@@ -79,6 +80,7 @@ export class UserController {
     private readonly getUsersService: GetUsersService,
     private readonly impersonateUserService: ImpersonateUserService,
     private readonly blockPermissionService: BlockPermissionService,
+    private readonly getMessageService: GetMessageService,
   ) {}
 
   @Get('admin/users')
@@ -209,6 +211,12 @@ export class UserController {
   @Get('messages/status')
   listStatusMessages(@Req() req) {
     return MESSAGES_STATUS;
+  }
+
+  @Get('messages/:id')
+  @Permissions([PERMISSIONS.SELF_GET_MESSAGE.value])
+  getMessage(@Param('id') id: string) {
+    return this.getMessageService.execute(id);
   }
 
   @Post('checkout')
