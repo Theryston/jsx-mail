@@ -16,6 +16,7 @@ import { Worker } from 'bullmq';
 import { Message } from '@prisma/client';
 import { GetUserLimitsService } from '../user/services/get-user-limits.service';
 import { PERMISSIONS } from 'src/auth/permissions';
+import { UpdateMessageStatusService } from './services/update-message-status.service';
 
 const transporter = nodemailer.createTransport({
   SES: { aws, ses: sesClient },
@@ -27,6 +28,7 @@ export class EmailProcessor extends WorkerHost {
     private readonly prisma: PrismaService,
     @InjectQueue('email') private readonly queue: Queue,
     private readonly getUserLimitsService: GetUserLimitsService,
+    private readonly updateMessageStatusService: UpdateMessageStatusService,
   ) {
     super();
   }
@@ -106,7 +108,10 @@ export class EmailProcessor extends WorkerHost {
 
     let to: string[] = data.to;
 
-    if (process.env.NODE_ENV === 'development') {
+    if (
+      process.env.NODE_ENV === 'development' &&
+      !to.find((t) => t.includes(process.env.DEFAULT_USER_EMAIL as string))
+    ) {
       let newTo = 'success@simulator.amazonses.com';
 
       if (data.to.find((t) => t.includes('bounce'))) {
@@ -139,10 +144,11 @@ export class EmailProcessor extends WorkerHost {
 
       userId = message.userId;
 
-      await this.prisma.message.update({
-        where: { id: messageId },
-        data: { status: 'processing' },
-      });
+      await this.updateMessageStatusService.execute(
+        messageId,
+        'processing',
+        'Processing email',
+      );
     } else {
       console.log(
         `[EMAIL_PROCESSOR] creating message for ${to} with default sender ${process.env.DEFAULT_SENDER_EMAIL} and domain ${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`,
@@ -194,6 +200,14 @@ export class EmailProcessor extends WorkerHost {
         },
       });
 
+      await this.prisma.messageStatusHistory.create({
+        data: {
+          messageId: message.id,
+          status: 'processing',
+          description: 'Created message and started processing the email',
+        },
+      });
+
       messageId = message.id;
       userId = message.userId;
 
@@ -217,10 +231,11 @@ export class EmailProcessor extends WorkerHost {
     });
 
     if (isBlockedToSendEmail) {
-      await this.prisma.message.update({
-        where: { id: messageId },
-        data: { status: 'failed' },
-      });
+      await this.updateMessageStatusService.execute(
+        messageId,
+        'failed',
+        'Failed because user is blocked to send email',
+      );
 
       console.log(
         `[EMAIL_PROCESSOR] user ${userId} is blocked to send email, not sending email`,
@@ -237,10 +252,11 @@ export class EmailProcessor extends WorkerHost {
         `[EMAIL_PROCESSOR] insufficient balance for user ${userId}, not sending email`,
       );
 
-      await this.prisma.message.update({
-        where: { id: messageId },
-        data: { status: 'failed' },
-      });
+      await this.updateMessageStatusService.execute(
+        messageId,
+        'failed',
+        'Failed because user has no balance',
+      );
 
       return;
     }

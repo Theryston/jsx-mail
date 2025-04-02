@@ -2,7 +2,6 @@
 
 import { Button } from '@jsx-mail/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@jsx-mail/ui/popover';
-import { Input } from '@jsx-mail/ui/input';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@jsx-mail/ui/calendar';
 import { useState } from 'react';

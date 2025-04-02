@@ -378,9 +378,24 @@ model Message {
   bulkSending BulkSending? @relation(fields: [bulkSendingId], references: [id], onDelete: Cascade)
   contact     Contact?     @relation(fields: [contactId], references: [id], onDelete: Cascade)
 
-  messageFiles MessageFile[]
+  messageFiles  MessageFile[]
+  statusHistory MessageStatusHistory[]
 
   @@map("messages")
+}
+
+model MessageStatusHistory {
+  id          String        @id @default(uuid())
+  messageId   String        @map("message_id")
+  status      MessageStatus
+  description String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  deletedAt   DateTime?     @map("deleted_at")
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@map("message_status_history")
 }
 
 model BulkSending {

@@ -7,6 +7,7 @@ import { EmailController } from './email.controller';
 import { EmailWebhookService } from './services/email-webhook.service';
 import { UserModule } from '../user/user.module';
 import { CheckUserEmailStatsService } from './services/check-user-email-stats.service';
+import { UpdateMessageStatusService } from './services/update-message-status.service';
 
 @Module({
   imports: [
@@ -21,8 +22,9 @@ import { CheckUserEmailStatsService } from './services/check-user-email-stats.se
     EmailProcessor,
     EmailWebhookService,
     CheckUserEmailStatsService,
+    UpdateMessageStatusService,
   ],
-  exports: [SendEmailService],
+  exports: [SendEmailService, UpdateMessageStatusService],
   controllers: [EmailController],
 })
 export class EmailModule {}

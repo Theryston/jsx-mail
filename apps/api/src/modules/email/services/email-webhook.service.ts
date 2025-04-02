@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { MessageStatus } from '@prisma/client';
-import moment from 'moment';
 import { PrismaService } from 'src/services/prisma.service';
 import { CheckUserEmailStatsService } from './check-user-email-stats.service';
+import { UpdateMessageStatusService } from './update-message-status.service';
 
 @Injectable()
 export class EmailWebhookService {
   constructor(
     private prisma: PrismaService,
     private checkUserEmailStatsService: CheckUserEmailStatsService,
+    private updateMessageStatusService: UpdateMessageStatusService,
   ) {}
 
   async execute(data: any) {
@@ -17,7 +18,7 @@ export class EmailWebhookService {
       if (!externalId) return 'ignored because the externalId is missing';
       console.log(`[EMAIL_WEBHOOK_SERVICE] received data from: ${externalId}`);
 
-      const status: MessageStatus | undefined = {
+      let newStatus: MessageStatus | undefined = {
         Send: 'sent',
         RenderingFailure: 'failed',
         Reject: 'reject',
@@ -30,7 +31,7 @@ export class EmailWebhookService {
         Click: 'clicked',
       }[data?.eventType];
 
-      if (!status) return 'ignored because the status was not found';
+      if (!newStatus) return 'ignored because the status was not found';
 
       const message = await this.prisma.message.findFirst({
         where: {
@@ -44,23 +45,28 @@ export class EmailWebhookService {
 
       if (!message) return 'ignored because the message was not found';
 
-      await this.prisma.message.update({
-        where: {
-          id: message.id,
-        },
-        data: {
-          status,
-          ...(status === 'sent'
-            ? {
-                sentAt: new Date(),
-                chargeMonth: moment().format('YYYY-MM'),
-                sentDay: moment().format('YYYY-MM-DD'),
-              }
-            : {}),
-        },
-      });
+      let description: string | undefined;
 
-      if (status === 'bonce' || status === 'complaint') {
+      if (newStatus === 'clicked') {
+        const link = data?.click?.link || 'Not found';
+
+        if (link.startsWith(`${process.env.CLOUD_FRONTEND_URL}/unsubscribe`)) {
+          console.log(`[EMAIL_WEBHOOK_SERVICE] unsubscribe link: ${link}`);
+
+          description = 'The recipient clicked the unsubscribe link';
+          newStatus = message.status;
+        } else {
+          description = `The recipient clicked the link in the email: ${link}`;
+        }
+      }
+
+      await this.updateMessageStatusService.execute(
+        message.id,
+        newStatus,
+        description,
+      );
+
+      if (newStatus === 'bonce' || newStatus === 'complaint') {
         await this.checkUserEmailStatsService.execute(message.userId);
       }
     } catch (error) {

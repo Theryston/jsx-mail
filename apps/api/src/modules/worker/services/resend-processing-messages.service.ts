@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
 import { PrismaService } from 'src/services/prisma.service';
-
+import { UpdateMessageStatusService } from 'src/modules/email/services/update-message-status.service';
 @Injectable()
 export class ResendProcessingMessagesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly sendEmailService: SendEmailService,
+    private readonly updateMessageStatusService: UpdateMessageStatusService,
   ) {}
 
   async execute() {
@@ -44,10 +45,11 @@ export class ResendProcessingMessagesService {
         messageId: message.id,
       });
 
-      await this.prisma.message.update({
-        where: { id: message.id },
-        data: { status: 'queued' },
-      });
+      await this.updateMessageStatusService.execute(
+        message.id,
+        'queued',
+        'Resending message',
+      );
 
       console.log(
         `[RESEND_PROCESSING_MESSAGES] re-sended message ${message.id}`,

@@ -1,5 +1,5 @@
 import { OnboardingStep, TransactionStyle } from '@prisma/client';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsDate,
   IsEmail,
@@ -14,6 +14,7 @@ import {
   Min,
   IsObject,
   ValidateNested,
+  IsBoolean,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -152,6 +153,11 @@ export class MessagesInsightsDto {
 }
 
 export class ListMessagesDto extends MessagesInsightsDto {
+  @IsOptional()
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  includeStatusHistory?: boolean;
+
   @IsNotEmpty()
   @Type(() => Number)
   @IsNumber()

@@ -242,4 +242,9 @@ export const PERMISSIONS: {
     value: 'other:block-permission',
     description: 'Can block a permission for a user',
   },
+  SELF_GET_MESSAGE: {
+    title: 'Self Get Message',
+    value: 'self:get-message',
+    description: 'Can get a message for itself',
+  },
 };
