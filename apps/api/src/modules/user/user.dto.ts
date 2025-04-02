@@ -14,6 +14,7 @@ import {
   Min,
   IsObject,
   ValidateNested,
+  IsBoolean,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -152,6 +153,10 @@ export class MessagesInsightsDto {
 }
 
 export class ListMessagesDto extends MessagesInsightsDto {
+  @IsOptional()
+  @IsBoolean()
+  includeStatusHistory?: boolean;
+
   @IsNotEmpty()
   @Type(() => Number)
   @IsNumber()

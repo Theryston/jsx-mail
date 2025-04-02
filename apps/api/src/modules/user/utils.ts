@@ -10,6 +10,7 @@ export function getFilterWhereMessages(
     toEmail,
     statuses: statusesParam,
     bulkSending,
+    includeStatusHistory,
   }: any,
   userId: string,
 ) {
@@ -57,5 +58,6 @@ export function getFilterWhereMessages(
     fromEmail,
     toEmail,
     statuses,
+    includeStatusHistory,
   };
 }

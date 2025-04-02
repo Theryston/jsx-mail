@@ -3,6 +3,7 @@ import { PrismaService } from 'src/services/prisma.service';
 import { messageSelect } from 'src/utils/public-selects';
 import { ListMessagesDto } from '../user.dto';
 import { getFilterWhereMessages } from '../utils';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ListMessagesService {
@@ -19,18 +20,32 @@ export class ListMessagesService {
       fromEmail,
       toEmail,
       statuses,
+      includeStatusHistory,
     } = getFilterWhereMessages(params, userId);
+
+    const select: Prisma.MessageSelect = {
+      ...messageSelect,
+      sender: {
+        select: {
+          email: true,
+        },
+      },
+    };
+
+    if (includeStatusHistory) {
+      select.statusHistory = {
+        select: {
+          id: true,
+          status: true,
+          description: true,
+          createdAt: true,
+        },
+      };
+    }
 
     let messages = await this.prisma.message.findMany({
       where,
-      select: {
-        ...messageSelect,
-        sender: {
-          select: {
-            email: true,
-          },
-        },
-      },
+      select,
       skip,
       take,
       orderBy: {
