@@ -17,7 +17,7 @@ export class EmailWebhookService {
       if (!externalId) return 'ignored because the externalId is missing';
       console.log(`[EMAIL_WEBHOOK_SERVICE] received data from: ${externalId}`);
 
-      const status: MessageStatus | undefined = {
+      const newStatus: MessageStatus | undefined = {
         Send: 'sent',
         RenderingFailure: 'failed',
         Reject: 'reject',
@@ -30,7 +30,7 @@ export class EmailWebhookService {
         Click: 'clicked',
       }[data?.eventType];
 
-      if (!status) return 'ignored because the status was not found';
+      if (!newStatus) return 'ignored because the status was not found';
 
       const message = await this.prisma.message.findFirst({
         where: {
@@ -44,13 +44,24 @@ export class EmailWebhookService {
 
       if (!message) return 'ignored because the message was not found';
 
+      if (this.shouldNotUpdateStatus(message.status, newStatus)) {
+        console.log(
+          `[EMAIL_WEBHOOK_SERVICE] ignoring status update from ${message.status} to ${newStatus}`,
+        );
+        return `ignored because the message already has a higher priority status: ${message.status}`;
+      }
+
+      console.log(
+        `[EMAIL_WEBHOOK_SERVICE] updating status from ${message.status} to ${newStatus}`,
+      );
+
       await this.prisma.message.update({
         where: {
           id: message.id,
         },
         data: {
-          status,
-          ...(status === 'sent'
+          status: newStatus,
+          ...(newStatus === 'sent'
             ? {
                 sentAt: new Date(),
                 chargeMonth: moment().format('YYYY-MM'),
@@ -60,12 +71,36 @@ export class EmailWebhookService {
         },
       });
 
-      if (status === 'bonce' || status === 'complaint') {
+      if (newStatus === 'bonce' || newStatus === 'complaint') {
         await this.checkUserEmailStatsService.execute(message.userId);
       }
     } catch (error) {
       console.log('[EMAIL_WEBHOOK_SERVICE] error: ', error);
       return 'event processed but there was an error';
     }
+  }
+
+  private shouldNotUpdateStatus(
+    currentStatus: MessageStatus,
+    newStatus: MessageStatus,
+  ): boolean {
+    const statusPriority: Record<MessageStatus, number> = {
+      clicked: 5,
+      opened: 4,
+      bonce: 3,
+      delivered: 2,
+      sent: 1,
+      complaint: 1,
+      failed: 1,
+      reject: 1,
+      delivery_delay: 1,
+      subscription: 1,
+      queued: 0,
+      processing: 0,
+    };
+
+    return (
+      (statusPriority[currentStatus] || 0) > (statusPriority[newStatus] || 0)
+    );
   }
 }
