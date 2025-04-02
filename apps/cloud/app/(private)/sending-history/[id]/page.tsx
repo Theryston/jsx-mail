@@ -1,7 +1,7 @@
 'use client';
 
 import { Container } from '@/components/container';
-import { useMessage, useMessageStatuses } from '@/hooks/message';
+import { useMessage } from '@/hooks/message';
 import { FullMessage } from '@/types/message';
 import { Button } from '@jsx-mail/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@jsx-mail/ui/tabs';
@@ -87,11 +87,18 @@ function EmailContent({ message }: { message: FullMessage }) {
 }
 
 function EmailEventsTimeline({ message }: { message: FullMessage }) {
-  const { data: statuses } = useMessageStatuses();
-
   const getStatusColor = (statusValue: string) => {
-    const status = statuses?.find((s) => s.value === statusValue);
-    return status?.color || 'rgb(161 161 170)';
+    let color = 'rgb(34, 197, 94)';
+
+    if (['queued', 'processing'].includes(statusValue)) {
+      color = 'rgb(161, 161, 170)';
+    }
+
+    if (['bonce', 'failed', 'complaint'].includes(statusValue)) {
+      color = 'rgb(239, 68, 68)';
+    }
+
+    return color;
   };
 
   return (
