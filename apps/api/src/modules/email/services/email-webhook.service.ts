@@ -48,7 +48,7 @@ export class EmailWebhookService {
       let description: string | undefined;
 
       if (newStatus === 'clicked') {
-        const link = data?.click?.link;
+        const link = data?.click?.link || 'Not found';
 
         if (link.startsWith(`${process.env.CLOUD_FRONTEND_URL}/unsubscribe`)) {
           console.log(`[EMAIL_WEBHOOK_SERVICE] unsubscribe link: ${link}`);
