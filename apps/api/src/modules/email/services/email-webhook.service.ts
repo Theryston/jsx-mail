@@ -14,9 +14,6 @@ export class EmailWebhookService {
 
   async execute(data: any) {
     try {
-      console.log(
-        `[EMAIL_WEBHOOK_SERVICE] received data: ${JSON.stringify(data, null, 2)}`,
-      );
       const externalId = data?.mail?.messageId;
       if (!externalId) return 'ignored because the externalId is missing';
       console.log(`[EMAIL_WEBHOOK_SERVICE] received data from: ${externalId}`);
@@ -51,7 +48,7 @@ export class EmailWebhookService {
       let description: string | undefined;
 
       if (newStatus === 'clicked') {
-        const link = data?.click?.url;
+        const link = data?.click?.link;
 
         if (link.startsWith(`${process.env.CLOUD_FRONTEND_URL}/unsubscribe`)) {
           console.log(`[EMAIL_WEBHOOK_SERVICE] unsubscribe link: ${link}`);
