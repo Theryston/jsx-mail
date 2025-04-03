@@ -3,12 +3,7 @@ import { PrismaService } from 'src/services/prisma.service';
 import moment from 'moment';
 import { BlockPermissionService } from 'src/modules/user/services/block-permission.service';
 import { PERMISSIONS } from 'src/auth/permissions';
-import {
-  BOUNCE_RATE_LIMIT,
-  COMPLAINT_RATE_LIMIT,
-  GAP_TO_CHECK_SECURITY_INSIGHTS,
-  MIN_EMAILS_FOR_RATE_CALCULATION,
-} from 'src/utils/constants';
+import { GetSettingsService } from 'src/modules/user/services/get-settings.service';
 
 const EMAIL_SENDING_PERMISSIONS = [
   PERMISSIONS.SELF_SEND_EMAIL.value,
@@ -20,10 +15,13 @@ export class CheckUserEmailStatsService {
   constructor(
     private prisma: PrismaService,
     private blockPermissionService: BlockPermissionService,
+    private getSettingsService: GetSettingsService,
   ) {}
 
   async execute(userId: string) {
     try {
+      const settings = await this.getSettingsService.execute(userId);
+
       const lastSendingBlockedPermissionEvent =
         await this.prisma.blockedPermissionEvent.findFirst({
           where: {
@@ -39,7 +37,7 @@ export class CheckUserEmailStatsService {
         });
 
       let gapToCheckSecurityInsights = moment()
-        .subtract(GAP_TO_CHECK_SECURITY_INSIGHTS, 'days')
+        .subtract(settings.gapToCheckSecurityInsights, 'days')
         .startOf('day')
         .toDate();
 
@@ -49,7 +47,7 @@ export class CheckUserEmailStatsService {
           'days',
         );
 
-        if (daysSinceLastBlock < GAP_TO_CHECK_SECURITY_INSIGHTS) {
+        if (daysSinceLastBlock < settings.gapToCheckSecurityInsights) {
           gapToCheckSecurityInsights =
             lastSendingBlockedPermissionEvent.createdAt;
         }
@@ -79,7 +77,7 @@ export class CheckUserEmailStatsService {
         },
       });
 
-      if (totalSentMessages < MIN_EMAILS_FOR_RATE_CALCULATION) return;
+      if (totalSentMessages < settings.minEmailsForRateCalculation) return;
 
       const bounceCount = await this.prisma.message.count({
         where: {
@@ -107,8 +105,8 @@ export class CheckUserEmailStatsService {
       const complaintRate = complaintCount / totalSentMessages;
 
       if (
-        bounceRate > BOUNCE_RATE_LIMIT ||
-        complaintRate > COMPLAINT_RATE_LIMIT
+        bounceRate > settings.bounceRateLimit ||
+        complaintRate > settings.complaintRateLimit
       ) {
         console.log(
           `[CHECK_USER_EMAIL_STATS] Blocking user ${userId} due to high bounce rate (${(bounceRate * 100).toFixed(2)}%) or complaint rate (${(complaintRate * 100).toFixed(2)}%)`,

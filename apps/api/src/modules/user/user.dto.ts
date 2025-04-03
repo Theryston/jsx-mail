@@ -230,3 +230,65 @@ export class BlockPermissionDto {
   @IsString()
   reason?: string;
 }
+
+export class UpdateDefaultSettingsDto {
+  @IsNotEmpty()
+  @IsNumber()
+  maxFileSize: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  maxBalanceToBeEligibleForFree: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  freeEmailsPerMonth: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  minBalanceToAdd: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  storageGbPrice: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  pricePerMessage: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  maxStorage: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  globalMaxMessagesPerSecond: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  globalMaxMessagesPerDay: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  bounceRateLimit: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  complaintRateLimit: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  gapToCheckSecurityInsights: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  minEmailsForRateCalculation: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  maxSecurityCodesPerHour: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  maxSecurityCodesPerMinute: number;
+}

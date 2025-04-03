@@ -122,7 +122,6 @@ model User {
 model DefaultSettings {
   id                            String    @id @default(uuid())
   maxFileSize                   Int       @map("max_file_size")
-  currency                      String    @map("currency")
   maxBalanceToBeEligibleForFree Int       @map("max_balance_to_be_eligible_for_free")
   freeEmailsPerMonth            Int       @map("free_emails_per_month")
   minBalanceToAdd               Int       @map("min_balance_to_add")
@@ -147,7 +146,6 @@ model DefaultSettings {
 model UserSettings {
   id                            String    @id @default(uuid())
   maxFileSize                   Int?      @map("max_file_size")
-  currency                      String?   @map("currency")
   maxBalanceToBeEligibleForFree Int?      @map("max_balance_to_be_eligible_for_free")
   freeEmailsPerMonth            Int?      @map("free_emails_per_month")
   minBalanceToAdd               Int?      @map("min_balance_to_add")

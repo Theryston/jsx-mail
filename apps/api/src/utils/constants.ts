@@ -1,7 +1,7 @@
 export const MONEY_SCALE = 1000000;
 export const GATEWAY_SCALE = 100;
+export const CURRENCY = 'USD';
 // export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-// export const CURRENCY = 'USD';
 // export const MAX_BALANCE_TO_BE_ELIGIBLE_FOR_FREE = 0.05 * MONEY_SCALE; // $0.05 | if the user balance is more then this amount, the user is not eligible for free emails
 // export const FREE_EMAILS_PER_MONTH = 10_000;
 // export const MINIMUM_ADD_BALANCE = 1 * MONEY_SCALE; // $1.00

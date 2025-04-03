@@ -31,6 +31,8 @@ import { BlockPermissionService } from './services/block-permission.service';
 import { VerifyTurnstileService } from './services/verify-turnstile.service';
 import { GetMessageService } from './services/get-message.service';
 import { GetSettingsService } from './services/get-settings.service';
+import { UpdateSettingsService } from './services/update-settings.service';
+import { UpdateDefaultSettingsService } from './services/update-default-settings.service';
 
 @Module({
   controllers: [UserController],
@@ -64,6 +66,8 @@ import { GetSettingsService } from './services/get-settings.service';
     VerifyTurnstileService,
     GetMessageService,
     GetSettingsService,
+    UpdateSettingsService,
+    UpdateDefaultSettingsService,
   ],
   imports: [EmailModule, SessionModule],
   exports: [

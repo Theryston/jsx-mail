@@ -8,15 +8,12 @@ import nodemailer from 'nodemailer';
 import axios from 'axios';
 import handlebars from 'handlebars';
 import moment from 'moment';
-import {
-  MAX_MESSAGES_PER_DAY,
-  MAX_MESSAGES_PER_SECOND,
-} from 'src/utils/constants';
 import { Worker } from 'bullmq';
 import { Message } from '@prisma/client';
 import { GetUserLimitsService } from '../user/services/get-user-limits.service';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { UpdateMessageStatusService } from './services/update-message-status.service';
+import { GetSettingsService } from '../user/services/get-settings.service';
 
 const transporter = nodemailer.createTransport({
   SES: { aws, ses: sesClient },
@@ -29,6 +26,7 @@ export class EmailProcessor extends WorkerHost {
     @InjectQueue('email') private readonly queue: Queue,
     private readonly getUserLimitsService: GetUserLimitsService,
     private readonly updateMessageStatusService: UpdateMessageStatusService,
+    private readonly getSettingsService: GetSettingsService,
   ) {
     super();
   }
@@ -56,6 +54,8 @@ export class EmailProcessor extends WorkerHost {
     let dataLog: any = { ...data };
     delete dataLog.html;
 
+    const settings = await this.getSettingsService.execute();
+
     const currentSecond = moment().startOf('second');
     const nextSecond = moment().add(1, 'second').startOf('second');
     const timeToWait = nextSecond.diff(moment(), 'milliseconds');
@@ -71,7 +71,7 @@ export class EmailProcessor extends WorkerHost {
       },
     });
 
-    if (messagesSentThisSecond >= MAX_MESSAGES_PER_SECOND) {
+    if (messagesSentThisSecond >= settings.globalMaxMessagesPerSecond) {
       console.log(
         `[EMAIL_PROCESSOR] rate second limit exceeded, waiting ${timeToWait} milliseconds. Will reset at ${moment(Date.now() + timeToWait).format('DD/MM/YYYY HH:mm:ss')}`,
       );
@@ -92,7 +92,7 @@ export class EmailProcessor extends WorkerHost {
       },
     });
 
-    if (messagesSentThisDay >= MAX_MESSAGES_PER_DAY) {
+    if (messagesSentThisDay >= settings.globalMaxMessagesPerDay) {
       console.log(
         `[EMAIL_PROCESSOR] rate day limit exceeded, waiting ${timeToWaitDay} milliseconds. Will reset at ${moment(Date.now() + timeToWaitDay).format('DD/MM/YYYY HH:mm:ss')}`,
       );

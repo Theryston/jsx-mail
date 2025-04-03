@@ -247,4 +247,14 @@ export const PERMISSIONS: {
     value: 'self:get-message',
     description: 'Can get a message for itself',
   },
+  OTHER_GET_DEFAULT_SETTINGS: {
+    title: 'Other Get Default Settings',
+    value: 'other:get-default-settings',
+    description: 'Can get default settings',
+  },
+  OTHER_UPDATE_DEFAULT_SETTINGS: {
+    title: 'Other Update Default Settings',
+    value: 'other:update-default-settings',
+    description: 'Can update default settings',
+  },
 };

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { friendlyMoney } from 'src/utils/format-money';
+import { GetSettingsService } from './get-settings.service';
 
 @Injectable()
 export class GetBalanceService {
@@ -22,7 +23,7 @@ export class GetBalanceService {
     return {
       amount,
       friendlyFullAmount: friendlyMoney(amount, true),
-      friendlyAmount: friendlyMoney(amount),
+      friendlyAmount: friendlyMoney(amount, false),
     };
   }
 }

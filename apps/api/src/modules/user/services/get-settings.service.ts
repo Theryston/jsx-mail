@@ -6,10 +6,10 @@ import { MONEY_SCALE } from 'src/utils/constants';
 export class GetSettingsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(userId?: string) {
+  async execute(userId?: string, defaultOnly = false) {
     let settings = await this.getDefaultSettings();
 
-    if (userId) {
+    if (userId && !defaultOnly) {
       const userSettings = await this.prisma.userSettings.findFirst({
         where: { userId },
       });
@@ -22,7 +22,6 @@ export class GetSettingsService {
 
     return {
       maxFileSize: settings.maxFileSize * 1024 * 1024,
-      currency: settings.currency,
       maxBalanceToBeEligibleForFree:
         settings.maxBalanceToBeEligibleForFree * MONEY_SCALE,
       freeEmailsPerMonth: settings.freeEmailsPerMonth,
@@ -41,12 +40,11 @@ export class GetSettingsService {
     };
   }
 
-  private async getDefaultSettings() {
+  async getDefaultSettings() {
     const defaultSettings = await this.prisma.defaultSettings.findFirst();
 
     return {
       maxFileSize: defaultSettings?.maxFileSize || 10,
-      currency: defaultSettings?.currency || 'USD',
       maxBalanceToBeEligibleForFree:
         defaultSettings?.maxBalanceToBeEligibleForFree || 0.05,
       freeEmailsPerMonth: defaultSettings?.freeEmailsPerMonth || 10000,

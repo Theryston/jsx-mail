@@ -5,6 +5,10 @@ import Link from 'next/link';
 export default function Admin() {
   const adminActions = [
     {
+      label: 'Settings',
+      href: '/admin/settings',
+    },
+    {
       label: 'Users',
       href: '/admin/users',
     },

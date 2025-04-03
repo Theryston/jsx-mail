@@ -4,16 +4,14 @@ import { SendEmailService } from 'src/modules/email/services/send-email.service'
 import { CreateSecurityCodeDto } from '../user.dto';
 import { render as jsxMailRender } from 'jsx-mail';
 import moment from 'moment';
-import {
-  MAX_SECURITY_CODES_PER_HOUR,
-  MAX_SECURITY_CODES_PER_MINUTE,
-} from 'src/utils/constants';
+import { GetSettingsService } from './get-settings.service';
 
 @Injectable()
 export class CreateSecurityCodeService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly sendEmailService: SendEmailService,
+    private readonly getSettingsService: GetSettingsService,
   ) {}
 
   async execute(data: CreateSecurityCodeDto) {
@@ -33,6 +31,8 @@ export class CreateSecurityCodeService {
       };
     }
 
+    const settings = await this.getSettingsService.execute(user.id);
+
     const oneMinuteAgo = moment().startOf('minute').toDate();
     const nextMinute = moment().add(1, 'minute').startOf('minute').toDate();
 
@@ -46,7 +46,7 @@ export class CreateSecurityCodeService {
       },
     });
 
-    if (securityCodesInLastMinute >= MAX_SECURITY_CODES_PER_MINUTE) {
+    if (securityCodesInLastMinute >= settings.maxSecurityCodesPerMinute) {
       throw new BadRequestException(
         `You can send a security code at ${moment(nextMinute).format('HH:mm')}`,
       );
@@ -65,7 +65,7 @@ export class CreateSecurityCodeService {
       },
     });
 
-    if (securityCodesThisHour >= MAX_SECURITY_CODES_PER_HOUR) {
+    if (securityCodesThisHour >= settings.maxSecurityCodesPerHour) {
       throw new BadRequestException(
         `You can send a security code at ${moment(nextHour).format('HH:mm')}`,
       );

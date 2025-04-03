@@ -8,6 +8,7 @@ import { EmailWebhookService } from './services/email-webhook.service';
 import { UserModule } from '../user/user.module';
 import { CheckUserEmailStatsService } from './services/check-user-email-stats.service';
 import { UpdateMessageStatusService } from './services/update-message-status.service';
+import { ResetQueueRateLimitService } from './services/reset-queue-rate-limit.service';
 
 @Module({
   imports: [
@@ -23,8 +24,13 @@ import { UpdateMessageStatusService } from './services/update-message-status.ser
     EmailWebhookService,
     CheckUserEmailStatsService,
     UpdateMessageStatusService,
+    ResetQueueRateLimitService,
   ],
-  exports: [SendEmailService, UpdateMessageStatusService],
+  exports: [
+    SendEmailService,
+    UpdateMessageStatusService,
+    ResetQueueRateLimitService,
+  ],
   controllers: [EmailController],
 })
 export class EmailModule {}

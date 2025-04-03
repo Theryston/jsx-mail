@@ -1,17 +1,13 @@
 import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { StripeService } from 'src/services/stripe.service';
-import {
-  CURRENCY,
-  GATEWAY_SCALE,
-  MINIMUM_ADD_BALANCE,
-  MONEY_SCALE,
-} from 'src/utils/constants';
+import { GATEWAY_SCALE, MONEY_SCALE, CURRENCY } from 'src/utils/constants';
 import { friendlyMoney } from 'src/utils/format-money';
 import { User } from '@prisma/client';
 import { CreateCheckoutDto } from '../user.dto';
 import countryToCurrency from 'country-to-currency';
 import { ExchangeMoneyService } from './exchange-money.service';
+import { GetSettingsService } from './get-settings.service';
 
 @Injectable()
 export class CreateCheckoutService {
@@ -19,6 +15,7 @@ export class CreateCheckoutService {
     private readonly prisma: PrismaService,
     private readonly stripeService: StripeService,
     private readonly exchangeMoneyService: ExchangeMoneyService,
+    private readonly getSettingsService: GetSettingsService,
   ) {}
 
   async execute({ amount, country }: CreateCheckoutDto, userId: string) {
@@ -38,6 +35,8 @@ export class CreateCheckoutService {
 
     const amountScale = Math.round(amount * MONEY_SCALE);
 
+    const settings = await this.getSettingsService.execute();
+
     amount = await this.exchangeMoneyService.execute({
       amount: amount,
       baseCurrency: CURRENCY,
@@ -45,9 +44,9 @@ export class CreateCheckoutService {
     });
     amount = Math.round(amount * GATEWAY_SCALE);
 
-    if (amount < MINIMUM_ADD_BALANCE / MONEY_SCALE) {
+    if (amount < settings.minBalanceToAdd / MONEY_SCALE) {
       throw new HttpException(
-        `Amount must be greater than ${friendlyMoney(MINIMUM_ADD_BALANCE)}`,
+        `Amount must be greater than ${friendlyMoney(settings.minBalanceToAdd, false)}`,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -76,7 +75,7 @@ export class CreateCheckoutService {
             currency: currency.toLowerCase(),
             product_data: {
               name: 'Add Balance',
-              description: `Add ${friendlyMoney(amountScale)} to your JSX Mail account`,
+              description: `Add ${friendlyMoney(amountScale, false)} to your JSX Mail account`,
             },
             unit_amount: amount,
           },
