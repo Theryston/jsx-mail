@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { toast } from '@jsx-mail/ui/sonner';
 import { Button } from '@jsx-mail/ui/button';
 import { Input } from '@jsx-mail/ui/input';
@@ -15,6 +15,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@jsx-mail/ui/form';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@jsx-mail/ui/dialog';
 import { Settings } from '@/types/settings';
 
 const settingsSchema = z.object({
@@ -43,6 +50,11 @@ const settingsSchema = z.object({
 
 type SettingsFormValues = z.infer<typeof settingsSchema>;
 
+interface ChangedField {
+  old: number;
+  new: number;
+}
+
 interface SettingsFormProps {
   initialData?: Settings;
   onSubmit: (data: SettingsFormValues) => Promise<void>;
@@ -57,6 +69,11 @@ export function SettingsForm({
   description = 'Update your settings below.',
 }: SettingsFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [changedFields, setChangedFields] = useState<
+    Record<string, ChangedField>
+  >({});
+  const [formData, setFormData] = useState<SettingsFormValues | null>(null);
 
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(settingsSchema),
@@ -82,10 +99,43 @@ export function SettingsForm({
   });
 
   useEffect(() => {
-    form.reset(initialData);
-  }, [initialData]);
+    if (initialData) form.reset(initialData);
+  }, [initialData, form]);
 
-  async function handleSubmit(data: SettingsFormValues) {
+  const compareValues = useCallback(
+    (data: SettingsFormValues) => {
+      if (!initialData) return {};
+
+      const changes: Record<string, ChangedField> = {};
+
+      Object.keys(data).forEach((key) => {
+        const typedKey = key as keyof SettingsFormValues;
+        if (data[typedKey] !== initialData[typedKey]) {
+          changes[key] = {
+            old: initialData[typedKey],
+            new: data[typedKey],
+          };
+        }
+      });
+
+      return changes;
+    },
+    [initialData],
+  );
+
+  function handleFormSubmit(data: SettingsFormValues) {
+    const changes = compareValues(data);
+
+    if (Object.keys(changes).length > 0) {
+      setChangedFields(changes);
+      setFormData(data);
+      setShowConfirmDialog(true);
+    } else {
+      submitForm(data);
+    }
+  }
+
+  async function submitForm(data: SettingsFormValues) {
     setIsSubmitting(true);
     try {
       await onSubmit(data);
@@ -98,6 +148,20 @@ export function SettingsForm({
     }
   }
 
+  function confirmChanges() {
+    if (formData) {
+      submitForm(formData);
+      setShowConfirmDialog(false);
+    }
+  }
+
+  function cancelChanges() {
+    setShowConfirmDialog(false);
+    setChangedFields({});
+    setFormData(null);
+    form.reset(initialData);
+  }
+
   return (
     <div className="space-y-4">
       <div className="mb-6">
@@ -106,7 +170,10 @@ export function SettingsForm({
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <form
+          onSubmit={form.handleSubmit(handleFormSubmit)}
+          className="space-y-4"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -386,6 +453,40 @@ export function SettingsForm({
           </Button>
         </form>
       </Form>
+
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Changes</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="mb-4">Please review the following changes:</p>
+            <div className="max-h-[300px] overflow-y-auto">
+              {Object.entries(changedFields).map(([key, value]) => (
+                <div key={key} className="mb-2 p-2 border rounded">
+                  <p className="font-medium">{key}</p>
+                  <div className="grid grid-cols-2 gap-2 mt-1">
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">Old value: </span>
+                      {value.old}
+                    </div>
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">New value: </span>
+                      {value.new}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={cancelChanges}>
+              Cancel
+            </Button>
+            <Button onClick={confirmChanges}>Confirm Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
