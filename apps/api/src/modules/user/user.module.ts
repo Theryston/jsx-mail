@@ -30,6 +30,7 @@ import { GetUserLimitsService } from './services/get-user-limits.service';
 import { BlockPermissionService } from './services/block-permission.service';
 import { VerifyTurnstileService } from './services/verify-turnstile.service';
 import { GetMessageService } from './services/get-message.service';
+import { GetSettingsService } from './services/get-settings.service';
 
 @Module({
   controllers: [UserController],
@@ -62,12 +63,14 @@ import { GetMessageService } from './services/get-message.service';
     BlockPermissionService,
     VerifyTurnstileService,
     GetMessageService,
+    GetSettingsService,
   ],
   imports: [EmailModule, SessionModule],
   exports: [
     BetaPermissionCheckService,
     GetUserLimitsService,
     BlockPermissionService,
+    GetSettingsService,
   ],
 })
 export class UserModule {}

@@ -1,16 +1,17 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import calculateHash from 'src/utils/calculate-hash';
-import { MAX_FILE_SIZE, MAXIMUM_STORAGE } from 'src/utils/constants';
 import { fileSelect } from 'src/utils/public-selects';
 import { S3ClientService } from './s3-client.service';
 import { formatSize } from 'src/utils/format';
+import { GetSettingsService } from 'src/modules/user/services/get-settings.service';
 
 @Injectable()
 export class UploadFileService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly s3ClientService: S3ClientService,
+    private readonly getSettingsService: GetSettingsService,
   ) {}
 
   async execute(file: Express.Multer.File, userId: string) {
@@ -43,7 +44,9 @@ export class UploadFileService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    if (file.size > MAX_FILE_SIZE) {
+    const settings = await this.getSettingsService.execute(userId);
+
+    if (file.size > settings.maxFileSize) {
       throw new HttpException('File size is too large', HttpStatus.BAD_REQUEST);
     }
 
@@ -59,9 +62,9 @@ export class UploadFileService {
       },
     });
 
-    if (storage + file.size > MAXIMUM_STORAGE) {
+    if (storage + file.size > settings.maxStorage) {
       throw new HttpException(
-        `You have reached the maximum storage limit of ${formatSize(MAXIMUM_STORAGE)}`,
+        `You have reached the maximum storage limit of ${formatSize(settings.maxStorage)}`,
         HttpStatus.BAD_REQUEST,
       );
     }

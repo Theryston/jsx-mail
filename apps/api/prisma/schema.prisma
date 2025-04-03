@@ -114,8 +114,60 @@ model User {
   blockedPermissions      BlockedPermission[]
   blockedPermissionEvents BlockedPermissionEvent[]
   userUtm                 UserUtm[]
+  settings                UserSettings[]
 
   @@map("users")
+}
+
+model DefaultSettings {
+  id                            String    @id @default(uuid())
+  maxFileSize                   Int       @map("max_file_size")
+  currency                      String    @map("currency")
+  maxBalanceToBeEligibleForFree Int       @map("max_balance_to_be_eligible_for_free")
+  freeEmailsPerMonth            Int       @map("free_emails_per_month")
+  minBalanceToAdd               Int       @map("min_balance_to_add")
+  storageGbPrice                Int       @map("storage_gb_price")
+  pricePerMessage               Int       @map("price_per_message")
+  maxStorage                    Int       @map("max_storage")
+  globalMaxMessagesPerSecond    Int       @map("global_max_messages_per_second")
+  globalMaxMessagesPerDay       Int       @map("global_max_messages_per_day")
+  bounceRateLimit               Float     @map("bounce_rate_limit")
+  complaintRateLimit            Float     @map("complaint_rate_limit")
+  gapToCheckSecurityInsights    Int       @map("gap_to_check_security_insights")
+  minEmailsForRateCalculation   Int       @map("min_emails_for_rate_calculation")
+  maxSecurityCodesPerHour       Int       @map("max_security_codes_per_hour")
+  maxSecurityCodesPerMinute     Int       @map("max_security_codes_per_minute")
+  createdAt                     DateTime  @default(now()) @map("created_at")
+  updatedAt                     DateTime  @updatedAt @map("updated_at")
+  deletedAt                     DateTime? @map("deleted_at")
+
+  @@map("default_settings")
+}
+
+model UserSettings {
+  id                            String    @id @default(uuid())
+  maxFileSize                   Int?      @map("max_file_size")
+  currency                      String?   @map("currency")
+  maxBalanceToBeEligibleForFree Int?      @map("max_balance_to_be_eligible_for_free")
+  freeEmailsPerMonth            Int?      @map("free_emails_per_month")
+  minBalanceToAdd               Int?      @map("min_balance_to_add")
+  storageGbPrice                Int?      @map("storage_gb_price")
+  pricePerMessage               Int?      @map("price_per_message")
+  maxStorage                    Int?      @map("max_storage")
+  bounceRateLimit               Float?    @map("bounce_rate_limit")
+  complaintRateLimit            Float?    @map("complaint_rate_limit")
+  gapToCheckSecurityInsights    Int?      @map("gap_to_check_security_insights")
+  minEmailsForRateCalculation   Int?      @map("min_emails_for_rate_calculation")
+  maxSecurityCodesPerHour       Int?      @map("max_security_codes_per_hour")
+  maxSecurityCodesPerMinute     Int?      @map("max_security_codes_per_minute")
+  userId                        String    @map("user_id")
+  createdAt                     DateTime  @default(now()) @map("created_at")
+  updatedAt                     DateTime  @updatedAt @map("updated_at")
+  deletedAt                     DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
 }
 
 model UserUtm {
