@@ -9,6 +9,8 @@ export type ContactListItem = {
   id: string;
   name: string;
   email: string;
+  bouncedAt: Date | null;
+  bouncedBy: string | null;
   createdAt: Date;
 };
 
@@ -117,4 +119,25 @@ export type BulkSendingFailure = {
   message: string;
   contactId: string | null;
   line: number | null;
+};
+
+export type BulkEmailCheck = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  contactGroupId: string;
+  totalEmails: number;
+  processedEmails: number;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  _count: {
+    results: number;
+  };
+};
+
+export type BulkEmailCheckEstimate = {
+  estimatedCost: number;
+  friendlyEstimatedCost: string;
+  estimatedTimeSeconds: number;
+  friendlyEstimatedTime: string;
+  contactsCount: number;
 };

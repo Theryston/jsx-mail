@@ -7,6 +7,7 @@ import { Worker } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import axios, { AxiosInstance } from 'axios';
+import { EmailCheckResult, EmailCheckStatus } from '@prisma/client';
 
 @Processor('email-check', { concurrency: 1 })
 export class EmailCheckProcessor extends WorkerHost {
@@ -35,113 +36,107 @@ export class EmailCheckProcessor extends WorkerHost {
       return;
     }
 
+    const emailCheck = await this.prisma.emailCheck.findUnique({
+      where: { id: emailCheckId },
+    });
+
+    if (!emailCheck) {
+      console.log(`[EMAIL_CHECK] email check not found`);
+      return;
+    }
+
+    let globalError: any = null;
+
+    console.log(
+      `[EMAIL_CHECK] processing job ${job.id} | At ${moment().format(
+        'DD/MM/YYYY HH:mm:ss',
+      )}`,
+    );
+
+    const settings = await this.getSettingsService.execute();
+
+    const currentSecond = moment().startOf('second').toDate();
+    const emailChecksSentThisSecond = await this.prisma.emailCheck.count({
+      where: {
+        processedAt: {
+          gte: currentSecond,
+        },
+      },
+    });
+
+    const timeToWait = 1000;
+
+    console.log(
+      `[EMAIL_CHECK] email checks sent this second: ${emailChecksSentThisSecond} | Rate limit: ${settings.globalEmailsCheckPerSecond}`,
+    );
+
+    if (emailChecksSentThisSecond >= settings.globalEmailsCheckPerSecond) {
+      console.log(
+        `[EMAIL_CHECK] rate second limit exceeded, waiting ${timeToWait} milliseconds. Will reset at ${moment(Date.now() + timeToWait).format('DD/MM/YYYY HH:mm:ss')}`,
+      );
+
+      await this.queue.rateLimit(timeToWait);
+      throw Worker.RateLimitError();
+    }
+
     try {
-      console.log(`[EMAIL_CHECK] processing job ${job.id}`);
-
-      const settings = await this.getSettingsService.execute();
-
-      const currentSecond = moment().startOf('second');
-      const nextSecond = moment().add(1, 'second').startOf('second');
-      const timeToWait = nextSecond.diff(moment(), 'milliseconds');
-
-      const emailChecksSentThisSecond = await this.prisma.emailCheck.count({
-        where: {
-          status: {
-            notIn: ['pending'],
-          },
-          createdAt: {
-            gte: currentSecond.toDate(),
-          },
-        },
-      });
-
-      if (emailChecksSentThisSecond >= settings.globalEmailsCheckPerSecond) {
-        console.log(
-          `[EMAIL_CHECK] rate second limit exceeded, waiting ${timeToWait} milliseconds. Will reset at ${moment(Date.now() + timeToWait).format('DD/MM/YYYY HH:mm:ss')}`,
-        );
-
-        await this.queue.rateLimit(timeToWait);
-        throw Worker.RateLimitError();
-      }
-
-      const emailCheck = await this.prisma.emailCheck.findUnique({
+      await this.prisma.emailCheck.update({
         where: { id: emailCheckId },
+        data: { status: 'processing', startedAt: new Date() },
       });
 
-      if (!emailCheck) {
-        throw new Error('Email check not found');
-      }
-
-      let externalId = emailCheck.externalId;
-      let email = emailCheck.email;
-
-      if (!externalId) {
-        const response = await this.truelistClient.post(`/v1/batches`, {
-          data: [[email]],
-        });
-
-        externalId = response.data.id;
-
-        await this.prisma.emailCheck.update({
-          where: { id: emailCheckId },
-          data: { externalId },
-        });
-      }
-
-      while (true) {
-        const response = await this.truelistClient.get(
-          `/v1/batches/${externalId}`,
-        );
-
-        if (response.data.status === 'completed') {
-          break;
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
-
-      const { data: results } = await this.truelistClient.get(
-        `/v1/email_addresses`,
+      let { data: response } = await this.truelistClient.post(
+        `/v1/verify_inline`,
         {
-          params: {
-            batch_uuid: externalId,
-          },
+          email: emailCheck.email,
         },
       );
 
-      const result = results.email_addresses.find(
-        (result) => result.address === email,
-      );
+      response = response?.emails?.[0];
 
-      if (!result) {
-        throw new Error('Email not found');
+      if (!response) {
+        throw new Error('No response found');
       }
 
-      const resultMap = {
+      console.log(`[EMAIL_CHECK] response: ${JSON.stringify(response)}`);
+
+      const finalResult: Record<EmailCheckResult, EmailCheckResult> = {
         ok: 'ok',
+        email_invalid: 'email_invalid',
         risky: 'risky',
-        invalid: 'invalid',
         unknown: 'unknown',
-      } as const;
+        accept_all: 'accept_all',
+      };
 
-      const finalResult = resultMap[result.email_state];
-
-      if (!finalResult) {
-        throw new Error('Invalid email state');
-      }
+      const result = finalResult[response.email_state];
 
       await this.prisma.emailCheck.update({
         where: { id: emailCheckId },
-        data: { status: 'completed', result: finalResult },
+        data: {
+          status: 'completed',
+          result,
+        },
       });
 
-      if (emailCheck.contactId && finalResult !== 'ok') {
+      if (emailCheck.contactId && result !== 'ok') {
         await this.prisma.contact.update({
           where: { id: emailCheck.contactId },
           data: { bouncedAt: new Date(), bouncedBy: 'email_check' },
         });
       }
 
+      console.log(`[EMAIL_CHECK] job ${job.id} completed: ${result}`);
+    } catch (error) {
+      console.error(`[EMAIL_CHECK] error processing job ${job.id}`);
+
+      await this.prisma.emailCheck.update({
+        where: { id: emailCheckId },
+        data: { status: 'failed', result: 'unknown' },
+      });
+
+      globalError = error?.response?.data || error;
+      console.error(globalError);
+    } finally {
       if (emailCheck.bulkEmailCheckId) {
         const pendingChecks = await this.prisma.emailCheck.count({
           where: {
@@ -153,19 +148,15 @@ export class EmailCheckProcessor extends WorkerHost {
         if (pendingChecks === 0) {
           await this.prisma.bulkEmailCheck.update({
             where: { id: emailCheck.bulkEmailCheckId },
-            data: { status: 'completed' },
+            data: { status: globalError ? 'failed' : 'completed' },
           });
         }
       }
-    } catch (error) {
-      console.error(`[EMAIL_CHECK] error processing job ${job.id}`, error);
 
       await this.prisma.emailCheck.update({
         where: { id: emailCheckId },
-        data: { status: 'failed', result: 'unknown' },
+        data: { processedAt: new Date() },
       });
-
-      throw error;
     }
   }
 }

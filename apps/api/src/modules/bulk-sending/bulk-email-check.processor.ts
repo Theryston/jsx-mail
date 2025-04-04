@@ -77,7 +77,7 @@ export class BulkEmailCheckProcessor extends WorkerHost {
         currentLine++;
 
         const contacts = await this.prisma.contact.findMany({
-          where: { contactGroupId },
+          where: { contactGroupId, bouncedAt: null, bouncedBy: null },
           skip: (page - 1) * PER_PAGE,
           take: PER_PAGE,
         });

@@ -32,7 +32,7 @@ export class EstimatedBulkEmailCheckService {
 
     return {
       estimatedCost,
-      friendlyEstimatedCost: friendlyMoney(estimatedCost),
+      friendlyEstimatedCost: friendlyMoney(estimatedCost, true),
       estimatedTimeSeconds,
       friendlyEstimatedTime: friendlyTime(estimatedTimeSeconds),
       contactsCount,

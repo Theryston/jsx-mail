@@ -182,6 +182,13 @@ export class BulkSendingProcessor extends WorkerHost {
                 },
               });
 
+              await this.prisma.bulkSending.update({
+                where: { id: bulkSendingId },
+                data: {
+                  processedContacts: currentLine,
+                },
+              });
+
               continue;
             }
 

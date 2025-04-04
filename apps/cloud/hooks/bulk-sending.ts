@@ -9,6 +9,8 @@ import {
   ContactImport,
   ContactImportFailuresPagination,
   BulkSendingFailuresPagination,
+  BulkEmailCheck,
+  BulkEmailCheckEstimate,
 } from '@/types/bulk-sending';
 import { PER_PAGE } from '@/utils/constants';
 
@@ -71,13 +73,18 @@ export function useContactGroupContacts(
   id: string,
   page: number = 1,
   search: string = '',
+  filter:
+    | 'all'
+    | 'bounced_email_check'
+    | 'bounced_message'
+    | 'not_bounced' = 'all',
 ) {
   return useQuery<ContactGroupContactsPagination>({
-    queryKey: ['contactGroupContacts', id, page, search],
+    queryKey: ['contactGroupContacts', id, page, search, filter],
     queryFn: () =>
       api
         .get(
-          `/bulk-sending/contact-group/${id}/contacts?page=${page}&take=${PER_PAGE}&search=${search}`,
+          `/bulk-sending/contact-group/${id}/contacts?page=${page}&take=${PER_PAGE}&search=${search}&filter=${filter}`,
         )
         .then((res) => res.data),
   });
@@ -240,5 +247,41 @@ export function useContactExists(key: string | null) {
     queryFn: () =>
       api.get(`/bulk-sending/unsubscribe/${key}`).then((res) => res.data),
     enabled: !!key,
+  });
+}
+
+export function useCreateBulkEmailCheck() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: { contactGroupId: string }) =>
+      api.post('/bulk-sending/email-check', body).then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bulkEmailChecks'] });
+    },
+  });
+}
+
+export function useListBulkEmailChecks(
+  contactGroupId: string,
+  refetchInterval?: number | false,
+) {
+  return useQuery<BulkEmailCheck[]>({
+    queryKey: ['bulkEmailChecks', contactGroupId],
+    queryFn: () =>
+      api
+        .get(`/bulk-sending/email-check/${contactGroupId}`)
+        .then((res) => res.data),
+    ...(refetchInterval ? { refetchInterval } : {}),
+  });
+}
+
+export function useEstimateBulkEmailCheck(contactGroupId: string) {
+  return useQuery<BulkEmailCheckEstimate>({
+    queryKey: ['estimateBulkEmailCheck', contactGroupId],
+    queryFn: () =>
+      api
+        .get(`/bulk-sending/email-check/estimate/${contactGroupId}`)
+        .then((res) => res.data),
   });
 }

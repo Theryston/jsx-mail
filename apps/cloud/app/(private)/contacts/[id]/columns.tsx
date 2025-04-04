@@ -39,6 +39,19 @@ export const columns = (
     },
   },
   {
+    accessorKey: 'bouncedAt',
+    header: 'Bounced',
+    cell: ({ row }) => {
+      return (
+        <span>
+          {row.original.bouncedAt
+            ? `Detected from ${row.original.bouncedBy === 'email_check' ? 'email check' : 'bounce'} at ${moment(row.original.bouncedAt).format('DD/MM/YYYY HH:mm:ss')}`
+            : 'N/A'}
+        </span>
+      );
+    },
+  },
+  {
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => {

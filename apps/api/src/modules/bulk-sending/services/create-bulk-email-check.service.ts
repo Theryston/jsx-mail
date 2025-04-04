@@ -7,6 +7,8 @@ import { PrismaService } from 'src/services/prisma.service';
 import { CreateBulkEmailCheckDto } from '../bulk-sending.dto';
 import { EstimatedBulkEmailCheckService } from './estimated-bulk-email-check.service';
 import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
+import { Queue } from 'bullmq';
+import { InjectQueue } from '@nestjs/bullmq';
 
 @Injectable()
 export class CreateBulkEmailCheckService {
@@ -14,6 +16,8 @@ export class CreateBulkEmailCheckService {
     private readonly prisma: PrismaService,
     private readonly estimatedBulkEmailCheckService: EstimatedBulkEmailCheckService,
     private readonly getBalanceService: GetBalanceService,
+    @InjectQueue('bulk-email-check')
+    private readonly bulkEmailCheckQueue: Queue,
   ) {}
 
   async execute({ contactGroupId }: CreateBulkEmailCheckDto, userId: string) {
@@ -45,7 +49,12 @@ export class CreateBulkEmailCheckService {
       data: {
         contactGroupId,
         userId,
+        totalEmails: estimatedBulkEmailCheck.contactsCount,
       },
+    });
+
+    this.bulkEmailCheckQueue.add('bulk-email-check', {
+      bulkEmailCheckId: bulkEmailCheck.id,
     });
 
     return bulkEmailCheck;

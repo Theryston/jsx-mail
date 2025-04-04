@@ -219,9 +219,15 @@ export class BulkSendingController {
     );
   }
 
-  @Get('email-check/estimate')
+  @Get('email-check/estimate/:contactGroupId')
   @Permissions([PERMISSIONS.SELF_CREATE_BULK_EMAIL_CHECK_ESTIMATE.value])
-  estimateBulkEmailCheck(@Body() body: CreateBulkEmailCheckDto, @Req() req) {
-    return this.estimateBulkEmailCheckService.execute(body, req.user.id);
+  estimateBulkEmailCheck(
+    @Param('contactGroupId') contactGroupId: string,
+    @Req() req,
+  ) {
+    return this.estimateBulkEmailCheckService.execute(
+      { contactGroupId },
+      req.user.id,
+    );
   }
 }

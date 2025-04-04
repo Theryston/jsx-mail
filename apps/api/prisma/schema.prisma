@@ -710,6 +710,8 @@ model EmailCheck {
   bulkEmailCheckId String?          @map("bulk_email_check_id")
   contactId        String?          @map("contact_id")
   externalId       String?          @map("external_id")
+  startedAt        DateTime?        @map("started_at")
+  processedAt      DateTime?        @map("processed_at")
   chargedAt        DateTime?        @map("charged_at")
   createdAt        DateTime         @default(now()) @map("created_at")
   updatedAt        DateTime         @updatedAt @map("updated_at")

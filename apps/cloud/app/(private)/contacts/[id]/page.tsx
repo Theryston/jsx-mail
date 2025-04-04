@@ -9,6 +9,7 @@ import {
   Send,
   Loader2,
   ArrowLeftIcon,
+  Search,
 } from 'lucide-react';
 import { use, useEffect, useState } from 'react';
 import {
@@ -17,6 +18,7 @@ import {
   useContactImports,
   useMarkContactImportAsRead,
   useContactImportFailures,
+  useListBulkEmailChecks,
 } from '@/hooks/bulk-sending';
 import { Skeleton } from '@jsx-mail/ui/skeleton';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -25,6 +27,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from '@jsx-mail/ui/dropdown-menu';
 import { DataTable } from './data-table';
 import { columns } from './columns';
@@ -38,6 +42,7 @@ import { DialogContent, DialogTitle, DialogHeader } from '@jsx-mail/ui/dialog';
 import { Dialog } from '@jsx-mail/ui/dialog';
 import { useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from '@/hooks/use-debounce';
+import { BulkEmailCheckBanner, BulkEmailCheckModal } from './bulk-email-check';
 
 export default function ContactGroupPage({
   params,
@@ -51,11 +56,15 @@ export default function ContactGroupPage({
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const searchDebounced = useDebounce(search, 500);
+  const [isBulkEmailCheckOpen, setIsBulkEmailCheckOpen] = useState(false);
+  const [filter, setFilter] = useState<
+    'all' | 'bounced_email_check' | 'bounced_message' | 'not_bounced'
+  >('all');
 
   const { data: contactGroup, isPending: isContactGroupPending } =
     useGetContactGroup(id);
   const { data: contactsPagination, isPending: isContactsPending } =
-    useContactGroupContacts(id, page, searchDebounced);
+    useContactGroupContacts(id, page, searchDebounced, filter);
   const [processingImport, setProcessingImport] =
     useState<ContactImport | null>(null);
   const [notReadFinalStatusImports, setNotReadFinalStatusImports] = useState<
@@ -67,6 +76,20 @@ export default function ContactGroupPage({
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const back = searchParams.get('back') || '/contacts';
+  const [refetchInterval, setRefetchInterval] = useState<number | false>(false);
+  const { data: bulkEmailChecks } = useListBulkEmailChecks(id, refetchInterval);
+
+  useEffect(() => {
+    if (
+      bulkEmailChecks?.some(
+        (check) => check.status === 'pending' || check.status === 'processing',
+      )
+    ) {
+      setRefetchInterval(1000);
+    } else {
+      setRefetchInterval(false);
+    }
+  }, [bulkEmailChecks]);
 
   useEffect(() => {
     queryClient.invalidateQueries({
@@ -130,8 +153,12 @@ export default function ContactGroupPage({
           <ImportsBanner imports={notReadFinalStatusImports} />
         )}
 
+        {bulkEmailChecks && (
+          <BulkEmailCheckBanner bulkEmailChecks={bulkEmailChecks} />
+        )}
+
         <div className="flex flex-col gap-4 md:flex-row md:items-center justify-between">
-          <div className="flex items-start justify-between">
+          <div className="flex items-start flex-col md:flex-row md:justify-between">
             <div className="flex gap-2 flex-col">
               <div className="flex items-center gap-2">
                 <Button
@@ -154,6 +181,10 @@ export default function ContactGroupPage({
               <ContactButtons
                 id={id}
                 setIsAddContactManuallyOpen={setIsAddContactManuallyOpen}
+                setIsBulkEmailCheckOpen={setIsBulkEmailCheckOpen}
+                isSmall={true}
+                filter={filter}
+                setFilter={setFilter}
               />
             </div>
           </div>
@@ -163,15 +194,20 @@ export default function ContactGroupPage({
               <ContactButtons
                 id={id}
                 setIsAddContactManuallyOpen={setIsAddContactManuallyOpen}
+                setIsBulkEmailCheckOpen={setIsBulkEmailCheckOpen}
+                filter={filter}
+                setFilter={setFilter}
               />
             </div>
 
-            <div className="w-full md:w-64">
-              <Input
-                placeholder="Search contacts..."
-                value={search}
-                onChange={handleSearchChange}
-              />
+            <div className="flex gap-2">
+              <div className="w-full md:w-64">
+                <Input
+                  placeholder="Search contacts..."
+                  value={search}
+                  onChange={handleSearchChange}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -202,6 +238,12 @@ export default function ContactGroupPage({
         isOpen={isAddContactManuallyOpen}
         onOpenChange={setIsAddContactManuallyOpen}
         id={id}
+      />
+
+      <BulkEmailCheckModal
+        isOpen={isBulkEmailCheckOpen}
+        onOpenChange={setIsBulkEmailCheckOpen}
+        contactGroupId={id}
       />
     </Container>
   );
@@ -392,9 +434,19 @@ function ViewErrorsDialog({
 function ContactButtons({
   id,
   setIsAddContactManuallyOpen,
+  setIsBulkEmailCheckOpen,
+  isSmall = false,
+  filter,
+  setFilter,
 }: {
   id: string;
   setIsAddContactManuallyOpen: (open: boolean) => void;
+  setIsBulkEmailCheckOpen: (open: boolean) => void;
+  filter: 'all' | 'bounced_email_check' | 'bounced_message' | 'not_bounced';
+  setFilter: (
+    filter: 'all' | 'bounced_email_check' | 'bounced_message' | 'not_bounced',
+  ) => void;
+  isSmall?: boolean;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -414,27 +466,98 @@ function ContactButtons({
   };
 
   return (
-    <div className="flex gap-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button size="icon" variant="outline">
-            <PlusIcon className="size-4" />
+    <div className="flex flex-col gap-2">
+      <div className={cn('flex gap-2', isSmall && 'flex-wrap mt-2')}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            {isSmall ? (
+              <Button variant="outline">
+                <PlusIcon className="size-4" />
+                Add contact
+              </Button>
+            ) : (
+              <Button size="icon" variant="outline">
+                <PlusIcon className="size-4" />
+              </Button>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem onClick={handleAddManually}>
+              <UserPlusIcon className="mr-2 size-4" />
+              Add Manually
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleImportCSV}>
+              <FileUpIcon className="mr-2 size-4" />
+              Import CSV
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {isSmall ? (
+          <Button variant="outline" onClick={handleSendEmail}>
+            <Send className="size-4" />
+            Send email
           </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuItem onClick={handleAddManually}>
-            <UserPlusIcon className="mr-2 size-4" />
-            Add Manually
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleImportCSV}>
-            <FileUpIcon className="mr-2 size-4" />
-            Import CSV
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <Button size="icon" variant="outline" onClick={handleSendEmail}>
-        <Send className="size-4" />
-      </Button>
+        ) : (
+          <Button size="icon" variant="outline" onClick={handleSendEmail}>
+            <Send className="size-4" />
+          </Button>
+        )}
+        <Button variant="outline" onClick={() => setIsBulkEmailCheckOpen(true)}>
+          <Search className="size-4" />
+          Detect invalid emails
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              Filter{' '}
+              {filter !== 'all' && (
+                <div className="w-2 h-2 bg-primary rounded-full" />
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Filter Contacts</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => setFilter('all')}
+              className={cn(
+                'flex items-center gap-2',
+                filter === 'all' && 'text-primary bg-primary/10',
+              )}
+            >
+              All{' '}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setFilter('bounced_email_check')}
+              className={cn(
+                'flex items-center gap-2',
+                filter === 'bounced_email_check' &&
+                  'text-primary bg-primary/10',
+              )}
+            >
+              Bounced (Email Check)
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setFilter('bounced_message')}
+              className={cn(
+                'flex items-center gap-2',
+                filter === 'bounced_message' && 'text-primary bg-primary/10',
+              )}
+            >
+              Bounced (Message)
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setFilter('not_bounced')}
+              className={cn(
+                'flex items-center gap-2',
+                filter === 'not_bounced' && 'text-primary bg-primary/10',
+              )}
+            >
+              Not Bounced{' '}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   );
 }

@@ -46,6 +46,8 @@ export class CreateBulkSendingService {
             contacts: {
               where: {
                 deletedAt: null,
+                bouncedAt: null,
+                bouncedBy: null,
               },
             },
           },
