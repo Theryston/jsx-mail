@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { UpdateMessageStatusService } from 'src/modules/email/services/update-message-status.service';
+import moment from 'moment';
 @Injectable()
 export class ResendProcessingMessagesService {
   constructor(
@@ -13,9 +14,50 @@ export class ResendProcessingMessagesService {
   async execute() {
     console.log(`[RESEND_PROCESSING_MESSAGES] started at: ${new Date()}`);
 
+    const messagesIds: Set<string> = new Set();
+
     const processingMessages = await this.prisma.message.findMany({
       where: {
         status: 'processing',
+      },
+      select: {
+        id: true,
+      },
+      // include: {
+      //   sender: true,
+      //   messageFiles: true,
+      // },
+    });
+
+    for (const message of processingMessages) {
+      messagesIds.add(message.id);
+    }
+
+    const last24Hours = moment().subtract(24, 'hours').toDate();
+
+    const messagesQueuedMoreThan24Hours = await this.prisma.message.findMany({
+      where: {
+        status: 'queued',
+        createdAt: {
+          lte: last24Hours,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    for (const message of messagesQueuedMoreThan24Hours) {
+      messagesIds.add(message.id);
+    }
+
+    console.log(
+      `[RESEND_PROCESSING_MESSAGES] found ${messagesIds.size} messages to resend`,
+    );
+
+    const messages = await this.prisma.message.findMany({
+      where: {
+        id: { in: Array.from(messagesIds) },
       },
       include: {
         sender: true,
@@ -23,11 +65,7 @@ export class ResendProcessingMessagesService {
       },
     });
 
-    console.log(
-      `[RESEND_PROCESSING_MESSAGES] found ${processingMessages.length} processing messages`,
-    );
-
-    for (const message of processingMessages) {
+    for (const message of messages) {
       await this.sendEmailService.execute({
         from: {
           email: message.sender.email,
