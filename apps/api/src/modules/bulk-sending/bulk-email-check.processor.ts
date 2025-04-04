@@ -88,6 +88,20 @@ export class BulkEmailCheckProcessor extends WorkerHost {
 
         for (const contact of contacts) {
           try {
+            const alreadyExists = await this.prisma.emailCheck.findFirst({
+              where: {
+                email: contact.email,
+                bulkEmailCheckId,
+              },
+            });
+
+            if (alreadyExists) {
+              console.log(
+                `[BULK_EMAIL_CHECK] email check ${contact.email} already exists`,
+              );
+              continue;
+            }
+
             const emailCheck = await this.prisma.emailCheck.create({
               data: {
                 email: contact.email,
