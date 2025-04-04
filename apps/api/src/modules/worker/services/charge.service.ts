@@ -70,7 +70,7 @@ export class ChargeService {
         if (!isEligibleForFree) {
           // If user is not eligible for free messages, charge for all messages
           price = notChargedMessagesAmount * settings.pricePerMessage;
-          description = `Charge for ${notChargedMessagesAmount} messages (not eligible for free messages)`;
+          description = `Charge for ${notChargedMessagesAmount} messages`;
         } else if (currentMonthMessagesAmount > settings.freeEmailsPerMonth) {
           // Calculate the remaining free messages for the user in the current month
           restFreeMessages =
