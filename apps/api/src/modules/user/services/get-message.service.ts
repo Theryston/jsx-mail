@@ -25,6 +25,9 @@ export class GetMessageService {
             description: true,
             status: true,
           },
+          orderBy: {
+            createdAt: 'asc',
+          },
         },
       },
     });
