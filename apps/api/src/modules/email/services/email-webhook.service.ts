@@ -55,7 +55,6 @@ export class EmailWebhookService {
           console.log(`[EMAIL_WEBHOOK_SERVICE] unsubscribe link: ${link}`);
 
           description = 'The recipient clicked the unsubscribe link';
-          newStatus = message.status;
           extra = { is_unsubscribe: 'true' };
         } else {
           description = `The recipient clicked the link in the email: ${link}`;
