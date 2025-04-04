@@ -279,12 +279,20 @@ export function useListBulkEmailChecks(
 export function useEstimateBulkEmailCheck(
   contactGroupId: string,
   totalEmails: number,
+  customEmailsTotal?: number,
 ) {
   return useQuery<BulkEmailCheckEstimate>({
-    queryKey: ['estimateBulkEmailCheck', contactGroupId, totalEmails],
+    queryKey: [
+      'estimateBulkEmailCheck',
+      contactGroupId,
+      totalEmails,
+      customEmailsTotal,
+    ],
     queryFn: () =>
       api
-        .get(`/bulk-sending/email-check/estimate/${contactGroupId}`)
+        .get(
+          `/bulk-sending/email-check/estimate/${contactGroupId}?customEmailsTotal=${customEmailsTotal}`,
+        )
         .then((res) => res.data),
   });
 }

@@ -226,10 +226,12 @@ export class BulkSendingController {
   estimateBulkEmailCheck(
     @Param('contactGroupId') contactGroupId: string,
     @Req() req,
+    @Query() query: any,
   ) {
     return this.estimateBulkEmailCheckService.execute(
       { contactGroupId },
       req.user.id,
+      query.customEmailsTotal ? Number(query.customEmailsTotal) : undefined,
     );
   }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@jsx-mail/ui/button';
 import {
   Dialog,
@@ -50,17 +50,18 @@ function BulkEmailCheckResult({ check }: { check: BulkEmailCheck }) {
           <div className="flex items-center gap-2">
             <CheckCircle className="size-4" />
             <p className="text-sm truncate overflow-hidden text-ellipsis">
-              Bulk Email Check: {check.processedEmails}/{check.totalEmails}{' '}
-              emails checked
+              Bulk Email Check: {check.processedEmails} email
+              {check.processedEmails === 1 ? '' : 's'} checked
             </p>
           </div>
           <div className="flex flex-col gap-0">
             <p className="text-xs">
-              Bounced Emails: {check.bouncedEmails}/{check.totalEmails} emails
+              Bounced Emails: {check.bouncedEmails} email
+              {check.bouncedEmails === 1 ? '' : 's'}
             </p>
             <p className="text-xs">
-              Valid Emails: {check.processedEmails - check.bouncedEmails}/
-              {check.totalEmails} emails
+              Valid Emails: {check.processedEmails - check.bouncedEmails} email
+              {check.processedEmails - check.bouncedEmails === 1 ? '' : 's'}
             </p>
           </div>
         </div>
@@ -78,10 +79,20 @@ function BulkEmailCheckResult({ check }: { check: BulkEmailCheck }) {
 }
 
 function ProcessingBulkEmailCheck({ check }: { check: BulkEmailCheck }) {
-  const momentStartedAt = moment(check.startedAt || new Date());
-  const passedSeconds = moment().diff(momentStartedAt, 'seconds');
-  const remainingSeconds = check.estimatedEndSeconds - passedSeconds;
-  const estimatedEndAt = moment().add(remainingSeconds, 'seconds');
+  const { data: estimate } = useEstimateBulkEmailCheck(
+    check.contactGroupId,
+    check.totalEmails,
+    check.totalEmails - check.processedEmails,
+  );
+  const [estimatedEndAt, setEstimatedEndAt] = useState<moment.Moment | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (!estimate?.estimatedTimeSeconds) return;
+
+    setEstimatedEndAt(moment().add(estimate.estimatedTimeSeconds, 'seconds'));
+  }, [estimate]);
 
   return (
     <div className="rounded-md p-4 bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse flex flex-col gap-2">
@@ -92,14 +103,20 @@ function ProcessingBulkEmailCheck({ check }: { check: BulkEmailCheck }) {
           {check.totalEmails} emails checked
         </p>
       </div>
-      {remainingSeconds > 0 && (
-        <>
-          <p className="text-xs">
-            Estimated End: {estimatedEndAt.format('DD/MM/YYYY HH:mm:ss')}
-          </p>
-          <p className="text-xs">Remaining: {friendlyTime(remainingSeconds)}</p>
-        </>
-      )}
+      <div className="flex flex-col gap-0">
+        {estimatedEndAt && (
+          <>
+            <p className="text-xs">
+              Estimated End:{' '}
+              {estimatedEndAt.format('DD/MM/YYYY HH:mm:ss') || 'N/A'}
+            </p>
+            <p className="text-xs">
+              Remaining:{' '}
+              {friendlyTime(estimatedEndAt.diff(moment(), 'seconds'))}
+            </p>
+          </>
+        )}
+      </div>
     </div>
   );
 }

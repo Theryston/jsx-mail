@@ -11,31 +11,39 @@ export class EstimatedBulkEmailCheckService {
     private readonly getSettingsService: GetSettingsService,
   ) {}
 
-  async execute({ contactGroupId }: CreateBulkEmailCheckDto, userId: string) {
+  async execute(
+    { contactGroupId }: CreateBulkEmailCheckDto,
+    userId: string,
+    customEmailsTotal?: number,
+  ) {
     const settings = await this.getSettingsService.execute(userId);
 
-    const contactGroup = await this.prisma.contactGroup.findUnique({
-      where: { id: contactGroupId, userId },
-    });
+    if (!customEmailsTotal) {
+      const contactGroup = await this.prisma.contactGroup.findUnique({
+        where: { id: contactGroupId, userId },
+      });
 
-    if (!contactGroup) {
-      throw new NotFoundException('Contact group not found');
+      if (!contactGroup) {
+        throw new NotFoundException('Contact group not found');
+      }
+
+      const contactsCount = await this.prisma.contact.count({
+        where: { contactGroupId, bouncedAt: null },
+      });
+
+      customEmailsTotal = contactsCount;
     }
 
-    const contactsCount = await this.prisma.contact.count({
-      where: { contactGroupId, bouncedAt: null },
-    });
-
-    const estimatedCost = contactsCount * settings.pricePerEmailCheck;
+    const estimatedCost = customEmailsTotal * settings.pricePerEmailCheck;
     const estimatedTimeSeconds =
-      contactsCount * settings.globalEmailsCheckPerSecond;
+      customEmailsTotal * settings.globalEmailsCheckPerSecond;
 
     return {
       estimatedCost,
       friendlyEstimatedCost: friendlyMoney(estimatedCost, true),
       estimatedTimeSeconds,
       friendlyEstimatedTime: friendlyTime(estimatedTimeSeconds),
-      contactsCount,
+      contactsCount: customEmailsTotal,
     };
   }
 }
