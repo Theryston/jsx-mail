@@ -173,7 +173,7 @@ export default function ContactGroupPage({
                 </h1>
               </div>
               <Badge variant="outline" className="w-fit h-fit">
-                {contactGroup?.contactsCount || 0} contacts
+                {contactsPagination?.totalItems || 0} contacts
               </Badge>
             </div>
 
