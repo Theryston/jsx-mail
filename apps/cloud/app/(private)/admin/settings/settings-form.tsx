@@ -48,6 +48,7 @@ const createSettingsSchema = (isUserSettings: boolean) => {
     minEmailsForRateCalculation: z.number().min(0, 'Must be 0 or greater'),
     maxSecurityCodesPerHour: z.number().min(0, 'Must be 0 or greater'),
     maxSecurityCodesPerMinute: z.number().min(0, 'Must be 0 or greater'),
+    pricePerEmailCheck: z.number().min(0, 'Must be 0 or greater'),
   };
 
   if (!isUserSettings) {
@@ -55,6 +56,7 @@ const createSettingsSchema = (isUserSettings: boolean) => {
       ...baseSchema,
       globalMaxMessagesPerSecond: z.number().min(0, 'Must be 0 or greater'),
       globalMaxMessagesPerDay: z.number().min(0, 'Must be 0 or greater'),
+      globalEmailsCheckPerSecond: z.number().min(0, 'Must be 0 or greater'),
     });
   }
 
@@ -75,11 +77,13 @@ type BaseSettingsFormValues = {
   minEmailsForRateCalculation: number;
   maxSecurityCodesPerHour: number;
   maxSecurityCodesPerMinute: number;
+  pricePerEmailCheck: number;
 };
 
 type GlobalSettingsFormValues = BaseSettingsFormValues & {
   globalMaxMessagesPerSecond: number;
   globalMaxMessagesPerDay: number;
+  globalEmailsCheckPerSecond: number;
 };
 
 type SettingsFormValues = BaseSettingsFormValues | GlobalSettingsFormValues;
@@ -136,10 +140,12 @@ export function SettingsForm({
       minEmailsForRateCalculation: 0,
       maxSecurityCodesPerHour: 0,
       maxSecurityCodesPerMinute: 0,
+      pricePerEmailCheck: 0,
       ...(!isUserSettings
         ? {
             globalMaxMessagesPerSecond: 0,
             globalMaxMessagesPerDay: 0,
+            globalEmailsCheckPerSecond: 0,
           }
         : {}),
     } as SettingsFormValues,
@@ -197,10 +203,12 @@ export function SettingsForm({
       const changes: Record<string, ChangedField> = {};
 
       Object.keys(data).forEach((key) => {
-        const typedKey = key as keyof SettingsFormValues;
-        if (data[typedKey] !== initialData[typedKey]) {
+        const typedKey = key as keyof typeof data;
+        if (
+          data[typedKey] !== initialData[typedKey as keyof typeof initialData]
+        ) {
           changes[key] = {
-            old: initialData[typedKey],
+            old: initialData[typedKey as keyof typeof initialData],
             new: data[typedKey],
           };
         }
@@ -740,6 +748,73 @@ export function SettingsForm({
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="pricePerEmailCheck"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    Price per Email Check
+                    {isFieldDifferent('pricePerEmailCheck') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(differentFields.pricePerEmailCheck.old)} →{' '}
+                        {formatNumber(differentFields.pricePerEmailCheck.new)}
+                      </Badge>
+                    )}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.0000001"
+                      {...field}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        field.onChange(isNaN(value) ? 0 : value);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {!isUserSettings && (
+              <FormField
+                control={form.control}
+                name="globalEmailsCheckPerSecond"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      Global Emails Check per Second
+                      {isFieldDifferent('globalEmailsCheckPerSecond') && (
+                        <Badge variant="outline" className="text-xs">
+                          {formatNumber(
+                            differentFields.globalEmailsCheckPerSecond.old,
+                          )}{' '}
+                          →{' '}
+                          {formatNumber(
+                            differentFields.globalEmailsCheckPerSecond.new,
+                          )}
+                        </Badge>
+                      )}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.0000001"
+                        {...field}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value);
+                          field.onChange(isNaN(value) ? 0 : value);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
           </div>
 
           <div className="flex gap-2">

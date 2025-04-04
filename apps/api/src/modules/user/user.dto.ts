@@ -291,6 +291,14 @@ export class UpdateDefaultSettingsDto {
   @IsNotEmpty()
   @IsNumber()
   maxSecurityCodesPerMinute: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  globalEmailsCheckPerSecond: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  pricePerEmailCheck: number;
 }
 
 export class UpdateUserSettingsDto {
@@ -345,4 +353,8 @@ export class UpdateUserSettingsDto {
   @IsOptional()
   @IsNumber()
   maxSecurityCodesPerMinute?: number;
+
+  @IsOptional()
+  @IsNumber()
+  pricePerEmailCheck?: number;
 }

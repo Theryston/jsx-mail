@@ -56,6 +56,10 @@ export class GetSettingsService {
       minEmailsForRateCalculation: settings.minEmailsForRateCalculation,
       maxSecurityCodesPerHour: settings.maxSecurityCodesPerHour,
       maxSecurityCodesPerMinute: settings.maxSecurityCodesPerMinute,
+      globalEmailsCheckPerSecond: settings.globalEmailsCheckPerSecond,
+      pricePerEmailCheck: options?.noScale
+        ? settings.pricePerEmailCheck
+        : settings.pricePerEmailCheck * MONEY_SCALE,
     };
   }
 
@@ -92,6 +96,9 @@ export class GetSettingsService {
       maxSecurityCodesPerHour: defaultSettings?.maxSecurityCodesPerHour || 10,
       maxSecurityCodesPerMinute:
         defaultSettings?.maxSecurityCodesPerMinute || 1,
+      pricePerEmailCheck: defaultSettings?.pricePerEmailCheck || 0.0001,
+      globalEmailsCheckPerSecond:
+        defaultSettings?.globalEmailsCheckPerSecond || 1,
     };
   }
 }
