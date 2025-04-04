@@ -19,7 +19,13 @@ export class ListBulkEmailChecksService {
       include: {
         _count: {
           select: {
-            results: true,
+            results: {
+              where: {
+                status: {
+                  notIn: ['pending', 'processing'],
+                },
+              },
+            },
           },
         },
       },
