@@ -18,7 +18,11 @@ export class GetSettingsService {
       const userSettings = await this.getUserSettings(userId);
 
       for (const key in settings) {
-        if (userSettings?.[key]) {
+        if (
+          userSettings?.[key] !== undefined &&
+          userSettings[key] !== null &&
+          userSettings[key] !== settings[key]
+        ) {
           settings[key] = userSettings[key];
         }
       }
