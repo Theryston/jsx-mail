@@ -12,7 +12,13 @@ export class ChargeBulkEmailCheckService {
     private readonly chargeService: ChargeService,
   ) {}
 
-  async execute({ userId }: { userId: string }) {
+  async execute({
+    userId,
+    bulkEmailCheckId,
+  }: {
+    userId: string;
+    bulkEmailCheckId: string;
+  }) {
     console.log(`[CHARGE_BULK_EMAIL_CHECK] started for ${userId}`);
 
     let totalEmailChecks = 0;
@@ -22,6 +28,7 @@ export class ChargeBulkEmailCheckService {
 
     const totalCount = await this.prisma.emailCheck.count({
       where: {
+        bulkEmailCheckId,
         chargedAt: null,
         deletedAt: null,
         status: {
@@ -52,6 +59,7 @@ export class ChargeBulkEmailCheckService {
             notIn: ['pending', 'processing'],
           },
           userId,
+          bulkEmailCheckId,
         },
         select: {
           id: true,

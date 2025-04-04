@@ -158,6 +158,7 @@ export class EmailCheckProcessor extends WorkerHost {
 
           await this.queueChargeBulkEmailCheckService.add(
             emailCheck.bulkEmailCheck.userId,
+            emailCheck.bulkEmailCheckId,
           );
         }
       }

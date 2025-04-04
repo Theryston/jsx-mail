@@ -6,7 +6,7 @@ import { Queue } from 'bullmq';
 export class QueueChargeBulkEmailCheckService {
   constructor(@InjectQueue('worker') private readonly queue: Queue) {}
 
-  async add(userId: string) {
-    await this.queue.add('charge-email-check', { userId });
+  async add(userId: string, bulkEmailCheckId: string) {
+    await this.queue.add('charge-email-check', { userId, bulkEmailCheckId });
   }
 }
