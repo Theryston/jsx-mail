@@ -26,6 +26,7 @@ import { BulkEmailCheckProcessor } from './bulk-email-check.processor';
 import { CreateBulkEmailCheckService } from './services/create-bulk-email-check.service';
 import { ListBulkEmailChecksService } from './services/list-bulk-email-checks.service';
 import { EstimatedBulkEmailCheckService } from './services/estimated-bulk-email-check.service';
+import { WorkerModule } from '../worker/worker.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { EstimatedBulkEmailCheckService } from './services/estimated-bulk-email-
       name: 'bulk-email-check',
     }),
     SenderModule,
+    WorkerModule,
   ],
   controllers: [BulkSendingController],
   providers: [

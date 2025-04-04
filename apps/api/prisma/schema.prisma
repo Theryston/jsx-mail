@@ -24,6 +24,7 @@ enum TransactionStyle {
   earn_paid
   message_charge
   storage_charge
+  email_check_charge
 }
 
 enum MessageStatus {

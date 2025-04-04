@@ -8,6 +8,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import axios, { AxiosInstance } from 'axios';
 import { EmailCheckResult, EmailCheckStatus } from '@prisma/client';
+import { QueueChargeBulkEmailCheckService } from '../worker/services/queue-charge-bulk-email-check.service';
 
 @Processor('email-check', { concurrency: 1 })
 export class EmailCheckProcessor extends WorkerHost {
@@ -17,6 +18,7 @@ export class EmailCheckProcessor extends WorkerHost {
     private readonly prisma: PrismaService,
     private readonly getSettingsService: GetSettingsService,
     @InjectQueue('email-check') private readonly queue: Queue,
+    private readonly queueChargeBulkEmailCheckService: QueueChargeBulkEmailCheckService,
   ) {
     super();
     this.truelistClient = axios.create({
@@ -38,6 +40,9 @@ export class EmailCheckProcessor extends WorkerHost {
 
     const emailCheck = await this.prisma.emailCheck.findUnique({
       where: { id: emailCheckId },
+      include: {
+        bulkEmailCheck: true,
+      },
     });
 
     if (!emailCheck) {
@@ -150,6 +155,10 @@ export class EmailCheckProcessor extends WorkerHost {
             where: { id: emailCheck.bulkEmailCheckId },
             data: { status: globalError ? 'failed' : 'completed' },
           });
+
+          await this.queueChargeBulkEmailCheckService.add(
+            emailCheck.bulkEmailCheck.userId,
+          );
         }
       }
 
