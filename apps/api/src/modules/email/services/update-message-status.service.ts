@@ -12,7 +12,10 @@ export class UpdateMessageStatusService {
     messageId: string,
     newStatus: MessageStatus,
     description?: string,
+    extra?: Record<string, string>,
   ) {
+    extra = extra || {};
+
     const message = await this.prisma.message.findUnique({
       where: { id: messageId },
     });
@@ -21,11 +24,18 @@ export class UpdateMessageStatusService {
       throw new NotFoundException('Message not found');
     }
 
+    const entries = Object.entries(extra);
+    const extras = entries.map(([key, value]) => ({
+      key,
+      value,
+    }));
+
     await this.prisma.messageStatusHistory.create({
       data: {
         messageId,
         status: newStatus,
         description,
+        extras: extras.length > 0 ? { create: extras } : undefined,
       },
     });
 

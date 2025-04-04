@@ -46,6 +46,7 @@ export class EmailWebhookService {
       if (!message) return 'ignored because the message was not found';
 
       let description: string | undefined;
+      let extra: Record<string, string> | undefined;
 
       if (newStatus === 'clicked') {
         const link = data?.click?.link || 'Not found';
@@ -55,8 +56,10 @@ export class EmailWebhookService {
 
           description = 'The recipient clicked the unsubscribe link';
           newStatus = message.status;
+          extra = { is_unsubscribe: 'true' };
         } else {
           description = `The recipient clicked the link in the email: ${link}`;
+          extra = { link };
         }
       }
 
@@ -64,6 +67,7 @@ export class EmailWebhookService {
         message.id,
         newStatus,
         description,
+        extra,
       );
 
       if (newStatus === 'bonce' || newStatus === 'complaint') {

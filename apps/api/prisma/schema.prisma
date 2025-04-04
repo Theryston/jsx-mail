@@ -395,7 +395,23 @@ model MessageStatusHistory {
 
   message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 
+  extras MessageStatusHistoryExtra[]
+
   @@map("message_status_history")
+}
+
+model MessageStatusHistoryExtra {
+  id                     String    @id @default(uuid())
+  messageStatusHistoryId String    @map("message_status_history_id")
+  key                    String
+  value                  String
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+  deletedAt              DateTime? @map("deleted_at")
+
+  messageStatusHistory MessageStatusHistory @relation(fields: [messageStatusHistoryId], references: [id], onDelete: Cascade)
+
+  @@map("message_status_history_extras")
 }
 
 model BulkSending {

@@ -24,6 +24,12 @@ export class GetMessageService {
             createdAt: true,
             description: true,
             status: true,
+            extras: {
+              select: {
+                key: true,
+                value: true,
+              },
+            },
           },
           orderBy: {
             createdAt: 'asc',

@@ -39,6 +39,12 @@ export class ListMessagesService {
           status: true,
           description: true,
           createdAt: true,
+          extras: {
+            select: {
+              key: true,
+              value: true,
+            },
+          },
         },
         orderBy: {
           createdAt: 'asc',
