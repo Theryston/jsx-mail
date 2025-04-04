@@ -13,24 +13,41 @@ export class ListBulkEmailChecksService {
     },
     userId: string,
   ) {
+    const bulks = [];
+
     const bulkEmailChecks = await this.prisma.bulkEmailCheck.findMany({
-      where: { userId, contactGroupId },
+      where: { userId, contactGroupId, lastStatusReadAt: null },
       orderBy: { createdAt: 'desc' },
-      include: {
-        _count: {
-          select: {
-            results: {
-              where: {
-                status: {
-                  notIn: ['pending', 'processing'],
-                },
-              },
-            },
-          },
-        },
-      },
     });
 
-    return bulkEmailChecks;
+    for (const bulkEmailCheck of bulkEmailChecks) {
+      const bouncedEmails = await this.prisma.emailCheck.count({
+        where: {
+          userId,
+          bulkEmailCheckId: bulkEmailCheck.id,
+          result: {
+            not: 'ok',
+          },
+        },
+      });
+
+      const processedEmails = await this.prisma.emailCheck.count({
+        where: {
+          userId,
+          bulkEmailCheckId: bulkEmailCheck.id,
+          status: {
+            notIn: ['pending', 'processing'],
+          },
+        },
+      });
+
+      bulks.push({
+        ...bulkEmailCheck,
+        bouncedEmails,
+        processedEmails,
+      });
+    }
+
+    return bulks;
   }
 }

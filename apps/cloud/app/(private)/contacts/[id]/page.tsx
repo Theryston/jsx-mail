@@ -244,6 +244,7 @@ export default function ContactGroupPage({
         isOpen={isBulkEmailCheckOpen}
         onOpenChange={setIsBulkEmailCheckOpen}
         contactGroupId={id}
+        totalEmails={contactGroup?.contactsCount || 0}
       />
     </Container>
   );

@@ -669,15 +669,19 @@ model Contact {
 }
 
 model BulkEmailCheck {
-  id              String               @id @default(uuid())
-  contactGroupId  String?              @map("contact_group_id")
-  status          BulkEmailCheckStatus @default(pending) @map("status")
-  totalEmails     Int                  @default(0) @map("total_emails")
-  processedEmails Int                  @default(0) @map("processed_emails")
-  userId          String               @map("user_id")
-  createdAt       DateTime             @default(now()) @map("created_at")
-  updatedAt       DateTime             @updatedAt @map("updated_at")
-  deletedAt       DateTime?            @map("deleted_at")
+  id                  String               @id @default(uuid())
+  contactGroupId      String?              @map("contact_group_id")
+  status              BulkEmailCheckStatus @default(pending) @map("status")
+  totalEmails         Int                  @default(0) @map("total_emails")
+  processedEmails     Int                  @default(0) @map("processed_emails")
+  userId              String               @map("user_id")
+  lastStatusReadAt    DateTime?            @map("last_status_read_at")
+  estimatedEndSeconds Int?                 @map("estimated_end_seconds")
+  estimatedEndAt      DateTime?            @map("estimated_end_at")
+  startedAt           DateTime?            @map("started_at")
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
+  deletedAt           DateTime?            @map("deleted_at")
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   contactGroup ContactGroup? @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)

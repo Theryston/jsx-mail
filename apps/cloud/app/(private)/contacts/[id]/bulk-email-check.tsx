@@ -7,12 +7,15 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@jsx-mail/ui/dialog';
-import { Loader2 } from 'lucide-react';
+import { CheckCircle, Loader2, Check } from 'lucide-react';
 import {
   useCreateBulkEmailCheck,
   useEstimateBulkEmailCheck,
+  useMarkBulkEmailCheckAsRead,
 } from '@/hooks/bulk-sending';
 import { BulkEmailCheck } from '@/types/bulk-sending';
+import moment from 'moment';
+import { friendlyTime } from '@/utils/format';
 
 type BulkEmailCheckStep = 'info' | 'estimate';
 
@@ -21,21 +24,82 @@ export function BulkEmailCheckBanner({
 }: {
   bulkEmailChecks: BulkEmailCheck[];
 }) {
-  const processingCheck = bulkEmailChecks.find(
-    (check) => check.status === 'pending' || check.status === 'processing',
+  return (
+    <div className="flex flex-col gap-2">
+      {bulkEmailChecks.map((check) => (
+        <>
+          {check.status === 'pending' || check.status === 'processing' ? (
+            <ProcessingBulkEmailCheck check={check} key={check.id} />
+          ) : (
+            <BulkEmailCheckResult check={check} key={check.id} />
+          )}
+        </>
+      ))}
+    </div>
   );
+}
 
-  if (!processingCheck) return null;
+function BulkEmailCheckResult({ check }: { check: BulkEmailCheck }) {
+  const { mutate: markBulkEmailCheckAsRead, isPending: isMarkingAsRead } =
+    useMarkBulkEmailCheckAsRead(check.id, check.contactGroupId);
 
   return (
-    <div className="rounded-md p-4 bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse">
+    <div className="rounded-md p-4 bg-green-500/10 border border-green-500/20">
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1 text-green-500 max-w-[80%]">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="size-4" />
+            <p className="text-sm truncate overflow-hidden text-ellipsis">
+              Bulk Email Check: {check.processedEmails}/{check.totalEmails}{' '}
+              emails checked
+            </p>
+          </div>
+          <div className="flex flex-col gap-0">
+            <p className="text-xs">
+              Bounced Emails: {check.bouncedEmails}/{check.totalEmails} emails
+            </p>
+            <p className="text-xs">
+              Valid Emails: {check.processedEmails - check.bouncedEmails}/
+              {check.totalEmails} emails
+            </p>
+          </div>
+        </div>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => markBulkEmailCheckAsRead()}
+          disabled={isMarkingAsRead}
+        >
+          <Check className="size-4" />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function ProcessingBulkEmailCheck({ check }: { check: BulkEmailCheck }) {
+  const momentStartedAt = moment(check.startedAt || new Date());
+  const passedSeconds = moment().diff(momentStartedAt, 'seconds');
+  const remainingSeconds = check.estimatedEndSeconds - passedSeconds;
+  const estimatedEndAt = moment().add(remainingSeconds, 'seconds');
+
+  return (
+    <div className="rounded-md p-4 bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse flex flex-col gap-2">
       <div className="flex items-center gap-2">
         <Loader2 className="size-4 animate-spin" />
         <p className="text-sm">
-          Processing Bulk Email Check: {processingCheck._count.results}/
-          {processingCheck.totalEmails} emails checked
+          Processing Bulk Email Check: {check.processedEmails}/
+          {check.totalEmails} emails checked
         </p>
       </div>
+      {remainingSeconds > 0 && (
+        <>
+          <p className="text-xs">
+            Estimated End: {estimatedEndAt.format('DD/MM/YYYY HH:mm:ss')}
+          </p>
+          <p className="text-xs">Remaining: {friendlyTime(remainingSeconds)}</p>
+        </>
+      )}
     </div>
   );
 }
@@ -44,14 +108,18 @@ export function BulkEmailCheckModal({
   isOpen,
   onOpenChange,
   contactGroupId,
+  totalEmails,
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   contactGroupId: string;
+  totalEmails: number;
 }) {
   const [step, setStep] = useState<BulkEmailCheckStep>('info');
-  const { data: estimate, isLoading: isEstimating } =
-    useEstimateBulkEmailCheck(contactGroupId);
+  const { data: estimate, isLoading: isEstimating } = useEstimateBulkEmailCheck(
+    contactGroupId,
+    totalEmails,
+  );
   const { mutate: createBulkEmailCheck, isPending: isCreating } =
     useCreateBulkEmailCheck();
 

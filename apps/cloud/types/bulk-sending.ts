@@ -127,11 +127,12 @@ export type BulkEmailCheck = {
   updatedAt: string;
   contactGroupId: string;
   totalEmails: number;
-  processedEmails: number;
   status: 'pending' | 'processing' | 'completed' | 'failed';
-  _count: {
-    results: number;
-  };
+  bouncedEmails: number;
+  processedEmails: number;
+  startedAt: string;
+  estimatedEndAt: string;
+  estimatedEndSeconds: number;
 };
 
 export type BulkEmailCheckEstimate = {

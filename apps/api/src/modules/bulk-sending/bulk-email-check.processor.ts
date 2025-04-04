@@ -59,7 +59,12 @@ export class BulkEmailCheckProcessor extends WorkerHost {
 
       await this.prisma.bulkEmailCheck.update({
         where: { id: bulkEmailCheckId },
-        data: { totalEmails, processedEmails: 0, status: 'processing' },
+        data: {
+          totalEmails,
+          processedEmails: 0,
+          status: 'processing',
+          startedAt: new Date(),
+        },
       });
 
       if (totalEmails === 0) {

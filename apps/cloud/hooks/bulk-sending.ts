@@ -276,12 +276,34 @@ export function useListBulkEmailChecks(
   });
 }
 
-export function useEstimateBulkEmailCheck(contactGroupId: string) {
+export function useEstimateBulkEmailCheck(
+  contactGroupId: string,
+  totalEmails: number,
+) {
   return useQuery<BulkEmailCheckEstimate>({
-    queryKey: ['estimateBulkEmailCheck', contactGroupId],
+    queryKey: ['estimateBulkEmailCheck', contactGroupId, totalEmails],
     queryFn: () =>
       api
         .get(`/bulk-sending/email-check/estimate/${contactGroupId}`)
         .then((res) => res.data),
+  });
+}
+
+export function useMarkBulkEmailCheckAsRead(
+  bulkEmailCheckId: string,
+  contactGroupId: string,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () =>
+      api
+        .put(`/bulk-sending/email-check/${bulkEmailCheckId}/read`)
+        .then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['bulkEmailChecks', contactGroupId],
+      });
+    },
   });
 }

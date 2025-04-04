@@ -287,4 +287,9 @@ export const PERMISSIONS: {
     value: 'self:create-bulk-email-check-estimate',
     description: 'Can create a bulk email check estimate for itself',
   },
+  SELF_MARK_BULK_EMAIL_CHECK_AS_READ: {
+    title: 'Self Mark Bulk Email Check As Read',
+    value: 'self:mark-bulk-email-check-as-read',
+    description: 'Can mark a bulk email check as read for itself',
+  },
 };

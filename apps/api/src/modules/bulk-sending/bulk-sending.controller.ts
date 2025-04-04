@@ -37,6 +37,7 @@ import { CreateContactService } from './services/create-contact.service';
 import { CreateBulkEmailCheckService } from './services/create-bulk-email-check.service';
 import { ListBulkEmailChecksService } from './services/list-bulk-email-checks.service';
 import { EstimatedBulkEmailCheckService } from './services/estimated-bulk-email-check.service';
+import { MarkBulkEmailCheckAsReadService } from './services/mark-bulk-email-check-as-read.service';
 
 @Controller('bulk-sending')
 export class BulkSendingController {
@@ -60,6 +61,7 @@ export class BulkSendingController {
     private readonly createBulkEmailCheckService: CreateBulkEmailCheckService,
     private readonly listBulkEmailChecksService: ListBulkEmailChecksService,
     private readonly estimateBulkEmailCheckService: EstimatedBulkEmailCheckService,
+    private readonly markBulkEmailCheckAsReadService: MarkBulkEmailCheckAsReadService,
   ) {}
 
   @Post()
@@ -227,6 +229,18 @@ export class BulkSendingController {
   ) {
     return this.estimateBulkEmailCheckService.execute(
       { contactGroupId },
+      req.user.id,
+    );
+  }
+
+  @Put('email-check/:bulkEmailCheckId/read')
+  @Permissions([PERMISSIONS.SELF_MARK_BULK_EMAIL_CHECK_AS_READ.value])
+  readBulkEmailCheck(
+    @Param('bulkEmailCheckId') bulkEmailCheckId: string,
+    @Req() req,
+  ) {
+    return this.markBulkEmailCheckAsReadService.execute(
+      bulkEmailCheckId,
       req.user.id,
     );
   }

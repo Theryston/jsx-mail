@@ -9,6 +9,7 @@ import { EstimatedBulkEmailCheckService } from './estimated-bulk-email-check.ser
 import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
+import moment from 'moment';
 
 @Injectable()
 export class CreateBulkEmailCheckService {
@@ -45,11 +46,17 @@ export class CreateBulkEmailCheckService {
       );
     }
 
+    const estimatedEndAt = moment()
+      .add(estimatedBulkEmailCheck.estimatedTimeSeconds, 'seconds')
+      .toDate();
+
     const bulkEmailCheck = await this.prisma.bulkEmailCheck.create({
       data: {
         contactGroupId,
         userId,
         totalEmails: estimatedBulkEmailCheck.contactsCount,
+        estimatedEndSeconds: estimatedBulkEmailCheck.estimatedTimeSeconds,
+        estimatedEndAt,
       },
     });
 
