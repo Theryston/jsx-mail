@@ -15,3 +15,8 @@ export type Settings = {
   maxSecurityCodesPerHour: number;
   maxSecurityCodesPerMinute: number;
 };
+
+export type UserSettings = Omit<
+  Settings,
+  'globalMaxMessagesPerSecond' | 'globalMaxMessagesPerDay'
+>;

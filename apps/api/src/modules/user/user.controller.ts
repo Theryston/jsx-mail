@@ -26,6 +26,7 @@ import {
   ResetPasswordDto,
   UpdateDefaultSettingsDto,
   UpdateOnboardingDto,
+  UpdateUserSettingsDto,
   UseSecurityCodeDto,
 } from './user.dto';
 import { Permissions } from 'src/auth/permissions.decorator';
@@ -56,6 +57,8 @@ import { BlockPermissionService } from './services/block-permission.service';
 import { GetMessageService } from './services/get-message.service';
 import { GetSettingsService } from './services/get-settings.service';
 import { UpdateDefaultSettingsService } from './services/update-default-settings.service';
+import { UpdateUserSettingsService } from './services/update-user-settings.service';
+import { DeleteUserSettingsService } from './services/delete-user-settings.service';
 
 @Controller('user')
 export class UserController {
@@ -82,6 +85,8 @@ export class UserController {
     private readonly getMessageService: GetMessageService,
     private readonly getSettingsService: GetSettingsService,
     private readonly updateDefaultSettingsService: UpdateDefaultSettingsService,
+    private readonly updateUserSettingsService: UpdateUserSettingsService,
+    private readonly deleteUserSettingsService: DeleteUserSettingsService,
   ) {}
 
   @Get('admin/users')
@@ -297,5 +302,26 @@ export class UserController {
   @Permissions([PERMISSIONS.OTHER_UPDATE_DEFAULT_SETTINGS.value])
   updateSettings(@Body() data: UpdateDefaultSettingsDto) {
     return this.updateDefaultSettingsService.execute(data);
+  }
+
+  @Get('settings/user/:userId')
+  @Permissions([PERMISSIONS.OTHER_GET_USER_SETTINGS.value])
+  getUserSettings(@Param('userId') userId: string) {
+    return this.getSettingsService.execute(userId, { noScale: true });
+  }
+
+  @Put('settings/user/:userId')
+  @Permissions([PERMISSIONS.OTHER_UPDATE_USER_SETTINGS.value])
+  updateUserSettings(
+    @Body() data: UpdateUserSettingsDto,
+    @Param('userId') userId: string,
+  ) {
+    return this.updateUserSettingsService.execute(userId, data);
+  }
+
+  @Delete('settings/user/:userId')
+  @Permissions([PERMISSIONS.OTHER_DELETE_USER_SETTINGS.value])
+  deleteUserSettings(@Param('userId') userId: string) {
+    return this.deleteUserSettingsService.execute(userId);
   }
 }

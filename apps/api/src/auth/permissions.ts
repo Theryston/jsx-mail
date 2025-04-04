@@ -257,4 +257,19 @@ export const PERMISSIONS: {
     value: 'other:update-default-settings',
     description: 'Can update default settings',
   },
+  OTHER_GET_USER_SETTINGS: {
+    title: 'Other Get User Settings',
+    value: 'other:get-user-settings',
+    description: 'Can get user settings',
+  },
+  OTHER_UPDATE_USER_SETTINGS: {
+    title: 'Other Update User Settings',
+    value: 'other:update-user-settings',
+    description: 'Can update user settings',
+  },
+  OTHER_DELETE_USER_SETTINGS: {
+    title: 'Other Delete User Settings',
+    value: 'other:delete-user-settings',
+    description: 'Can delete user settings',
+  },
 };

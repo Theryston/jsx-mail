@@ -10,6 +10,7 @@ import {
   BanIcon,
   MoreHorizontal,
   BarChartIcon,
+  SettingsIcon,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -24,6 +25,7 @@ import { useState } from 'react';
 import { BlockPermissionsModal } from './block-permissions-modal';
 import { UtmsModal } from './utms-modal';
 import { Badge } from '@jsx-mail/ui/badge';
+import { UserSettingsModal } from './user-settings-modal';
 
 export const columns: ColumnDef<UserAdmin>[] = [
   {
@@ -89,6 +91,7 @@ export const columns: ColumnDef<UserAdmin>[] = [
       const router = useRouter();
       const [blockModalOpen, setBlockModalOpen] = useState(false);
       const [utmsModalOpen, setUtmsModalOpen] = useState(false);
+      const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
       const handleImpersonate = async () => {
         const id = toast.loading('Impersonating user...');
@@ -126,8 +129,21 @@ export const columns: ColumnDef<UserAdmin>[] = [
         setUtmsModalOpen(true);
       };
 
+      const handleSettings = () => {
+        setSettingsModalOpen(true);
+      };
+
       return (
         <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleSettings}
+            title="Edit user settings"
+          >
+            <SettingsIcon className="size-4" />
+          </Button>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">
@@ -162,6 +178,14 @@ export const columns: ColumnDef<UserAdmin>[] = [
             <UtmsModal
               isOpen={utmsModalOpen}
               onClose={() => setUtmsModalOpen(false)}
+              user={user}
+            />
+          )}
+
+          {settingsModalOpen && (
+            <UserSettingsModal
+              isOpen={settingsModalOpen}
+              onClose={() => setSettingsModalOpen(false)}
               user={user}
             />
           )}

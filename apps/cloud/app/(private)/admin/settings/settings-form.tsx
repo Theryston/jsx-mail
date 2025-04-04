@@ -23,32 +23,66 @@ import {
   DialogFooter,
 } from '@jsx-mail/ui/dialog';
 import { Settings } from '@/types/settings';
+import { cn } from '@jsx-mail/ui/lib/utils';
+import { useDefaultSettings } from '@/hooks/settings';
+import { Badge } from '@jsx-mail/ui/badge';
 
-const settingsSchema = z.object({
-  maxFileSize: z.number().min(1, 'Max file size must be at least 1'),
-  maxBalanceToBeEligibleForFree: z.number().min(0, 'Must be 0 or greater'),
-  freeEmailsPerMonth: z.number().min(0, 'Must be 0 or greater'),
-  minBalanceToAdd: z.number().min(1, 'Minimum balance must be at least 1'),
-  storageGbPrice: z.number().min(0, 'Must be 0 or greater'),
-  pricePerMessage: z.number().min(0, 'Must be 0 or greater'),
-  maxStorage: z.number().min(1, 'Max storage must be at least 1'),
-  globalMaxMessagesPerSecond: z.number().min(1, 'Must be at least 1'),
-  globalMaxMessagesPerDay: z.number().min(1, 'Must be at least 1'),
-  bounceRateLimit: z
-    .number()
-    .min(0, 'Must be 0 or greater')
-    .max(100, 'Must be 100 or less'),
-  complaintRateLimit: z
-    .number()
-    .min(0, 'Must be 0 or greater')
-    .max(100, 'Must be 100 or less'),
-  gapToCheckSecurityInsights: z.number().min(1, 'Must be at least 1'),
-  minEmailsForRateCalculation: z.number().min(1, 'Must be at least 1'),
-  maxSecurityCodesPerHour: z.number().min(1, 'Must be at least 1'),
-  maxSecurityCodesPerMinute: z.number().min(1, 'Must be at least 1'),
-});
+const createSettingsSchema = (isUserSettings: boolean) => {
+  const baseSchema = {
+    maxFileSize: z.number().min(0, 'Max file size must be 0 or greater'),
+    maxBalanceToBeEligibleForFree: z.number().min(0, 'Must be 0 or greater'),
+    freeEmailsPerMonth: z.number().min(0, 'Must be 0 or greater'),
+    minBalanceToAdd: z.number().min(0, 'Minimum balance must be 0 or greater'),
+    storageGbPrice: z.number().min(0, 'Must be 0 or greater'),
+    pricePerMessage: z.number().min(0, 'Must be 0 or greater'),
+    maxStorage: z.number().min(0, 'Max storage must be 0 or greater'),
+    bounceRateLimit: z
+      .number()
+      .min(0, 'Must be 0 or greater')
+      .max(100, 'Must be 100 or less'),
+    complaintRateLimit: z
+      .number()
+      .min(0, 'Must be 0 or greater')
+      .max(100, 'Must be 100 or less'),
+    gapToCheckSecurityInsights: z.number().min(0, 'Must be 0 or greater'),
+    minEmailsForRateCalculation: z.number().min(0, 'Must be 0 or greater'),
+    maxSecurityCodesPerHour: z.number().min(0, 'Must be 0 or greater'),
+    maxSecurityCodesPerMinute: z.number().min(0, 'Must be 0 or greater'),
+  };
 
-type SettingsFormValues = z.infer<typeof settingsSchema>;
+  if (!isUserSettings) {
+    return z.object({
+      ...baseSchema,
+      globalMaxMessagesPerSecond: z.number().min(0, 'Must be 0 or greater'),
+      globalMaxMessagesPerDay: z.number().min(0, 'Must be 0 or greater'),
+    });
+  }
+
+  return z.object(baseSchema);
+};
+
+type BaseSettingsFormValues = {
+  maxFileSize: number;
+  maxBalanceToBeEligibleForFree: number;
+  freeEmailsPerMonth: number;
+  minBalanceToAdd: number;
+  storageGbPrice: number;
+  pricePerMessage: number;
+  maxStorage: number;
+  bounceRateLimit: number;
+  complaintRateLimit: number;
+  gapToCheckSecurityInsights: number;
+  minEmailsForRateCalculation: number;
+  maxSecurityCodesPerHour: number;
+  maxSecurityCodesPerMinute: number;
+};
+
+type GlobalSettingsFormValues = BaseSettingsFormValues & {
+  globalMaxMessagesPerSecond: number;
+  globalMaxMessagesPerDay: number;
+};
+
+type SettingsFormValues = BaseSettingsFormValues | GlobalSettingsFormValues;
 
 interface ChangedField {
   old: number;
@@ -58,45 +92,63 @@ interface ChangedField {
 interface SettingsFormProps {
   initialData?: Settings;
   onSubmit: (data: SettingsFormValues) => Promise<void>;
+  onDiscard?: (data: SettingsFormValues) => Promise<void>;
+  isUserSettings?: boolean;
   title?: string;
   description?: string;
+  forcePerRow?: boolean;
 }
 
 export function SettingsForm({
   initialData,
   onSubmit,
-  title = 'Settings',
-  description = 'Update your settings below.',
+  title,
+  description,
+  isUserSettings = false,
+  onDiscard,
+  forcePerRow = false,
 }: SettingsFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDiscarding, setIsDiscarding] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [changedFields, setChangedFields] = useState<
     Record<string, ChangedField>
   >({});
   const [formData, setFormData] = useState<SettingsFormValues | null>(null);
+  const { data: defaultSettings } = useDefaultSettings();
+
+  const schema = createSettingsSchema(isUserSettings);
 
   const form = useForm<SettingsFormValues>({
-    resolver: zodResolver(settingsSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
-      maxFileSize: initialData?.maxFileSize || 0,
-      maxBalanceToBeEligibleForFree:
-        initialData?.maxBalanceToBeEligibleForFree || 0,
-      freeEmailsPerMonth: initialData?.freeEmailsPerMonth || 0,
-      minBalanceToAdd: initialData?.minBalanceToAdd || 0,
-      storageGbPrice: initialData?.storageGbPrice || 0,
-      pricePerMessage: initialData?.pricePerMessage || 0,
-      maxStorage: initialData?.maxStorage || 0,
-      globalMaxMessagesPerSecond: initialData?.globalMaxMessagesPerSecond || 0,
-      globalMaxMessagesPerDay: initialData?.globalMaxMessagesPerDay || 0,
-      bounceRateLimit: initialData?.bounceRateLimit || 0,
-      complaintRateLimit: initialData?.complaintRateLimit || 0,
-      gapToCheckSecurityInsights: initialData?.gapToCheckSecurityInsights || 0,
-      minEmailsForRateCalculation:
-        initialData?.minEmailsForRateCalculation || 0,
-      maxSecurityCodesPerHour: initialData?.maxSecurityCodesPerHour || 0,
-      maxSecurityCodesPerMinute: initialData?.maxSecurityCodesPerMinute || 0,
-    },
+      maxFileSize: 0,
+      maxBalanceToBeEligibleForFree: 0,
+      freeEmailsPerMonth: 0,
+      minBalanceToAdd: 0,
+      storageGbPrice: 0,
+      pricePerMessage: 0,
+      maxStorage: 0,
+      bounceRateLimit: 0,
+      complaintRateLimit: 0,
+      gapToCheckSecurityInsights: 0,
+      minEmailsForRateCalculation: 0,
+      maxSecurityCodesPerHour: 0,
+      maxSecurityCodesPerMinute: 0,
+      ...(!isUserSettings
+        ? {
+            globalMaxMessagesPerSecond: 0,
+            globalMaxMessagesPerDay: 0,
+          }
+        : {}),
+    } as SettingsFormValues,
   });
+
+  const handleDiscard = async () => {
+    setIsDiscarding(true);
+    await onDiscard?.(form.getValues());
+    setIsDiscarding(false);
+  };
 
   useEffect(() => {
     if (initialData) form.reset(initialData);
@@ -123,6 +175,26 @@ export function SettingsForm({
     [initialData],
   );
 
+  const getDifferentFields = useCallback(() => {
+    if (!isUserSettings || !defaultSettings || !initialData) return {};
+
+    const differentFields: Record<string, { old: number; new: number }> = {};
+
+    Object.keys(initialData).forEach((key) => {
+      const typedKey = key as keyof Settings;
+      if (initialData[typedKey] !== defaultSettings[typedKey]) {
+        differentFields[key] = {
+          old: defaultSettings[typedKey],
+          new: initialData[typedKey],
+        };
+      }
+    });
+
+    return differentFields;
+  }, [isUserSettings, defaultSettings, initialData]);
+
+  const differentFields = getDifferentFields();
+
   function handleFormSubmit(data: SettingsFormValues) {
     const changes = compareValues(data);
 
@@ -138,6 +210,7 @@ export function SettingsForm({
   async function submitForm(data: SettingsFormValues) {
     setIsSubmitting(true);
     try {
+      console.log('Submitting form with data:', data);
       await onSubmit(data);
       toast.success('Settings updated successfully');
     } catch (error) {
@@ -162,25 +235,65 @@ export function SettingsForm({
     form.reset(initialData);
   }
 
+  const isFieldDifferent = (fieldName: string) => {
+    return fieldName in differentFields;
+  };
+
+  const formatNumber = (value: number) => {
+    return value;
+  };
+
   return (
     <div className="space-y-4">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold">{title}</h2>
-        <p className="text-muted-foreground">{description}</p>
-      </div>
+      {(title || description) && (
+        <div className="mb-6">
+          {title && <h2 className="text-2xl font-bold">{title}</h2>}
+          {description && (
+            <p className="text-muted-foreground">{description}</p>
+          )}
+        </div>
+      )}
+
+      {isUserSettings && Object.keys(differentFields).length > 0 && (
+        <div className="mb-4 p-4 bg-amber-400/10 rounded-lg">
+          <p className="text-sm text-amber-400">
+            This user has custom settings for the following fields:
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {Object.entries(differentFields).map(([field, values]) => (
+              <Badge key={field} variant="secondary">
+                {field}: {formatNumber(values.old)} → {formatNumber(values.new)}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
 
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleFormSubmit)}
           className="space-y-4"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div
+            className={cn(
+              'grid grid-cols-1 gap-4',
+              !forcePerRow && 'md:grid-cols-2',
+            )}
+          >
             <FormField
               control={form.control}
               name="maxFileSize"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Max File Size (MB)</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Max File Size (MB)
+                    {isFieldDifferent('maxFileSize') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(differentFields.maxFileSize.old)} →{' '}
+                        {formatNumber(differentFields.maxFileSize.new)}
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -198,7 +311,20 @@ export function SettingsForm({
               name="maxBalanceToBeEligibleForFree"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Max Balance for Free Tier</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Max Balance for Free Tier
+                    {isFieldDifferent('maxBalanceToBeEligibleForFree') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(
+                          differentFields.maxBalanceToBeEligibleForFree.old,
+                        )}{' '}
+                        →{' '}
+                        {formatNumber(
+                          differentFields.maxBalanceToBeEligibleForFree.new,
+                        )}
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -216,7 +342,15 @@ export function SettingsForm({
               name="freeEmailsPerMonth"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Free Emails per Month</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Free Emails per Month
+                    {isFieldDifferent('freeEmailsPerMonth') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(differentFields.freeEmailsPerMonth.old)} →{' '}
+                        {formatNumber(differentFields.freeEmailsPerMonth.new)}
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -234,12 +368,24 @@ export function SettingsForm({
               name="minBalanceToAdd"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Minimum Balance to Add</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Minimum Balance to Add
+                    {isFieldDifferent('minBalanceToAdd') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(differentFields.minBalanceToAdd.old)} →{' '}
+                        {formatNumber(differentFields.minBalanceToAdd.new)}
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
+                      step="0.0000001"
                       {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        field.onChange(isNaN(value) ? 0 : value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -252,12 +398,24 @@ export function SettingsForm({
               name="storageGbPrice"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Storage Price per GB</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Storage Price per GB
+                    {isFieldDifferent('storageGbPrice') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(differentFields.storageGbPrice.old)} →{' '}
+                        {formatNumber(differentFields.storageGbPrice.new)}
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
+                      step="0.0000001"
                       {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        field.onChange(isNaN(value) ? 0 : value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -270,12 +428,24 @@ export function SettingsForm({
               name="pricePerMessage"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price per Message</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Price per Message
+                    {isFieldDifferent('pricePerMessage') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(differentFields.pricePerMessage.old)} →{' '}
+                        {formatNumber(differentFields.pricePerMessage.new)}
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
+                      step="0.0000001"
                       {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        field.onChange(isNaN(value) ? 0 : value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -288,7 +458,15 @@ export function SettingsForm({
               name="maxStorage"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Max Storage (GB)</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Max Storage (GB)
+                    {isFieldDifferent('maxStorage') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(differentFields.maxStorage.old)} →{' '}
+                        {formatNumber(differentFields.maxStorage.new)}
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -301,48 +479,68 @@ export function SettingsForm({
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="globalMaxMessagesPerSecond"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Global Max Messages per Second</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!isUserSettings && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="globalMaxMessagesPerSecond"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Global Max Messages per Second</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.0000001"
+                          {...field}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            field.onChange(isNaN(value) ? 0 : value);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="globalMaxMessagesPerDay"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Global Max Messages per Day</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="globalMaxMessagesPerDay"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Global Max Messages per Day</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.0000001"
+                          {...field}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            field.onChange(isNaN(value) ? 0 : value);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
 
             <FormField
               control={form.control}
               name="bounceRateLimit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Bounce Rate Limit (0-1)</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Bounce Rate Limit (0-1)
+                    {isFieldDifferent('bounceRateLimit') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(differentFields.bounceRateLimit.old)} →{' '}
+                        {formatNumber(differentFields.bounceRateLimit.new)}
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -361,7 +559,15 @@ export function SettingsForm({
               name="complaintRateLimit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Complaint Rate Limit (0-1)</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Complaint Rate Limit (0-1)
+                    {isFieldDifferent('complaintRateLimit') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(differentFields.complaintRateLimit.old)} →{' '}
+                        {formatNumber(differentFields.complaintRateLimit.new)}
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -380,7 +586,20 @@ export function SettingsForm({
               name="gapToCheckSecurityInsights"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Gap to Check Security Insights (days)</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Gap to Check Security Insights (days)
+                    {isFieldDifferent('gapToCheckSecurityInsights') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(
+                          differentFields.gapToCheckSecurityInsights.old,
+                        )}{' '}
+                        →{' '}
+                        {formatNumber(
+                          differentFields.gapToCheckSecurityInsights.new,
+                        )}
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -398,7 +617,20 @@ export function SettingsForm({
               name="minEmailsForRateCalculation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Min Emails for Rate Calculation</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Min Emails for Rate Calculation
+                    {isFieldDifferent('minEmailsForRateCalculation') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(
+                          differentFields.minEmailsForRateCalculation.old,
+                        )}{' '}
+                        →{' '}
+                        {formatNumber(
+                          differentFields.minEmailsForRateCalculation.new,
+                        )}
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -416,7 +648,20 @@ export function SettingsForm({
               name="maxSecurityCodesPerHour"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Max Security Codes per Hour</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Max Security Codes per Hour
+                    {isFieldDifferent('maxSecurityCodesPerHour') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(
+                          differentFields.maxSecurityCodesPerHour.old,
+                        )}{' '}
+                        →{' '}
+                        {formatNumber(
+                          differentFields.maxSecurityCodesPerHour.new,
+                        )}
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -434,7 +679,20 @@ export function SettingsForm({
               name="maxSecurityCodesPerMinute"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Max Security Codes per Minute</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    Max Security Codes per Minute
+                    {isFieldDifferent('maxSecurityCodesPerMinute') && (
+                      <Badge variant="outline" className="text-xs">
+                        {formatNumber(
+                          differentFields.maxSecurityCodesPerMinute.old,
+                        )}{' '}
+                        →{' '}
+                        {formatNumber(
+                          differentFields.maxSecurityCodesPerMinute.new,
+                        )}
+                      </Badge>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -448,9 +706,21 @@ export function SettingsForm({
             />
           </div>
 
-          <Button type="submit" className="mt-4" isLoading={isSubmitting}>
-            Save Changes
-          </Button>
+          <div className="flex gap-2">
+            <Button type="submit" isLoading={isSubmitting}>
+              Save Changes
+            </Button>
+
+            {isUserSettings && (
+              <Button
+                variant="outline"
+                onClick={handleDiscard}
+                isLoading={isDiscarding}
+              >
+                Discard user settings
+              </Button>
+            )}
+          </div>
         </form>
       </Form>
 
@@ -468,11 +738,11 @@ export function SettingsForm({
                   <div className="grid grid-cols-2 gap-2 mt-1">
                     <div className="text-sm">
                       <span className="text-muted-foreground">Old value: </span>
-                      {value.old}
+                      {formatNumber(value.old)}
                     </div>
                     <div className="text-sm">
                       <span className="text-muted-foreground">New value: </span>
-                      {value.new}
+                      {formatNumber(value.new)}
                     </div>
                   </div>
                 </div>

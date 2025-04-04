@@ -25,7 +25,8 @@ export default function AdminSettings() {
       </Button>
       <SettingsForm
         initialData={defaultSettings}
-        onSubmit={async (data) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onSubmit={async (data: any) => {
           await updateDefaultSettings(data);
         }}
         title="Default Settings"

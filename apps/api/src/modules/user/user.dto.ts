@@ -292,3 +292,57 @@ export class UpdateDefaultSettingsDto {
   @IsNumber()
   maxSecurityCodesPerMinute: number;
 }
+
+export class UpdateUserSettingsDto {
+  @IsOptional()
+  @IsNumber()
+  maxFileSize?: number;
+
+  @IsOptional()
+  @IsNumber()
+  maxBalanceToBeEligibleForFree?: number;
+
+  @IsOptional()
+  @IsNumber()
+  freeEmailsPerMonth?: number;
+
+  @IsOptional()
+  @IsNumber()
+  minBalanceToAdd?: number;
+
+  @IsOptional()
+  @IsNumber()
+  storageGbPrice?: number;
+
+  @IsOptional()
+  @IsNumber()
+  pricePerMessage?: number;
+
+  @IsOptional()
+  @IsNumber()
+  maxStorage?: number;
+
+  @IsOptional()
+  @IsNumber()
+  bounceRateLimit?: number;
+
+  @IsOptional()
+  @IsNumber()
+  complaintRateLimit?: number;
+
+  @IsOptional()
+  @IsNumber()
+  gapToCheckSecurityInsights?: number;
+
+  @IsOptional()
+  @IsNumber()
+  minEmailsForRateCalculation?: number;
+
+  @IsOptional()
+  @IsNumber()
+  maxSecurityCodesPerHour?: number;
+
+  @IsOptional()
+  @IsNumber()
+  maxSecurityCodesPerMinute?: number;
+}

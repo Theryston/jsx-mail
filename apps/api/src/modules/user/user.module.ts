@@ -33,6 +33,8 @@ import { GetMessageService } from './services/get-message.service';
 import { GetSettingsService } from './services/get-settings.service';
 import { UpdateSettingsService } from './services/update-settings.service';
 import { UpdateDefaultSettingsService } from './services/update-default-settings.service';
+import { UpdateUserSettingsService } from './services/update-user-settings.service';
+import { DeleteUserSettingsService } from './services/delete-user-settings.service';
 
 @Module({
   controllers: [UserController],
@@ -68,6 +70,8 @@ import { UpdateDefaultSettingsService } from './services/update-default-settings
     GetSettingsService,
     UpdateSettingsService,
     UpdateDefaultSettingsService,
+    UpdateUserSettingsService,
+    DeleteUserSettingsService,
   ],
   imports: [EmailModule, SessionModule],
   exports: [

@@ -2,33 +2,48 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { MONEY_SCALE } from 'src/utils/constants';
 
+type GetSettingsOptions = {
+  defaultOnly?: boolean;
+  noScale?: boolean;
+};
+
 @Injectable()
 export class GetSettingsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(userId?: string, defaultOnly = false) {
+  async execute(userId?: string, options?: GetSettingsOptions) {
     let settings = await this.getDefaultSettings();
 
-    if (userId && !defaultOnly) {
-      const userSettings = await this.prisma.userSettings.findFirst({
-        where: { userId },
-      });
+    if (userId && !options?.defaultOnly) {
+      const userSettings = await this.getUserSettings(userId);
 
-      settings = {
-        ...settings,
-        ...userSettings,
-      };
+      for (const key in settings) {
+        if (userSettings?.[key]) {
+          settings[key] = userSettings[key];
+        }
+      }
     }
 
     return {
-      maxFileSize: settings.maxFileSize * 1024 * 1024,
-      maxBalanceToBeEligibleForFree:
-        settings.maxBalanceToBeEligibleForFree * MONEY_SCALE,
+      maxFileSize: options?.noScale
+        ? settings.maxFileSize
+        : settings.maxFileSize * 1024 * 1024,
+      maxBalanceToBeEligibleForFree: options?.noScale
+        ? settings.maxBalanceToBeEligibleForFree
+        : settings.maxBalanceToBeEligibleForFree * MONEY_SCALE,
       freeEmailsPerMonth: settings.freeEmailsPerMonth,
-      minBalanceToAdd: settings.minBalanceToAdd * MONEY_SCALE,
-      storageGbPrice: settings.storageGbPrice * MONEY_SCALE,
-      pricePerMessage: settings.pricePerMessage * MONEY_SCALE,
-      maxStorage: settings.maxStorage * 1024 * 1024 * 1024,
+      minBalanceToAdd: options?.noScale
+        ? settings.minBalanceToAdd
+        : settings.minBalanceToAdd * MONEY_SCALE,
+      storageGbPrice: options?.noScale
+        ? settings.storageGbPrice
+        : settings.storageGbPrice * MONEY_SCALE,
+      pricePerMessage: options?.noScale
+        ? settings.pricePerMessage
+        : settings.pricePerMessage * MONEY_SCALE,
+      maxStorage: options?.noScale
+        ? settings.maxStorage
+        : settings.maxStorage * 1024 * 1024 * 1024,
       globalMaxMessagesPerSecond: settings.globalMaxMessagesPerSecond,
       globalMaxMessagesPerDay: settings.globalMaxMessagesPerDay,
       bounceRateLimit: settings.bounceRateLimit,
@@ -38,6 +53,14 @@ export class GetSettingsService {
       maxSecurityCodesPerHour: settings.maxSecurityCodesPerHour,
       maxSecurityCodesPerMinute: settings.maxSecurityCodesPerMinute,
     };
+  }
+
+  async getUserSettings(userId: string) {
+    const userSettings = await this.prisma.userSettings.findFirst({
+      where: { userId },
+    });
+
+    return userSettings;
   }
 
   async getDefaultSettings() {

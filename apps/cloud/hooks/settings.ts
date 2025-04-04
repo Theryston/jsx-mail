@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/utils/api';
-import { Settings } from '@/types/settings';
+import { Settings, UserSettings } from '@/types/settings';
 
 export function useDefaultSettings() {
   return useQuery({
@@ -29,45 +29,44 @@ export function useUpdateDefaultSettings() {
   });
 }
 
-// export function useUserSettings(userId: string) {
-//   return useQuery({
-//     queryKey: ['user-settings', userId],
-//     queryFn: async () => {
-//       const { data } = await api.get<Settings>(`/user/settings/user/${userId}`);
-//       return data;
-//     },
-//     enabled: !!userId,
-//   });
-// }
+export function useUserSettings(userId: string) {
+  return useQuery({
+    queryKey: ['user-settings', userId],
+    queryFn: async () => {
+      const { data } = await api.get<Settings>(`/user/settings/user/${userId}`);
+      return data;
+    },
+    enabled: !!userId,
+  });
+}
 
-// export function useUpdateUserSettings(userId: string) {
-//   const queryClient = useQueryClient();
+export function useUpdateUserSettings(userId: string) {
+  const queryClient = useQueryClient();
 
-//   return useMutation({
-//     mutationFn: async (settings: Settings) => {
-//       const { data } = await api.put<Settings>(
-//         `/user/settings/user/${userId}`,
-//         settings,
-//       );
-//       return data;
-//     },
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: ['user-settings', userId] });
-//     },
-//   });
-// }
+  return useMutation({
+    mutationFn: async (settings: UserSettings) => {
+      const { data } = await api.put<UserSettings>(
+        `/user/settings/user/${userId}`,
+        settings,
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-settings', userId] });
+    },
+  });
+}
 
-// export function useSetToDefaultSettings() {
-//   const queryClient = useQueryClient();
+export function useDeleteUserSettings(userId: string) {
+  const queryClient = useQueryClient();
 
-//   return useMutation({
-//     mutationFn: async (userId: string) => {
-//       const { data } = await api.delete(`/user/settings/user/${userId}`);
-//       return data;
-//     },
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: ['default-settings'] });
-//       queryClient.invalidateQueries({ queryKey: ['user-settings'] });
-//     },
-//   });
-// }
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await api.delete(`/user/settings/user/${userId}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-settings', userId] });
+    },
+  });
+}
