@@ -111,6 +111,7 @@ export function SettingsForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDiscarding, setIsDiscarding] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showDiscardDialog, setShowDiscardDialog] = useState(false);
   const [changedFields, setChangedFields] = useState<
     Record<string, ChangedField>
   >({});
@@ -145,9 +146,44 @@ export function SettingsForm({
   });
 
   const handleDiscard = async () => {
+    if (!defaultSettings || !initialData) return;
+
+    const changes: Record<string, ChangedField> = {};
+    Object.keys(initialData).forEach((key) => {
+      const typedKey = key as keyof Settings;
+      if (initialData[typedKey] !== defaultSettings[typedKey]) {
+        changes[key] = {
+          old: initialData[typedKey],
+          new: defaultSettings[typedKey],
+        };
+      }
+    });
+
+    if (Object.keys(changes).length > 0) {
+      setChangedFields(changes);
+      setShowDiscardDialog(true);
+    } else {
+      await confirmDiscard();
+    }
+  };
+
+  const confirmDiscard = async () => {
     setIsDiscarding(true);
-    await onDiscard?.(form.getValues());
-    setIsDiscarding(false);
+    try {
+      await onDiscard?.(form.getValues());
+      toast.success('User settings discarded successfully');
+    } catch (error) {
+      console.error('Failed to discard user settings:', error);
+      toast.error('Failed to discard user settings');
+    } finally {
+      setIsDiscarding(false);
+      setShowDiscardDialog(false);
+    }
+  };
+
+  const cancelDiscard = () => {
+    setShowDiscardDialog(false);
+    setChangedFields({});
   };
 
   useEffect(() => {
@@ -716,6 +752,7 @@ export function SettingsForm({
                 variant="outline"
                 onClick={handleDiscard}
                 isLoading={isDiscarding}
+                type="button"
               >
                 Discard user settings
               </Button>
@@ -754,6 +791,52 @@ export function SettingsForm({
               Cancel
             </Button>
             <Button onClick={confirmChanges}>Confirm Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showDiscardDialog} onOpenChange={setShowDiscardDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Discard User Settings</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="mb-4">
+              The following settings will be reset to default values:
+            </p>
+            <div className="max-h-[300px] overflow-y-auto">
+              {Object.entries(changedFields).map(([key, value]) => (
+                <div key={key} className="mb-2 p-2 border rounded">
+                  <p className="font-medium">{key}</p>
+                  <div className="grid grid-cols-2 gap-2 mt-1">
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">
+                        Current value:{' '}
+                      </span>
+                      {formatNumber(value.old)}
+                    </div>
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">
+                        Default value:{' '}
+                      </span>
+                      {formatNumber(value.new)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={cancelDiscard}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDiscard}
+              isLoading={isDiscarding}
+            >
+              Discard Settings
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
