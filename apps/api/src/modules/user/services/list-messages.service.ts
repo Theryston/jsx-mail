@@ -40,6 +40,9 @@ export class ListMessagesService {
           description: true,
           createdAt: true,
         },
+        orderBy: {
+          createdAt: 'asc',
+        },
       };
     }
 
