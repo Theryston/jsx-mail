@@ -272,4 +272,19 @@ export const PERMISSIONS: {
     value: 'other:delete-user-settings',
     description: 'Can delete user settings',
   },
+  SELF_CREATE_BULK_EMAIL_CHECK: {
+    title: 'Self Create Bulk Email Check',
+    value: 'self:create-bulk-email-check',
+    description: 'Can create a bulk email check for itself',
+  },
+  SELF_LIST_BULK_EMAIL_CHECKS: {
+    title: 'Self List Bulk Email Checks',
+    value: 'self:list-bulk-email-checks',
+    description: 'Can list bulk email checks for itself',
+  },
+  SELF_CREATE_BULK_EMAIL_CHECK_ESTIMATE: {
+    title: 'Self Create Bulk Email Check Estimate',
+    value: 'self:create-bulk-email-check-estimate',
+    description: 'Can create a bulk email check estimate for itself',
+  },
 };

@@ -19,3 +19,15 @@ export function storageToMoney(bytes: number, storageGbPrice: number) {
   const sizeGb = bytes / (1024 * 1024 * 1024);
   return Math.round(sizeGb * storageGbPrice);
 }
+
+export function friendlyTime(seconds: number) {
+  if (seconds < 60) {
+    return `${seconds}s`;
+  } else if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60);
+    return `${minutes}m`;
+  } else {
+    const hours = Math.floor(seconds / 3600);
+    return `${hours}h`;
+  }
+}

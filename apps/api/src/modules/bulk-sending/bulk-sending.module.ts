@@ -21,12 +21,23 @@ import { ContactExistsService } from './services/contact-exists.service';
 import { ListBulkSendingFailuresService } from './services/list-bulk-sending-failures.service';
 import { CreateContactService } from './services/create-contact.service';
 import { UserModule } from '../user/user.module';
+import { EmailCheckProcessor } from './email-check.processor';
+import { BulkEmailCheckProcessor } from './bulk-email-check.processor';
+import { CreateBulkEmailCheckService } from './services/create-bulk-email-check.service';
+import { ListBulkEmailChecksService } from './services/list-bulk-email-checks.service';
+import { EstimatedBulkEmailCheckService } from './services/estimated-bulk-email-check.service';
 
 @Module({
   imports: [
     UserModule,
     BullModule.registerQueue({
       name: 'bulk-sending',
+    }),
+    BullModule.registerQueue({
+      name: 'email-check',
+    }),
+    BullModule.registerQueue({
+      name: 'bulk-email-check',
     }),
     SenderModule,
   ],
@@ -50,6 +61,11 @@ import { UserModule } from '../user/user.module';
     ContactExistsService,
     ListBulkSendingFailuresService,
     CreateContactService,
+    EmailCheckProcessor,
+    BulkEmailCheckProcessor,
+    CreateBulkEmailCheckService,
+    ListBulkEmailChecksService,
+    EstimatedBulkEmailCheckService,
   ],
 })
 export class BulkSendingModule {}

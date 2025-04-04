@@ -59,6 +59,16 @@ export class UpdateMessageStatusService {
       };
     }
 
+    if (newStatus === 'bonce' && message.contactId) {
+      await this.prisma.contact.update({
+        where: { id: message.contactId },
+        data: {
+          bouncedAt: new Date(),
+          bouncedBy: 'message',
+        },
+      });
+    }
+
     await this.prisma.message.update({
       where: { id: message.id },
       data,

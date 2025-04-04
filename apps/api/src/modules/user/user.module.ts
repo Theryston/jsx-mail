@@ -79,6 +79,7 @@ import { DeleteUserSettingsService } from './services/delete-user-settings.servi
     GetUserLimitsService,
     BlockPermissionService,
     GetSettingsService,
+    GetBalanceService,
   ],
 })
 export class UserModule {}

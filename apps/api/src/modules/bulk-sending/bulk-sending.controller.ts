@@ -12,6 +12,7 @@ import {
 import { CreateContactsGroupService } from './services/create-contacts-group.service';
 import {
   CreateBulkContactsDto,
+  CreateBulkEmailCheckDto,
   CreateBulkSendingDto,
   CreateContactDto,
   CreateContactGroupDto,
@@ -33,6 +34,9 @@ import { ContactUnsubscribeService } from './services/contact-unsubscribe.servic
 import { ContactExistsService } from './services/contact-exists.service';
 import { ListBulkSendingFailuresService } from './services/list-bulk-sending-failures.service';
 import { CreateContactService } from './services/create-contact.service';
+import { CreateBulkEmailCheckService } from './services/create-bulk-email-check.service';
+import { ListBulkEmailChecksService } from './services/list-bulk-email-checks.service';
+import { EstimatedBulkEmailCheckService } from './services/estimated-bulk-email-check.service';
 
 @Controller('bulk-sending')
 export class BulkSendingController {
@@ -53,6 +57,9 @@ export class BulkSendingController {
     private readonly contactExistsService: ContactExistsService,
     private readonly listBulkSendingFailuresService: ListBulkSendingFailuresService,
     private readonly createContactService: CreateContactService,
+    private readonly createBulkEmailCheckService: CreateBulkEmailCheckService,
+    private readonly listBulkEmailChecksService: ListBulkEmailChecksService,
+    private readonly estimateBulkEmailCheckService: EstimatedBulkEmailCheckService,
   ) {}
 
   @Post()
@@ -192,5 +199,29 @@ export class BulkSendingController {
   @Get('unsubscribe/:key')
   unsubscribeExists(@Param('key') key: string) {
     return this.contactExistsService.execute(key);
+  }
+
+  @Post('email-check')
+  @Permissions([PERMISSIONS.SELF_CREATE_BULK_EMAIL_CHECK.value])
+  createBulkEmailCheck(@Body() body: CreateBulkEmailCheckDto, @Req() req) {
+    return this.createBulkEmailCheckService.execute(body, req.user.id);
+  }
+
+  @Get('email-check/:contactGroupId')
+  @Permissions([PERMISSIONS.SELF_LIST_BULK_EMAIL_CHECKS.value])
+  listBulkEmailChecks(
+    @Param('contactGroupId') contactGroupId: string,
+    @Req() req,
+  ) {
+    return this.listBulkEmailChecksService.execute(
+      { contactGroupId },
+      req.user.id,
+    );
+  }
+
+  @Get('email-check/estimate')
+  @Permissions([PERMISSIONS.SELF_CREATE_BULK_EMAIL_CHECK_ESTIMATE.value])
+  estimateBulkEmailCheck(@Body() body: CreateBulkEmailCheckDto, @Req() req) {
+    return this.estimateBulkEmailCheckService.execute(body, req.user.id);
   }
 }

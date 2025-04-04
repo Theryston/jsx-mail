@@ -165,6 +165,26 @@ export class BulkSendingProcessor extends WorkerHost {
               break;
             }
 
+            if (contact.bouncedAt) {
+              const message =
+                contact.bouncedBy === 'message'
+                  ? `Some previous message was sent to this contact (${contact.email}) and received a bounce. Skipping...`
+                  : `This contact (${contact.email}) was marked as bounce at ${moment(contact.bouncedAt).format('DD/MM/YYYY HH:mm:ss')} by our check email service. Skipping...`;
+
+              console.log(`[BULK_SENDING] ${message}`);
+
+              await this.prisma.bulkSendingFailure.create({
+                data: {
+                  bulkSendingId,
+                  contactId: contact.id,
+                  message,
+                  line: currentLine,
+                },
+              });
+
+              continue;
+            }
+
             const message = await this.senderSendEmailService.execute(
               {
                 sender: bulkSending.sender.email,

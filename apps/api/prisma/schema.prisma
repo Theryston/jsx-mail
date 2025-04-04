@@ -74,9 +74,36 @@ enum ContactDeletedBy {
   self
 }
 
+enum BouncedBy {
+  email_check
+  message
+}
+
 enum BlockedPermissionEventStyle {
   block
   unblock
+}
+
+enum EmailCheckStatus {
+  pending
+  processing
+  completed
+  failed
+}
+
+enum EmailCheckResult {
+  ok
+  email_invalid
+  risky
+  unknown
+  accept_all
+}
+
+enum BulkEmailCheckStatus {
+  pending
+  processing
+  completed
+  failed
 }
 
 model User {
@@ -115,6 +142,8 @@ model User {
   blockedPermissionEvents BlockedPermissionEvent[]
   userUtm                 UserUtm[]
   settings                UserSettings[]
+  bulkEmailChecks         BulkEmailCheck[]
+  emailChecks             EmailCheck[]
 
   @@map("users")
 }
@@ -567,9 +596,10 @@ model ContactGroup {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  contacts       Contact[]
-  contactImports ContactImport[]
-  bulkSendings   BulkSending[]
+  contacts        Contact[]
+  contactImports  ContactImport[]
+  bulkSendings    BulkSending[]
+  bulkEmailChecks BulkEmailCheck[]
 
   @@map("contact_groups")
 }
@@ -623,6 +653,8 @@ model Contact {
   contactImportId String?           @map("contact_import_id")
   createdAt       DateTime          @default(now()) @map("created_at")
   updatedAt       DateTime          @updatedAt @map("updated_at")
+  bouncedAt       DateTime?         @map("bounced_at")
+  bouncedBy       BouncedBy?        @map("bounced_by")
   deletedBy       ContactDeletedBy? @default(contactGroupOwner) @map("deleted_by")
   deletedAt       DateTime?         @map("deleted_at")
 
@@ -630,6 +662,62 @@ model Contact {
   contactImport       ContactImport?       @relation(fields: [contactImportId], references: [id], onDelete: Cascade)
   bulkSendingFailures BulkSendingFailure[]
   messages            Message[]
+  emailChecks         EmailCheck[]
 
   @@map("contacts")
+}
+
+model BulkEmailCheck {
+  id              String               @id @default(uuid())
+  contactGroupId  String?              @map("contact_group_id")
+  status          BulkEmailCheckStatus @default(pending) @map("status")
+  totalEmails     Int                  @default(0) @map("total_emails")
+  processedEmails Int                  @default(0) @map("processed_emails")
+  userId          String               @map("user_id")
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @updatedAt @map("updated_at")
+  deletedAt       DateTime?            @map("deleted_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contactGroup ContactGroup? @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
+
+  failures BulkEmailCheckFailure[]
+  results  EmailCheck[]
+
+  @@map("bulk_email_checks")
+}
+
+model BulkEmailCheckFailure {
+  id               String    @id @default(uuid())
+  bulkEmailCheckId String    @map("bulk_email_check_id")
+  email            String?
+  reason           String
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  deletedAt        DateTime? @map("deleted_at")
+
+  bulkEmailCheck BulkEmailCheck @relation(fields: [bulkEmailCheckId], references: [id], onDelete: Cascade)
+
+  @@map("bulk_email_check_failures")
+}
+
+model EmailCheck {
+  id               String           @id @default(uuid())
+  email            String
+  status           EmailCheckStatus @default(pending) @map("status")
+  result           EmailCheckResult @default(unknown) @map("result")
+  userId           String           @map("user_id")
+  bulkEmailCheckId String?          @map("bulk_email_check_id")
+  contactId        String?          @map("contact_id")
+  externalId       String?          @map("external_id")
+  chargedAt        DateTime?        @map("charged_at")
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+  deletedAt        DateTime?        @map("deleted_at")
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bulkEmailCheck BulkEmailCheck? @relation(fields: [bulkEmailCheckId], references: [id], onDelete: Cascade)
+  contact        Contact?        @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@map("email_checks")
 }

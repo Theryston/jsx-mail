@@ -77,3 +77,9 @@ export class CreateContactDto {
   @IsOptional()
   contactImportId?: string;
 }
+
+export class CreateBulkEmailCheckDto {
+  @IsString()
+  @IsNotEmpty()
+  contactGroupId: string;
+}
