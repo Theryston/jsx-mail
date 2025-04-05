@@ -47,6 +47,22 @@ export class CreateContactService {
       throw new NotFoundException('Contact group not found');
     }
 
+    const processingBulkEmailCheck = await this.prisma.bulkEmailCheck.findFirst(
+      {
+        where: {
+          userId,
+          contactGroupId: contactGroup.id,
+          status: { in: ['processing', 'pending'] },
+        },
+      },
+    );
+
+    if (processingBulkEmailCheck) {
+      throw new BadRequestException(
+        'Wait for the email check to finish before sending emails',
+      );
+    }
+
     const unsubscribeKey = crypto.randomBytes(32).toString('hex');
     const unsubscribeUrl = `${process.env.CLOUD_FRONTEND_URL}/unsubscribe?key=${unsubscribeKey}`;
 
