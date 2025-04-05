@@ -65,6 +65,38 @@ export class CreateBulkSendingService {
       );
     }
 
+    const processingContactImport = await this.prisma.contactImport.findFirst({
+      where: {
+        userId,
+        contactGroupId: contactGroup.id,
+        status: {
+          in: ['processing', 'pending'],
+        },
+      },
+    });
+
+    if (processingContactImport) {
+      throw new BadRequestException(
+        'Wait for the contact import to finish before sending emails',
+      );
+    }
+
+    const processingEmailCheck = await this.prisma.bulkEmailCheck.findFirst({
+      where: {
+        userId,
+        contactGroupId: contactGroup.id,
+        status: {
+          in: ['processing', 'pending'],
+        },
+      },
+    });
+
+    if (processingEmailCheck) {
+      throw new BadRequestException(
+        'Wait for the email check to finish before sending emails',
+      );
+    }
+
     const hasUnsubscribeLink = body.content.includes('{{unsubscribeUrl}}');
 
     if (!hasUnsubscribeLink) {
