@@ -45,7 +45,7 @@ export const columns = (
       return (
         <span>
           {row.original.bouncedAt
-            ? `Detected from ${row.original.bouncedBy === 'email_check' ? 'email check' : 'bounce'} at ${moment(row.original.bouncedAt).format('DD/MM/YYYY HH:mm:ss')}`
+            ? `Detected from ${row.original.bouncedBy === 'email_check' ? 'email check' : 'bounced message'} at ${moment(row.original.bouncedAt).format('DD/MM/YYYY HH:mm:ss')}`
             : 'N/A'}
         </span>
       );

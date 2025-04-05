@@ -1,8 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Message, MessageStatus } from '@prisma/client';
+import { MessageStatus } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
 import moment from 'moment';
+import { MarkBounceToService } from './mark-bounce-to.service';
+import { MessageExtra } from 'src/utils/types';
 
 const STATUS_SHOULD_HAVE_SENT_AT: MessageStatus[] = [
   'bonce',
@@ -16,13 +18,16 @@ const STATUS_SHOULD_HAVE_SENT_AT: MessageStatus[] = [
 
 @Injectable()
 export class UpdateMessageStatusService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private markBounceToService: MarkBounceToService,
+  ) {}
 
   async execute(
     messageId: string,
     newStatus: MessageStatus,
     description?: string,
-    extra?: Record<string, string>,
+    extra?: MessageExtra,
   ) {
     extra = extra || {};
 
@@ -77,6 +82,12 @@ export class UpdateMessageStatusService {
           bouncedBy: 'message',
         },
       });
+    }
+
+    if (newStatus === 'bonce') {
+      for (const to of message.to) {
+        await this.markBounceToService.create(to, 'message');
+      }
     }
 
     await this.prisma.message.update({

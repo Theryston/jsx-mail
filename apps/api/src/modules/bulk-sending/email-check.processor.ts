@@ -9,7 +9,7 @@ import axios, { AxiosInstance } from 'axios';
 import { EmailCheckResult } from '@prisma/client';
 import { QueueChargeBulkEmailCheckService } from '../worker/services/queue-charge-bulk-email-check.service';
 import { Worker } from 'bullmq';
-
+import { MarkBounceToService } from '../email/services/mark-bounce-to.service';
 @Processor('email-check', { concurrency: 1 })
 export class EmailCheckProcessor extends WorkerHost {
   truelistClient: AxiosInstance;
@@ -19,6 +19,7 @@ export class EmailCheckProcessor extends WorkerHost {
     private readonly getSettingsService: GetSettingsService,
     @InjectQueue('email-check') private readonly queue: Queue,
     private readonly queueChargeBulkEmailCheckService: QueueChargeBulkEmailCheckService,
+    private readonly markBounceToService: MarkBounceToService,
   ) {
     super();
     this.truelistClient = axios.create({
@@ -186,15 +187,32 @@ export class EmailCheckProcessor extends WorkerHost {
 
         console.log(`[EMAIL_CHECK] response: ${JSON.stringify(response)}`);
 
-        const finalResult: Record<EmailCheckResult, EmailCheckResult> = {
-          ok: 'ok',
-          email_invalid: 'email_invalid',
-          risky: 'risky',
-          unknown: 'unknown',
-          accept_all: 'accept_all',
-        };
+        let result = null;
 
-        const result = finalResult[response.email_state];
+        const markedBounceTo = await this.markBounceToService.get(
+          emailCheck.email,
+        );
+
+        if (markedBounceTo) {
+          console.log(
+            `[EMAIL_CHECK] email ${emailCheck.email} is marked as bounce to ${markedBounceTo.bounceBy} at ${moment(markedBounceTo.createdAt).format('DD/MM/YYYY HH:mm:ss')}`,
+          );
+          result = 'email_invalid';
+        } else {
+          const finalResult: Record<EmailCheckResult, EmailCheckResult> = {
+            ok: 'ok',
+            email_invalid: 'email_invalid',
+            risky: 'risky',
+            unknown: 'unknown',
+            accept_all: 'accept_all',
+          };
+
+          result = finalResult[response.email_state];
+        }
+
+        if (!result) {
+          result = 'unknown';
+        }
 
         await this.prisma.emailCheck.update({
           where: { id: emailCheckId },
@@ -209,6 +227,11 @@ export class EmailCheckProcessor extends WorkerHost {
             where: { id: emailCheck.contactId },
             data: { bouncedAt: new Date(), bouncedBy: 'email_check' },
           });
+
+          await this.markBounceToService.create(
+            emailCheck.email,
+            'email_check',
+          );
         }
 
         console.log(`[EMAIL_CHECK] job ${job.id} completed: ${result}`);

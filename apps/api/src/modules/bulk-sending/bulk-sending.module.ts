@@ -28,6 +28,7 @@ import { ListBulkEmailChecksService } from './services/list-bulk-email-checks.se
 import { EstimatedBulkEmailCheckService } from './services/estimated-bulk-email-check.service';
 import { WorkerModule } from '../worker/worker.module';
 import { MarkBulkEmailCheckAsReadService } from './services/mark-bulk-email-check-as-read.service';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { MarkBulkEmailCheckAsReadService } from './services/mark-bulk-email-chec
     }),
     SenderModule,
     WorkerModule,
+    EmailModule,
   ],
   controllers: [BulkSendingController],
   providers: [

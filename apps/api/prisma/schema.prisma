@@ -729,3 +729,15 @@ model EmailCheck {
 
   @@map("email_checks")
 }
+
+model MarkedBounceTo {
+  id        String    @id @default(uuid())
+  email     String
+  bounceBy  BouncedBy @default(email_check) @map("bounce_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  expiresAt DateTime? @map("expires_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("marked_bounce_to")
+}

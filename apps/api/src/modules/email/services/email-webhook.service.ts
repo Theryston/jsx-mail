@@ -3,6 +3,7 @@ import { MessageStatus } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
 import { CheckUserEmailStatsService } from './check-user-email-stats.service';
 import { UpdateMessageStatusService } from './update-message-status.service';
+import { MessageExtra } from 'src/utils/types';
 
 @Injectable()
 export class EmailWebhookService {
@@ -46,7 +47,7 @@ export class EmailWebhookService {
       if (!message) return 'ignored because the message was not found';
 
       let description: string | undefined;
-      let extra: Record<string, string> | undefined;
+      let extra: MessageExtra | undefined;
 
       if (newStatus === 'clicked') {
         const link = data?.click?.link || 'Not found';
