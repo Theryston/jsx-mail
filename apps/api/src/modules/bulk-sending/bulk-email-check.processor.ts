@@ -118,8 +118,11 @@ export class BulkEmailCheckProcessor extends WorkerHost {
               },
             });
 
+            const randomPriority = Math.floor(Math.random() * 10) + 1;
+
             await this.emailCheckQueue.add('email-check', {
               emailCheckId: emailCheck.id,
+              priority: randomPriority,
             });
 
             await this.prisma.bulkEmailCheck.update({
