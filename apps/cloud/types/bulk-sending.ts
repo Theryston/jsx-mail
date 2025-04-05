@@ -3,6 +3,7 @@ export type ContactGroupListItem = {
   name: string;
   createdAt: Date;
   contactsCount: number;
+  validContactsCount: number;
 };
 
 export type ContactListItem = {
@@ -33,6 +34,7 @@ export type ContactGroup = {
   name: string;
   createdAt: Date;
   contactsCount: number;
+  validContactsCount: number;
 };
 
 export type ContactImport = {

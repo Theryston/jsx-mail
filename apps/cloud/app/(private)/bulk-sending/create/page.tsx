@@ -213,8 +213,10 @@ export default function BulkSendingCreatePage() {
       return;
     }
 
-    if (contactGroup.contactsCount === 0) {
-      toast.error('Contact group is empty please add some contacts');
+    if (contactGroup.validContactsCount === 0) {
+      toast.error(
+        'Contact group is empty of valid contacts, please add some contacts',
+      );
       return;
     }
 
@@ -717,7 +719,7 @@ function SendModal({
       messages.push('No to (contact group) selected');
     } else if (!contactGroup) {
       messages.push('No contact group selected');
-    } else if (contactGroup.contactsCount === 0) {
+    } else if (contactGroup.validContactsCount === 0) {
       messages.push(`No contacts in contact group ${contactGroup?.name}`);
     }
 
@@ -859,7 +861,7 @@ function SendModal({
           {contactGroup && (
             <DialogDescription>
               Are you sure you want to send this email to{' '}
-              <b>{contactGroup?.contactsCount}</b> contacts from{' '}
+              <b>{contactGroup?.validContactsCount}</b> contacts from{' '}
               <b>{contactGroup?.name}</b>?
             </DialogDescription>
           )}
@@ -1124,7 +1126,7 @@ function ContactGroupSelector({
                       <div className="flex flex-col">
                         <span>{group.name}</span>
                         <span className="text-xs text-zinc-400">
-                          {group.contactsCount} contacts
+                          {group.validContactsCount} valid contacts
                         </span>
                       </div>
                     </div>

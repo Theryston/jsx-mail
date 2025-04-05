@@ -34,13 +34,26 @@ export class ListContactGroupsService {
     });
     const totalPages = Math.ceil(totalItems / take);
 
-    return {
-      contactGroups: contactGroups.map((contactGroup) => ({
+    const promises = contactGroups.map(async (contactGroup) => {
+      const validContactsCount = await this.prisma.contact.count({
+        where: {
+          contactGroupId: contactGroup.id,
+          deletedAt: null,
+          bouncedAt: null,
+        },
+      });
+
+      return {
         id: contactGroup.id,
         name: contactGroup.name,
         createdAt: contactGroup.createdAt,
         contactsCount: contactGroup._count.contacts,
-      })),
+        validContactsCount,
+      };
+    });
+
+    return {
+      contactGroups: await Promise.all(promises),
       totalItems,
       totalPages,
       currentPage: page,
