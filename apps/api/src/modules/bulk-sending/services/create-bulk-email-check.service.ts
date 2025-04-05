@@ -30,6 +30,23 @@ export class CreateBulkEmailCheckService {
       throw new NotFoundException('Contact group not found');
     }
 
+    const processingBulkEmailCheck = await this.prisma.bulkEmailCheck.findFirst(
+      {
+        where: {
+          contactGroupId,
+          status: {
+            in: ['processing', 'pending'],
+          },
+        },
+      },
+    );
+
+    if (processingBulkEmailCheck) {
+      throw new BadRequestException(
+        'Wait for the previous bulk email check to finish',
+      );
+    }
+
     const estimatedBulkEmailCheck =
       await this.estimatedBulkEmailCheckService.execute(
         {
