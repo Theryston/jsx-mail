@@ -707,20 +707,21 @@ model BulkEmailCheckFailure {
 }
 
 model EmailCheck {
-  id               String           @id @default(uuid())
-  email            String
-  status           EmailCheckStatus @default(pending) @map("status")
-  result           EmailCheckResult @default(unknown) @map("result")
-  userId           String           @map("user_id")
-  bulkEmailCheckId String?          @map("bulk_email_check_id")
-  contactId        String?          @map("contact_id")
-  externalId       String?          @map("external_id")
-  startedAt        DateTime?        @map("started_at")
-  processedAt      DateTime?        @map("processed_at")
-  chargedAt        DateTime?        @map("charged_at")
-  createdAt        DateTime         @default(now()) @map("created_at")
-  updatedAt        DateTime         @updatedAt @map("updated_at")
-  deletedAt        DateTime?        @map("deleted_at")
+  id                String           @id @default(uuid())
+  email             String
+  status            EmailCheckStatus @default(pending) @map("status")
+  result            EmailCheckResult @default(unknown) @map("result")
+  userId            String           @map("user_id")
+  bulkEmailCheckId  String?          @map("bulk_email_check_id")
+  contactId         String?          @map("contact_id")
+  externalId        String?          @map("external_id")
+  startedAt         DateTime?        @map("started_at")
+  externalRequestAt DateTime?        @map("external_request_at")
+  processedAt       DateTime?        @map("processed_at")
+  chargedAt         DateTime?        @map("charged_at")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+  deletedAt         DateTime?        @map("deleted_at")
 
   user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   bulkEmailCheck BulkEmailCheck? @relation(fields: [bulkEmailCheckId], references: [id], onDelete: Cascade)
