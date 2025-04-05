@@ -1,8 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MessageStatus } from '@prisma/client';
+import { Message, MessageStatus } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
 import moment from 'moment';
+
+const STATUS_SHOULD_HAVE_SENT_AT: MessageStatus[] = [
+  'bonce',
+  'clicked',
+  'complaint',
+  'delivered',
+  'opened',
+  'reject',
+  'subscription',
+];
 
 @Injectable()
 export class UpdateMessageStatusService {
@@ -51,12 +61,12 @@ export class UpdateMessageStatusService {
     };
 
     if (newStatus === 'sent') {
-      data = {
-        ...data,
-        sentAt: new Date(),
-        chargeMonth: moment().format('YYYY-MM'),
-        sentDay: moment().format('YYYY-MM-DD'),
-      };
+      data = this.addSentDate(data);
+    } else if (
+      STATUS_SHOULD_HAVE_SENT_AT.includes(newStatus) &&
+      message.sentAt === null
+    ) {
+      data = this.addSentDate(data);
     }
 
     if (newStatus === 'bonce' && message.contactId) {
@@ -73,6 +83,15 @@ export class UpdateMessageStatusService {
       where: { id: message.id },
       data,
     });
+  }
+
+  private addSentDate(data: Prisma.MessageUpdateInput) {
+    return {
+      ...data,
+      sentAt: new Date(),
+      chargeMonth: moment().format('YYYY-MM'),
+      sentDay: moment().format('YYYY-MM-DD'),
+    };
   }
 
   private shouldNotUpdateStatus(
