@@ -130,12 +130,6 @@ export class EmailCheckProcessor extends WorkerHost {
           );
           const now = moment();
 
-          console.log('now', now.format('DD/MM/YYYY HH:mm:ss:SSS'));
-          console.log(
-            'lastExternalRequestAt',
-            lastExternalRequestAt.format('DD/MM/YYYY HH:mm:ss:SSS'),
-          );
-
           const elapsedMilliseconds = now.diff(
             lastExternalRequestAt,
             'milliseconds',
