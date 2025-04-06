@@ -11,6 +11,7 @@ import {
   BulkSendingFailuresPagination,
   BulkEmailCheck,
   BulkEmailCheckEstimate,
+  EmailCheckLevel,
 } from '@/types/bulk-sending';
 import { PER_PAGE } from '@/utils/constants';
 
@@ -254,7 +255,7 @@ export function useCreateBulkEmailCheck() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (body: { contactGroupId: string }) =>
+    mutationFn: (body: { contactGroupId: string; level: EmailCheckLevel }) =>
       api.post('/bulk-sending/email-check', body).then((res) => res.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bulkEmailChecks'] });

@@ -6,11 +6,15 @@ import { GetSettingsService } from '../user/services/get-settings.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import axios, { AxiosInstance } from 'axios';
-import { EmailCheckResult } from '@prisma/client';
+import { EmailCheck, EmailCheckResult } from '@prisma/client';
 import { QueueChargeBulkEmailCheckService } from '../worker/services/queue-charge-bulk-email-check.service';
 import { Worker } from 'bullmq';
 import { MarkBounceToService } from '../email/services/mark-bounce-to.service';
-import { EMAIL_CHECK_ATTEMPTS } from 'src/utils/constants';
+import {
+  EMAIL_CHECK_ATTEMPTS,
+  SAFELY_VALID_EMAIL_CHECK_RESULT,
+  VALID_EMAIL_CHECK_RESULT,
+} from 'src/utils/constants';
 
 @Processor('email-check', { concurrency: 1 })
 export class EmailCheckProcessor extends WorkerHost {
@@ -202,14 +206,31 @@ export class EmailCheckProcessor extends WorkerHost {
     });
   }
 
-  private async handleBounce(emailCheck: any, result: string) {
-    if (emailCheck.contactId && result !== 'ok') {
+  private async handleBounce(emailCheck: EmailCheck, result: EmailCheckResult) {
+    if (!emailCheck.contactId) return;
+
+    if (!VALID_EMAIL_CHECK_RESULT.includes(result)) {
+      await this.markBounceToService.create(emailCheck.email, 'email_check');
+    }
+
+    if (
+      emailCheck.level === 'safely' &&
+      !SAFELY_VALID_EMAIL_CHECK_RESULT.includes(result)
+    ) {
       await this.prisma.contact.update({
         where: { id: emailCheck.contactId },
         data: { bouncedAt: new Date(), bouncedBy: 'email_check' },
       });
+    }
 
-      await this.markBounceToService.create(emailCheck.email, 'email_check');
+    if (
+      emailCheck.level === 'valid' &&
+      !VALID_EMAIL_CHECK_RESULT.includes(result)
+    ) {
+      await this.prisma.contact.update({
+        where: { id: emailCheck.contactId },
+        data: { bouncedAt: new Date(), bouncedBy: 'email_check' },
+      });
     }
   }
 

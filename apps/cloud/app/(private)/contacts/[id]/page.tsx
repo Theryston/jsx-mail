@@ -80,6 +80,12 @@ export default function ContactGroupPage({
   const { data: bulkEmailChecks } = useListBulkEmailChecks(id, refetchInterval);
 
   useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: ['contactGroupContacts', id],
+    });
+  }, [bulkEmailChecks]);
+
+  useEffect(() => {
     if (
       bulkEmailChecks?.some(
         (check) => check.status === 'pending' || check.status === 'processing',

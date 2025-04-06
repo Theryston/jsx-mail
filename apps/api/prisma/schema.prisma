@@ -107,6 +107,11 @@ enum BulkEmailCheckStatus {
   failed
 }
 
+enum EmailCheckLevel {
+  safely
+  valid
+}
+
 model User {
   id              String         @id @default(uuid())
   name            String
@@ -672,6 +677,7 @@ model BulkEmailCheck {
   id                  String               @id @default(uuid())
   contactGroupId      String?              @map("contact_group_id")
   status              BulkEmailCheckStatus @default(pending) @map("status")
+  level               EmailCheckLevel      @default(valid) @map("level")
   totalEmails         Int                  @default(0) @map("total_emails")
   processedEmails     Int                  @default(0) @map("processed_emails")
   userId              String               @map("user_id")
@@ -711,6 +717,7 @@ model EmailCheck {
   email             String
   status            EmailCheckStatus @default(pending) @map("status")
   result            EmailCheckResult @default(unknown) @map("result")
+  level             EmailCheckLevel  @default(valid) @map("level")
   userId            String           @map("user_id")
   bulkEmailCheckId  String?          @map("bulk_email_check_id")
   willRetry         Boolean          @default(false) @map("will_retry")

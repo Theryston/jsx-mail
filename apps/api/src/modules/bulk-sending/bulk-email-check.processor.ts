@@ -111,6 +111,7 @@ export class BulkEmailCheckProcessor extends WorkerHost {
                 email: contact.email,
                 bulkEmailCheckId,
                 contactId: contact.id,
+                level: bulkEmailCheck.level,
               },
               bulkEmailCheck.userId,
             );

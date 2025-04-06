@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
+import {
+  SAFELY_VALID_EMAIL_CHECK_RESULT,
+  VALID_EMAIL_CHECK_RESULT,
+} from 'src/utils/constants';
 
 @Injectable()
 export class ListBulkEmailChecksService {
@@ -26,7 +30,10 @@ export class ListBulkEmailChecksService {
           userId,
           bulkEmailCheckId: bulkEmailCheck.id,
           result: {
-            not: 'ok',
+            notIn:
+              bulkEmailCheck.level === 'valid'
+                ? VALID_EMAIL_CHECK_RESULT
+                : SAFELY_VALID_EMAIL_CHECK_RESULT,
           },
           status: {
             notIn: ['pending', 'processing', 'failed'],
@@ -67,7 +74,12 @@ export class ListBulkEmailChecksService {
         where: {
           userId,
           bulkEmailCheckId: bulkEmailCheck.id,
-          result: 'ok',
+          result: {
+            in:
+              bulkEmailCheck.level === 'valid'
+                ? VALID_EMAIL_CHECK_RESULT
+                : SAFELY_VALID_EMAIL_CHECK_RESULT,
+          },
         },
       });
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@jsx-mail/ui/button';
 import {
   Dialog,
@@ -13,9 +13,10 @@ import {
   useEstimateBulkEmailCheck,
   useMarkBulkEmailCheckAsRead,
 } from '@/hooks/bulk-sending';
-import { BulkEmailCheck } from '@/types/bulk-sending';
+import { BulkEmailCheck, EmailCheckLevel } from '@/types/bulk-sending';
 import moment from 'moment';
 import { friendlyTime } from '@/utils/format';
+import { cn } from '@jsx-mail/ui/lib/utils';
 
 type BulkEmailCheckStep = 'info' | 'estimate';
 
@@ -157,17 +158,18 @@ export function BulkEmailCheckModal({
     contactGroupId,
     totalEmails,
   );
+  const [level, setLevel] = useState<EmailCheckLevel>('valid');
   const { mutate: createBulkEmailCheck, isPending: isCreating } =
     useCreateBulkEmailCheck();
 
-  const handleConfirm = () => {
+  const handleConfirm = useCallback(() => {
     if (step === 'info') {
       setStep('estimate');
     } else {
-      createBulkEmailCheck({ contactGroupId });
+      createBulkEmailCheck({ contactGroupId, level });
       onOpenChange(false);
     }
-  };
+  }, [contactGroupId, createBulkEmailCheck, level, onOpenChange, step]);
 
   const onClose = () => {
     onOpenChange(false);
@@ -238,6 +240,38 @@ export function BulkEmailCheckModal({
                   <p className="text-sm text-muted-foreground">
                     {estimate?.contactsCount}
                   </p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">Mark as bounced</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div
+                      onClick={() => setLevel('valid')}
+                      className={cn(
+                        'p-2 w-full rounded-md border border-input flex flex-col gap-1 cursor-pointer',
+                        level === 'valid' && 'border-primary/50',
+                      )}
+                    >
+                      <p className="text-sm">Valid emails</p>
+                      <p className="text-xs text-muted-foreground">
+                        It will only mark a contact as bounce if it is in fact
+                        an invalid email and is not receiving emails.
+                      </p>
+                    </div>
+                    <div
+                      onClick={() => setLevel('safely')}
+                      className={cn(
+                        'p-2 w-full rounded-md border border-input flex flex-col gap-1 cursor-pointer',
+                        level === 'safely' && 'border-primary/50',
+                      )}
+                    >
+                      <p className="text-sm">Valid & safe emails</p>
+                      <p className="text-xs text-muted-foreground">
+                        It will mark contacts as bounce if the email is invalid
+                        (as in the other option) or appears to be risky - such
+                        as bots, temporary emails, etc.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </>
             )}

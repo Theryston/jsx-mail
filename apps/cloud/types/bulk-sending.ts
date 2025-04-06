@@ -147,3 +147,5 @@ export type BulkEmailCheckEstimate = {
   friendlyEstimatedTime: string;
   contactsCount: number;
 };
+
+export type EmailCheckLevel = 'safely' | 'valid';

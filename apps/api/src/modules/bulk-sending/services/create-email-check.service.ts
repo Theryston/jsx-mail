@@ -3,6 +3,7 @@ import { PrismaService } from 'src/services/prisma.service';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
 import { EMAIL_CHECK_ATTEMPTS, EMAIL_CHECK_DELAY } from 'src/utils/constants';
+import { EmailCheckLevel } from '@prisma/client';
 
 @Injectable()
 export class CreateEmailCheckService {
@@ -16,9 +17,17 @@ export class CreateEmailCheckService {
       email,
       bulkEmailCheckId,
       contactId,
-    }: { email: string; bulkEmailCheckId?: string; contactId?: string },
+      level,
+    }: {
+      email: string;
+      bulkEmailCheckId?: string;
+      contactId?: string;
+      level?: EmailCheckLevel;
+    },
     userId: string,
   ) {
+    if (!level) level = 'valid';
+
     const emailCheck = await this.prisma.emailCheck.create({
       data: {
         email,
@@ -27,6 +36,7 @@ export class CreateEmailCheckService {
         bulkEmailCheckId,
         contactId,
         userId,
+        level,
       },
     });
 

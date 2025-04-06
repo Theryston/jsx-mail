@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import { CreateBulkEmailCheckDto } from '../bulk-sending.dto';
+import { EstimatedBulkEmailCheckDto } from '../bulk-sending.dto';
 import { GetSettingsService } from 'src/modules/user/services/get-settings.service';
 import { friendlyMoney, friendlyTime } from 'src/utils/format-money';
 
@@ -12,7 +12,7 @@ export class EstimatedBulkEmailCheckService {
   ) {}
 
   async execute(
-    { contactGroupId }: CreateBulkEmailCheckDto,
+    { contactGroupId }: EstimatedBulkEmailCheckDto,
     userId: string,
     customEmailsTotal?: number,
   ) {

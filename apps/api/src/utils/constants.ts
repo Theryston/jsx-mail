@@ -1,8 +1,19 @@
+import { EmailCheckResult } from '@prisma/client';
+
 export const MONEY_SCALE = 1000000;
 export const GATEWAY_SCALE = 100;
 export const EMAIL_CHECK_ATTEMPTS = 3;
 export const EMAIL_CHECK_DELAY = 1000 * 30;
 export const CURRENCY = 'USD';
+
+export const VALID_EMAIL_CHECK_RESULT: EmailCheckResult[] = [
+  'ok',
+  'risky',
+  'unknown',
+  'accept_all',
+];
+
+export const SAFELY_VALID_EMAIL_CHECK_RESULT: EmailCheckResult[] = ['ok'];
 
 export const MESSAGES_STATUS = [
   {

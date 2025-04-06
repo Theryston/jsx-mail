@@ -1,4 +1,5 @@
 import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { EmailCheckLevel } from '@prisma/client';
 
 export class CreateContactGroupDto {
   @IsString()
@@ -79,6 +80,16 @@ export class CreateContactDto {
 }
 
 export class CreateBulkEmailCheckDto {
+  @IsString()
+  @IsNotEmpty()
+  contactGroupId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  level: EmailCheckLevel;
+}
+
+export class EstimatedBulkEmailCheckDto {
   @IsString()
   @IsNotEmpty()
   contactGroupId: string;

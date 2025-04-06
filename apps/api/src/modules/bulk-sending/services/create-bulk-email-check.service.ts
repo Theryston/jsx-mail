@@ -21,7 +21,10 @@ export class CreateBulkEmailCheckService {
     private readonly bulkEmailCheckQueue: Queue,
   ) {}
 
-  async execute({ contactGroupId }: CreateBulkEmailCheckDto, userId: string) {
+  async execute(
+    { contactGroupId, level }: CreateBulkEmailCheckDto,
+    userId: string,
+  ) {
     const contactGroup = await this.prisma.contactGroup.findUnique({
       where: { id: contactGroupId },
     });
@@ -74,6 +77,7 @@ export class CreateBulkEmailCheckService {
         totalEmails: estimatedBulkEmailCheck.contactsCount,
         estimatedEndSeconds: estimatedBulkEmailCheck.estimatedTimeSeconds,
         estimatedEndAt,
+        level,
       },
     });
 
