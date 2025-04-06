@@ -265,17 +265,6 @@ export class EmailCheckProcessor extends WorkerHost {
         },
       );
 
-      console.log(
-        `[EMAIL_CHECK] external request at: ${moment(externalRequestAt).format(
-          'DD/MM/YYYY HH:mm:ss:SSS',
-        )}`,
-      );
-
-      await this.prisma.emailCheck.update({
-        where: { id: emailCheckId },
-        data: { externalRequestAt },
-      });
-
       response = response?.emails?.[0];
 
       if (!response) {
@@ -293,13 +282,17 @@ export class EmailCheckProcessor extends WorkerHost {
       };
 
       return finalResult[response.email_state];
-    } catch (error) {
+    } finally {
+      console.log(
+        `[EMAIL_CHECK] external request updating to ${moment(
+          externalRequestAt,
+        ).format('DD/MM/YYYY HH:mm:ss:SSS')}`,
+      );
+
       await this.prisma.emailCheck.update({
         where: { id: emailCheckId },
         data: { externalRequestAt },
       });
-
-      throw error;
     }
   }
 }
