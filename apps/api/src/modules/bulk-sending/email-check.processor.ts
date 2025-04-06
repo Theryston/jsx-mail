@@ -75,7 +75,10 @@ export class EmailCheckProcessor extends WorkerHost {
       await this.finalizeProcess(job, emailCheck, processStartedAt);
     }
 
-    if (processedError) throw processedError;
+    if (processedError) {
+      console.log('[EMAIL_CHECK] processed error: ', processedError);
+      throw processedError;
+    }
   }
 
   private async getEmailCheck(emailCheckId: string) {
