@@ -1,5 +1,6 @@
 export const MONEY_SCALE = 1000000;
 export const GATEWAY_SCALE = 100;
+export const EMAIL_CHECK_ATTEMPTS = 5;
 export const CURRENCY = 'USD';
 
 export const MESSAGES_STATUS = [

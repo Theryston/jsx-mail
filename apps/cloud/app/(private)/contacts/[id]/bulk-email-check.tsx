@@ -108,6 +108,18 @@ function ProcessingBulkEmailCheck({ check }: { check: BulkEmailCheck }) {
         </p>
       </div>
       <div className="flex flex-col gap-0">
+        <p className="text-xs">
+          Failed Emails: {check.failedEmails} email
+          {check.failedEmails === 1 ? '' : 's'}
+        </p>
+        <p className="text-xs">
+          Bounced Emails: {check.bouncedEmails} email
+          {check.bouncedEmails === 1 ? '' : 's'}
+        </p>
+        <p className="text-xs">
+          Valid Emails: {check.processedEmails - check.bouncedEmails} email
+          {check.processedEmails - check.bouncedEmails === 1 ? '' : 's'}
+        </p>
         {estimatedEndAt && (
           <>
             <p className="text-xs">

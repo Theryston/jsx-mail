@@ -10,6 +10,7 @@ import { EmailCheckResult } from '@prisma/client';
 import { QueueChargeBulkEmailCheckService } from '../worker/services/queue-charge-bulk-email-check.service';
 import { Worker } from 'bullmq';
 import { MarkBounceToService } from '../email/services/mark-bounce-to.service';
+import { EMAIL_CHECK_ATTEMPTS } from 'src/utils/constants';
 @Processor('email-check', { concurrency: 1 })
 export class EmailCheckProcessor extends WorkerHost {
   truelistClient: AxiosInstance;
@@ -237,10 +238,17 @@ export class EmailCheckProcessor extends WorkerHost {
       } catch (error) {
         console.error(`[EMAIL_CHECK] error processing job ${job.id}`);
 
-        await this.prisma.emailCheck.update({
-          where: { id: emailCheckId },
-          data: { status: 'failed', result: 'unknown' },
-        });
+        if (job.attemptsMade >= EMAIL_CHECK_ATTEMPTS) {
+          await this.prisma.emailCheck.update({
+            where: { id: emailCheckId },
+            data: { status: 'failed', result: 'unknown' },
+          });
+        } else {
+          await this.prisma.emailCheck.update({
+            where: { id: emailCheckId },
+            data: { status: 'pending', result: 'unknown' },
+          });
+        }
 
         globalError = error?.response?.data || error;
         console.error(globalError);

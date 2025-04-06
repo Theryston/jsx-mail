@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
+import { EMAIL_CHECK_ATTEMPTS } from 'src/utils/constants';
 
 @Injectable()
 export class CreateEmailCheckService {
@@ -34,7 +35,7 @@ export class CreateEmailCheckService {
     await this.emailCheckQueue.add('email-check', {
       emailCheckId: emailCheck.id,
       priority: randomPriority,
-      attempts: 5,
+      attempts: EMAIL_CHECK_ATTEMPTS,
       backoff: {
         type: 'exponential',
         delay: 1000 * 30,
