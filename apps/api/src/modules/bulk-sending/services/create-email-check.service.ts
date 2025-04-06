@@ -37,8 +37,8 @@ export class CreateEmailCheckService {
       priority: randomPriority,
       attempts: EMAIL_CHECK_ATTEMPTS,
       backoff: {
-        type: 'exponential',
-        delay: 1000,
+        type: 'fixed',
+        delay: 1000 * 10,
       },
     });
   }
