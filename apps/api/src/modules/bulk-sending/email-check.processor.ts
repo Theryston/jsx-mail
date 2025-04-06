@@ -110,14 +110,6 @@ export class EmailCheckProcessor extends WorkerHost {
           orderBy: {
             externalRequestAt: 'desc',
           },
-          where: {
-            externalRequestAt: {
-              not: null,
-            },
-            status: {
-              notIn: ['failed', 'pending'],
-            },
-          },
           select: {
             externalRequestAt: true,
           },
@@ -127,7 +119,7 @@ export class EmailCheckProcessor extends WorkerHost {
 
         if (lastEmailCheck) {
           const lastExternalRequestAt = moment(
-            lastEmailCheck.externalRequestAt,
+            lastEmailCheck.externalRequestAt || new Date(),
           );
           const now = moment();
 
@@ -161,34 +153,6 @@ export class EmailCheckProcessor extends WorkerHost {
           data: { status: 'processing', startedAt: new Date() },
         });
 
-        let { data: response } = await this.truelistClient.post(
-          `/v1/verify_inline`,
-          {
-            email: emailCheck.email,
-          },
-        );
-
-        const externalRequestAt = new Date();
-
-        console.log(
-          `[EMAIL_CHECK] external request at: ${moment(
-            externalRequestAt,
-          ).format('DD/MM/YYYY HH:mm:ss:SSS')}`,
-        );
-
-        await this.prisma.emailCheck.update({
-          where: { id: emailCheckId },
-          data: { externalRequestAt },
-        });
-
-        response = response?.emails?.[0];
-
-        if (!response) {
-          throw new Error('No response found');
-        }
-
-        console.log(`[EMAIL_CHECK] response: ${JSON.stringify(response)}`);
-
         let result = null;
 
         const markedBounceTo = await this.markBounceToService.get(
@@ -201,15 +165,7 @@ export class EmailCheckProcessor extends WorkerHost {
           );
           result = 'email_invalid';
         } else {
-          const finalResult: Record<EmailCheckResult, EmailCheckResult> = {
-            ok: 'ok',
-            email_invalid: 'email_invalid',
-            risky: 'risky',
-            unknown: 'unknown',
-            accept_all: 'accept_all',
-          };
-
-          result = finalResult[response.email_state];
+          result = await this.getExternalResult(emailCheck.email, emailCheckId);
         }
 
         if (!result) {
@@ -295,6 +251,55 @@ export class EmailCheckProcessor extends WorkerHost {
       console.log(
         `[EMAIL_CHECK] job ${job.id} completed in ${duration} milliseconds | Finished at ${moment(finishedAt).format('DD/MM/YYYY HH:mm:ss:SSS')}`,
       );
+    }
+  }
+
+  async getExternalResult(email: string, emailCheckId: string) {
+    const externalRequestAt = new Date();
+
+    try {
+      let { data: response } = await this.truelistClient.post(
+        `/v1/verify_inline`,
+        {
+          email,
+        },
+      );
+
+      console.log(
+        `[EMAIL_CHECK] external request at: ${moment(externalRequestAt).format(
+          'DD/MM/YYYY HH:mm:ss:SSS',
+        )}`,
+      );
+
+      await this.prisma.emailCheck.update({
+        where: { id: emailCheckId },
+        data: { externalRequestAt },
+      });
+
+      response = response?.emails?.[0];
+
+      if (!response) {
+        throw new Error('No response found');
+      }
+
+      console.log(`[EMAIL_CHECK] response: ${JSON.stringify(response)}`);
+
+      const finalResult: Record<EmailCheckResult, EmailCheckResult> = {
+        ok: 'ok',
+        email_invalid: 'email_invalid',
+        risky: 'risky',
+        unknown: 'unknown',
+        accept_all: 'accept_all',
+      };
+
+      return finalResult[response.email_state];
+    } catch (error) {
+      await this.prisma.emailCheck.update({
+        where: { id: emailCheckId },
+        data: { externalRequestAt },
+      });
+
+      throw error;
     }
   }
 }
