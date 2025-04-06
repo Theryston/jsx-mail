@@ -80,6 +80,9 @@ export class ListBulkEmailChecksService {
                 ? VALID_EMAIL_CHECK_RESULT
                 : SAFELY_VALID_EMAIL_CHECK_RESULT,
           },
+          status: {
+            notIn: ['pending', 'processing'],
+          },
         },
       });
 
