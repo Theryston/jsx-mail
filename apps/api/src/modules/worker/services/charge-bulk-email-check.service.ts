@@ -56,7 +56,7 @@ export class ChargeBulkEmailCheckService {
           chargedAt: null,
           deletedAt: null,
           status: {
-            notIn: ['pending', 'processing'],
+            notIn: ['pending', 'processing', 'failed'],
           },
           userId,
           bulkEmailCheckId,
