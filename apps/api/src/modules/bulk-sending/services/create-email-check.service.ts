@@ -34,10 +34,10 @@ export class CreateEmailCheckService {
     await this.emailCheckQueue.add('email-check', {
       emailCheckId: emailCheck.id,
       priority: randomPriority,
-      attempts: 3,
+      attempts: 5,
       backoff: {
         type: 'exponential',
-        delay: 1000 * 60,
+        delay: 1000 * 30,
       },
     });
   }
