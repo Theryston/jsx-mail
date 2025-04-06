@@ -63,6 +63,10 @@ function BulkEmailCheckResult({ check }: { check: BulkEmailCheck }) {
               Valid Emails: {check.processedEmails - check.bouncedEmails} email
               {check.processedEmails - check.bouncedEmails === 1 ? '' : 's'}
             </p>
+            <p className="text-xs">
+              Failed Emails: {check.failedEmails} email
+              {check.failedEmails === 1 ? '' : 's'}
+            </p>
           </div>
         </div>
         <Button

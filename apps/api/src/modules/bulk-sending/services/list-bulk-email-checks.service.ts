@@ -28,6 +28,9 @@ export class ListBulkEmailChecksService {
           result: {
             not: 'ok',
           },
+          status: {
+            notIn: ['pending', 'processing', 'failed'],
+          },
         },
       });
 
@@ -36,8 +39,16 @@ export class ListBulkEmailChecksService {
           userId,
           bulkEmailCheckId: bulkEmailCheck.id,
           status: {
-            notIn: ['pending', 'processing'],
+            notIn: ['pending', 'processing', 'failed'],
           },
+        },
+      });
+
+      const failedEmails = await this.prisma.emailCheck.count({
+        where: {
+          userId,
+          bulkEmailCheckId: bulkEmailCheck.id,
+          status: 'failed',
         },
       });
 
@@ -45,6 +56,7 @@ export class ListBulkEmailChecksService {
         ...bulkEmailCheck,
         bouncedEmails,
         processedEmails,
+        failedEmails,
       });
     }
 
