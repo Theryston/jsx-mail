@@ -32,10 +32,19 @@ export class CreateEmailCheckService {
 
     const randomPriority = Math.floor(Math.random() * 10) + 1;
 
-    await this.emailCheckQueue.add('email-check', {
-      emailCheckId: emailCheck.id,
-      priority: randomPriority,
-      attempts: EMAIL_CHECK_ATTEMPTS,
-    });
+    await this.emailCheckQueue.add(
+      'email-check',
+      {
+        emailCheckId: emailCheck.id,
+      },
+      {
+        priority: randomPriority,
+        attempts: EMAIL_CHECK_ATTEMPTS,
+        backoff: {
+          type: 'exponential',
+          delay: 1000 * 30,
+        },
+      },
+    );
   }
 }
