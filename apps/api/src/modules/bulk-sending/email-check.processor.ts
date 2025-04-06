@@ -64,7 +64,7 @@ export class EmailCheckProcessor extends WorkerHost {
     let processedError: any = null;
 
     try {
-      await this.updateEmailCheckStatus(emailCheckId, 'processing');
+      await this.updateProcessingEmailCheckStatus(emailCheckId);
       const result = await this.processEmailCheck(emailCheck);
       await this.updateEmailCheckResult(emailCheckId, result);
       await this.handleBounce(emailCheck, result);
@@ -164,13 +164,10 @@ export class EmailCheckProcessor extends WorkerHost {
     return timeToWait;
   }
 
-  private async updateEmailCheckStatus(
-    emailCheckId: string,
-    status: 'processing' | 'completed' | 'failed' | 'pending',
-  ) {
+  private async updateProcessingEmailCheckStatus(emailCheckId: string) {
     await this.prisma.emailCheck.update({
       where: { id: emailCheckId },
-      data: { status, startedAt: new Date() },
+      data: { status: 'processing', startedAt: new Date(), willRetry: false },
     });
   }
 
@@ -224,7 +221,7 @@ export class EmailCheckProcessor extends WorkerHost {
     if (attemptsMade >= EMAIL_CHECK_ATTEMPTS) {
       await this.prisma.emailCheck.update({
         where: { id: emailCheckId },
-        data: { status: 'failed', result: 'unknown' },
+        data: { status: 'failed', result: 'unknown', willRetry: false },
       });
     } else {
       console.log(
@@ -233,7 +230,7 @@ export class EmailCheckProcessor extends WorkerHost {
 
       await this.prisma.emailCheck.update({
         where: { id: emailCheckId },
-        data: { status: 'pending', result: 'unknown' },
+        data: { status: 'pending', result: 'unknown', willRetry: true },
       });
     }
 

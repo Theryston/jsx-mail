@@ -31,6 +31,7 @@ export class ListBulkEmailChecksService {
           status: {
             notIn: ['pending', 'processing', 'failed'],
           },
+          willRetry: false,
         },
       });
 
@@ -41,6 +42,7 @@ export class ListBulkEmailChecksService {
           status: {
             notIn: ['pending', 'processing', 'failed'],
           },
+          willRetry: false,
         },
       });
 
@@ -49,6 +51,15 @@ export class ListBulkEmailChecksService {
           userId,
           bulkEmailCheckId: bulkEmailCheck.id,
           status: 'failed',
+          willRetry: false,
+        },
+      });
+
+      const willRetryEmails = await this.prisma.emailCheck.count({
+        where: {
+          userId,
+          bulkEmailCheckId: bulkEmailCheck.id,
+          willRetry: true,
         },
       });
 
@@ -57,6 +68,7 @@ export class ListBulkEmailChecksService {
         bouncedEmails,
         processedEmails,
         failedEmails,
+        willRetryEmails,
       });
     }
 

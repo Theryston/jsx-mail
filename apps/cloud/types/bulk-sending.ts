@@ -136,6 +136,7 @@ export type BulkEmailCheck = {
   estimatedEndAt: string;
   estimatedEndSeconds: number;
   failedEmails: number;
+  willRetryEmails: number;
 };
 
 export type BulkEmailCheckEstimate = {

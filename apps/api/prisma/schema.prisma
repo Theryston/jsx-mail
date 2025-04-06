@@ -713,6 +713,7 @@ model EmailCheck {
   result            EmailCheckResult @default(unknown) @map("result")
   userId            String           @map("user_id")
   bulkEmailCheckId  String?          @map("bulk_email_check_id")
+  willRetry         Boolean          @default(false) @map("will_retry")
   contactId         String?          @map("contact_id")
   externalId        String?          @map("external_id")
   startedAt         DateTime?        @map("started_at")
