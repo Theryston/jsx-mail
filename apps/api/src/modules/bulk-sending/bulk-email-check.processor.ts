@@ -1,14 +1,13 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
-import { Queue } from 'bullmq';
-import { InjectQueue } from '@nestjs/bullmq';
 import { PrismaService } from 'src/services/prisma.service';
+import { CreateEmailCheckService } from './services/create-email-check.service';
 
 @Processor('bulk-email-check', { concurrency: 10 })
 export class BulkEmailCheckProcessor extends WorkerHost {
   constructor(
     private readonly prisma: PrismaService,
-    @InjectQueue('email-check') private readonly emailCheckQueue: Queue,
+    private readonly createEmailCheckService: CreateEmailCheckService,
   ) {
     super();
   }
@@ -107,23 +106,14 @@ export class BulkEmailCheckProcessor extends WorkerHost {
               continue;
             }
 
-            const emailCheck = await this.prisma.emailCheck.create({
-              data: {
+            await this.createEmailCheckService.execute(
+              {
                 email: contact.email,
-                status: 'pending',
-                result: 'unknown',
                 bulkEmailCheckId,
                 contactId: contact.id,
-                userId: bulkEmailCheck.userId,
               },
-            });
-
-            const randomPriority = Math.floor(Math.random() * 10) + 1;
-
-            await this.emailCheckQueue.add('email-check', {
-              emailCheckId: emailCheck.id,
-              priority: randomPriority,
-            });
+              bulkEmailCheck.userId,
+            );
 
             await this.prisma.bulkEmailCheck.update({
               where: { id: bulkEmailCheckId },

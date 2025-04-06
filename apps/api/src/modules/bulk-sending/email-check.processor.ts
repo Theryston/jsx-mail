@@ -62,8 +62,7 @@ export class EmailCheckProcessor extends WorkerHost {
       }
 
       if (emailCheck.status === 'failed') {
-        console.log(`[EMAIL_CHECK] email check ${emailCheckId} already failed`);
-        return;
+        console.log(`[EMAIL_CHECK] retrying email check ${emailCheckId}`);
       }
 
       let globalError: any = null;

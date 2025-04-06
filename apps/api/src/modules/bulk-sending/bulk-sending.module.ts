@@ -29,6 +29,7 @@ import { EstimatedBulkEmailCheckService } from './services/estimated-bulk-email-
 import { WorkerModule } from '../worker/worker.module';
 import { MarkBulkEmailCheckAsReadService } from './services/mark-bulk-email-check-as-read.service';
 import { EmailModule } from '../email/email.module';
+import { CreateEmailCheckService } from './services/create-email-check.service';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { EmailModule } from '../email/email.module';
     ListBulkEmailChecksService,
     EstimatedBulkEmailCheckService,
     MarkBulkEmailCheckAsReadService,
+    CreateEmailCheckService,
   ],
 })
 export class BulkSendingModule {}
