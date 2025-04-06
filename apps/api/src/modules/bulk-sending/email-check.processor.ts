@@ -144,6 +144,8 @@ export class EmailCheckProcessor extends WorkerHost {
         }
       }
 
+      console.log(`[EMAIL_CHECK] time to wait: ${timeToWait}`);
+
       if (timeToWait > 0) {
         console.log(
           `[EMAIL_CHECK] rate second limit exceeded, waiting ${timeToWait} milliseconds. Will reset at ${moment(Date.now() + timeToWait).format('DD/MM/YYYY HH:mm:ss')}`,
