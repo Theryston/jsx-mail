@@ -40,7 +40,7 @@ export class ListBulkEmailChecksService {
           userId,
           bulkEmailCheckId: bulkEmailCheck.id,
           status: {
-            notIn: ['pending', 'processing', 'failed'],
+            notIn: ['pending', 'processing'],
           },
           willRetry: false,
         },
