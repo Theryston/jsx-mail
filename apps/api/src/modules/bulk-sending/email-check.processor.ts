@@ -11,6 +11,7 @@ import { QueueChargeBulkEmailCheckService } from '../worker/services/queue-charg
 import { Worker } from 'bullmq';
 import { MarkBounceToService } from '../email/services/mark-bounce-to.service';
 import { EMAIL_CHECK_ATTEMPTS } from 'src/utils/constants';
+
 @Processor('email-check', { concurrency: 1 })
 export class EmailCheckProcessor extends WorkerHost {
   truelistClient: AxiosInstance;
