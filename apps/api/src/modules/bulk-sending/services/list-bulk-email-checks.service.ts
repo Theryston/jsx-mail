@@ -63,12 +63,21 @@ export class ListBulkEmailChecksService {
         },
       });
 
+      const validEmails = await this.prisma.emailCheck.count({
+        where: {
+          userId,
+          bulkEmailCheckId: bulkEmailCheck.id,
+          result: 'ok',
+        },
+      });
+
       bulks.push({
         ...bulkEmailCheck,
         bouncedEmails,
         processedEmails,
         failedEmails,
         willRetryEmails,
+        validEmails,
       });
     }
 
