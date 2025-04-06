@@ -76,7 +76,11 @@ export class EmailCheckProcessor extends WorkerHost {
     }
 
     if (processedError) {
-      console.log('[EMAIL_CHECK] processed error: ', processedError);
+      console.log(
+        `[EMAIL_CHECK] processed error for job ${job.id}: `,
+        processedError,
+      );
+
       throw processedError;
     }
   }
