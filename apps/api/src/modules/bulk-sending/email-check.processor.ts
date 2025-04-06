@@ -211,6 +211,8 @@ export class EmailCheckProcessor extends WorkerHost {
 
         globalError = error?.response?.data || error;
         console.error(globalError);
+
+        throw globalError;
       } finally {
         const finishedAt = new Date();
 
