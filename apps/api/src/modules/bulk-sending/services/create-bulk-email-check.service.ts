@@ -58,6 +58,10 @@ export class CreateBulkEmailCheckService {
         userId,
       );
 
+    if (estimatedBulkEmailCheck.contactsCount === 0) {
+      throw new BadRequestException('No contacts found in the contact group');
+    }
+
     const balance = await this.getBalanceService.execute(userId);
 
     if (balance.amount < estimatedBulkEmailCheck.estimatedCost) {
@@ -66,17 +70,13 @@ export class CreateBulkEmailCheckService {
       );
     }
 
-    const estimatedEndAt = moment()
-      .add(estimatedBulkEmailCheck.estimatedTimeSeconds, 'seconds')
-      .toDate();
-
     const bulkEmailCheck = await this.prisma.bulkEmailCheck.create({
       data: {
         contactGroupId,
         userId,
         totalEmails: estimatedBulkEmailCheck.contactsCount,
         estimatedEndSeconds: estimatedBulkEmailCheck.estimatedTimeSeconds,
-        estimatedEndAt,
+        estimatedEndAt: estimatedBulkEmailCheck.estimatedEndAt,
         level,
       },
     });

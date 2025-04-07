@@ -53,23 +53,6 @@ export class ListBulkEmailChecksService {
         },
       });
 
-      const failedEmails = await this.prisma.emailCheck.count({
-        where: {
-          userId,
-          bulkEmailCheckId: bulkEmailCheck.id,
-          status: 'failed',
-          willRetry: false,
-        },
-      });
-
-      const willRetryEmails = await this.prisma.emailCheck.count({
-        where: {
-          userId,
-          bulkEmailCheckId: bulkEmailCheck.id,
-          willRetry: true,
-        },
-      });
-
       const validEmails = await this.prisma.emailCheck.count({
         where: {
           userId,
@@ -90,8 +73,6 @@ export class ListBulkEmailChecksService {
         ...bulkEmailCheck,
         bouncedEmails,
         processedEmails,
-        failedEmails,
-        willRetryEmails,
         validEmails,
       });
     }

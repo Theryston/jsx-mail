@@ -3,6 +3,7 @@ import { PrismaService } from 'src/services/prisma.service';
 import { GetSettingsService } from 'src/modules/user/services/get-settings.service';
 import { ChargeService } from './charge.service';
 import { TransactionStyle } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ChargeBulkEmailCheckService {
@@ -26,16 +27,18 @@ export class ChargeBulkEmailCheckService {
     const pageSize = 100;
     let hasMoreRecords = true;
 
-    const totalCount = await this.prisma.emailCheck.count({
-      where: {
-        bulkEmailCheckId,
-        chargedAt: null,
-        deletedAt: null,
-        status: {
-          notIn: ['pending', 'processing'],
-        },
-        userId,
+    const where: Prisma.EmailCheckWhereInput = {
+      bulkEmailCheckId,
+      chargedAt: null,
+      deletedAt: null,
+      status: {
+        notIn: ['pending', 'processing'],
       },
+      userId,
+    };
+
+    const totalCount = await this.prisma.emailCheck.count({
+      where,
     });
 
     console.log(
@@ -50,17 +53,9 @@ export class ChargeBulkEmailCheckService {
 
     let totalAmount = 0;
 
-    while (hasMoreRecords) {
+    while (true) {
       const emailChecks = await this.prisma.emailCheck.findMany({
-        where: {
-          chargedAt: null,
-          deletedAt: null,
-          status: {
-            notIn: ['pending', 'processing', 'failed'],
-          },
-          userId,
-          bulkEmailCheckId,
-        },
+        where,
         select: {
           id: true,
         },
@@ -69,7 +64,10 @@ export class ChargeBulkEmailCheckService {
       });
 
       if (emailChecks.length === 0) {
-        hasMoreRecords = false;
+        console.log(
+          `[CHARGE_BULK_EMAIL_CHECK] ${userId} has no more email checks to charge`,
+        );
+
         break;
       }
 
@@ -93,10 +91,6 @@ export class ChargeBulkEmailCheckService {
       console.log(
         `[CHARGE_BULK_EMAIL_CHECK] ${userId} processed batch of ${emailChecks.length} (${processedCount}/${totalCount})`,
       );
-
-      if (emailChecks.length < pageSize) {
-        hasMoreRecords = false;
-      }
     }
 
     await this.chargeService.removeBalance({

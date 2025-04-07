@@ -112,6 +112,13 @@ enum EmailCheckLevel {
   valid
 }
 
+enum BulkEmailCheckBatchStatus {
+  pending
+  waiting_to_import
+  completed
+  failed
+}
+
 model User {
   id              String         @id @default(uuid())
   name            String
@@ -155,27 +162,28 @@ model User {
 }
 
 model DefaultSettings {
-  id                            String    @id @default(uuid())
-  maxFileSize                   Float     @map("max_file_size")
-  maxBalanceToBeEligibleForFree Float     @map("max_balance_to_be_eligible_for_free")
-  freeEmailsPerMonth            Float     @map("free_emails_per_month")
-  minBalanceToAdd               Float     @map("min_balance_to_add")
-  storageGbPrice                Float     @map("storage_gb_price")
-  pricePerMessage               Float     @map("price_per_message")
-  maxStorage                    Float     @map("max_storage")
-  globalMaxMessagesPerSecond    Float     @map("global_max_messages_per_second")
-  globalMaxMessagesPerDay       Float     @map("global_max_messages_per_day")
-  bounceRateLimit               Float     @map("bounce_rate_limit")
-  complaintRateLimit            Float     @map("complaint_rate_limit")
-  gapToCheckSecurityInsights    Float     @map("gap_to_check_security_insights")
-  minEmailsForRateCalculation   Float     @map("min_emails_for_rate_calculation")
-  maxSecurityCodesPerHour       Float     @map("max_security_codes_per_hour")
-  maxSecurityCodesPerMinute     Float     @map("max_security_codes_per_minute")
-  pricePerEmailCheck            Float     @map("price_per_email_check")
-  globalEmailsCheckPerSecond    Float     @map("global_emails_check_per_second")
-  createdAt                     DateTime  @default(now()) @map("created_at")
-  updatedAt                     DateTime  @updatedAt @map("updated_at")
-  deletedAt                     DateTime? @map("deleted_at")
+  id                               String    @id @default(uuid())
+  maxFileSize                      Float     @map("max_file_size")
+  maxBalanceToBeEligibleForFree    Float     @map("max_balance_to_be_eligible_for_free")
+  freeEmailsPerMonth               Float     @map("free_emails_per_month")
+  minBalanceToAdd                  Float     @map("min_balance_to_add")
+  storageGbPrice                   Float     @map("storage_gb_price")
+  pricePerMessage                  Float     @map("price_per_message")
+  maxStorage                       Float     @map("max_storage")
+  globalMaxMessagesPerSecond       Float     @map("global_max_messages_per_second")
+  globalMaxMessagesPerDay          Float     @map("global_max_messages_per_day")
+  bounceRateLimit                  Float     @map("bounce_rate_limit")
+  complaintRateLimit               Float     @map("complaint_rate_limit")
+  gapToCheckSecurityInsights       Float     @map("gap_to_check_security_insights")
+  minEmailsForRateCalculation      Float     @map("min_emails_for_rate_calculation")
+  maxSecurityCodesPerHour          Float     @map("max_security_codes_per_hour")
+  maxSecurityCodesPerMinute        Float     @map("max_security_codes_per_minute")
+  pricePerEmailCheck               Float     @map("price_per_email_check")
+  globalEmailsCheckPerSecond       Float     @map("global_emails_check_per_second")
+  globalBulkEmailCheckMaxBatchSize Float     @map("global_bulk_email_check_max_batch_size")
+  createdAt                        DateTime  @default(now()) @map("created_at")
+  updatedAt                        DateTime  @updatedAt @map("updated_at")
+  deletedAt                        DateTime? @map("deleted_at")
 
   @@map("default_settings")
 }
@@ -694,6 +702,7 @@ model BulkEmailCheck {
 
   failures BulkEmailCheckFailure[]
   results  EmailCheck[]
+  batches  BulkEmailCheckBatch[]
 
   @@map("bulk_email_checks")
 }
@@ -710,6 +719,21 @@ model BulkEmailCheckFailure {
   bulkEmailCheck BulkEmailCheck @relation(fields: [bulkEmailCheckId], references: [id], onDelete: Cascade)
 
   @@map("bulk_email_check_failures")
+}
+
+model BulkEmailCheckBatch {
+  id               String                    @id @default(uuid())
+  bulkEmailCheckId String                    @map("bulk_email_check_id")
+  status           BulkEmailCheckBatchStatus @default(pending) @map("status")
+  externalId       String?                   @map("external_id")
+  totalEmails      Int                       @default(0) @map("total_emails")
+  createdAt        DateTime                  @default(now()) @map("created_at")
+  updatedAt        DateTime                  @updatedAt @map("updated_at")
+  deletedAt        DateTime?                 @map("deleted_at")
+
+  bulkEmailCheck BulkEmailCheck @relation(fields: [bulkEmailCheckId], references: [id], onDelete: Cascade)
+
+  @@map("bulk_email_check_batches")
 }
 
 model EmailCheck {

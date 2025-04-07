@@ -38,6 +38,7 @@ import { CreateBulkEmailCheckService } from './services/create-bulk-email-check.
 import { ListBulkEmailChecksService } from './services/list-bulk-email-checks.service';
 import { EstimatedBulkEmailCheckService } from './services/estimated-bulk-email-check.service';
 import { MarkBulkEmailCheckAsReadService } from './services/mark-bulk-email-check-as-read.service';
+import { BulkEmailCheckWebhookService } from './services/bulk-email-check-webhook.service';
 
 @Controller('bulk-sending')
 export class BulkSendingController {
@@ -62,6 +63,7 @@ export class BulkSendingController {
     private readonly listBulkEmailChecksService: ListBulkEmailChecksService,
     private readonly estimateBulkEmailCheckService: EstimatedBulkEmailCheckService,
     private readonly markBulkEmailCheckAsReadService: MarkBulkEmailCheckAsReadService,
+    private readonly bulkEmailCheckWebhookService: BulkEmailCheckWebhookService,
   ) {}
 
   @Post()
@@ -245,5 +247,14 @@ export class BulkSendingController {
       bulkEmailCheckId,
       req.user.id,
     );
+  }
+
+  @Post('bulk-email-check/webhook/:bulkEmailCheckBatchId')
+  bulkEmailCheckWebhook(
+    @Param('bulkEmailCheckBatchId') bulkEmailCheckBatchId: string,
+    @Body() body: any,
+  ) {
+    console.log(body);
+    return this.bulkEmailCheckWebhookService.execute(bulkEmailCheckBatchId);
   }
 }

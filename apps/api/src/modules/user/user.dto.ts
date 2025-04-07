@@ -298,6 +298,10 @@ export class UpdateDefaultSettingsDto {
 
   @IsNotEmpty()
   @IsNumber()
+  globalBulkEmailCheckMaxBatchSize: number;
+
+  @IsNotEmpty()
+  @IsNumber()
   pricePerEmailCheck: number;
 }
 

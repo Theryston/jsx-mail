@@ -1,17 +1,30 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { PrismaService } from 'src/services/prisma.service';
-import { CreateEmailCheckService } from './services/create-email-check.service';
+import { BulkEmailCheck, Contact } from '@prisma/client';
+import {
+  GetSettingsService,
+  Settings,
+} from '../user/services/get-settings.service';
+import axios, { AxiosInstance } from 'axios';
 
 @Processor('bulk-email-check', { concurrency: 10 })
 export class BulkEmailCheckProcessor extends WorkerHost {
-  private readonly PER_PAGE = 100;
+  truelistClient: AxiosInstance;
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly createEmailCheckService: CreateEmailCheckService,
+    private readonly getSettingsService: GetSettingsService,
   ) {
     super();
+
+    this.truelistClient = axios.create({
+      baseURL: 'https://api.truelist.io/api',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.TRUELIST_API_KEY}`,
+      },
+    });
   }
 
   async process(job: Job) {
@@ -22,7 +35,10 @@ export class BulkEmailCheckProcessor extends WorkerHost {
       const bulkEmailCheck =
         await this.validateBulkEmailCheck(bulkEmailCheckId);
       await this.updateBulkEmailCheckStatus(bulkEmailCheck);
-      await this.processContacts(bulkEmailCheck);
+      const settings = await this.getSettingsService.execute(
+        bulkEmailCheck.userId,
+      );
+      await this.processContacts(bulkEmailCheck, settings);
     } catch (error) {
       await this.handleError(bulkEmailCheckId, error);
       throw error;
@@ -65,7 +81,7 @@ export class BulkEmailCheckProcessor extends WorkerHost {
     return bulkEmailCheck;
   }
 
-  private async updateBulkEmailCheckStatus(bulkEmailCheck: any) {
+  private async updateBulkEmailCheckStatus(bulkEmailCheck: BulkEmailCheck) {
     const totalEmails = await this.prisma.contact.count({
       where: { contactGroupId: bulkEmailCheck.contactGroupId, bouncedAt: null },
     });
@@ -88,84 +104,79 @@ export class BulkEmailCheckProcessor extends WorkerHost {
     });
   }
 
-  private async processContacts(bulkEmailCheck: any) {
+  private async processContacts(
+    bulkEmailCheck: BulkEmailCheck,
+    settings: Settings,
+  ) {
     let page = 1;
     let currentLine = 0;
 
     while (true) {
       currentLine++;
+
       const contacts = await this.prisma.contact.findMany({
         where: {
           contactGroupId: bulkEmailCheck.contactGroupId,
           bouncedAt: null,
           bouncedBy: null,
         },
-        skip: (page - 1) * this.PER_PAGE,
-        take: this.PER_PAGE,
+        skip: (page - 1) * settings.globalBulkEmailCheckMaxBatchSize,
+        take: settings.globalBulkEmailCheckMaxBatchSize,
       });
 
-      if (contacts.length === 0) {
-        break;
-      }
+      if (contacts.length === 0) break;
 
-      await this.processContactBatch(contacts, bulkEmailCheck, currentLine);
+      await this.processContactBatch(contacts, bulkEmailCheck);
+
       page++;
     }
   }
 
   private async processContactBatch(
-    contacts: any[],
-    bulkEmailCheck: any,
-    currentLine: number,
+    contacts: Contact[],
+    bulkEmailCheck: BulkEmailCheck,
   ) {
-    for (const contact of contacts) {
-      try {
-        const alreadyExists = await this.prisma.emailCheck.findFirst({
-          where: {
-            email: contact.email,
-            bulkEmailCheckId: bulkEmailCheck.id,
-          },
-        });
+    const processedContacts = contacts.map((contact) => {
+      return [contact.email];
+    });
 
-        if (alreadyExists) {
-          console.log(
-            `[BULK_EMAIL_CHECK] email check ${contact.email} already exists`,
-          );
-          continue;
-        }
+    if (processedContacts.length === 0) return;
 
-        await this.createEmailCheckService.execute(
-          {
-            email: contact.email,
-            bulkEmailCheckId: bulkEmailCheck.id,
-            contactId: contact.id,
-            level: bulkEmailCheck.level,
-          },
-          bulkEmailCheck.userId,
-        );
-
-        await this.prisma.bulkEmailCheck.update({
-          where: { id: bulkEmailCheck.id },
-          data: { processedEmails: currentLine },
-        });
-      } catch (error) {
-        console.error(
-          `[BULK_EMAIL_CHECK] error creating bulk email check failure for contact ${contact.email}`,
-          error,
-        );
-
-        await this.prisma.bulkEmailCheckFailure.create({
-          data: {
-            bulkEmailCheckId: bulkEmailCheck.id,
-            email: contact.email,
-            reason: error.message || 'Unknown error',
-          },
-        });
-      }
+    if (processedContacts.length === 1) {
+      processedContacts.push(processedContacts[0]);
     }
+
+    const bulkEmailCheckBatch = await this.prisma.bulkEmailCheckBatch.create({
+      data: {
+        bulkEmailCheckId: bulkEmailCheck.id,
+        status: 'pending',
+      },
+    });
+
+    const webhookUrl = `${process.env.API_BASE_URL}/bulk-sending/bulk-email-check/webhook/${bulkEmailCheckBatch.id}`;
+
+    console.log(`[BULK_EMAIL_CHECK] webhook url: ${webhookUrl}`);
+
+    const { data: batchResult } = await this.truelistClient.post(
+      '/v1/batches',
+      {
+        data: processedContacts,
+        webhook_url: webhookUrl,
+        filename: `${bulkEmailCheckBatch.id}.csv`,
+      },
+    );
+
+    await this.prisma.bulkEmailCheckBatch.update({
+      where: { id: bulkEmailCheckBatch.id },
+      data: { status: 'pending', externalId: batchResult.id },
+    });
+
+    console.log(`Added batch ${bulkEmailCheckBatch.id} to truelist`);
   }
 
   private async handleError(bulkEmailCheckId: string, error: any) {
+    error = error?.response?.data || error;
+
     console.error(
       `[BULK_EMAIL_CHECK] error processing job ${bulkEmailCheckId}`,
       error,
@@ -179,7 +190,7 @@ export class BulkEmailCheckProcessor extends WorkerHost {
     await this.prisma.bulkEmailCheckFailure.create({
       data: {
         bulkEmailCheckId,
-        reason: error.message || 'Unknown error',
+        reason: error.message || error.error || 'Unknown error',
       },
     });
   }

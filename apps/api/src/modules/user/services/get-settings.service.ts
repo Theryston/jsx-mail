@@ -7,11 +7,35 @@ type GetSettingsOptions = {
   noScale?: boolean;
 };
 
+export type Settings = {
+  maxFileSize: number;
+  maxBalanceToBeEligibleForFree: number;
+  freeEmailsPerMonth: number;
+  minBalanceToAdd: number;
+  storageGbPrice: number;
+  pricePerMessage: number;
+  maxStorage: number;
+  globalMaxMessagesPerSecond: number;
+  globalMaxMessagesPerDay: number;
+  bounceRateLimit: number;
+  complaintRateLimit: number;
+  gapToCheckSecurityInsights: number;
+  minEmailsForRateCalculation: number;
+  maxSecurityCodesPerHour: number;
+  maxSecurityCodesPerMinute: number;
+  globalEmailsCheckPerSecond: number;
+  globalBulkEmailCheckMaxBatchSize: number;
+  pricePerEmailCheck: number;
+};
+
 @Injectable()
 export class GetSettingsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(userId?: string, options?: GetSettingsOptions) {
+  async execute(
+    userId?: string,
+    options?: GetSettingsOptions,
+  ): Promise<Settings> {
     let settings = await this.getDefaultSettings();
 
     if (userId && !options?.defaultOnly) {
@@ -57,6 +81,8 @@ export class GetSettingsService {
       maxSecurityCodesPerHour: settings.maxSecurityCodesPerHour,
       maxSecurityCodesPerMinute: settings.maxSecurityCodesPerMinute,
       globalEmailsCheckPerSecond: settings.globalEmailsCheckPerSecond,
+      globalBulkEmailCheckMaxBatchSize:
+        settings.globalBulkEmailCheckMaxBatchSize,
       pricePerEmailCheck: options?.noScale
         ? settings.pricePerEmailCheck
         : settings.pricePerEmailCheck * MONEY_SCALE,
@@ -99,6 +125,8 @@ export class GetSettingsService {
       pricePerEmailCheck: defaultSettings?.pricePerEmailCheck || 0.0001,
       globalEmailsCheckPerSecond:
         defaultSettings?.globalEmailsCheckPerSecond || 1,
+      globalBulkEmailCheckMaxBatchSize:
+        defaultSettings?.globalBulkEmailCheckMaxBatchSize || 1000,
     };
   }
 }

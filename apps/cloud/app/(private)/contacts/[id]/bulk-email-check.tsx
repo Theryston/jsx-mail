@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '@jsx-mail/ui/button';
 import {
   Dialog,
@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@jsx-mail/ui/dialog';
-import { CheckCircle, Loader2, Check } from 'lucide-react';
+import { CheckCircle, Loader2, Check, Info } from 'lucide-react';
 import {
   useCreateBulkEmailCheck,
   useEstimateBulkEmailCheck,
@@ -17,6 +17,7 @@ import { BulkEmailCheck, EmailCheckLevel } from '@/types/bulk-sending';
 import moment from 'moment';
 import { friendlyTime } from '@/utils/format';
 import { cn } from '@jsx-mail/ui/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@jsx-mail/ui/tooltip';
 
 type BulkEmailCheckStep = 'info' | 'estimate';
 
@@ -64,10 +65,6 @@ function BulkEmailCheckResult({ check }: { check: BulkEmailCheck }) {
               Valid: {check.validEmails} email
               {check.validEmails === 1 ? '' : 's'}
             </p>
-            <p className="text-xs">
-              Failed: {check.failedEmails} email
-              {check.failedEmails === 1 ? '' : 's'}
-            </p>
           </div>
         </div>
         <Button
@@ -84,56 +81,59 @@ function BulkEmailCheckResult({ check }: { check: BulkEmailCheck }) {
 }
 
 function ProcessingBulkEmailCheck({ check }: { check: BulkEmailCheck }) {
-  const { data: estimate } = useEstimateBulkEmailCheck(
-    check.contactGroupId,
-    check.totalEmails,
-    check.totalEmails - check.processedEmails,
-  );
   const [estimatedEndAt, setEstimatedEndAt] = useState<moment.Moment | null>(
-    null,
+    moment(check.estimatedEndAt),
   );
+  const [isInPast, setIsInPast] = useState(false);
+  const interval = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (!estimate?.estimatedTimeSeconds) return;
+    if (interval.current) clearInterval(interval.current);
 
-    setEstimatedEndAt(moment().add(estimate.estimatedTimeSeconds, 'seconds'));
-  }, [estimate]);
+    if (check.status !== 'processing') return;
+
+    interval.current = setInterval(() => {
+      const checkEstimatedEndAt = moment(check.estimatedEndAt);
+
+      const isEstimatedInPast = checkEstimatedEndAt.isBefore(moment());
+
+      if (isEstimatedInPast) {
+        setEstimatedEndAt(null);
+        setIsInPast(true);
+      } else {
+        setEstimatedEndAt(checkEstimatedEndAt);
+        setIsInPast(false);
+      }
+    }, 1000);
+
+    return () => {
+      if (interval.current) clearInterval(interval.current);
+    };
+  }, [check]);
 
   return (
     <div className="rounded-md p-4 bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse flex flex-col gap-2">
       <div className="flex items-center gap-2">
         <Loader2 className="size-4 animate-spin" />
-        <p className="text-sm">
-          Processing Bulk Email Check: {check.processedEmails}/
-          {check.totalEmails} emails checked
-        </p>
+        <p className="text-sm">Processing Bulk Email Check</p>
       </div>
       <div className="flex flex-col gap-0">
-        <p className="text-xs">
-          Valid: {check.validEmails} email
-          {check.validEmails === 1 ? '' : 's'}
-        </p>
-        <p className="text-xs">
-          Bounced: {check.bouncedEmails} email
-          {check.bouncedEmails === 1 ? '' : 's'}
-        </p>
-        <p className="text-xs">
-          Retrying soon: {check.willRetryEmails} email
-          {check.willRetryEmails === 1 ? '' : 's'}
-        </p>
-        <p className="text-xs">
-          Failed: {check.failedEmails} email
-          {check.failedEmails === 1 ? '' : 's'}
-        </p>
-        {estimatedEndAt && (
+        {isInPast ? (
+          <p className="text-xs">
+            The process is taking longer than expected. Please wait a few
+            minutes or contact support.
+          </p>
+        ) : (
           <>
             <p className="text-xs">
               Estimated End:{' '}
-              {estimatedEndAt.format('DD/MM/YYYY HH:mm:ss') || 'N/A'}
+              {estimatedEndAt?.format('DD/MM/YYYY HH:mm:ss') || 'N/A'}
             </p>
             <p className="text-xs">
               Remaining:{' '}
-              {friendlyTime(estimatedEndAt.diff(moment(), 'seconds'))}
+              {estimatedEndAt
+                ? friendlyTime(estimatedEndAt.diff(moment(), 'seconds'))
+                : 'N/A'}
             </p>
           </>
         )}
@@ -224,19 +224,62 @@ export function BulkEmailCheckModal({
             ) : (
               <>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium">Estimated Time</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">Estimated Time</p>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="size-3" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-xs text-muted-foreground">
+                          Estimated time to complete the bulk email check.
+                          <br />
+                          This is an estimate and may not be accurate.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                   <p className="text-sm text-muted-foreground">
                     {estimate?.friendlyEstimatedTime}
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium">Estimated Cost</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">Estimated Cost</p>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="size-3" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-xs text-muted-foreground">
+                          Estimated cost to complete the bulk email check.
+                          <br />
+                          This is an estimate and may not be accurate.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                   <p className="text-sm text-muted-foreground">
                     {estimate?.friendlyEstimatedCost}
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm font-medium">Total Emails</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">Total Emails</p>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="size-3" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-xs text-muted-foreground">
+                          Total number of emails to check.
+                          <br />
+                          If your contact group has less than 2 emails, it will
+                          be automatically increased to 2.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                   <p className="text-sm text-muted-foreground">
                     {estimate?.contactsCount}
                   </p>

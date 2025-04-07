@@ -130,13 +130,11 @@ export type BulkEmailCheck = {
   contactGroupId: string;
   totalEmails: number;
   status: 'pending' | 'processing' | 'completed' | 'failed';
-  bouncedEmails: number;
-  processedEmails: number;
   startedAt: string;
   estimatedEndAt: string;
   estimatedEndSeconds: number;
-  failedEmails: number;
-  willRetryEmails: number;
+  bouncedEmails: number;
+  processedEmails: number;
   validEmails: number;
 };
 

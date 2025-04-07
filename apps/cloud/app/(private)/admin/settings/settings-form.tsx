@@ -57,6 +57,9 @@ const createSettingsSchema = (isUserSettings: boolean) => {
       globalMaxMessagesPerSecond: z.number().min(0, 'Must be 0 or greater'),
       globalMaxMessagesPerDay: z.number().min(0, 'Must be 0 or greater'),
       globalEmailsCheckPerSecond: z.number().min(0, 'Must be 0 or greater'),
+      globalBulkEmailCheckMaxBatchSize: z
+        .number()
+        .min(0, 'Must be 0 or greater'),
     });
   }
 
@@ -84,6 +87,7 @@ type GlobalSettingsFormValues = BaseSettingsFormValues & {
   globalMaxMessagesPerSecond: number;
   globalMaxMessagesPerDay: number;
   globalEmailsCheckPerSecond: number;
+  globalBulkEmailCheckMaxBatchSize: number;
 };
 
 type SettingsFormValues = BaseSettingsFormValues | GlobalSettingsFormValues;
@@ -146,6 +150,7 @@ export function SettingsForm({
             globalMaxMessagesPerSecond: 0,
             globalMaxMessagesPerDay: 0,
             globalEmailsCheckPerSecond: 0,
+            globalBulkEmailCheckMaxBatchSize: 0,
           }
         : {}),
     } as SettingsFormValues,
@@ -780,40 +785,79 @@ export function SettingsForm({
             />
 
             {!isUserSettings && (
-              <FormField
-                control={form.control}
-                name="globalEmailsCheckPerSecond"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      Global Emails Check per Second
-                      {isFieldDifferent('globalEmailsCheckPerSecond') && (
-                        <Badge variant="outline" className="text-xs">
-                          {formatNumber(
-                            differentFields.globalEmailsCheckPerSecond.old,
-                          )}{' '}
-                          →{' '}
-                          {formatNumber(
-                            differentFields.globalEmailsCheckPerSecond.new,
-                          )}
-                        </Badge>
-                      )}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.0000001"
-                        {...field}
-                        onChange={(e) => {
-                          const value = parseFloat(e.target.value);
-                          field.onChange(isNaN(value) ? 0 : value);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <>
+                <FormField
+                  control={form.control}
+                  name="globalEmailsCheckPerSecond"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        Global Emails Check per Second
+                        {isFieldDifferent('globalEmailsCheckPerSecond') && (
+                          <Badge variant="outline" className="text-xs">
+                            {formatNumber(
+                              differentFields.globalEmailsCheckPerSecond.old,
+                            )}{' '}
+                            →{' '}
+                            {formatNumber(
+                              differentFields.globalEmailsCheckPerSecond.new,
+                            )}
+                          </Badge>
+                        )}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.0000001"
+                          {...field}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            field.onChange(isNaN(value) ? 0 : value);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="globalBulkEmailCheckMaxBatchSize"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        Global Bulk Email Check Max Batch Size
+                        {isFieldDifferent(
+                          'globalBulkEmailCheckMaxBatchSize',
+                        ) && (
+                          <Badge variant="outline" className="text-xs">
+                            {formatNumber(
+                              differentFields.globalBulkEmailCheckMaxBatchSize
+                                .old,
+                            )}{' '}
+                            →{' '}
+                            {formatNumber(
+                              differentFields.globalBulkEmailCheckMaxBatchSize
+                                .new,
+                            )}
+                          </Badge>
+                        )}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
             )}
           </div>
 

@@ -21,7 +21,6 @@ import { ContactExistsService } from './services/contact-exists.service';
 import { ListBulkSendingFailuresService } from './services/list-bulk-sending-failures.service';
 import { CreateContactService } from './services/create-contact.service';
 import { UserModule } from '../user/user.module';
-import { EmailCheckProcessor } from './email-check.processor';
 import { BulkEmailCheckProcessor } from './bulk-email-check.processor';
 import { CreateBulkEmailCheckService } from './services/create-bulk-email-check.service';
 import { ListBulkEmailChecksService } from './services/list-bulk-email-checks.service';
@@ -30,6 +29,8 @@ import { WorkerModule } from '../worker/worker.module';
 import { MarkBulkEmailCheckAsReadService } from './services/mark-bulk-email-check-as-read.service';
 import { EmailModule } from '../email/email.module';
 import { CreateEmailCheckService } from './services/create-email-check.service';
+import { BulkEmailCheckWebhookService } from './services/bulk-email-check-webhook.service';
+import { GetBulkCheckResultProcessor } from './get-bulk-check-result.processor';
 
 @Module({
   imports: [
@@ -38,10 +39,10 @@ import { CreateEmailCheckService } from './services/create-email-check.service';
       name: 'bulk-sending',
     }),
     BullModule.registerQueue({
-      name: 'email-check',
+      name: 'bulk-email-check',
     }),
     BullModule.registerQueue({
-      name: 'bulk-email-check',
+      name: 'get-bulk-check-result',
     }),
     SenderModule,
     WorkerModule,
@@ -67,13 +68,14 @@ import { CreateEmailCheckService } from './services/create-email-check.service';
     ContactExistsService,
     ListBulkSendingFailuresService,
     CreateContactService,
-    EmailCheckProcessor,
     BulkEmailCheckProcessor,
     CreateBulkEmailCheckService,
     ListBulkEmailChecksService,
     EstimatedBulkEmailCheckService,
     MarkBulkEmailCheckAsReadService,
     CreateEmailCheckService,
+    BulkEmailCheckWebhookService,
+    GetBulkCheckResultProcessor,
   ],
 })
 export class BulkSendingModule {}

@@ -15,6 +15,21 @@ export const VALID_EMAIL_CHECK_RESULT: EmailCheckResult[] = [
 
 export const SAFELY_VALID_EMAIL_CHECK_RESULT: EmailCheckResult[] = ['ok'];
 
+export const BULK_EMAIL_CHECK_STATUS_MAP = {
+  pending: 'pending',
+  pending_processing: 'pending',
+  processing: 'processing',
+  completed: 'completed',
+};
+
+export const EMAIL_CHECK_RESULT_MAP: Record<string, EmailCheckResult> = {
+  ok: 'ok',
+  email_invalid: 'email_invalid',
+  risky: 'risky',
+  unknown: 'unknown',
+  accept_all: 'accept_all',
+};
+
 export const MESSAGES_STATUS = [
   {
     value: 'queued',
