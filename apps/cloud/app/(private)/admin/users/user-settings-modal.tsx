@@ -47,7 +47,8 @@ export function UserSettingsModal({
 
         <SettingsForm
           initialData={userSettings}
-          onSubmit={async (data) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onSubmit={async (data: any) => {
             await updateUserSettings(data);
             onClose();
           }}
