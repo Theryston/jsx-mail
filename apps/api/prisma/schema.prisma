@@ -24,6 +24,7 @@ enum TransactionStyle {
   earn_paid
   message_charge
   storage_charge
+  email_check_charge
 }
 
 enum MessageStatus {
@@ -74,9 +75,48 @@ enum ContactDeletedBy {
   self
 }
 
+enum BouncedBy {
+  email_check
+  message
+}
+
 enum BlockedPermissionEventStyle {
   block
   unblock
+}
+
+enum EmailCheckStatus {
+  pending
+  processing
+  completed
+  failed
+}
+
+enum EmailCheckResult {
+  ok
+  email_invalid
+  risky
+  unknown
+  accept_all
+}
+
+enum BulkEmailCheckStatus {
+  pending
+  processing
+  completed
+  failed
+}
+
+enum EmailCheckLevel {
+  safely
+  valid
+}
+
+enum BulkEmailCheckBatchStatus {
+  pending
+  waiting_to_import
+  completed
+  failed
 }
 
 model User {
@@ -114,8 +154,64 @@ model User {
   blockedPermissions      BlockedPermission[]
   blockedPermissionEvents BlockedPermissionEvent[]
   userUtm                 UserUtm[]
+  settings                UserSettings[]
+  bulkEmailChecks         BulkEmailCheck[]
+  emailChecks             EmailCheck[]
 
   @@map("users")
+}
+
+model DefaultSettings {
+  id                               String    @id @default(uuid())
+  maxFileSize                      Float     @map("max_file_size")
+  maxBalanceToBeEligibleForFree    Float     @map("max_balance_to_be_eligible_for_free")
+  freeEmailsPerMonth               Float     @map("free_emails_per_month")
+  minBalanceToAdd                  Float     @map("min_balance_to_add")
+  storageGbPrice                   Float     @map("storage_gb_price")
+  pricePerMessage                  Float     @map("price_per_message")
+  maxStorage                       Float     @map("max_storage")
+  globalMaxMessagesPerSecond       Float     @map("global_max_messages_per_second")
+  globalMaxMessagesPerDay          Float     @map("global_max_messages_per_day")
+  bounceRateLimit                  Float     @map("bounce_rate_limit")
+  complaintRateLimit               Float     @map("complaint_rate_limit")
+  gapToCheckSecurityInsights       Float     @map("gap_to_check_security_insights")
+  minEmailsForRateCalculation      Float     @map("min_emails_for_rate_calculation")
+  maxSecurityCodesPerHour          Float     @map("max_security_codes_per_hour")
+  maxSecurityCodesPerMinute        Float     @map("max_security_codes_per_minute")
+  pricePerEmailCheck               Float     @map("price_per_email_check")
+  globalEmailsCheckPerSecond       Float     @map("global_emails_check_per_second")
+  globalBulkEmailCheckMaxBatchSize Float     @map("global_bulk_email_check_max_batch_size")
+  createdAt                        DateTime  @default(now()) @map("created_at")
+  updatedAt                        DateTime  @updatedAt @map("updated_at")
+  deletedAt                        DateTime? @map("deleted_at")
+
+  @@map("default_settings")
+}
+
+model UserSettings {
+  id                            String    @id @default(uuid())
+  maxFileSize                   Float?    @map("max_file_size")
+  maxBalanceToBeEligibleForFree Float?    @map("max_balance_to_be_eligible_for_free")
+  freeEmailsPerMonth            Float?    @map("free_emails_per_month")
+  minBalanceToAdd               Float?    @map("min_balance_to_add")
+  storageGbPrice                Float?    @map("storage_gb_price")
+  pricePerMessage               Float?    @map("price_per_message")
+  maxStorage                    Float?    @map("max_storage")
+  bounceRateLimit               Float?    @map("bounce_rate_limit")
+  complaintRateLimit            Float?    @map("complaint_rate_limit")
+  gapToCheckSecurityInsights    Float?    @map("gap_to_check_security_insights")
+  minEmailsForRateCalculation   Float?    @map("min_emails_for_rate_calculation")
+  maxSecurityCodesPerHour       Float?    @map("max_security_codes_per_hour")
+  maxSecurityCodesPerMinute     Float?    @map("max_security_codes_per_minute")
+  pricePerEmailCheck            Float?    @map("price_per_email_check")
+  userId                        String    @map("user_id")
+  createdAt                     DateTime  @default(now()) @map("created_at")
+  updatedAt                     DateTime  @updatedAt @map("updated_at")
+  deletedAt                     DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
 }
 
 model UserUtm {
@@ -514,9 +610,10 @@ model ContactGroup {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  contacts       Contact[]
-  contactImports ContactImport[]
-  bulkSendings   BulkSending[]
+  contacts        Contact[]
+  contactImports  ContactImport[]
+  bulkSendings    BulkSending[]
+  bulkEmailChecks BulkEmailCheck[]
 
   @@map("contact_groups")
 }
@@ -570,6 +667,8 @@ model Contact {
   contactImportId String?           @map("contact_import_id")
   createdAt       DateTime          @default(now()) @map("created_at")
   updatedAt       DateTime          @updatedAt @map("updated_at")
+  bouncedAt       DateTime?         @map("bounced_at")
+  bouncedBy       BouncedBy?        @map("bounced_by")
   deletedBy       ContactDeletedBy? @default(contactGroupOwner) @map("deleted_by")
   deletedAt       DateTime?         @map("deleted_at")
 
@@ -577,6 +676,100 @@ model Contact {
   contactImport       ContactImport?       @relation(fields: [contactImportId], references: [id], onDelete: Cascade)
   bulkSendingFailures BulkSendingFailure[]
   messages            Message[]
+  emailChecks         EmailCheck[]
 
   @@map("contacts")
+}
+
+model BulkEmailCheck {
+  id                  String               @id @default(uuid())
+  contactGroupId      String?              @map("contact_group_id")
+  status              BulkEmailCheckStatus @default(pending) @map("status")
+  level               EmailCheckLevel      @default(valid) @map("level")
+  totalEmails         Int                  @default(0) @map("total_emails")
+  processedEmails     Int                  @default(0) @map("processed_emails")
+  userId              String               @map("user_id")
+  lastStatusReadAt    DateTime?            @map("last_status_read_at")
+  estimatedEndSeconds Int?                 @map("estimated_end_seconds")
+  estimatedEndAt      DateTime?            @map("estimated_end_at")
+  startedAt           DateTime?            @map("started_at")
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
+  deletedAt           DateTime?            @map("deleted_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contactGroup ContactGroup? @relation(fields: [contactGroupId], references: [id], onDelete: Cascade)
+
+  failures BulkEmailCheckFailure[]
+  results  EmailCheck[]
+  batches  BulkEmailCheckBatch[]
+
+  @@map("bulk_email_checks")
+}
+
+model BulkEmailCheckFailure {
+  id               String    @id @default(uuid())
+  bulkEmailCheckId String    @map("bulk_email_check_id")
+  email            String?
+  reason           String
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  deletedAt        DateTime? @map("deleted_at")
+
+  bulkEmailCheck BulkEmailCheck @relation(fields: [bulkEmailCheckId], references: [id], onDelete: Cascade)
+
+  @@map("bulk_email_check_failures")
+}
+
+model BulkEmailCheckBatch {
+  id               String                    @id @default(uuid())
+  bulkEmailCheckId String                    @map("bulk_email_check_id")
+  status           BulkEmailCheckBatchStatus @default(pending) @map("status")
+  externalId       String?                   @map("external_id")
+  totalEmails      Int                       @default(0) @map("total_emails")
+  createdAt        DateTime                  @default(now()) @map("created_at")
+  updatedAt        DateTime                  @updatedAt @map("updated_at")
+  deletedAt        DateTime?                 @map("deleted_at")
+
+  bulkEmailCheck BulkEmailCheck @relation(fields: [bulkEmailCheckId], references: [id], onDelete: Cascade)
+
+  @@map("bulk_email_check_batches")
+}
+
+model EmailCheck {
+  id                String           @id @default(uuid())
+  email             String
+  status            EmailCheckStatus @default(pending) @map("status")
+  result            EmailCheckResult @default(unknown) @map("result")
+  level             EmailCheckLevel  @default(valid) @map("level")
+  userId            String           @map("user_id")
+  bulkEmailCheckId  String?          @map("bulk_email_check_id")
+  willRetry         Boolean          @default(false) @map("will_retry")
+  contactId         String?          @map("contact_id")
+  externalId        String?          @map("external_id")
+  startedAt         DateTime?        @map("started_at")
+  externalRequestAt DateTime?        @map("external_request_at")
+  processedAt       DateTime?        @map("processed_at")
+  chargedAt         DateTime?        @map("charged_at")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+  deletedAt         DateTime?        @map("deleted_at")
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bulkEmailCheck BulkEmailCheck? @relation(fields: [bulkEmailCheckId], references: [id], onDelete: Cascade)
+  contact        Contact?        @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@map("email_checks")
+}
+
+model MarkedBounceTo {
+  id        String    @id @default(uuid())
+  email     String
+  bounceBy  BouncedBy @default(email_check) @map("bounce_by")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  expiresAt DateTime? @map("expires_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("marked_bounce_to")
 }

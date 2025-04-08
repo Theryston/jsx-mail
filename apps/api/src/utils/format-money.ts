@@ -1,4 +1,4 @@
-import { CURRENCY, MONEY_SCALE, STORAGE_GB_PRICE } from './constants';
+import { MONEY_SCALE, CURRENCY } from './constants';
 
 export function friendlyMoney(amount: number, showAllDecimals = false) {
   const moneyInScale = amount ? amount / MONEY_SCALE : 0;
@@ -15,7 +15,19 @@ export function friendlyMoney(amount: number, showAllDecimals = false) {
   });
 }
 
-export function storageToMoney(bytes: number) {
+export function storageToMoney(bytes: number, storageGbPrice: number) {
   const sizeGb = bytes / (1024 * 1024 * 1024);
-  return Math.round(sizeGb * STORAGE_GB_PRICE);
+  return Math.round(sizeGb * storageGbPrice);
+}
+
+export function friendlyTime(seconds: number) {
+  if (seconds < 60) {
+    return `${seconds}s`;
+  } else if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60);
+    return `${minutes}m`;
+  } else {
+    const hours = Math.floor(seconds / 3600);
+    return `${hours}h`;
+  }
 }

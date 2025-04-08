@@ -3,12 +3,15 @@ export type ContactGroupListItem = {
   name: string;
   createdAt: Date;
   contactsCount: number;
+  validContactsCount: number;
 };
 
 export type ContactListItem = {
   id: string;
   name: string;
   email: string;
+  bouncedAt: Date | null;
+  bouncedBy: string | null;
   createdAt: Date;
 };
 
@@ -31,6 +34,7 @@ export type ContactGroup = {
   name: string;
   createdAt: Date;
   contactsCount: number;
+  validContactsCount: number;
 };
 
 export type ContactImport = {
@@ -118,3 +122,28 @@ export type BulkSendingFailure = {
   contactId: string | null;
   line: number | null;
 };
+
+export type BulkEmailCheck = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  contactGroupId: string;
+  totalEmails: number;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  startedAt: string;
+  estimatedEndAt: string;
+  estimatedEndSeconds: number;
+  bouncedEmails: number;
+  processedEmails: number;
+  validEmails: number;
+};
+
+export type BulkEmailCheckEstimate = {
+  estimatedCost: number;
+  friendlyEstimatedCost: string;
+  estimatedTimeSeconds: number;
+  friendlyEstimatedTime: string;
+  contactsCount: number;
+};
+
+export type EmailCheckLevel = 'safely' | 'valid';

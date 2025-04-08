@@ -230,3 +230,135 @@ export class BlockPermissionDto {
   @IsString()
   reason?: string;
 }
+
+export class UpdateDefaultSettingsDto {
+  @IsNotEmpty()
+  @IsNumber()
+  maxFileSize: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  maxBalanceToBeEligibleForFree: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  freeEmailsPerMonth: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  minBalanceToAdd: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  storageGbPrice: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  pricePerMessage: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  maxStorage: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  globalMaxMessagesPerSecond: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  globalMaxMessagesPerDay: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  bounceRateLimit: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  complaintRateLimit: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  gapToCheckSecurityInsights: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  minEmailsForRateCalculation: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  maxSecurityCodesPerHour: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  maxSecurityCodesPerMinute: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  globalEmailsCheckPerSecond: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  globalBulkEmailCheckMaxBatchSize: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  pricePerEmailCheck: number;
+}
+
+export class UpdateUserSettingsDto {
+  @IsOptional()
+  @IsNumber()
+  maxFileSize?: number;
+
+  @IsOptional()
+  @IsNumber()
+  maxBalanceToBeEligibleForFree?: number;
+
+  @IsOptional()
+  @IsNumber()
+  freeEmailsPerMonth?: number;
+
+  @IsOptional()
+  @IsNumber()
+  minBalanceToAdd?: number;
+
+  @IsOptional()
+  @IsNumber()
+  storageGbPrice?: number;
+
+  @IsOptional()
+  @IsNumber()
+  pricePerMessage?: number;
+
+  @IsOptional()
+  @IsNumber()
+  maxStorage?: number;
+
+  @IsOptional()
+  @IsNumber()
+  bounceRateLimit?: number;
+
+  @IsOptional()
+  @IsNumber()
+  complaintRateLimit?: number;
+
+  @IsOptional()
+  @IsNumber()
+  gapToCheckSecurityInsights?: number;
+
+  @IsOptional()
+  @IsNumber()
+  minEmailsForRateCalculation?: number;
+
+  @IsOptional()
+  @IsNumber()
+  maxSecurityCodesPerHour?: number;
+
+  @IsOptional()
+  @IsNumber()
+  maxSecurityCodesPerMinute?: number;
+
+  @IsOptional()
+  @IsNumber()
+  pricePerEmailCheck?: number;
+}

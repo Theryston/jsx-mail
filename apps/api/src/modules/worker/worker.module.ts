@@ -10,6 +10,8 @@ import { ResendProcessingMessagesService } from './services/resend-processing-me
 import { EmailModule } from '../email/email.module';
 import { BullModule } from '@nestjs/bullmq';
 import { WorkerProcessor } from './worker.processor';
+import { ChargeBulkEmailCheckService } from './services/charge-bulk-email-check.service';
+import { QueueChargeBulkEmailCheckService } from './services/queue-charge-bulk-email-check.service';
 
 @Module({
   imports: [
@@ -27,7 +29,10 @@ import { WorkerProcessor } from './worker.processor';
     DeadMessagesService,
     ResendProcessingMessagesService,
     WorkerProcessor,
+    ChargeBulkEmailCheckService,
+    QueueChargeBulkEmailCheckService,
   ],
   controllers: [WorkerController],
+  exports: [QueueChargeBulkEmailCheckService],
 })
 export class WorkerModule {}

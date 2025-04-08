@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { TransactionStyle } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
-import { FREE_EMAILS_PER_MONTH, PRICE_PER_MESSAGE } from 'src/utils/constants';
 import { formatSize } from 'src/utils/format';
 import { storageToMoney } from 'src/utils/format-money';
 import moment from 'moment';
 import { GetUserLimitsService } from 'src/modules/user/services/get-user-limits.service';
+import { GetSettingsService } from 'src/modules/user/services/get-settings.service';
 
 @Injectable()
 export class ChargeService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly getUserLimitsService: GetUserLimitsService,
+    private readonly getSettingsService: GetSettingsService,
   ) {}
 
   async execute() {
@@ -47,6 +48,8 @@ export class ChargeService {
       userId,
       _count: { id: notChargedMessagesAmount },
     } of currentMonthMessages) {
+      const settings = await this.getSettingsService.execute(userId);
+
       try {
         const currentMonthMessagesAmount = await this.prisma.message.count({
           where: {
@@ -66,12 +69,12 @@ export class ChargeService {
 
         if (!isEligibleForFree) {
           // If user is not eligible for free messages, charge for all messages
-          price = notChargedMessagesAmount * PRICE_PER_MESSAGE;
-          description = `Charge for ${notChargedMessagesAmount} messages (not eligible for free messages)`;
-        } else if (currentMonthMessagesAmount > FREE_EMAILS_PER_MONTH) {
+          price = notChargedMessagesAmount * settings.pricePerMessage;
+          description = `Charge for ${notChargedMessagesAmount} messages`;
+        } else if (currentMonthMessagesAmount > settings.freeEmailsPerMonth) {
           // Calculate the remaining free messages for the user in the current month
           restFreeMessages =
-            FREE_EMAILS_PER_MONTH -
+            settings.freeEmailsPerMonth -
             (currentMonthMessagesAmount - notChargedMessagesAmount);
 
           if (restFreeMessages < 0) restFreeMessages = 0;
@@ -83,7 +86,7 @@ export class ChargeService {
           if (chargedMessages < 0) chargedMessages = 0;
 
           // Calculate the price based on the number of charged messages
-          price = chargedMessages * PRICE_PER_MESSAGE;
+          price = chargedMessages * settings.pricePerMessage;
 
           // Set the description for the charge
           description = `Charge for ${chargedMessages} messages${restFreeMessages !== 0 ? ` and ignored ${restFreeMessages} free messages` : ''}`;
@@ -169,7 +172,9 @@ export class ChargeService {
       });
       const days = moment().diff(firstDayOfMonth, 'days') + 1;
       const averageSize = Math.round(size / days);
-      const price = storageToMoney(averageSize);
+      const settings = await this.getSettingsService.execute(userId);
+
+      const price = storageToMoney(averageSize, settings.storageGbPrice);
 
       await this.removeBalance({
         amount: price,

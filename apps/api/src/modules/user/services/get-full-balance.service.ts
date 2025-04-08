@@ -65,12 +65,12 @@ export class GetFullBalanceService {
       MONTH_ADDED: {
         amount: addedBalance,
         friendlyFullAmount: friendlyMoney(addedBalance, true),
-        friendlyAmount: friendlyMoney(addedBalance),
+        friendlyAmount: friendlyMoney(addedBalance, false),
       },
       MONTH_CHARGED: {
         amount: chargedBalance,
         friendlyFullAmount: friendlyMoney(chargedBalance, true),
-        friendlyAmount: friendlyMoney(chargedBalance),
+        friendlyAmount: friendlyMoney(chargedBalance, false),
       },
     };
   }

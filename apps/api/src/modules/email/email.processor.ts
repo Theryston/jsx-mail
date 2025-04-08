@@ -8,15 +8,13 @@ import nodemailer from 'nodemailer';
 import axios from 'axios';
 import handlebars from 'handlebars';
 import moment from 'moment';
-import {
-  MAX_MESSAGES_PER_DAY,
-  MAX_MESSAGES_PER_SECOND,
-} from 'src/utils/constants';
 import { Worker } from 'bullmq';
-import { Message } from '@prisma/client';
+import { MarkedBounceTo, Message } from '@prisma/client';
 import { GetUserLimitsService } from '../user/services/get-user-limits.service';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { UpdateMessageStatusService } from './services/update-message-status.service';
+import { GetSettingsService } from '../user/services/get-settings.service';
+import { MarkBounceToService } from './services/mark-bounce-to.service';
 
 const transporter = nodemailer.createTransport({
   SES: { aws, ses: sesClient },
@@ -29,6 +27,8 @@ export class EmailProcessor extends WorkerHost {
     @InjectQueue('email') private readonly queue: Queue,
     private readonly getUserLimitsService: GetUserLimitsService,
     private readonly updateMessageStatusService: UpdateMessageStatusService,
+    private readonly getSettingsService: GetSettingsService,
+    private readonly markBounceToService: MarkBounceToService,
   ) {
     super();
   }
@@ -56,6 +56,8 @@ export class EmailProcessor extends WorkerHost {
     let dataLog: any = { ...data };
     delete dataLog.html;
 
+    const settings = await this.getSettingsService.execute();
+
     const currentSecond = moment().startOf('second');
     const nextSecond = moment().add(1, 'second').startOf('second');
     const timeToWait = nextSecond.diff(moment(), 'milliseconds');
@@ -71,7 +73,7 @@ export class EmailProcessor extends WorkerHost {
       },
     });
 
-    if (messagesSentThisSecond >= MAX_MESSAGES_PER_SECOND) {
+    if (messagesSentThisSecond >= settings.globalMaxMessagesPerSecond) {
       console.log(
         `[EMAIL_PROCESSOR] rate second limit exceeded, waiting ${timeToWait} milliseconds. Will reset at ${moment(Date.now() + timeToWait).format('DD/MM/YYYY HH:mm:ss')}`,
       );
@@ -92,7 +94,7 @@ export class EmailProcessor extends WorkerHost {
       },
     });
 
-    if (messagesSentThisDay >= MAX_MESSAGES_PER_DAY) {
+    if (messagesSentThisDay >= settings.globalMaxMessagesPerDay) {
       console.log(
         `[EMAIL_PROCESSOR] rate day limit exceeded, waiting ${timeToWaitDay} milliseconds. Will reset at ${moment(Date.now() + timeToWaitDay).format('DD/MM/YYYY HH:mm:ss')}`,
       );
@@ -131,6 +133,7 @@ export class EmailProcessor extends WorkerHost {
     let messageId: string | null = data.messageId || null;
     let message: Message | null = null;
     let userId: string | null = null;
+    let contactId: string | null = null;
 
     if (messageId) {
       message = await this.prisma.message.findUnique({
@@ -143,6 +146,7 @@ export class EmailProcessor extends WorkerHost {
       }
 
       userId = message.userId;
+      contactId = message.contactId;
 
       await this.updateMessageStatusService.execute(
         messageId,
@@ -210,6 +214,7 @@ export class EmailProcessor extends WorkerHost {
 
       messageId = message.id;
       userId = message.userId;
+      contactId = message.contactId;
 
       console.log(
         `[EMAIL_PROCESSOR] created message: ${messageId} for ${to} with default sender ${process.env.DEFAULT_SENDER_EMAIL} and domain ${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`,
@@ -220,6 +225,54 @@ export class EmailProcessor extends WorkerHost {
       console.error(
         `[EMAIL_PROCESSOR] message or messageId or userId not found: ${messageId}`,
       );
+      return;
+    }
+
+    if (contactId) {
+      const contact = await this.prisma.contact.findUnique({
+        where: { id: contactId },
+        select: {
+          bouncedAt: true,
+          bouncedBy: true,
+          email: true,
+        },
+      });
+
+      if (contact?.bouncedAt) {
+        await this.updateMessageStatusService.execute(
+          messageId,
+          'failed',
+          `Ignored because contact ${contact?.email} is bounced by ${contact?.bouncedBy === 'email_check' ? 'email check' : 'previous bounced message'} at ${moment(contact?.bouncedAt).format('DD/MM/YYYY HH:mm:ss')}`,
+          {
+            skipBounceToCheck: 'true',
+          },
+        );
+
+        return;
+      }
+    }
+
+    let detectedMarkedBounceTo: MarkedBounceTo | null = null;
+
+    for (const to of data.to) {
+      const markedBounceTo = await this.markBounceToService.get(to);
+
+      if (markedBounceTo) {
+        detectedMarkedBounceTo = markedBounceTo;
+        break;
+      }
+    }
+
+    if (detectedMarkedBounceTo) {
+      await this.updateMessageStatusService.execute(
+        messageId,
+        'bonce',
+        `Bounced because this email was marked as bounce by ${detectedMarkedBounceTo.bounceBy === 'email_check' ? 'email check' : 'previous bounced message'} at ${moment(detectedMarkedBounceTo.createdAt).format('DD/MM/YYYY HH:mm:ss')}`,
+        {
+          smartBounce: 'true',
+        },
+      );
+
       return;
     }
 
@@ -235,6 +288,9 @@ export class EmailProcessor extends WorkerHost {
         messageId,
         'failed',
         'Failed because user is blocked to send email',
+        {
+          is_blocked: 'true',
+        },
       );
 
       console.log(

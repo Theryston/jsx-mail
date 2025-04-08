@@ -7,6 +7,7 @@ import { UpdateChargeMonthService } from './services/update-charge-month.service
 import { DeadMessagesService } from './services/dead-messages.service';
 import { ResendProcessingMessagesService } from './services/resend-processing-messages.service';
 import moment from 'moment';
+import { ChargeBulkEmailCheckService } from './services/charge-bulk-email-check.service';
 
 @Injectable()
 @Processor('worker')
@@ -17,6 +18,7 @@ export class WorkerProcessor extends WorkerHost {
     private readonly updateChargeMonthService: UpdateChargeMonthService,
     private readonly deadMessagesService: DeadMessagesService,
     private readonly resendProcessingMessagesService: ResendProcessingMessagesService,
+    private readonly chargeEmailCheckService: ChargeBulkEmailCheckService,
   ) {
     super();
   }
@@ -48,6 +50,8 @@ export class WorkerProcessor extends WorkerHost {
         return this.deadMessagesService.execute();
       case 'resend-processing-messages':
         return this.resendProcessingMessagesService.execute();
+      case 'charge-email-check':
+        return this.chargeEmailCheckService.execute(job.data);
       default:
         throw new Error(`Job ${name} not implemented`);
     }

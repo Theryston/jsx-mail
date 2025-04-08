@@ -22,7 +22,7 @@ export class GetBalanceService {
     return {
       amount,
       friendlyFullAmount: friendlyMoney(amount, true),
-      friendlyAmount: friendlyMoney(amount),
+      friendlyAmount: friendlyMoney(amount, false),
     };
   }
 }

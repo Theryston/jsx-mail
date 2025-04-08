@@ -24,7 +24,9 @@ import {
   ListMessagesDto,
   MessagesInsightsDto,
   ResetPasswordDto,
+  UpdateDefaultSettingsDto,
   UpdateOnboardingDto,
+  UpdateUserSettingsDto,
   UseSecurityCodeDto,
 } from './user.dto';
 import { Permissions } from 'src/auth/permissions.decorator';
@@ -34,11 +36,7 @@ import { UseSecurityCodeService } from './services/use-security-code.service';
 import { ValidateEmailService } from './services/validate-email.service';
 import { AuthUserService } from './services/auth-user.service';
 import { ResetPasswordService } from './services/reset-password.service';
-import {
-  FREE_EMAILS_PER_MONTH,
-  MONEY_SCALE,
-  PRICE_PER_MESSAGE,
-} from 'src/utils/constants';
+import { MONEY_SCALE } from 'src/utils/constants';
 import { friendlyMoney } from 'src/utils/format-money';
 import { GetFullBalanceService } from './services/get-full-balance.service';
 import { ListTransactionsService } from './services/list-transactions.service';
@@ -57,6 +55,10 @@ import { Fingerprint, IFingerprint } from 'nestjs-fingerprint';
 import { RealIP } from 'nestjs-real-ip';
 import { BlockPermissionService } from './services/block-permission.service';
 import { GetMessageService } from './services/get-message.service';
+import { GetSettingsService } from './services/get-settings.service';
+import { UpdateDefaultSettingsService } from './services/update-default-settings.service';
+import { UpdateUserSettingsService } from './services/update-user-settings.service';
+import { DeleteUserSettingsService } from './services/delete-user-settings.service';
 
 @Controller('user')
 export class UserController {
@@ -81,6 +83,10 @@ export class UserController {
     private readonly impersonateUserService: ImpersonateUserService,
     private readonly blockPermissionService: BlockPermissionService,
     private readonly getMessageService: GetMessageService,
+    private readonly getSettingsService: GetSettingsService,
+    private readonly updateDefaultSettingsService: UpdateDefaultSettingsService,
+    private readonly updateUserSettingsService: UpdateUserSettingsService,
+    private readonly deleteUserSettingsService: DeleteUserSettingsService,
   ) {}
 
   @Get('admin/users')
@@ -243,19 +249,21 @@ export class UserController {
   }
 
   @Get('price')
-  price() {
+  async price() {
+    const settings = await this.getSettingsService.execute();
+
     return {
       MONEY_SCALE: MONEY_SCALE,
-      FREE_EMAILS_PER_MONTH: FREE_EMAILS_PER_MONTH,
+      FREE_EMAILS_PER_MONTH: settings.freeEmailsPerMonth,
       EMAIL_PRICING: {
         unit: 1000,
         unitName: 'emails',
         step: 1000,
         minValue: 1000,
         maxValue: 1000000,
-        defaultValue: FREE_EMAILS_PER_MONTH,
-        price: PRICE_PER_MESSAGE * 1000,
-        friendlyAmount: friendlyMoney(PRICE_PER_MESSAGE * 1000, true),
+        defaultValue: settings.freeEmailsPerMonth,
+        price: settings.pricePerMessage * 1000,
+        friendlyAmount: friendlyMoney(settings.pricePerMessage * 1000, true),
       },
     };
   }
@@ -282,5 +290,38 @@ export class UserController {
   @Permissions([PERMISSIONS.OTHER_BLOCK_PERMISSION.value])
   getBlockedPermissions(@Param('userId') userId: string) {
     return this.blockPermissionService.get(userId);
+  }
+
+  @Get('settings/default')
+  @Permissions([PERMISSIONS.OTHER_GET_DEFAULT_SETTINGS.value])
+  getSettings() {
+    return this.getSettingsService.getDefaultSettings();
+  }
+
+  @Put('settings/default')
+  @Permissions([PERMISSIONS.OTHER_UPDATE_DEFAULT_SETTINGS.value])
+  updateSettings(@Body() data: UpdateDefaultSettingsDto) {
+    return this.updateDefaultSettingsService.execute(data);
+  }
+
+  @Get('settings/user/:userId')
+  @Permissions([PERMISSIONS.OTHER_GET_USER_SETTINGS.value])
+  getUserSettings(@Param('userId') userId: string) {
+    return this.getSettingsService.execute(userId, { noScale: true });
+  }
+
+  @Put('settings/user/:userId')
+  @Permissions([PERMISSIONS.OTHER_UPDATE_USER_SETTINGS.value])
+  updateUserSettings(
+    @Body() data: UpdateUserSettingsDto,
+    @Param('userId') userId: string,
+  ) {
+    return this.updateUserSettingsService.execute(userId, data);
+  }
+
+  @Delete('settings/user/:userId')
+  @Permissions([PERMISSIONS.OTHER_DELETE_USER_SETTINGS.value])
+  deleteUserSettings(@Param('userId') userId: string) {
+    return this.deleteUserSettingsService.execute(userId);
   }
 }

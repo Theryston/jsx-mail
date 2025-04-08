@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateBulkContactsDto } from '../bulk-sending.dto';
 import { PrismaService } from 'src/services/prisma.service';
 import { InjectQueue } from '@nestjs/bullmq';
@@ -19,7 +23,7 @@ export class CreateBulkContactsService {
     });
 
     if (!file) {
-      throw new Error('File not found');
+      throw new NotFoundException('File not found');
     }
 
     const contactGroup = await this.prisma.contactGroup.findUnique({
@@ -27,7 +31,37 @@ export class CreateBulkContactsService {
     });
 
     if (!contactGroup) {
-      throw new Error('Contact group not found');
+      throw new NotFoundException('Contact group not found');
+    }
+
+    const processingContactImport = await this.prisma.contactImport.findFirst({
+      where: {
+        userId,
+        contactGroupId: contactGroup.id,
+        status: { in: ['processing', 'pending'] },
+      },
+    });
+
+    if (processingContactImport) {
+      throw new BadRequestException(
+        'Wait for the contact import to finish before sending emails',
+      );
+    }
+
+    const processingBulkEmailCheck = await this.prisma.bulkEmailCheck.findFirst(
+      {
+        where: {
+          userId,
+          contactGroupId: contactGroup.id,
+          status: { in: ['processing', 'pending'] },
+        },
+      },
+    );
+
+    if (processingBulkEmailCheck) {
+      throw new BadRequestException(
+        'Wait for the email check to finish before sending emails',
+      );
     }
 
     const contactImport = await this.prisma.contactImport.create({

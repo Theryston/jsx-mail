@@ -247,4 +247,49 @@ export const PERMISSIONS: {
     value: 'self:get-message',
     description: 'Can get a message for itself',
   },
+  OTHER_GET_DEFAULT_SETTINGS: {
+    title: 'Other Get Default Settings',
+    value: 'other:get-default-settings',
+    description: 'Can get default settings',
+  },
+  OTHER_UPDATE_DEFAULT_SETTINGS: {
+    title: 'Other Update Default Settings',
+    value: 'other:update-default-settings',
+    description: 'Can update default settings',
+  },
+  OTHER_GET_USER_SETTINGS: {
+    title: 'Other Get User Settings',
+    value: 'other:get-user-settings',
+    description: 'Can get user settings',
+  },
+  OTHER_UPDATE_USER_SETTINGS: {
+    title: 'Other Update User Settings',
+    value: 'other:update-user-settings',
+    description: 'Can update user settings',
+  },
+  OTHER_DELETE_USER_SETTINGS: {
+    title: 'Other Delete User Settings',
+    value: 'other:delete-user-settings',
+    description: 'Can delete user settings',
+  },
+  SELF_CREATE_BULK_EMAIL_CHECK: {
+    title: 'Self Create Bulk Email Check',
+    value: 'self:create-bulk-email-check',
+    description: 'Can create a bulk email check for itself',
+  },
+  SELF_LIST_BULK_EMAIL_CHECKS: {
+    title: 'Self List Bulk Email Checks',
+    value: 'self:list-bulk-email-checks',
+    description: 'Can list bulk email checks for itself',
+  },
+  SELF_CREATE_BULK_EMAIL_CHECK_ESTIMATE: {
+    title: 'Self Create Bulk Email Check Estimate',
+    value: 'self:create-bulk-email-check-estimate',
+    description: 'Can create a bulk email check estimate for itself',
+  },
+  SELF_MARK_BULK_EMAIL_CHECK_AS_READ: {
+    title: 'Self Mark Bulk Email Check As Read',
+    value: 'self:mark-bulk-email-check-as-read',
+    description: 'Can mark a bulk email check as read for itself',
+  },
 };

@@ -46,6 +46,8 @@ export class CreateBulkSendingService {
             contacts: {
               where: {
                 deletedAt: null,
+                bouncedAt: null,
+                bouncedBy: null,
               },
             },
           },
@@ -60,6 +62,38 @@ export class CreateBulkSendingService {
     if (contactGroup._count.contacts === 0) {
       throw new BadRequestException(
         'You can not send emails to an empty contact group',
+      );
+    }
+
+    const processingContactImport = await this.prisma.contactImport.findFirst({
+      where: {
+        userId,
+        contactGroupId: contactGroup.id,
+        status: {
+          in: ['processing', 'pending'],
+        },
+      },
+    });
+
+    if (processingContactImport) {
+      throw new BadRequestException(
+        'Wait for the contact import to finish before sending emails',
+      );
+    }
+
+    const processingEmailCheck = await this.prisma.bulkEmailCheck.findFirst({
+      where: {
+        userId,
+        contactGroupId: contactGroup.id,
+        status: {
+          in: ['processing', 'pending'],
+        },
+      },
+    });
+
+    if (processingEmailCheck) {
+      throw new BadRequestException(
+        'Wait for the email check to finish before sending emails',
       );
     }
 
