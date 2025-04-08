@@ -252,9 +252,7 @@ export class BulkSendingController {
   @Post('bulk-email-check/webhook/:bulkEmailCheckBatchId')
   bulkEmailCheckWebhook(
     @Param('bulkEmailCheckBatchId') bulkEmailCheckBatchId: string,
-    @Body() body: any,
   ) {
-    console.log(body);
     return this.bulkEmailCheckWebhookService.execute(bulkEmailCheckBatchId);
   }
 }

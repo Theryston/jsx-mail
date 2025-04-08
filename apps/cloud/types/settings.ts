@@ -14,6 +14,9 @@ export type Settings = {
   minEmailsForRateCalculation: number;
   maxSecurityCodesPerHour: number;
   maxSecurityCodesPerMinute: number;
+  globalEmailsCheckPerSecond: number;
+  globalBulkEmailCheckMaxBatchSize: number;
+  pricePerEmailCheck: number;
 };
 
 export type UserSettings = Omit<

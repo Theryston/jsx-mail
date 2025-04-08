@@ -2,6 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
 
+enum ContactFilter {
+  ALL = 'all',
+  BOUNCED_EMAIL_CHECK = 'bounced_email_check',
+  BOUNCED_MESSAGE = 'bounced_message',
+  NOT_BOUNCED = 'not_bounced',
+}
+
 @Injectable()
 export class ListContactsFromContactGroupService {
   constructor(private readonly prisma: PrismaService) {}
@@ -10,7 +17,7 @@ export class ListContactsFromContactGroupService {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
     const search = query.search || '';
-    const filter = query.filter || 'all';
+    const filter = query.filter || ContactFilter.ALL;
 
     const contactGroup = await this.prisma.contactGroup.findUnique({
       where: { id, userId },

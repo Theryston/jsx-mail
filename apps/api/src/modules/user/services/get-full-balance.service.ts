@@ -3,14 +3,12 @@ import { PrismaService } from 'src/services/prisma.service';
 import { GetBalanceService } from './get-balance.service';
 import moment from 'moment';
 import { friendlyMoney } from 'src/utils/format-money';
-import { GetSettingsService } from './get-settings.service';
 
 @Injectable()
 export class GetFullBalanceService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly getBalanceService: GetBalanceService,
-    private readonly getSettingsService: GetSettingsService,
   ) {}
 
   async execute(userId: string) {
@@ -61,8 +59,6 @@ export class GetFullBalanceService {
 
     const addedBalance = currentMonthAddedBalance || 0;
     const chargedBalance = (currentMonthChargedBalance || 0) * -1;
-
-    const settings = await this.getSettingsService.execute();
 
     return {
       CURRENT: currentBalance,
