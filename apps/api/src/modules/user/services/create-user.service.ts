@@ -33,44 +33,30 @@ export class CreateUserService {
 
     await this.verifyTurnstileService.execute(turnstileToken);
 
-    if (!fingerprint) {
-      throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);
-    }
+    if (ipAddress) {
+      const blockedIpAddress = await this.prisma.blockedIpAddress.findFirst({
+        where: {
+          ipAddress,
+        },
+      });
 
-    if (!ipAddress) {
-      throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);
-    }
+      if (blockedIpAddress) {
+        throw new HttpException(
+          'You was blocked by our system, please contact support',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
-    const blockedIpAddress = await this.prisma.blockedIpAddress.findFirst({
-      where: {
-        ipAddress,
-      },
-    });
-
-    if (blockedIpAddress) {
-      throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);
-    }
-
-    const fingerprintExists = await this.prisma.user.findFirst({
-      where: {
-        fingerprint,
-        deletedAt: null,
-      },
-    });
-
-    if (fingerprintExists) {
-      throw new HttpException('Something is wrong', HttpStatus.BAD_REQUEST);
-    }
-
-    const { data: ipHubResponse } = await this.ipHubClient.get(
-      `/ip/${ipAddress}`,
-    );
-
-    if (ipHubResponse.block === 1) {
-      throw new HttpException(
-        'Seems you are using a proxy, please turn off and try again',
-        HttpStatus.BAD_REQUEST,
+      const { data: ipHubResponse } = await this.ipHubClient.get(
+        `/ip/${ipAddress}`,
       );
+
+      if (ipHubResponse.block === 1) {
+        throw new HttpException(
+          'Seems you are using a proxy, please turn off and try again',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
     }
 
     const userExists = await this.prisma.user.findFirst({
