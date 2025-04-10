@@ -24,7 +24,7 @@ export class EmailWebhookService {
         RenderingFailure: 'failed',
         Reject: 'reject',
         Delivery: 'delivered',
-        Bounce: 'bonce',
+        Bounce: 'bounce',
         Complaint: 'complaint',
         DeliveryDelay: 'delivery_delay',
         Subscription: 'subscription',
@@ -70,7 +70,7 @@ export class EmailWebhookService {
         extra,
       );
 
-      if (newStatus === 'bonce' || newStatus === 'complaint') {
+      if (newStatus === 'bounce' || newStatus === 'complaint') {
         await this.checkUserEmailStatsService.execute(message.userId);
       }
     } catch (error) {

@@ -51,8 +51,8 @@ export const MESSAGES_STATUS = [
     color: 'rgb(168 85 247)',
   },
   {
-    value: 'bonce',
-    label: 'Bonce',
+    value: 'bounce',
+    label: 'Bounce',
     description:
       "A hard bounce that the recipient's mail server permanently rejected the email.",
     color: 'rgb(239 68 68)',
