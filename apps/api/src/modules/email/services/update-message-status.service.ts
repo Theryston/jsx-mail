@@ -122,7 +122,6 @@ export class UpdateMessageStatusService {
       subscription: 1,
       queued: 0,
       processing: 0,
-      bonce: 0,
     };
 
     return (

@@ -14,7 +14,11 @@ export class GetUsersService {
     const where: Prisma.UserWhereInput = {};
 
     if (search) {
-      where.name = { contains: search, mode: 'insensitive' };
+      where.OR = [
+        ...(where.OR || []),
+        { name: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+      ];
     }
 
     const users = await this.prisma.user.findMany({

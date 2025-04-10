@@ -31,7 +31,6 @@ enum MessageStatus {
   queued
   processing
   sent
-  bonce
   bounce
   failed
   reject
