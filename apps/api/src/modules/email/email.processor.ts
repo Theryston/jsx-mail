@@ -266,7 +266,7 @@ export class EmailProcessor extends WorkerHost {
     if (detectedMarkedBounceTo) {
       await this.updateMessageStatusService.execute(
         messageId,
-        'bonce',
+        'bounce',
         `Bounced because this email was marked as bounce by ${detectedMarkedBounceTo.bounceBy === 'email_check' ? 'email check' : 'previous bounced message'} at ${moment(detectedMarkedBounceTo.createdAt).format('DD/MM/YYYY HH:mm:ss')}`,
         {
           smartBounce: 'true',

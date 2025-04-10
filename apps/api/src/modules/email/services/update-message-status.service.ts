@@ -7,7 +7,7 @@ import { MarkBounceToService } from './mark-bounce-to.service';
 import { MessageExtra } from 'src/utils/types';
 
 const STATUS_SHOULD_HAVE_SENT_AT: MessageStatus[] = [
-  'bonce',
+  'bounce',
   'clicked',
   'complaint',
   'delivered',
@@ -74,7 +74,7 @@ export class UpdateMessageStatusService {
       data = this.addSentDate(data);
     }
 
-    if (newStatus === 'bonce' && message.contactId) {
+    if (newStatus === 'bounce' && message.contactId) {
       await this.prisma.contact.update({
         where: { id: message.contactId },
         data: {
@@ -84,7 +84,7 @@ export class UpdateMessageStatusService {
       });
     }
 
-    if (newStatus === 'bonce') {
+    if (newStatus === 'bounce') {
       for (const to of message.to) {
         await this.markBounceToService.create(to, 'message');
       }
@@ -112,7 +112,7 @@ export class UpdateMessageStatusService {
     const statusPriority: Record<MessageStatus, number> = {
       clicked: 5,
       opened: 4,
-      bonce: 3,
+      bounce: 3,
       delivered: 2,
       sent: 1,
       complaint: 1,
@@ -122,6 +122,7 @@ export class UpdateMessageStatusService {
       subscription: 1,
       queued: 0,
       processing: 0,
+      bonce: 0,
     };
 
     return (

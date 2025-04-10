@@ -70,7 +70,7 @@ export class CheckUserEmailStatsService {
               'delivered',
               'opened',
               'clicked',
-              'bonce',
+              'bounce',
               'complaint',
             ],
           },
@@ -86,7 +86,7 @@ export class CheckUserEmailStatsService {
           sentAt: {
             gte: gapToCheckSecurityInsights,
           },
-          status: 'bonce',
+          status: 'bounce',
         },
       });
 

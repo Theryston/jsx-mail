@@ -25,7 +25,7 @@ export class GetUserLimitsService {
           gte: moment().startOf('month').toDate(),
         },
         status: {
-          notIn: ['bonce', 'failed', 'reject', 'complaint'],
+          notIn: ['bounce', 'failed', 'reject', 'complaint'],
         },
       },
     });

@@ -94,7 +94,7 @@ function EmailEventsTimeline({ message }: { message: FullMessage }) {
       color = 'rgb(161, 161, 170)';
     }
 
-    if (['bonce', 'failed', 'complaint'].includes(statusValue)) {
+    if (['bounce', 'failed', 'complaint'].includes(statusValue)) {
       color = 'rgb(239, 68, 68)';
     }
 

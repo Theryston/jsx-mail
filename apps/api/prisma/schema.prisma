@@ -32,6 +32,7 @@ enum MessageStatus {
   processing
   sent
   bonce
+  bounce
   failed
   reject
   complaint
