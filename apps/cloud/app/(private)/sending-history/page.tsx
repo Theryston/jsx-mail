@@ -1,7 +1,7 @@
 'use client';
 
 import { Container } from '@/components/container';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useMessages, useMessageInsights } from '@/hooks/message';
 import { Skeleton } from '@jsx-mail/ui/skeleton';
 import { DateFilter } from './date-filter';
@@ -21,37 +21,66 @@ export default function SendingHistoryPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [page, setPage] = useState(() => {
-    const pageParam = searchParams?.get('page');
-    return pageParam ? parseInt(pageParam, 10) : 1;
-  });
+  const [page, setPage] = useState(1);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [fromEmail, setFromEmail] = useState('');
+  const [toEmail, setToEmail] = useState('');
+  const [statuses, setStatuses] = useState<string[]>([]);
+  const bulkSending = searchParams?.get('bulkSending') || '';
+  const isDefaultProcessed = useRef(false);
 
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
+  useEffect(() => {
+    if (isDefaultProcessed.current) return;
+
+    const pageParam = searchParams?.get('page');
     const startDateParam = searchParams?.get('startDate');
     const endDateParam = searchParams?.get('endDate');
+    const fromEmailParam = searchParams?.get('fromEmail');
+    const toEmailParam = searchParams?.get('toEmail');
+    const statusesParam = searchParams?.get('statuses');
 
-    if (startDateParam && endDateParam) {
-      return {
-        from: new Date(startDateParam),
-        to: new Date(endDateParam),
-      };
+    if (pageParam) {
+      const numberPage = parseInt(pageParam, 10);
+      setPage((prev) => (prev === numberPage ? prev : numberPage));
     }
 
-    return {
-      from: new Date(moment().subtract(30, 'days').format('YYYY-MM-DD')),
-      to: new Date(),
-    };
-  });
+    if (startDateParam && endDateParam) {
+      setDateRange((prev) => {
+        const newDateRange = {
+          from: moment(startDateParam).startOf('day').toDate(),
+          to: moment(endDateParam).endOf('day').toDate(),
+        };
 
-  const [fromEmail, setFromEmail] = useState(
-    searchParams?.get('fromEmail') || '',
-  );
-  const [toEmail, setToEmail] = useState(searchParams?.get('toEmail') || '');
-  const [statuses, setStatuses] = useState<string[]>(() => {
-    const statusesParam = searchParams?.get('statuses');
-    return statusesParam ? JSON.parse(statusesParam) : [];
-  });
-  const bulkSending = searchParams?.get('bulkSending') || '';
+        return prev?.from === newDateRange.from && prev?.to === newDateRange.to
+          ? prev
+          : newDateRange;
+      });
+    } else {
+      setDateRange({
+        from: moment().subtract(30, 'days').startOf('day').toDate(),
+        to: moment().endOf('day').toDate(),
+      });
+    }
+
+    if (fromEmailParam) {
+      setFromEmail((prev) => (prev === fromEmailParam ? prev : fromEmailParam));
+    }
+
+    if (toEmailParam) {
+      setToEmail((prev) => (prev === toEmailParam ? prev : toEmailParam));
+    }
+
+    if (statusesParam) {
+      const statusesArray = JSON.parse(statusesParam);
+      setStatuses((prev) =>
+        statusesArray.every((status: string) => prev.includes(status))
+          ? prev
+          : statusesArray,
+      );
+    }
+
+    isDefaultProcessed.current = true;
+  }, [searchParams]);
 
   const startDate = moment(
     dateRange?.from || moment().subtract(30, 'days').toDate(),

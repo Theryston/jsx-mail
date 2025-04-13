@@ -4,7 +4,7 @@ import { Button } from '@jsx-mail/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@jsx-mail/ui/popover';
 import { Input } from '@jsx-mail/ui/input';
 import { FilterIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -73,6 +73,12 @@ export function Filters({
       statuses: statuses || [],
     },
   });
+
+  useEffect(() => {
+    if (statuses && statuses.length > 0) setSelectedStatuses(statuses);
+    if (fromEmail) form.setValue('fromEmail', fromEmail);
+    if (toEmail) form.setValue('toEmail', toEmail);
+  }, [statuses, fromEmail, toEmail]);
 
   function onSubmit(data: FiltersFormValues) {
     onFiltersChange({
