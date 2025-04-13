@@ -79,7 +79,7 @@ export class ResendProcessingMessagesService {
           ? JSON.parse(message.customPayload)
           : {},
         delay: 0,
-        filesIds: message.messageFiles.map((file) => file.fileId),
+        attachmentIds: message.messageFiles.map((file) => file.fileId),
         messageId: message.id,
       });
 

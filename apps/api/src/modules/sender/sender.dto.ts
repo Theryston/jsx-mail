@@ -43,7 +43,7 @@ export class SenderSendEmailDto {
 
   @IsOptional()
   @IsArray()
-  filesIds?: string[];
+  attachmentIds?: string[];
 
   @IsOptional()
   @IsString()

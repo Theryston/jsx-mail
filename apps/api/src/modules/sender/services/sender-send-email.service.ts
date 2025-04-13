@@ -24,7 +24,7 @@ export class SenderSendEmailService {
       html,
       subject,
       to,
-      filesIds,
+      attachmentIds,
       bulkSendingId,
       customPayload,
       contactId,
@@ -33,7 +33,7 @@ export class SenderSendEmailService {
     }: SenderSendEmailDto,
     userId: string,
   ) {
-    if (filesIds && filesIds.length > 0) {
+    if (attachmentIds && attachmentIds.length > 0) {
       await this.betaPermissionCheckService.execute(userId, [
         PERMISSIONS.SELF_SEND_EMAIL_WITH_ATTACHMENTS.value,
       ]);
@@ -86,9 +86,9 @@ export class SenderSendEmailService {
         userId,
         contactId,
         createdDay: moment().format('YYYY-MM-DD'),
-        messageFiles: filesIds
+        messageFiles: attachmentIds
           ? {
-              create: filesIds.map((fileId) => ({
+              create: attachmentIds.map((fileId) => ({
                 file: {
                   connect: {
                     id: fileId,
@@ -122,7 +122,7 @@ export class SenderSendEmailService {
       subject,
       to,
       messageId: message.id,
-      filesIds,
+      attachmentIds,
       bulkSendingId,
       customPayload,
       delay,

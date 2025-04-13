@@ -1046,12 +1046,12 @@
             "example": "sender@jsxmail.org",
             "description": "Optional email address of the sender. If not provided, the most recently created sender will be used."
           },
-          "filesIds": {
+          "attachmentIds": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Optional array of file IDs to attach to the email. This is in a close beta and requires a special permission. Contact support to get access."
+            "description": "Optional array of files IDs to attach to the email. This is in a close beta and requires a special permission. Contact support to get access."
           },
           "bulkSendingId": {
             "type": "string",

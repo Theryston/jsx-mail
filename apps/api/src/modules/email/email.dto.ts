@@ -47,7 +47,7 @@ export class SendEmailDto {
 
   @IsOptional()
   @IsArray()
-  filesIds?: string[];
+  attachmentIds?: string[];
 
   @IsOptional()
   @IsString()
