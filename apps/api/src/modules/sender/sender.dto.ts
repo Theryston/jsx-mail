@@ -8,8 +8,10 @@ import {
   IsObject,
   IsNumber,
   IsEnum,
+  ValidateNested,
 } from 'class-validator';
-import { EmailPriority } from '../email/email.dto';
+import { Type } from 'class-transformer';
+import { EmailPriority, AttachmentDto } from '../email/email.dto';
 
 export class CreateSenderDto {
   @IsNotEmpty()
@@ -44,6 +46,12 @@ export class SenderSendEmailDto {
   @IsOptional()
   @IsArray()
   attachmentIds?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AttachmentDto)
+  attachments?: AttachmentDto[];
 
   @IsOptional()
   @IsString()

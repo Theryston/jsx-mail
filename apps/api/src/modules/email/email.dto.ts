@@ -7,7 +7,9 @@ import {
   IsObject,
   IsNumber,
   IsEnum,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export enum EmailPriority {
   NORMAL = 'normal',
@@ -22,6 +24,16 @@ export class FromDto {
   @IsNotEmpty()
   @Length(3, 100)
   email: string;
+}
+
+export class AttachmentDto {
+  @IsNotEmpty()
+  @IsString()
+  fileName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  content: string; // base64 content
 }
 
 export class SendEmailDto {
@@ -48,6 +60,12 @@ export class SendEmailDto {
   @IsOptional()
   @IsArray()
   attachmentIds?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AttachmentDto)
+  attachments?: AttachmentDto[];
 
   @IsOptional()
   @IsString()

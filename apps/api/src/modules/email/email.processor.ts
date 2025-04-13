@@ -350,6 +350,23 @@ export class EmailProcessor extends WorkerHost {
       }
     }
 
+    if (data.attachments) {
+      for (const attachment of data.attachments) {
+        attachments.push({
+          filename: attachment.fileName,
+          content: attachment.content,
+          encoding: 'base64',
+        });
+
+        await this.prisma.messageAttachment.create({
+          data: {
+            messageId: messageId,
+            fileName: attachment.fileName,
+          },
+        });
+      }
+    }
+
     const { response: externalMessageId } = await transporter.sendMail({
       from: `"${from.name}" <${from.email}>`,
       to,

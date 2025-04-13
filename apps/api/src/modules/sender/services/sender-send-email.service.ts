@@ -25,6 +25,7 @@ export class SenderSendEmailService {
       subject,
       to,
       attachmentIds,
+      attachments,
       bulkSendingId,
       customPayload,
       contactId,
@@ -33,7 +34,10 @@ export class SenderSendEmailService {
     }: SenderSendEmailDto,
     userId: string,
   ) {
-    if (attachmentIds && attachmentIds.length > 0) {
+    if (
+      (attachmentIds && attachmentIds.length > 0) ||
+      (attachments && attachments.length > 0)
+    ) {
       await this.betaPermissionCheckService.execute(userId, [
         PERMISSIONS.SELF_SEND_EMAIL_WITH_ATTACHMENTS.value,
       ]);
@@ -123,6 +127,7 @@ export class SenderSendEmailService {
       to,
       messageId: message.id,
       attachmentIds,
+      attachments,
       bulkSendingId,
       customPayload,
       delay,

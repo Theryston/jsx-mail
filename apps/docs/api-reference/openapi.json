@@ -1053,6 +1053,24 @@
             },
             "description": "Optional array of files IDs to attach to the email. This is in a close beta and requires a special permission. Contact support to get access."
           },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["fileName", "content"],
+              "properties": {
+                "fileName": {
+                  "type": "string",
+                  "description": "The name of the file to be attached"
+                },
+                "content": {
+                  "type": "string",
+                  "description": "The base64 encoded content of the file"
+                }
+              }
+            },
+            "description": "Optional array of temporary attachments. These attachments will not be stored in the database and will be used only for this email."
+          },
           "bulkSendingId": {
             "type": "string",
             "example": "b4f8d8c4-3c2e-4f2a-9f2e-3c2e4f2a9f2e",
