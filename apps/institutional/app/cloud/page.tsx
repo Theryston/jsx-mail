@@ -19,14 +19,16 @@ import {
   AnimatePresence,
 } from 'framer-motion';
 import { getCloudUrl } from '@/lib/utils';
+import { useUtmInfo } from '../utm-context';
 
 export default function CloudPage() {
   const { data } = usePricing();
+  const { utmGroupId } = useUtmInfo();
   const [cloudUrl, setCloudUrl] = useState('');
 
   useEffect(() => {
-    setCloudUrl(getCloudUrl('/sign-up'));
-  }, []);
+    setCloudUrl(getCloudUrl('/sign-up', utmGroupId));
+  }, [utmGroupId]);
 
   // Refs para animações de scroll
   const heroRef = useRef(null);

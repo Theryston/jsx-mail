@@ -15,6 +15,7 @@ import {
   IsObject,
   ValidateNested,
   IsBoolean,
+  IsArray,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -361,4 +362,30 @@ export class UpdateUserSettingsDto {
   @IsOptional()
   @IsNumber()
   pricePerEmailCheck?: number;
+}
+
+export class CreateOneUtmDto {
+  @IsNotEmpty()
+  @IsString()
+  utmName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  utmValue: string;
+}
+
+export class CreateUtmDto {
+  @IsNotEmpty()
+  @IsString()
+  url: string;
+
+  @IsOptional()
+  @IsString()
+  userUtmGroupId?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateOneUtmDto)
+  utms?: CreateOneUtmDto[];
 }

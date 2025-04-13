@@ -4,13 +4,15 @@ import { Link } from '@heroui/link';
 import Image from 'next/image';
 import { getCloudUrl } from '@/lib/utils';
 import { useState, useEffect } from 'react';
+import { useUtmInfo } from '@/app/utm-context';
 
 export default function Footer() {
+  const { utmGroupId } = useUtmInfo();
   const [cloudUrl, setCloudUrl] = useState('');
 
   useEffect(() => {
-    setCloudUrl(getCloudUrl('/app'));
-  }, []);
+    setCloudUrl(getCloudUrl('/app', utmGroupId));
+  }, [utmGroupId]);
 
   return (
     <footer className="bg-zinc-900/30 text-foreground py-5 px-6 flex flex-col md:flex-row gap-4 items-center justify-between">

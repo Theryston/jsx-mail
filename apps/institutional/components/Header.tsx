@@ -14,6 +14,7 @@ import {
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { getCloudUrl } from '@/lib/utils';
+import { useUtmInfo } from '@/app/utm-context';
 
 export default function Header({
   menuItems,
@@ -21,11 +22,12 @@ export default function Header({
   menuItems: { label: string; href: string }[];
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { utmGroupId } = useUtmInfo();
   const [cloudUrl, setCloudUrl] = useState('');
 
   useEffect(() => {
-    setCloudUrl(getCloudUrl('/app'));
-  }, []);
+    setCloudUrl(getCloudUrl('/app', utmGroupId));
+  }, [utmGroupId]);
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen} maxWidth="2xl">

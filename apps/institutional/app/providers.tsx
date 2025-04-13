@@ -8,6 +8,7 @@ import { ThemeProviderProps } from 'next-themes/dist/types';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { UtmProvider } from './utm-context';
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -20,7 +21,9 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   return (
     <HeroUIProvider navigate={router.push}>
       <NextThemesProvider {...themeProps}>
-        <QueryClientProvider>{children}</QueryClientProvider>
+        <QueryClientProvider>
+          <UtmProvider>{children}</UtmProvider>
+        </QueryClientProvider>
       </NextThemesProvider>
     </HeroUIProvider>
   );

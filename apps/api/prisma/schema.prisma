@@ -154,6 +154,7 @@ model User {
   blockedPermissions      BlockedPermission[]
   blockedPermissionEvents BlockedPermissionEvent[]
   userUtm                 UserUtm[]
+  userUtmGroups           UserUtmGroup[]
   settings                UserSettings[]
   bulkEmailChecks         BulkEmailCheck[]
   emailChecks             EmailCheck[]
@@ -214,18 +215,47 @@ model UserSettings {
   @@map("user_settings")
 }
 
+model UserUtmGroup {
+  id        String    @id @default(uuid())
+  userId    String?   @map("user_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user  User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  utms  UserUtm[]
+  views UserUtmGroupView[]
+
+  @@map("user_utm_groups")
+}
+
 model UserUtm {
   id        String    @id @default(uuid())
-  userId    String    @map("user_id")
+  userId    String?   @map("user_id")
+  groupId   String?   @map("group_id")
   utmName   String    @map("utm_name")
   utmValue  String    @map("utm_value")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group UserUtmGroup? @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@map("users_utm")
+}
+
+model UserUtmGroupView {
+  id        String    @id @default(uuid())
+  groupId   String    @map("group_id")
+  url       String    @map("url")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  group UserUtmGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@map("user_utm_group_views")
 }
 
 model BlockedPermission {

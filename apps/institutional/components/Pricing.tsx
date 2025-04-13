@@ -8,6 +8,7 @@ import { Spinner } from '@heroui/spinner';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { getCloudUrl } from '@/lib/utils';
+import { useUtmInfo } from '@/app/utm-context';
 
 type Price = {
   amount: number;
@@ -18,6 +19,7 @@ type Price = {
 
 export default function Pricing() {
   const { data, isPending: isLoadingPricing } = usePricing();
+  const { utmGroupId } = useUtmInfo();
   const emailPricing = data?.EMAIL_PRICING;
   const [cloudUrl, setCloudUrl] = useState('');
 
@@ -117,8 +119,8 @@ export default function Pricing() {
   }, [value, emailPricing]);
 
   useEffect(() => {
-    setCloudUrl(getCloudUrl('/app'));
-  }, []);
+    setCloudUrl(getCloudUrl('/app', utmGroupId));
+  }, [utmGroupId]);
 
   return (
     <div id="pricing" className="flex flex-col gap-9 items-center w-full mb-20">

@@ -1,16 +1,9 @@
-export function getCloudUrl(path: string) {
+export function getCloudUrl(path: string, utmGroupId: string | null) {
   if (typeof window === 'undefined') return `https://cloud.jsxmail.org${path}`;
 
-  const currentUrl = new URL(window.location.href);
   const cloudUrl = new URL(`https://cloud.jsxmail.org${path}`);
 
-  currentUrl.searchParams.forEach((value, key) => {
-    cloudUrl.searchParams.set(key, value);
-  });
+  if (utmGroupId) cloudUrl.searchParams.set('utmGroupId', utmGroupId);
 
-  const url = cloudUrl.toString();
-
-  console.log(url);
-
-  return url;
+  return cloudUrl.toString();
 }

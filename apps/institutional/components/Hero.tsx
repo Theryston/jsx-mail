@@ -4,10 +4,12 @@ import { Link } from '@heroui/link';
 import { Button } from '@heroui/button';
 import { useEffect, useState } from 'react';
 import { getCloudUrl } from '@/lib/utils';
+import { useUtmInfo } from '@/app/utm-context';
 
 export default function Hero() {
   const [bottom, setBottom] = useState(0);
   const [cloudUrl, setCloudUrl] = useState('');
+  const { utmGroupId } = useUtmInfo();
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -36,8 +38,8 @@ export default function Hero() {
   }, []);
 
   useEffect(() => {
-    setCloudUrl(getCloudUrl('/app'));
-  }, []);
+    setCloudUrl(getCloudUrl('/app', utmGroupId));
+  }, [utmGroupId]);
 
   return (
     <div className="flex flex-col gap-3 md:gap-5 items-center justify-between md:justify-center h-[calc(100dvh-64px)] py-6">
