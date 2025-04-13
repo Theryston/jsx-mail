@@ -25,8 +25,8 @@ export class CreateUserService {
     name,
     fingerprint,
     ipAddress,
-    utm,
     turnstileToken,
+    utmGroupId,
   }: CreateUserDto & { fingerprint: string; ipAddress: string }) {
     email = email.toLocaleLowerCase().trim();
     name = name.toLocaleLowerCase().trim();
@@ -86,16 +86,28 @@ export class CreateUserService {
     delete user.password;
     delete user.deletedAt;
 
-    if (utm) {
-      for (const [key, value] of Object.entries(utm)) {
-        await this.prisma.userUtm.create({
-          data: {
-            userId: user.id,
-            utmName: key,
-            utmValue: value,
+    if (utmGroupId) {
+      await this.prisma.userUtmGroup.update({
+        where: {
+          id: utmGroupId,
+        },
+        data: {
+          user: {
+            connect: {
+              id: user.id,
+            },
           },
-        });
-      }
+        },
+      });
+
+      await this.prisma.userUtm.updateMany({
+        where: {
+          groupId: utmGroupId,
+        },
+        data: {
+          userId: user.id,
+        },
+      });
     }
 
     return {

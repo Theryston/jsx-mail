@@ -12,7 +12,6 @@ import {
   Matches,
   Max,
   Min,
-  IsObject,
   ValidateNested,
   IsBoolean,
   IsArray,
@@ -38,9 +37,8 @@ export class CreateUserDto {
   turnstileToken: string;
 
   @IsOptional()
-  @IsObject()
-  @ValidateNested()
-  utm?: Record<string, string>;
+  @IsString()
+  utmGroupId?: string;
 }
 
 export class UseSecurityCodeDto {

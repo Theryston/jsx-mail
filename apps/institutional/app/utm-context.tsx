@@ -25,7 +25,7 @@ export function UtmProvider({ children }: { children: React.ReactNode }) {
     for (const [key, value] of Object.entries(searchParamsEntries)) {
       if (key.startsWith('utm_')) {
         utmSearchParams.push({
-          utmName: key.replace('utm_', ''),
+          utmName: key,
           utmValue: value,
         });
       }

@@ -30,7 +30,7 @@ export function useSignUp() {
       email: string;
       password: string;
       turnstileToken: string;
-      utm?: Record<string, string>;
+      utmGroupId?: string;
     }) => await api.post('/user', data),
   });
 }
