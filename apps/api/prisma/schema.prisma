@@ -475,9 +475,23 @@ model Message {
   contact     Contact?     @relation(fields: [contactId], references: [id], onDelete: Cascade)
 
   messageFiles  MessageFile[]
+  attachments   MessageAttachment[]
   statusHistory MessageStatusHistory[]
 
   @@map("messages")
+}
+
+model MessageAttachment {
+  id        String    @id @default(uuid())
+  messageId String    @map("message_id")
+  fileName  String    @map("file_name")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@map("message_attachments")
 }
 
 model MessageStatusHistory {
