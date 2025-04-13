@@ -1070,6 +1070,12 @@
             "type": "string",
             "example": "a1b2c3d4-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
             "description": "Optional ID of a contact to associate the email with."
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["normal", "high"],
+            "default": "normal",
+            "description": "Optional priority of the email. 'high' priority emails will be processed before 'normal' priority emails in the queue."
           }
         }
       },

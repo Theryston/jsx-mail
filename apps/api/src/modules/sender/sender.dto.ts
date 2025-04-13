@@ -7,7 +7,9 @@ import {
   IsString,
   IsObject,
   IsNumber,
+  IsEnum,
 } from 'class-validator';
+import { EmailPriority } from '../email/email.dto';
 
 export class CreateSenderDto {
   @IsNotEmpty()
@@ -58,4 +60,8 @@ export class SenderSendEmailDto {
   @IsOptional()
   @IsNumber()
   delay?: number;
+
+  @IsOptional()
+  @IsEnum(EmailPriority)
+  priority?: EmailPriority;
 }

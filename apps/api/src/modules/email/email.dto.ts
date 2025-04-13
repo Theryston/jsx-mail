@@ -6,7 +6,13 @@ import {
   Length,
   IsObject,
   IsNumber,
+  IsEnum,
 } from 'class-validator';
+
+export enum EmailPriority {
+  NORMAL = 'normal',
+  HIGH = 'high',
+}
 
 export class FromDto {
   @IsNotEmpty()
@@ -54,4 +60,8 @@ export class SendEmailDto {
   @IsOptional()
   @IsNumber()
   delay?: number;
+
+  @IsOptional()
+  @IsEnum(EmailPriority)
+  priority?: EmailPriority;
 }

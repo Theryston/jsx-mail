@@ -1,6 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
-import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { SenderSendEmailDto } from '../sender.dto';
 import { messageSelect } from 'src/utils/public-selects';
@@ -14,7 +13,6 @@ import { GetUserLimitsService } from 'src/modules/user/services/get-user-limits.
 export class SenderSendEmailService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly getBalanceService: GetBalanceService,
     private readonly sendEmailService: SendEmailService,
     private readonly betaPermissionCheckService: BetaPermissionCheckService,
     private readonly getUserLimitsService: GetUserLimitsService,
@@ -31,6 +29,7 @@ export class SenderSendEmailService {
       customPayload,
       contactId,
       delay,
+      priority,
     }: SenderSendEmailDto,
     userId: string,
   ) {
@@ -127,6 +126,7 @@ export class SenderSendEmailService {
       bulkSendingId,
       customPayload,
       delay,
+      priority,
     });
 
     return message;
