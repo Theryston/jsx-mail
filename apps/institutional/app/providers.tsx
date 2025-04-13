@@ -19,13 +19,15 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   const router = useRouter();
 
   return (
-    <HeroUIProvider navigate={router.push}>
-      <NextThemesProvider {...themeProps}>
-        <QueryClientProvider>
-          <UtmProvider>{children}</UtmProvider>
-        </QueryClientProvider>
-      </NextThemesProvider>
-    </HeroUIProvider>
+    <React.Suspense>
+      <HeroUIProvider navigate={router.push}>
+        <NextThemesProvider {...themeProps}>
+          <QueryClientProvider>
+            <UtmProvider>{children}</UtmProvider>
+          </QueryClientProvider>
+        </NextThemesProvider>
+      </HeroUIProvider>
+    </React.Suspense>
   );
 }
 
