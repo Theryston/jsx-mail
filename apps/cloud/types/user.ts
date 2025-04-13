@@ -86,6 +86,13 @@ export type UserUtm = {
 
 export type UserAdmin = User & {
   userUtm: UserUtm[];
+  userUtmGroups?: {
+    id: string;
+    views?: {
+      id: string;
+      url: string;
+    }[];
+  }[];
 };
 
 export type AdminUsersPagination = {
