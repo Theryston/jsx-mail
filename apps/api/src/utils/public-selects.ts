@@ -60,6 +60,12 @@ export const messageSelect: Prisma.MessageSelect = {
       },
     },
   },
+  attachments: {
+    select: {
+      id: true,
+      fileName: true,
+    },
+  },
 };
 
 export const sessionSelect: Prisma.SessionSelect = {
