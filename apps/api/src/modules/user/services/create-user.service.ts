@@ -101,7 +101,7 @@ export class CreateUserService {
       });
 
       if (!utmGroup) {
-        response.message = 'UTM group not found';
+        response.message = 'UTM group not found but user was created';
         return response;
       }
 
