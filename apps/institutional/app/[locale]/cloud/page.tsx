@@ -20,8 +20,10 @@ import {
 } from 'framer-motion';
 import { getCloudUrl } from '@/lib/utils';
 import { useUtmInfo } from '@/app/utm-context';
+import { useTranslations } from 'next-intl';
 
 export default function CloudPage() {
+  const t = useTranslations('CloudPage');
   const { data } = usePricing();
   const { utmGroupId } = useUtmInfo();
   const [cloudUrl, setCloudUrl] = useState('');
@@ -99,11 +101,11 @@ export default function CloudPage() {
     <main className="flex flex-col overflow-x-hidden overflow-y-hidden h-full">
       <Header
         menuItems={[
-          { label: 'Home', href: '/' },
-          { label: 'Features', href: '#features' },
-          { label: 'Why?', href: '#why' },
-          { label: 'Pricing', href: '#pricing' },
-          { label: 'FAQ', href: '#faq' },
+          { label: t('header.home'), href: '/' },
+          { label: t('header.features'), href: '#features' },
+          { label: t('header.why'), href: '#why' },
+          { label: t('header.pricing'), href: '#pricing' },
+          { label: t('header.faq'), href: '#faq' },
         ]}
       />
 
@@ -181,7 +183,7 @@ export default function CloudPage() {
                     delay: 0.2,
                   }}
                 >
-                  JSX Mail Cloud
+                  {t('hero.title')}
                 </motion.h1>
                 <motion.h1
                   className="md:hidden text-4xl font-bold text-center bg-gradient-to-br from-primary-900 to-primary-700 text-transparent bg-clip-text"
@@ -193,7 +195,7 @@ export default function CloudPage() {
                     delay: 0.2,
                   }}
                 >
-                  JSX Mail Cloud
+                  {t('hero.title')}
                 </motion.h1>
                 <motion.div
                   className="absolute -inset-x-8 top-1/2 -z-10 h-px bg-gradient-to-r from-transparent via-primary-500/30 to-transparent"
@@ -207,8 +209,7 @@ export default function CloudPage() {
                 className="text-center w-full text-sm md:text-base 2xl:text-lg md:w-8/12 text-zinc-400 max-w-2xl"
                 variants={fadeInUp}
               >
-                The most efficient and cost-effective cloud for email delivery,
-                image hosting, and campaign analytics.
+                {t('hero.subtitle')}
               </motion.p>
             </motion.div>
           </motion.div>
@@ -227,7 +228,7 @@ export default function CloudPage() {
               className="font-medium"
               aria-label="Sign Up for JSX Mail Cloud"
             >
-              Sign Up
+              {t('hero.cta.signUp')}
             </Button>
             <Button
               color="primary"
@@ -239,7 +240,7 @@ export default function CloudPage() {
               className="font-medium"
               aria-label="View JSX Mail Cloud Documentation"
             >
-              Docs
+              {t('hero.cta.docs')}
             </Button>
           </motion.div>
           <div className="flex-1" />
@@ -286,46 +287,17 @@ export default function CloudPage() {
             className="flex flex-col gap-4 items-center w-full md:w-7/12 2xl:w-5/12"
             variants={fadeInUp}
           >
-            <motion.div
-              className="flex items-center gap-2"
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: 'auto' }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <motion.div
-                className="h-px w-12 bg-gradient-to-r from-transparent via-primary-500 to-transparent"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.8 }}
-              />
-              <motion.h2
-                className="text-sm font-medium text-primary-400"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                Features
-              </motion.h2>
-              <motion.div
-                className="h-px w-12 bg-gradient-to-r from-transparent via-primary-500 to-transparent"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.8 }}
-              />
-            </motion.div>
             <motion.h1
               className="text-4xl font-bold text-center bg-gradient-to-br from-zinc-100 to-zinc-400 text-transparent bg-clip-text"
               variants={fadeInUp}
             >
-              Cloud Features
+              {t('features.title')}
             </motion.h1>
             <motion.p
               className="text-center text-sm text-zinc-400"
               variants={fadeInUp}
             >
-              JSX Mail Cloud provides everything you need for your email
-              workflow, from sending emails to hosting images and tracking
-              analytics.
+              {t('features.subtitle')}
             </motion.p>
           </motion.div>
 
@@ -335,9 +307,8 @@ export default function CloudPage() {
           >
             {[
               {
-                title: 'Email Delivery',
-                description:
-                  'Send emails reliably with high deliverability rates and real-time tracking.',
+                title: t('features.items.emailDelivery.title'),
+                description: t('features.items.emailDelivery.description'),
                 icon: (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -357,9 +328,8 @@ export default function CloudPage() {
                 ),
               },
               {
-                title: 'Image Hosting',
-                description:
-                  'Automatically optimize and host images for your email campaigns with global CDN delivery.',
+                title: t('features.items.imageHosting.title'),
+                description: t('features.items.imageHosting.description'),
                 icon: (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -380,9 +350,8 @@ export default function CloudPage() {
                 ),
               },
               {
-                title: 'Analytics',
-                description:
-                  'Track opens, clicks, and other engagement metrics to optimize your email campaigns.',
+                title: t('features.items.analytics.title'),
+                description: t('features.items.analytics.description'),
                 icon: (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -474,7 +443,7 @@ export default function CloudPage() {
                   viewport={{ once: false }}
                   transition={{ duration: 0.5, delay: 0.3 }}
                 >
-                  Mass Communications
+                  {t('bulkSending.header-title')}
                 </motion.h2>
                 <motion.div
                   className="h-px w-12 bg-gradient-to-r from-transparent via-primary-500 to-transparent"
@@ -491,7 +460,7 @@ export default function CloudPage() {
                 viewport={{ once: false }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                Bulk Sending Made Simple
+                {t('bulkSending.title')}
               </motion.h1>
               <motion.p
                 className="text-center text-sm text-zinc-400"
@@ -500,7 +469,7 @@ export default function CloudPage() {
                 viewport={{ once: false }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                Reach thousands of recipients with just a few clicks
+                {t('bulkSending.subtitle')}
               </motion.p>
             </motion.div>
 
@@ -550,7 +519,7 @@ export default function CloudPage() {
                       </svg>
                     </div>
                     <h3 className="text-xl md:text-2xl font-semibold">
-                      Powerful Contact Management
+                      {t('bulkSending.contactManagement.title')}
                     </h3>
                   </motion.div>
 
@@ -563,9 +532,12 @@ export default function CloudPage() {
                   >
                     {[
                       {
-                        title: 'Import CSV',
-                        description:
-                          'Upload thousands of contacts at once with a simple CSV import',
+                        title: t(
+                          'bulkSending.contactManagement.features.importCsv.title',
+                        ),
+                        description: t(
+                          'bulkSending.contactManagement.features.importCsv.description',
+                        ),
                         icon: (
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -586,9 +558,12 @@ export default function CloudPage() {
                         ),
                       },
                       {
-                        title: 'Group Management',
-                        description:
-                          'Organize contacts into targeted groups for precise segmentation',
+                        title: t(
+                          'bulkSending.contactManagement.features.groupManagement.title',
+                        ),
+                        description: t(
+                          'bulkSending.contactManagement.features.groupManagement.description',
+                        ),
                         icon: (
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -610,9 +585,12 @@ export default function CloudPage() {
                         ),
                       },
                       {
-                        title: 'Automatic Deduplication',
-                        description:
-                          'Smart system removes duplicates to maintain clean contact lists',
+                        title: t(
+                          'bulkSending.contactManagement.features.automaticDeduplication.title',
+                        ),
+                        description: t(
+                          'bulkSending.contactManagement.features.automaticDeduplication.description',
+                        ),
                         icon: (
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -632,9 +610,12 @@ export default function CloudPage() {
                         ),
                       },
                       {
-                        title: 'Advanced Filtering',
-                        description:
-                          'Target specific segments based on behavior or demographics',
+                        title: t(
+                          'bulkSending.contactManagement.features.advancedFiltering.title',
+                        ),
+                        description: t(
+                          'bulkSending.contactManagement.features.advancedFiltering.description',
+                        ),
                         icon: (
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -696,39 +677,47 @@ export default function CloudPage() {
               >
                 <div className="relative z-10 overflow-x-hidden overflow-y-hidden h-full">
                   <h3 className="text-2xl font-semibold mb-4 bg-gradient-to-r from-zinc-100 to-zinc-400 text-transparent bg-clip-text">
-                    From Hundreds to Thousands in Minutes
+                    {t('bulkSending.process.title')}
                   </h3>
                   <p className="text-zinc-400 text-sm mb-6">
-                    Our bulk email system is designed for scale, letting you
-                    reach your entire audience without the complexity. Perfect
-                    for newsletters, announcements, or marketing campaigns.
+                    {t('bulkSending.process.description')}
                   </p>
 
                   <div className="flex flex-col gap-8 overflow-x-hidden overflow-y-hidden h-full">
                     {[
                       {
                         step: '01',
-                        title: 'Create Your Contact Group',
-                        description:
-                          'Start by creating a new contact group in your dashboard. Give it a meaningful name that reflects your audience segment.',
+                        title: t('bulkSending.process.steps.createGroup.title'),
+                        description: t(
+                          'bulkSending.process.steps.createGroup.description',
+                        ),
                       },
                       {
                         step: '02',
-                        title: 'Import Your Contacts',
-                        description:
-                          'Upload your contact list via CSV file or use our API to programmatically add subscribers. Our system automatically handles duplicates and validates email formats.',
+                        title: t(
+                          'bulkSending.process.steps.importContacts.title',
+                        ),
+                        description: t(
+                          'bulkSending.process.steps.importContacts.description',
+                        ),
                       },
                       {
                         step: '03',
-                        title: 'Design Your Campaign',
-                        description:
-                          'Use our intuitive editor, JSX Mail Framework or HTML to craft beautiful, responsive emails that look great on any device.',
+                        title: t(
+                          'bulkSending.process.steps.designCampaign.title',
+                        ),
+                        description: t(
+                          'bulkSending.process.steps.designCampaign.description',
+                        ),
                       },
                       {
                         step: '04',
-                        title: 'Send and Track',
-                        description:
-                          'Send your campaign and watch real-time analytics as your audience engages with your content.',
+                        title: t(
+                          'bulkSending.process.steps.sendAndTrack.title',
+                        ),
+                        description: t(
+                          'bulkSending.process.steps.sendAndTrack.description',
+                        ),
                       },
                     ].map((step, index) => (
                       <motion.div
@@ -796,13 +785,10 @@ export default function CloudPage() {
                     </div>
                     <div>
                       <h4 className="text-base font-medium text-primary-300 mb-1">
-                        Automatic Delivery Optimization
+                        {t('bulkSending.process.optimization.title')}
                       </h4>
                       <p className="text-sm text-zinc-400">
-                        Our system intelligently manages sending rates to
-                        maximize deliverability, automatically throttling when
-                        needed to ensure your emails reach the inbox, not the
-                        spam folder.
+                        {t('bulkSending.process.optimization.description')}
                       </p>
                     </div>
                   </div>
@@ -832,7 +818,7 @@ export default function CloudPage() {
                   aria-label="Start sending bulk emails"
                 >
                   <span className="relative z-10">
-                    Start Sending Bulk Emails
+                    {t('bulkSending.cta.startSending')}
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-500 transition-opacity opacity-0 group-hover:opacity-100" />
                 </Button>
@@ -858,7 +844,7 @@ export default function CloudPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              Why?
+              {t('why.title')}
             </motion.h1>
             <motion.div
               className="absolute -inset-x-8 top-1/2 -z-10 h-px bg-gradient-to-r from-transparent via-primary-500/30 to-transparent"
@@ -874,9 +860,8 @@ export default function CloudPage() {
           >
             {[
               {
-                title: 'Only true pay-as-you-go service',
-                description:
-                  'Unlike competitors who require subscriptions, we offer genuine pay-as-you-go pricing. Pay only for what you use with no monthly commitments.',
+                title: t('why.reasons.payAsYouGo.title'),
+                description: t('why.reasons.payAsYouGo.description'),
                 icon: (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -895,9 +880,8 @@ export default function CloudPage() {
                 ),
               },
               {
-                title: 'High deliverability',
-                description:
-                  'Our infrastructure ensures your emails reach the inbox, not the spam folder.',
+                title: t('why.reasons.highDeliverability.title'),
+                description: t('why.reasons.highDeliverability.description'),
                 icon: (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -917,9 +901,8 @@ export default function CloudPage() {
                 ),
               },
               {
-                title: 'Easy integration',
-                description:
-                  'Simple API that works with any framework, not just JSX Mail. Send HTML emails from any source.',
+                title: t('why.reasons.easyIntegration.title'),
+                description: t('why.reasons.easyIntegration.description'),
                 icon: (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -941,9 +924,8 @@ export default function CloudPage() {
                 ),
               },
               {
-                title: 'Comprehensive solution',
-                description:
-                  'Email delivery, image hosting, and analytics all in one platform for a seamless workflow.',
+                title: t('why.reasons.comprehensiveSolution.title'),
+                description: t('why.reasons.comprehensiveSolution.description'),
                 icon: (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -1033,7 +1015,7 @@ export default function CloudPage() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                Process
+                {t('howItWorks.header-title')}
               </motion.h2>
               <motion.div
                 className="h-px w-12 bg-gradient-to-r from-transparent via-primary-500 to-transparent"
@@ -1046,13 +1028,13 @@ export default function CloudPage() {
               className="text-4xl font-bold text-center bg-gradient-to-br from-zinc-100 to-zinc-400 text-transparent bg-clip-text"
               variants={fadeInUp}
             >
-              How It Works
+              {t('howItWorks.title')}
             </motion.h1>
             <motion.p
               className="text-center text-sm text-zinc-400"
               variants={fadeInUp}
             >
-              Getting started with JSX Mail Cloud is simple and straightforward.
+              {t('howItWorks.subtitle')}
             </motion.p>
           </motion.div>
 
@@ -1063,9 +1045,8 @@ export default function CloudPage() {
             {[
               {
                 step: 1,
-                title: 'Sign Up',
-                description:
-                  'Create an account on JSX Mail Cloud and get your API key.',
+                title: t('howItWorks.steps.signUp.title'),
+                description: t('howItWorks.steps.signUp.description'),
                 href: 'https://cloud.jsxmail.org/sign-up',
                 icon: (
                   <svg
@@ -1089,9 +1070,8 @@ export default function CloudPage() {
               },
               {
                 step: 2,
-                title: 'Integrate',
-                description:
-                  'Use our API to send emails from your application or use the JSX Mail framework for a seamless experience.',
+                title: t('howItWorks.steps.integrate.title'),
+                description: t('howItWorks.steps.integrate.description'),
                 href: 'https://docs.jsxmail.org/api-reference/introduction',
                 icon: (
                   <svg
@@ -1115,9 +1095,8 @@ export default function CloudPage() {
               },
               {
                 step: 3,
-                title: 'Monitor',
-                description:
-                  'Track your email performance with our comprehensive analytics dashboard.',
+                title: t('howItWorks.steps.monitor.title'),
+                description: t('howItWorks.steps.monitor.description'),
                 href: 'https://cloud.jsxmail.org',
                 icon: (
                   <svg
@@ -1186,11 +1165,10 @@ export default function CloudPage() {
         <div className="flex flex-col gap-8 items-center w-full my-20">
           <div className="flex flex-col gap-3 items-center w-full md:w-7/12 2xl:w-5/12">
             <h1 className="text-3xl font-bold text-center">
-              Compare JSX Mail Cloud
+              {t('comparison.title')}
             </h1>
             <p className="text-center text-sm text-zinc-400">
-              See how JSX Mail Cloud stacks up against other email service
-              providers.
+              {t('comparison.subtitle')}
             </p>
           </div>
 
@@ -1198,7 +1176,9 @@ export default function CloudPage() {
             <table className="w-full min-w-[600px] border-collapse">
               <thead>
                 <tr className="border-b border-zinc-800">
-                  <th className="p-4 text-left">Feature</th>
+                  <th className="p-4 text-left">
+                    {t('comparison.features.title')}
+                  </th>
                   <th className="p-4 text-center">
                     <div className="flex flex-col items-center">
                       <img
@@ -1230,8 +1210,112 @@ export default function CloudPage() {
               </thead>
               <tbody>
                 <tr className="border-b border-zinc-800">
+                  <td className="p-4">{t('comparison.features.payAsYouGo')}</td>
+                  <td className="p-4 text-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-primary-500 mx-auto"
+                    >
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                  </td>
+                  <td className="p-4 text-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-zinc-500 mx-auto"
+                    >
+                      <path d="M18 6 6 18" />
+                      <path d="m6 6 12 12" />
+                    </svg>
+                  </td>
+                  <td className="p-4 text-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-zinc-500 mx-auto"
+                    >
+                      <path d="M18 6 6 18" />
+                      <path d="m6 6 12 12" />
+                    </svg>
+                  </td>
+                </tr>
+                <tr className="border-b border-zinc-800">
+                  <td className="p-4">{t('comparison.features.freeTier')}</td>
+                  <td className="p-4 text-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-primary-500 mx-auto"
+                    >
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                  </td>
+                  <td className="p-4 text-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-primary-500 mx-auto"
+                    >
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                  </td>
+                  <td className="p-4 text-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-primary-500 mx-auto"
+                    >
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                  </td>
+                </tr>
+                <tr className="border-b border-zinc-800">
                   <td className="p-4">
-                    True pay-as-you-go pricing (no subscription required)
+                    {t('comparison.features.imageHosting')}
                   </td>
                   <td className="p-4 text-center">
                     <svg
@@ -1285,111 +1369,9 @@ export default function CloudPage() {
                   </td>
                 </tr>
                 <tr className="border-b border-zinc-800">
-                  <td className="p-4">Free tier</td>
-                  <td className="p-4 text-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-primary-500 mx-auto"
-                    >
-                      <path d="M20 6 9 17l-5-5" />
-                    </svg>
+                  <td className="p-4">
+                    {t('comparison.features.frameworkIntegration')}
                   </td>
-                  <td className="p-4 text-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-primary-500 mx-auto"
-                    >
-                      <path d="M20 6 9 17l-5-5" />
-                    </svg>
-                  </td>
-                  <td className="p-4 text-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-primary-500 mx-auto"
-                    >
-                      <path d="M20 6 9 17l-5-5" />
-                    </svg>
-                  </td>
-                </tr>
-                <tr className="border-b border-zinc-800">
-                  <td className="p-4">Image hosting</td>
-                  <td className="p-4 text-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-primary-500 mx-auto"
-                    >
-                      <path d="M20 6 9 17l-5-5" />
-                    </svg>
-                  </td>
-                  <td className="p-4 text-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-zinc-500 mx-auto"
-                    >
-                      <path d="M18 6 6 18" />
-                      <path d="m6 6 12 12" />
-                    </svg>
-                  </td>
-                  <td className="p-4 text-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-zinc-500 mx-auto"
-                    >
-                      <path d="M18 6 6 18" />
-                      <path d="m6 6 12 12" />
-                    </svg>
-                  </td>
-                </tr>
-                <tr className="border-b border-zinc-800">
-                  <td className="p-4">Framework integration</td>
                   <td className="p-4 text-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -1441,7 +1423,9 @@ export default function CloudPage() {
                   </td>
                 </tr>
                 <tr>
-                  <td className="p-4">Comprehensive analytics</td>
+                  <td className="p-4">
+                    {t('comparison.features.comprehensiveAnalytics')}
+                  </td>
                   <td className="p-4 text-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -1534,7 +1518,7 @@ export default function CloudPage() {
                 viewport={{ once: false }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                Ready to get started?
+                {t('readyToStart.title')}
               </motion.h2>
               <motion.p
                 className="text-base text-zinc-400"
@@ -1543,13 +1527,9 @@ export default function CloudPage() {
                 viewport={{ once: false }}
                 transition={{ duration: 0.6, delay: 0.5 }}
               >
-                Join thousands of developers who trust JSX Mail Cloud - the only
-                true pay-as-you-go email service. No subscriptions, no
-                commitments. Get started for free with{' '}
-                <span className="text-primary-400 font-medium">
-                  {data?.FREE_EMAILS_PER_MONTH?.toLocaleString('en-US')}
-                </span>{' '}
-                emails per month.
+                {t('readyToStart.description', {
+                  count: data?.FREE_EMAILS_PER_MONTH,
+                })}
               </motion.p>
             </div>
           </motion.div>
@@ -1577,7 +1557,9 @@ export default function CloudPage() {
                 className="font-medium px-12 py-6 text-base relative overflow-hidden group"
                 aria-label="Sign up for JSX Mail Cloud"
               >
-                <span className="relative z-10">Sign Up Free</span>
+                <span className="relative z-10">
+                  {t('readyToStart.signUp')}
+                </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-500 transition-opacity opacity-0 group-hover:opacity-100" />
               </Button>
             </motion.div>
@@ -1597,7 +1579,7 @@ export default function CloudPage() {
                 className="font-medium"
                 aria-label="View JSX Mail Cloud Documentation"
               >
-                Learn More
+                {t('readyToStart.learnMore')}
               </Button>
             </motion.div>
           </motion.div>
@@ -1635,7 +1617,7 @@ export default function CloudPage() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                Pricing
+                {t('pricing.header-title')}
               </motion.h2>
               <motion.div
                 className="h-px w-12 bg-gradient-to-r from-transparent via-primary-500 to-transparent"
@@ -1648,14 +1630,13 @@ export default function CloudPage() {
               className="text-4xl font-bold text-center bg-gradient-to-br from-zinc-100 to-zinc-400 text-transparent bg-clip-text"
               variants={fadeInUp}
             >
-              Cloud Pricing
+              {t('pricing.title')}
             </motion.h1>
             <motion.p
               className="text-center text-sm text-zinc-400"
               variants={fadeInUp}
             >
-              True pay-as-you-go pricing. No subscriptions, no commitments. Pay
-              only for what you use.
+              {t('pricing.subtitle')}
             </motion.p>
           </motion.div>
 
@@ -1676,6 +1657,7 @@ export default function CloudPage() {
 }
 
 function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
+  const t = useTranslations('CloudPage.pricing');
   const { data, isPending: isLoadingPricing } = usePricing();
   const emailPricing = data?.EMAIL_PRICING;
 
@@ -1705,7 +1687,7 @@ function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
     const newPricing = [
       {
         amount: jsxMailCloudPricing,
-        period: 'just when you send',
+        period: t('pay-as-you-go'),
         logo: (
           <img
             src="/our-cloud-logo.svg"
@@ -1728,7 +1710,7 @@ function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
                   : value < 700000
                     ? 200
                     : 400,
-        period: 'mo',
+        period: t('monthly'),
         logo: <img src="/resend.svg" className="w-24" alt="Resend logo" />,
         barPercentage: 0,
       },
@@ -1747,7 +1729,7 @@ function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
                     : value <= 750000
                       ? 550
                       : 700,
-        period: 'mo',
+        period: t('monthly'),
         logo: <img src="/mailgun.svg" className="w-24" alt="Mailgun logo" />,
         barPercentage: 0,
       },
@@ -1774,7 +1756,7 @@ function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
   if (!data || !emailPricing) {
     return (
       <div className="flex justify-center items-center h-96">
-        <p>Failed to load pricing data.</p>
+        <p>{t('error-to-fetch-data')}</p>
       </div>
     );
   }
@@ -1830,11 +1812,10 @@ function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
           >
             <div className="space-y-2">
               <h3 className="text-2xl font-semibold bg-gradient-to-br from-zinc-100 to-zinc-400 text-transparent bg-clip-text">
-                Cost Simulator
+                {t('costSimulator.title')}
               </h3>
               <p className="text-sm text-zinc-400">
-                Compare JSX Mail Cloud with other providers and see how much you
-                can save
+                {t('costSimulator.description')}
               </p>
             </div>
           </motion.div>
@@ -1854,10 +1835,10 @@ function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
               <div className="flex flex-col gap-2 md:flex-row md:justify-between md:items-center">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-zinc-300">
-                    Monthly emails
+                    {t('costSimulator.monthlyEmails')}
                   </p>
                   <p className="text-xs text-zinc-500">
-                    Drag the slider or type the amount
+                    {t('costSimulator.dragOrType')}
                   </p>
                 </div>
                 <Input
@@ -1874,9 +1855,11 @@ function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
                   }}
                   className="w-full md:w-36 bg-zinc-800/80 border-zinc-700"
                   endContent={
-                    <span className="text-xs text-zinc-300">emails</span>
+                    <span className="text-xs text-zinc-300">
+                      {t('costSimulator.emails')}
+                    </span>
                   }
-                  aria-label="Number of emails"
+                  aria-label={t('costSimulator.emails')}
                 />
               </div>
 
@@ -2074,14 +2057,12 @@ function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
               </svg>
             </motion.div>
             <h3 className="text-lg font-semibold mb-2 text-primary-300">
-              Free Tier
+              {t('features.freeTier.title')}
             </h3>
             <p className="text-sm text-zinc-400">
-              Get started with{' '}
-              <span className="text-primary-400 font-medium">
-                {data?.FREE_EMAILS_PER_MONTH.toLocaleString('en-US')}
-              </span>{' '}
-              free emails every month. No credit card required.
+              {t('features.freeTier.description', {
+                count: data?.FREE_EMAILS_PER_MONTH,
+              })}
             </p>
           </div>
         </motion.div>
@@ -2133,11 +2114,10 @@ function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
               </svg>
             </motion.div>
             <h3 className="text-lg font-semibold mb-2 text-zinc-100">
-              No Subscriptions
+              {t('features.noSubscriptions.title')}
             </h3>
             <p className="text-sm text-zinc-400">
-              True pay-as-you-go pricing. Only pay for what you use, when you
-              use it.
+              {t('features.noSubscriptions.description')}
             </p>
           </div>
         </motion.div>
@@ -2188,11 +2168,10 @@ function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
               </svg>
             </motion.div>
             <h3 className="text-lg font-semibold mb-2 text-zinc-100">
-              Full Analytics
+              {t('features.fullAnalytics.title')}
             </h3>
             <p className="text-sm text-zinc-400">
-              Track opens, clicks, and delivery metrics with our comprehensive
-              dashboard.
+              {t('features.fullAnalytics.description')}
             </p>
           </div>
         </motion.div>
@@ -2219,7 +2198,7 @@ function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
             className="px-12 py-6 text-base font-medium relative overflow-hidden group"
             aria-label="Sign up for JSX Mail Cloud"
           >
-            <span className="relative z-10">Get Started Free</span>
+            <span className="relative z-10">{t('cta.getStarted')}</span>
             <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-500 transition-opacity opacity-0 group-hover:opacity-100" />
           </Button>
         </motion.div>
@@ -2229,7 +2208,7 @@ function CloudPricing({ cloudUrl }: { cloudUrl: string }) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
-          No credit card required
+          {t('cta.noCreditCard')}
         </motion.p>
       </motion.div>
     </motion.div>
