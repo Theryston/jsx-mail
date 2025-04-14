@@ -119,5 +119,13 @@
         "answer": "Yes, JSX Mail is designed to comply with major email marketing regulations, including the CAN-SPAM Act and GDPR. We provide features that help you manage consent and ensure that your email campaigns adhere to legal requirements."
       }
     }
+  },
+  "Footer": {
+    "links": {
+      "cloud": "Cloud",
+      "docs": "Docs",
+      "github": "GitHub"
+    },
+    "license": "JSX Mail is licensed under MIT"
   }
 }
