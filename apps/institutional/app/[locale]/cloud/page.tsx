@@ -19,7 +19,7 @@ import {
   AnimatePresence,
 } from 'framer-motion';
 import { getCloudUrl } from '@/lib/utils';
-import { useUtmInfo } from '../utm-context';
+import { useUtmInfo } from '@/app/utm-context';
 
 export default function CloudPage() {
   const { data } = usePricing();
