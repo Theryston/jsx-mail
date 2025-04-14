@@ -86,7 +86,23 @@ export class CreateUserService {
     delete user.password;
     delete user.deletedAt;
 
+    const response = {
+      message: 'User created successfully',
+      user,
+    };
+
     if (utmGroupId) {
+      const utmGroup = await this.prisma.userUtmGroup.findUnique({
+        where: {
+          id: utmGroupId,
+        },
+      });
+
+      if (!utmGroup) {
+        response.message = 'UTM group not found but user was created';
+        return response;
+      }
+
       await this.prisma.userUtmGroup.update({
         where: {
           id: utmGroupId,
@@ -110,9 +126,6 @@ export class CreateUserService {
       });
     }
 
-    return {
-      message: 'User created successfully',
-      user,
-    };
+    return response;
   }
 }
