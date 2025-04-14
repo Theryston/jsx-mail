@@ -839,7 +839,7 @@ export default function CloudPage() {
         >
           <motion.div className="relative" variants={fadeInUp}>
             <motion.h1
-              className="text-primary-400 font-bold text-7xl md:text-8xl"
+              className="text-primary-400 font-bold text-7xl md:text-8xl text-nowrap"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
