@@ -1,4 +1,6 @@
-import { getTranslations } from 'next-intl/server';
+'use client';
+
+import { useTranslations } from 'next-intl';
 
 const REASON_KEYS = [
   'fully-integrated',
@@ -7,8 +9,8 @@ const REASON_KEYS = [
   'developer-friendly',
 ] as const;
 
-export default async function Why() {
-  const t = await getTranslations('Why');
+export default function Why() {
+  const t = useTranslations('Why');
 
   return (
     <div
