@@ -39,6 +39,10 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   utmGroupId?: string;
+
+  @IsOptional()
+  @IsPhoneNumber()
+  phone?: string;
 }
 
 export class UseSecurityCodeDto {

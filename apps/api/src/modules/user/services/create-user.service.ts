@@ -27,6 +27,7 @@ export class CreateUserService {
     ipAddress,
     turnstileToken,
     utmGroupId,
+    phone,
   }: CreateUserDto & { fingerprint: string; ipAddress: string }) {
     email = email.toLocaleLowerCase().trim();
     name = name.toLocaleLowerCase().trim();
@@ -80,6 +81,7 @@ export class CreateUserService {
         password: hashPassword,
         fingerprint,
         ipAddress,
+        phone,
       },
     });
 

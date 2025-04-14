@@ -22,6 +22,8 @@ import { toast } from '@jsx-mail/ui/sonner';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { sendGTMEvent } from '@next/third-parties/google';
 import { Turnstile } from 'next-turnstile';
+import PhoneInput from 'react-phone-number-input/react-hook-form-input';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 
 const signUpScheme = z
   .object({
@@ -29,6 +31,19 @@ const signUpScheme = z
     email: z.string({ required_error: 'Email is required' }).email({
       message: 'Invalid email address',
     }),
+    phone: z
+      .string()
+      .optional()
+      .nullable()
+      .refine(
+        (value) => {
+          if (!value) return true;
+          return isValidPhoneNumber(value);
+        },
+        {
+          message: 'Invalid phone number',
+        },
+      ),
     password: z
       .string({ required_error: 'Password is required' })
       .min(8, { message: 'Password must be at least 8 characters' }),
@@ -67,7 +82,7 @@ export default function SignUp() {
   };
 
   const onSubmit = useCallback(
-    async ({ name, email, password }: SignUpForm) => {
+    async ({ name, email, phone, password }: SignUpForm) => {
       if (!turnstileToken) {
         toast.error('Please complete the captcha');
         return;
@@ -79,6 +94,7 @@ export default function SignUp() {
         await signUp({
           name,
           email,
+          phone: phone || undefined,
           password,
           utmGroupId: utmGroupId || undefined,
           turnstileToken,
@@ -132,6 +148,23 @@ export default function SignUp() {
               <FormItem className="flex flex-col gap-2 w-full text-left">
                 <FormControl>
                   <Input placeholder="Enter your email" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem className="flex flex-col gap-2 w-full text-left">
+                <FormControl>
+                  <PhoneInput
+                    {...field}
+                    placeholder="Enter your phone number"
+                    inputComponent={Input}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -31,6 +31,7 @@ export function useSignUp() {
       password: string;
       turnstileToken: string;
       utmGroupId?: string;
+      phone?: string;
     }) => await api.post('/user', data),
   });
 }
