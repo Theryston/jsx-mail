@@ -1,0 +1,123 @@
+{
+  "Header": {
+    "cloud": "Cloud",
+    "what-is": "What's?",
+    "why": "Why?",
+    "pricing": "Pricing",
+    "faq": "FAQ"
+  },
+  "HomePage": {
+    "hero": {
+      "github": "Our github with the MIT code",
+      "title": {
+        "one-tool": "One Tool.",
+        "one-seamless": "One Seamless",
+        "email-workflow": "Email Workflow"
+      },
+      "subtitle": "The complete solution for your email flow, combining a modern framework for template creation with the most efficient and cost-effective cloud for email delivery.",
+      "docs": "View Documentation",
+      "cloud": "Go to JSX Mail Cloud"
+    }
+  },
+  "Whats": {
+    "title": "What's JSX Mail?",
+    "description": "JSX Mail is not just a framework, a library, or a cloud service. It is a complete email workflow tool that allows you to build emails, send emails, host your images, and much more.",
+    "cloud": {
+      "title": "Cloud",
+      "description": "Send email, host images, get analytics from your email campaigns..."
+    },
+    "framework": {
+      "title": "Framework",
+      "description": "A modern framework for creating email templates"
+    }
+  },
+  "Why": {
+    "title": "Why?",
+    "reasons": {
+      "fully-integrated": {
+        "title": "Fully integrated",
+        "description": "JSX Mail is a complete email workflow tool that lets you do everything in one place without needing other tools."
+      },
+      "simple-usage": {
+        "title": "Simple usage",
+        "description": "With full integration, JSX Mail is easy to use; for example: with images, just add images to your project, and it optimizes, hosts, and inserts them automatically into the final email."
+      },
+      "compatibility": {
+        "title": "Compatibility",
+        "description": "JSX Mail is compatible with all email clients, converting JSX code into HTML and adapting tags for universal support."
+      },
+      "developer-friendly": {
+        "title": "Developer friendly",
+        "description": "Designed with developers in mind, JSX Mail enhances the coding experience, focusing on efficient email development."
+      }
+    }
+  },
+  "Pricing": {
+    "period": {
+      "month": "mo",
+      "pay-as-you-go": "just when you send"
+    },
+    "title": "Pricing",
+    "framework": {
+      "title": "Framework",
+      "price": "Free",
+      "period": "Forever",
+      "button": "Documentation",
+      "features": {
+        "jsx-syntax": "Create email templates with JSX syntax",
+        "preview": "Preview your email templates in real time",
+        "compatibility": "Get compatibility with all email clients",
+        "images": "Optimize and host the images of your email templates"
+      }
+    },
+    "cloud": {
+      "title": "Cloud",
+      "button": "Go to cloud",
+      "features": {
+        "free-emails": "The first {count, number} of each month are free",
+        "pay-as-you-go": "Send emails with pay-as-you-go pricing",
+        "host-images": "Host your email template images",
+        "insights": "Stay on top of your email sending insights"
+      }
+    },
+    "emails": "Emails",
+    "monthly": "Mo"
+  },
+  "Faq": {
+    "title": "FAQ",
+    "questions": {
+      "pricing-subscription": {
+        "question": "Is the pricing a subscription?",
+        "answer": "No, the JSX Mail Cloud is a pay-as-you-go service. You only pay for what you use, and there are no subscription fees."
+      },
+      "use-with-other-frameworks": {
+        "question": "Can I use JSX Mail Cloud with other frameworks?",
+        "answer": "Yes, you can see into the <apiReference>API Reference</apiReference> the JSX Mail Cloud if just a API that you call by giving a HTML body, and we will send it for you. So you can use any framework to build your email, and then just send it to JSX Mail Cloud."
+      },
+      "use-framework-with-other-providers": {
+        "question": "Can I use JSX Mail framework with other sending providers?",
+        "answer": "Yes, as you can see into the <renderingDocs>rendering documentation</renderingDocs>, you can use the JSX Mail framework just for generating the HTML body, and then you can use any sending provider to send your email. You can also <zipDocs>get the files as images</zipDocs> and then add it to any email platform that need a zip file."
+      },
+      "use-with-other-languages": {
+        "question": "Can I use the JSX Mail Cloud with other languages?",
+        "answer": "Yes, you can use the JSX Mail Cloud with any language that can send a HTTP request, like: JavaScript/Node.js, Python, PHP, Ruby, Go, Rust, Java, C#, etc."
+      },
+      "large-scale-campaigns": {
+        "question": "Is JSX Mail Cloud suitable for large-scale email campaigns?",
+        "answer": "Yes, JSX Mail is designed to handle large-scale email campaigns efficiently. You can leverage the Cloud features to manage and send bulk emails seamlessly."
+      },
+      "support": {
+        "question": "What kind of support is available for JSX Mail?",
+        "answer": "We offer community support through our <githubDiscussions>github discussions</githubDiscussions> and you can also contact our <supportTeam>support team</supportTeam> for more personalized assistance."
+      },
+      "email-limits": {
+        "question": "Is there a limit to the number of emails I can send?",
+        "answer": "There are no hard limits on the number of emails you can send, but we recommend checking our pricing page for any applicable usage policies."
+      },
+      "compliance": {
+        "question": "Does JSX Mail comply with email marketing regulations?",
+        "answer": "Yes, JSX Mail is designed to comply with major email marketing regulations, including the CAN-SPAM Act and GDPR. We provide features that help you manage consent and ensure that your email campaigns adhere to legal requirements."
+      }
+    }
+  }
+}

@@ -5,11 +5,13 @@ import { Button } from '@heroui/button';
 import { useEffect, useState } from 'react';
 import { getCloudUrl } from '@/lib/utils';
 import { useUtmInfo } from '@/app/utm-context';
+import { useTranslations } from 'next-intl';
 
 export default function Hero() {
   const [bottom, setBottom] = useState(0);
   const [cloudUrl, setCloudUrl] = useState('');
   const { utmGroupId } = useUtmInfo();
+  const t = useTranslations('HomePage.hero');
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -52,25 +54,27 @@ export default function Hero() {
             fontSize: '10px',
             lineHeight: '10px',
           }}
-          aria-label="Visit our GitHub repository with MIT license"
+          aria-label={t('github')}
         >
-          Our github with the MIT code
+          {t('github')}
         </Link>
 
         <div className="flex flex-col items-center gap-4">
           <h1 className="hidden md:block text-7xl 2xl:text-8xl font-bold text-center bg-gradient-to-br from-primary-900 to-primary-700 text-transparent bg-clip-text">
-            One Tool. One Seamless <br /> Email Workflow
+            {t('title.one-tool')} {t('title.one-seamless')} <br />{' '}
+            {t('title.email-workflow')}
           </h1>
 
           <h1 className="md:hidden text-4xl font-bold text-center bg-gradient-to-br from-primary-900 to-primary-700 text-transparent bg-clip-text">
-            One Tool.
-            <br /> One Seamless <br /> Email Workflow
+            {t('title.one-tool')}
+            <br />
+            {t('title.one-seamless')}
+            <br />
+            {t('title.email-workflow')}
           </h1>
 
           <p className="text-center w-full text-xs 2xl:text-sm md:text-sm md:w-7/12">
-            The complete solution for your email flow, combining a modern
-            framework for template creation with the most efficient and
-            cost-effective cloud for email delivery.
+            {t('subtitle')}
           </p>
         </div>
       </div>
@@ -91,7 +95,7 @@ export default function Hero() {
           size="sm"
           aria-label="Go to JSX Mail Cloud"
         >
-          Cloud
+          {t('cloud')}
         </Button>
         <Button
           color="primary"
@@ -103,7 +107,7 @@ export default function Hero() {
           size="sm"
           aria-label="View JSX Mail Documentation"
         >
-          Docs
+          {t('docs')}
         </Button>
       </div>
     </div>

@@ -3,6 +3,9 @@ import { Metadata, Viewport } from 'next';
 import { GoogleTagManager } from '@next/third-parties/google';
 import { Poppins as Font } from 'next/font/google';
 import clsx from 'clsx';
+import { NextIntlClientProvider, hasLocale } from 'next-intl';
+import { notFound } from 'next/navigation';
+import { routing } from '@/i18n/routing';
 
 import { Providers } from './providers';
 
@@ -27,19 +30,29 @@ const font = Font({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <head />
       <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || ''} />
       <body className={clsx('min-h-screen bg-background', font.className)}>
-        <Providers themeProps={{ attribute: 'class', defaultTheme: 'dark' }}>
-          {children}
-        </Providers>
+        <NextIntlClientProvider>
+          <Providers themeProps={{ attribute: 'class', defaultTheme: 'dark' }}>
+            {children}
+          </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
