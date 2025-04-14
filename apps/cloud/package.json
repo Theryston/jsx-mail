@@ -21,7 +21,7 @@
     "crisp-sdk-web": "^1.0.25",
     "date-fns": "^4.1.0",
     "moment": "^2.30.1",
-    "next": "15.2.1",
+    "next": "15.2.4",
     "next-nprogress-bar": "^2.4.7",
     "next-turnstile": "^1.0.2",
     "novel": "^1.0.2",
