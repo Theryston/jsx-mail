@@ -225,3 +225,12 @@ export function useGetBlockedPermissions(userId: string) {
       api.get(`/user/blocked-permissions/${userId}`).then((res) => res.data),
   });
 }
+
+export function useCheckEmail() {
+  return useMutation({
+    mutationFn: (data: { email: string }) =>
+      api
+        .post<{ exists: boolean }>('/user/check-email', data)
+        .then((res) => res.data),
+  });
+}

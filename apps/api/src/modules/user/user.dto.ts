@@ -20,9 +20,6 @@ import {
 export class CreateUserDto {
   @IsNotEmpty()
   @Length(3, 100)
-  @Matches(/^[a-zA-Z]+(?:\s[a-zA-Z]+)+$/, {
-    message: 'Please enter a valid full name',
-  })
   name: string;
 
   @IsNotEmpty()
@@ -30,7 +27,7 @@ export class CreateUserDto {
   email: string;
 
   @IsNotEmpty()
-  @Length(6, 100)
+  @Length(6, 200)
   password: string;
 
   @IsNotEmpty()
@@ -43,6 +40,12 @@ export class CreateUserDto {
   @IsOptional()
   @IsPhoneNumber()
   phone?: string;
+}
+
+export class CheckEmailDto {
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 }
 
 export class UseSecurityCodeDto {
