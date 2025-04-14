@@ -19,6 +19,7 @@ import {
   CreateCheckoutDto,
   CreateSecurityCodeDto,
   CreateUserDto,
+  CreateUtmDto,
   GetUsersDto,
   ImpersonateUserDto,
   ListMessagesDto,
@@ -59,6 +60,7 @@ import { GetSettingsService } from './services/get-settings.service';
 import { UpdateDefaultSettingsService } from './services/update-default-settings.service';
 import { UpdateUserSettingsService } from './services/update-user-settings.service';
 import { DeleteUserSettingsService } from './services/delete-user-settings.service';
+import { CreateUtmOrViewService } from './services/create-utm-or-view.service';
 
 @Controller('user')
 export class UserController {
@@ -87,6 +89,7 @@ export class UserController {
     private readonly updateDefaultSettingsService: UpdateDefaultSettingsService,
     private readonly updateUserSettingsService: UpdateUserSettingsService,
     private readonly deleteUserSettingsService: DeleteUserSettingsService,
+    private readonly createUtmOrViewService: CreateUtmOrViewService,
   ) {}
 
   @Get('admin/users')
@@ -323,5 +326,10 @@ export class UserController {
   @Permissions([PERMISSIONS.OTHER_DELETE_USER_SETTINGS.value])
   deleteUserSettings(@Param('userId') userId: string) {
     return this.deleteUserSettingsService.execute(userId);
+  }
+
+  @Post('utm')
+  createUtm(@Body() data: CreateUtmDto) {
+    return this.createUtmOrViewService.execute(data);
   }
 }

@@ -74,10 +74,15 @@ export default function SignUp() {
       }
 
       try {
-        const utmParams = localStorage.getItem('utm_params');
-        const utm = utmParams ? JSON.parse(utmParams) : undefined;
+        const utmGroupId = localStorage.getItem('utmGroupId');
 
-        await signUp({ name, email, password, utm, turnstileToken });
+        await signUp({
+          name,
+          email,
+          password,
+          utmGroupId: utmGroupId || undefined,
+          turnstileToken,
+        });
 
         sendGTMEvent({ event: 'sign_up' });
 

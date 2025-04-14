@@ -106,7 +106,7 @@ export class EmailProcessor extends WorkerHost {
 
     console.log(`[EMAIL_PROCESSOR] sending email: ${dataLog}`);
 
-    const { from, filesIds } = data;
+    const { from, attachmentIds } = data;
 
     let to: string[] = data.to;
 
@@ -180,9 +180,9 @@ export class EmailProcessor extends WorkerHost {
             },
           },
           createdDay: moment().format('YYYY-MM-DD'),
-          messageFiles: filesIds
+          messageFiles: attachmentIds
             ? {
-                create: filesIds.map((fileId) => ({
+                create: attachmentIds.map((fileId) => ({
                   file: {
                     connect: {
                       id: fileId,
@@ -330,9 +330,9 @@ export class EmailProcessor extends WorkerHost {
 
     let attachments: any[] = [];
 
-    if (filesIds) {
+    if (attachmentIds) {
       const files = await this.prisma.file.findMany({
-        where: { id: { in: filesIds } },
+        where: { id: { in: attachmentIds } },
       });
 
       for (const file of files) {
@@ -346,6 +346,23 @@ export class EmailProcessor extends WorkerHost {
           filename: file.originalName,
           content: base64,
           encoding: 'base64',
+        });
+      }
+    }
+
+    if (data.attachments) {
+      for (const attachment of data.attachments) {
+        attachments.push({
+          filename: attachment.fileName,
+          content: attachment.content,
+          encoding: 'base64',
+        });
+
+        await this.prisma.messageAttachment.create({
+          data: {
+            messageId: messageId,
+            fileName: attachment.fileName,
+          },
         });
       }
     }

@@ -18,6 +18,19 @@ export type StatusHistory = {
 
 export type FullMessage = Message & {
   statusHistory: StatusHistory[];
+  attachments: {
+    id: string;
+    fileName: string;
+  }[];
+  messageFiles: {
+    file: {
+      id: string;
+      mimeType: string;
+      originalName: string;
+      size: number;
+      url: string;
+    };
+  }[];
   body: string; // The HTML body of the message
   sender: {
     email: string;

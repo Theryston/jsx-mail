@@ -1,6 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
-import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { SenderSendEmailDto } from '../sender.dto';
 import { messageSelect } from 'src/utils/public-selects';
@@ -14,7 +13,6 @@ import { GetUserLimitsService } from 'src/modules/user/services/get-user-limits.
 export class SenderSendEmailService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly getBalanceService: GetBalanceService,
     private readonly sendEmailService: SendEmailService,
     private readonly betaPermissionCheckService: BetaPermissionCheckService,
     private readonly getUserLimitsService: GetUserLimitsService,
@@ -26,15 +24,20 @@ export class SenderSendEmailService {
       html,
       subject,
       to,
-      filesIds,
+      attachmentIds,
+      attachments,
       bulkSendingId,
       customPayload,
       contactId,
       delay,
+      priority,
     }: SenderSendEmailDto,
     userId: string,
   ) {
-    if (filesIds && filesIds.length > 0) {
+    if (
+      (attachmentIds && attachmentIds.length > 0) ||
+      (attachments && attachments.length > 0)
+    ) {
       await this.betaPermissionCheckService.execute(userId, [
         PERMISSIONS.SELF_SEND_EMAIL_WITH_ATTACHMENTS.value,
       ]);
@@ -87,9 +90,9 @@ export class SenderSendEmailService {
         userId,
         contactId,
         createdDay: moment().format('YYYY-MM-DD'),
-        messageFiles: filesIds
+        messageFiles: attachmentIds
           ? {
-              create: filesIds.map((fileId) => ({
+              create: attachmentIds.map((fileId) => ({
                 file: {
                   connect: {
                     id: fileId,
@@ -123,10 +126,12 @@ export class SenderSendEmailService {
       subject,
       to,
       messageId: message.id,
-      filesIds,
+      attachmentIds,
+      attachments,
       bulkSendingId,
       customPayload,
       delay,
+      priority,
     });
 
     return message;

@@ -5,30 +5,33 @@ import Why from '@/components/Why';
 import Pricing from '@/components/Pricing';
 import Faq from '@/components/Faq';
 import Footer from '@/components/Footer';
+import { getTranslations } from 'next-intl/server';
 
-export default function Home() {
+export default async function Home() {
+  const t = await getTranslations('Header');
+
   return (
     <main className="flex flex-col">
       <Header
         menuItems={[
           {
-            label: 'Cloud',
+            label: t('cloud'),
             href: '/cloud',
           },
           {
-            label: "What's?",
+            label: t('what-is'),
             href: '#whats',
           },
           {
-            label: 'Why?',
+            label: t('why'),
             href: '#why',
           },
           {
-            label: 'Pricing',
+            label: t('pricing'),
             href: '#pricing',
           },
           {
-            label: 'FAQ',
+            label: t('faq'),
             href: '#faq',
           },
         ]}

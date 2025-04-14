@@ -54,17 +54,9 @@ function UTMProvider({ children }: { children: React.ReactNode }) {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const utmParams: Record<string, string> = {};
+    const utmGroupId = searchParams.get('utmGroupId');
 
-    searchParams.forEach((value, key) => {
-      if (key.startsWith('utm_')) {
-        utmParams[key] = value;
-      }
-    });
-
-    if (Object.keys(utmParams).length > 0) {
-      localStorage.setItem('utm_params', JSON.stringify(utmParams));
-    }
+    if (utmGroupId) localStorage.setItem('utmGroupId', utmGroupId);
   }, [searchParams]);
 
   return <>{children}</>;

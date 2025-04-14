@@ -1046,12 +1046,30 @@
             "example": "sender@jsxmail.org",
             "description": "Optional email address of the sender. If not provided, the most recently created sender will be used."
           },
-          "filesIds": {
+          "attachmentIds": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Optional array of file IDs to attach to the email. This is in a close beta and requires a special permission. Contact support to get access."
+            "description": "Optional array of files IDs to attach to the email. This is in a close beta and requires a special permission. Contact support to get access."
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["fileName", "content"],
+              "properties": {
+                "fileName": {
+                  "type": "string",
+                  "description": "The name of the file to be attached"
+                },
+                "content": {
+                  "type": "string",
+                  "description": "The base64 encoded content of the file"
+                }
+              }
+            },
+            "description": "Optional array of temporary attachments. These attachments will not be stored in the database and will be used only for this email."
           },
           "bulkSendingId": {
             "type": "string",
@@ -1070,6 +1088,12 @@
             "type": "string",
             "example": "a1b2c3d4-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
             "description": "Optional ID of a contact to associate the email with."
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["normal", "high"],
+            "default": "normal",
+            "description": "Optional priority of the email. 'high' priority emails will be processed before 'normal' priority emails in the queue."
           }
         }
       },

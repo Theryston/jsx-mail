@@ -40,6 +40,16 @@ export class GetUsersService {
             utmValue: true,
           },
         },
+        userUtmGroups: {
+          select: {
+            views: {
+              select: {
+                id: true,
+                url: true,
+              },
+            },
+          },
+        },
       },
     });
 

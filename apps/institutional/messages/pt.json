@@ -1,0 +1,313 @@
+{
+  "Header": {
+    "cloud": "Cloud",
+    "what-is": "O que é?",
+    "why": "Por quê?",
+    "pricing": "Preços",
+    "faq": "FAQ"
+  },
+  "HomePage": {
+    "hero": {
+      "github": "Nosso github com o código MIT",
+      "title": {
+        "one-tool": "Uma Ferramenta.",
+        "one-seamless": "Um Fluxo",
+        "email-workflow": "Contínuo de E-mails"
+      },
+      "subtitle": "A solução completa para seu fluxo de e-mails, combinando um framework moderno para criação de templates com a cloud mais eficiente e econômica para entrega de e-mails.",
+      "docs": "Ver Documentação",
+      "cloud": "Ir para JSX Mail Cloud"
+    }
+  },
+  "Whats": {
+    "title": "O que é JSX Mail?",
+    "description": "JSX Mail não é apenas um framework, uma biblioteca ou um serviço em cloud. É uma ferramenta completa de fluxo de e-mails que permite criar e-mails, enviar e-mails, hospedar suas imagens e muito mais.",
+    "cloud": {
+      "title": "Cloud",
+      "description": "Envie e-mails, hospede imagens, obtenha análises de suas campanhas de e-mail..."
+    },
+    "framework": {
+      "title": "Framework",
+      "description": "Um framework moderno para criar templates de e-mail"
+    }
+  },
+  "Why": {
+    "title": "Por quê?",
+    "reasons": {
+      "fully-integrated": {
+        "title": "Totalmente integrado",
+        "description": "JSX Mail é uma ferramenta completa de fluxo de e-mails que permite fazer tudo em um só lugar sem precisar de outras ferramentas."
+      },
+      "simple-usage": {
+        "title": "Uso simples",
+        "description": "Com integração total, JSX Mail é fácil de usar; por exemplo: com imagens, basta adicionar imagens ao seu projeto, e ele otimiza, hospeda e as insere automaticamente no e-mail final."
+      },
+      "compatibility": {
+        "title": "Compatibilidade",
+        "description": "JSX Mail é compatível com todos os clientes de e-mail, convertendo código JSX em HTML e adaptando tags para suporte universal."
+      },
+      "developer-friendly": {
+        "title": "Amigável para desenvolvedores",
+        "description": "Projetado pensando nos desenvolvedores, JSX Mail melhora a experiência de codificação, focando no desenvolvimento eficiente de e-mails."
+      }
+    }
+  },
+  "Pricing": {
+    "period": {
+      "month": "mês",
+      "pay-as-you-go": "apenas quando você envia"
+    },
+    "title": "Preços",
+    "framework": {
+      "title": "Framework",
+      "price": "Grátis",
+      "period": "Para sempre",
+      "button": "Documentação",
+      "features": {
+        "jsx-syntax": "Crie templates de e-mail com sintaxe JSX",
+        "preview": "Visualize seus templates de e-mail em tempo real",
+        "compatibility": "Obtenha compatibilidade com todos os clientes de e-mail",
+        "images": "Otimize e hospede as imagens dos seus templates de e-mail"
+      }
+    },
+    "cloud": {
+      "title": "Cloud",
+      "button": "Ir para cloud",
+      "features": {
+        "free-emails": "Os primeiros {count, number} de cada mês são gratuitos",
+        "pay-as-you-go": "Envie e-mails com preços pay-as-you-go",
+        "host-images": "Hospede as imagens dos seus templates de e-mail",
+        "insights": "Acompanhe as análises do envio de seus e-mails"
+      }
+    },
+    "emails": "E-mails",
+    "monthly": "Mês"
+  },
+  "Faq": {
+    "title": "Perguntas Frequentes",
+    "questions": {
+      "pricing-subscription": {
+        "question": "O preço é uma assinatura?",
+        "answer": "Não, o JSX Mail Cloud é um serviço pay-as-you-go. Você paga apenas pelo que usa, e não há taxas de assinatura."
+      },
+      "use-with-other-frameworks": {
+        "question": "Posso usar o JSX Mail Cloud com outros frameworks?",
+        "answer": "Sim, você pode ver na <apiReference>Referência da API</apiReference> que o JSX Mail Cloud é apenas uma API que você chama fornecendo um corpo HTML, e nós o enviaremos para você. Então você pode usar qualquer framework para criar seu e-mail e depois apenas enviá-lo para o JSX Mail Cloud."
+      },
+      "use-framework-with-other-providers": {
+        "question": "Posso usar o framework JSX Mail com outros provedores de envio?",
+        "answer": "Sim, como você pode ver na <renderingDocs>documentação de renderização</renderingDocs>, você pode usar o framework JSX Mail apenas para gerar o corpo HTML, e depois pode usar qualquer provedor de envio para enviar seu e-mail. Você também pode <zipDocs>obter os arquivos como imagens</zipDocs> e depois adicioná-los a qualquer plataforma de e-mail que precise de um arquivo zip."
+      },
+      "use-with-other-languages": {
+        "question": "Posso usar o JSX Mail Cloud com outras linguagens?",
+        "answer": "Sim, você pode usar o JSX Mail Cloud com qualquer linguagem que possa enviar uma requisição HTTP, como: JavaScript/Node.js, Python, PHP, Ruby, Go, Rust, Java, C#, etc."
+      },
+      "large-scale-campaigns": {
+        "question": "O JSX Mail Cloud é adequado para campanhas de e-mail em larga escala?",
+        "answer": "Sim, o JSX Mail foi projetado para lidar com campanhas de e-mail em larga escala de forma eficiente. Você pode aproveitar os recursos da Cloud para gerenciar e enviar e-mails em massa de forma contínua."
+      },
+      "support": {
+        "question": "Que tipo de suporte está disponível para o JSX Mail?",
+        "answer": "Oferecemos suporte comunitário através de nossas <githubDiscussions>discussões no github</githubDiscussions> e você também pode entrar em contato com nossa <supportTeam>equipe de suporte</supportTeam> para assistência mais personalizada."
+      },
+      "email-limits": {
+        "question": "Existe um limite para o número de e-mails que posso enviar?",
+        "answer": "Não há limites rígidos para o número de e-mails que você pode enviar, mas recomendamos verificar nossa página de preços para quaisquer políticas de uso aplicáveis."
+      },
+      "compliance": {
+        "question": "O JSX Mail está em conformidade com as regulamentações de marketing por e-mail?",
+        "answer": "Sim, o JSX Mail foi projetado para estar em conformidade com as principais regulamentações de marketing por e-mail, incluindo a Lei CAN-SPAM e o GDPR. Fornecemos recursos que ajudam você a gerenciar o consentimento e garantir que suas campanhas de e-mail estejam em conformidade com os requisitos legais."
+      }
+    }
+  },
+  "Footer": {
+    "links": {
+      "cloud": "Cloud",
+      "docs": "Documentação",
+      "github": "GitHub"
+    },
+    "license": "JSX Mail é licenciado sob MIT"
+  },
+  "CloudPage": {
+    "header": {
+      "home": "Início",
+      "features": "Recursos",
+      "why": "Por quê?",
+      "pricing": "Preços",
+      "faq": "Perguntas Frequentes"
+    },
+    "hero": {
+      "title": "JSX Mail Cloud",
+      "subtitle": "A cloud mais eficiente e econômica para entrega de e-mails, hospedagem de imagens e análises de campanhas.",
+      "cta": {
+        "signUp": "Cadastre-se",
+        "docs": "Ver Documentação"
+      }
+    },
+    "features": {
+      "title": "Recursos",
+      "subtitle": "O JSX Mail Cloud fornece tudo o que você precisa para seu fluxo de e-mails, desde o envio de e-mails até a hospedagem de imagens e o acompanhamento de análises.",
+      "items": {
+        "emailDelivery": {
+          "title": "Entrega de E-mails",
+          "description": "Envie e-mails com confiabilidade, altas taxas de entrega e acompanhamento em tempo real."
+        },
+        "imageHosting": {
+          "title": "Hospedagem de Imagens",
+          "description": "Otimize e hospede automaticamente imagens para suas campanhas de e-mail com entrega global por CDN."
+        },
+        "analytics": {
+          "title": "Análises",
+          "description": "Acompanhe aberturas, cliques e outras métricas de engajamento para otimizar suas campanhas de e-mail."
+        }
+      }
+    },
+    "bulkSending": {
+      "header-title": "Comunicações em Massa",
+      "title": "Envio em Massa Simplificado",
+      "subtitle": "Alcance milhares de destinatários com apenas alguns cliques",
+      "contactManagement": {
+        "title": "Gerenciamento Poderoso de Contatos",
+        "features": {
+          "importCsv": {
+            "title": "Importar CSV",
+            "description": "Faça upload de milhares de contatos de uma vez com uma simples importação CSV"
+          },
+          "groupManagement": {
+            "title": "Gerenciamento de Grupos",
+            "description": "Organize contatos em grupos segmentados para segmentação precisa"
+          },
+          "automaticDeduplication": {
+            "title": "Deduplicação Automática",
+            "description": "Sistema inteligente remove duplicatas para manter listas de contatos limpas"
+          },
+          "advancedFiltering": {
+            "title": "Filtragem Avançada",
+            "description": "Segmentação específica baseada em comportamento ou demografia"
+          }
+        }
+      },
+      "process": {
+        "title": "De Centenas a Milhares em Minutos",
+        "description": "Nosso sistema de e-mail em massa foi projetado para escala, permitindo que você alcance todo o seu público sem complexidade. Perfeito para newsletters, anúncios ou campanhas de marketing.",
+        "steps": {
+          "createGroup": {
+            "title": "Crie Seu Grupo de Contatos",
+            "description": "Comece criando um novo grupo de contatos em seu painel. Dê um nome significativo que reflita seu segmento de público."
+          },
+          "importContacts": {
+            "title": "Importe Seus Contatos",
+            "description": "Faça upload de sua lista de contatos via arquivo CSV ou use nossa API para adicionar assinantes programaticamente. Nosso sistema lida automaticamente com duplicatas e valida formatos de e-mail."
+          },
+          "designCampaign": {
+            "title": "Projete Sua Campanha",
+            "description": "Use nosso editor intuitivo, JSX Mail Framework ou HTML para criar e-mails bonitos e responsivos que ficam ótimos em qualquer dispositivo."
+          },
+          "sendAndTrack": {
+            "title": "Envie e Acompanhe",
+            "description": "Envie sua campanha e acompanhe análises em tempo real enquanto seu público interage com seu conteúdo."
+          }
+        },
+        "optimization": {
+          "title": "Otimização Automática de Entrega",
+          "description": "Nosso sistema gerencia inteligentemente as taxas de envio para maximizar a entrega, limitando automaticamente quando necessário para garantir que seus e-mails cheguem à caixa de entrada, não à pasta de spam."
+        }
+      },
+      "cta": {
+        "startSending": "Comece a Enviar E-mails em Massa"
+      }
+    },
+    "why": {
+      "title": "Por quê?",
+      "reasons": {
+        "payAsYouGo": {
+          "title": "Único serviço pay-as-you-go de verdade",
+          "description": "Diferente dos concorrentes que exigem assinaturas, oferecemos preços genuinamente pay-as-you-go. Pague apenas pelo que usar, sem compromissos mensais."
+        },
+        "highDeliverability": {
+          "title": "Alta taxa de entrega",
+          "description": "Nossa infraestrutura garante que seus e-mails cheguem à caixa de entrada, não à pasta de spam."
+        },
+        "easyIntegration": {
+          "title": "Integração fácil",
+          "description": "API simples que funciona com qualquer framework, não apenas JSX Mail. Envie e-mails HTML de qualquer fonte."
+        },
+        "comprehensiveSolution": {
+          "title": "Solução abrangente",
+          "description": "Entrega de e-mails, hospedagem de imagens e análises em uma única plataforma para um fluxo de trabalho contínuo."
+        }
+      }
+    },
+    "howItWorks": {
+      "header-title": "Processo",
+      "title": "Como Funciona",
+      "subtitle": "Começar com o JSX Mail Cloud é simples e direto.",
+      "steps": {
+        "signUp": {
+          "title": "Cadastre-se",
+          "description": "Crie uma conta no JSX Mail Cloud e obtenha sua chave de API."
+        },
+        "integrate": {
+          "title": "Integre",
+          "description": "Use nossa API para enviar e-mails de sua aplicação ou use o framework JSX Mail para uma experiência contínua."
+        },
+        "monitor": {
+          "title": "Monitore",
+          "description": "Acompanhe o desempenho de seus e-mails com nosso painel de análises abrangente."
+        }
+      }
+    },
+    "comparison": {
+      "title": "Compare o JSX Mail Cloud",
+      "subtitle": "Veja como o JSX Mail Cloud se compara a outros provedores de serviço de e-mail.",
+      "features": {
+        "title": "Recursos",
+        "payAsYouGo": "Preços verdadeiramente pay-as-you-go (sem assinatura necessária)",
+        "freeTier": "Camada gratuita",
+        "imageHosting": "Hospedagem de imagens",
+        "frameworkIntegration": "Integração com framework",
+        "comprehensiveAnalytics": "Análises abrangentes"
+      }
+    },
+    "readyToStart": {
+      "title": "Pronto para começar?",
+      "description": "Junte-se a milhares de desenvolvedores que confiam no JSX Mail Cloud - o único serviço de e-mail verdadeiramente pay-as-you-go. Sem assinaturas, sem compromissos. Comece gratuitamente com {count, number} e-mails por mês.",
+      "signUp": "Cadastre-se Grátis",
+      "learnMore": "Saiba Mais"
+    },
+    "pricing": {
+      "header-title": "Preços",
+      "title": "Preços da Cloud",
+      "subtitle": "Preços verdadeiramente pay-as-you-go. Sem assinaturas, sem compromissos. Pague apenas pelo que usar.",
+      "pay-as-you-go": "apenas quando você envia",
+      "monthly": "mês",
+      "error-to-fetch-data": "Falha ao carregar dados de preços",
+      "costSimulator": {
+        "title": "Simulador de Custos",
+        "description": "Compare o JSX Mail Cloud com outros provedores e veja quanto você pode economizar",
+        "monthlyEmails": "E-mails mensais",
+        "dragOrType": "Arraste o controle deslizante ou digite o valor",
+        "emails": "emails"
+      },
+      "features": {
+        "freeTier": {
+          "title": "Camada Gratuita",
+          "description": "Comece com {count, number} e-mails gratuitos todos os meses. Nenhum cartão de crédito necessário."
+        },
+        "noSubscriptions": {
+          "title": "Sem Assinaturas",
+          "description": "Preços verdadeiramente pay-as-you-go. Pague apenas pelo que usar, quando usar."
+        },
+        "fullAnalytics": {
+          "title": "Análises Completas",
+          "description": "Acompanhe aberturas, cliques e métricas de entrega com nosso painel abrangente."
+        }
+      },
+      "cta": {
+        "getStarted": "Comece Grátis",
+        "noCreditCard": "Nenhum cartão de crédito necessário",
+        "learnMore": "Saiba Mais"
+      }
+    }
+  }
+}

@@ -8,6 +8,8 @@ import { Spinner } from '@heroui/spinner';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { getCloudUrl } from '@/lib/utils';
+import { useUtmInfo } from '@/app/utm-context';
+import { useTranslations } from 'next-intl';
 
 type Price = {
   amount: number;
@@ -18,11 +20,13 @@ type Price = {
 
 export default function Pricing() {
   const { data, isPending: isLoadingPricing } = usePricing();
+  const { utmGroupId } = useUtmInfo();
   const emailPricing = data?.EMAIL_PRICING;
   const [cloudUrl, setCloudUrl] = useState('');
 
   const [prices, setPrices] = useState<Price[]>([]);
   const [value, setValue] = useState(0);
+  const t = useTranslations('Pricing');
 
   useEffect(() => {
     setValue(emailPricing?.defaultValue || 1000);
@@ -40,7 +44,7 @@ export default function Pricing() {
     const newPricing: Price[] = [
       {
         amount: jsxMailCloudPricing,
-        period: 'just when you send',
+        period: t('period.pay-as-you-go'),
         logo: (
           <img
             src="/our-cloud-logo.svg"
@@ -63,7 +67,7 @@ export default function Pricing() {
                   : value < 700000
                     ? 200
                     : 400,
-        period: 'mo',
+        period: t('period.month'),
         logo: <img src="/resend.svg" className="w-24" alt="Resend logo" />,
         barPercentage: 0, // This will be calculated later
       },
@@ -82,7 +86,7 @@ export default function Pricing() {
                     : value <= 750000
                       ? 550
                       : 700,
-        period: 'mo',
+        period: t('period.month'),
         logo: <img src="/mailgun.svg" className="w-24" alt="Mailgun logo" />,
         barPercentage: 0, // This will be calculated later
       },
@@ -99,7 +103,7 @@ export default function Pricing() {
                   : value <= 500000
                     ? 470
                     : 700,
-        period: 'mo',
+        period: t('period.month'),
         logo: <img src="/mailjet.svg" className="w-24" alt="Mailjet logo" />,
         barPercentage: 0, // This will be calculated later
       },
@@ -117,19 +121,21 @@ export default function Pricing() {
   }, [value, emailPricing]);
 
   useEffect(() => {
-    setCloudUrl(getCloudUrl('/app'));
-  }, []);
+    setCloudUrl(getCloudUrl('/app', utmGroupId));
+  }, [utmGroupId]);
 
   return (
     <div id="pricing" className="flex flex-col gap-9 items-center w-full mb-20">
-      <h2 className="text-4xl font-bold text-center">Pricing</h2>
+      <h2 className="text-4xl font-bold text-center">{t('title')}</h2>
       <div className="flex flex-col md:flex-row items-start justify-center gap-4 w-full md:w-8/12">
         <div className="bg-zinc-900 h-[400px] px-6 py-9 rounded-3xl w-full gap-6 md:gap-9 flex flex-col justify-center">
-          <p className="text-base">Framework</p>
+          <p className="text-base">{t('framework.title')}</p>
 
           <div className="flex gap-2 items-end">
-            <span className="text-5xl md:text-6xl font-medium">Free</span>
-            <span className="text-xs md:text-sm">Forever</span>
+            <span className="text-5xl md:text-6xl font-medium">
+              {t('framework.price')}
+            </span>
+            <span className="text-xs md:text-sm">{t('framework.period')}</span>
           </div>
 
           <Button
@@ -141,32 +147,32 @@ export default function Pricing() {
             target="_blank"
             aria-label="View JSX Mail Documentation"
           >
-            Documentation
+            {t('framework.button')}
           </Button>
 
           <div className="flex flex-col gap-3">
             <div className="flex gap-3 items-center">
               <img src="/tick.svg" alt="tick" />
               <p className="text-xs text-zinc-300">
-                Create email templates with JSX syntax
+                {t('framework.features.jsx-syntax')}
               </p>
             </div>
             <div className="flex gap-3 items-center">
               <img src="/tick.svg" alt="tick" />
               <p className="text-xs text-zinc-300">
-                Preview your email templates in real time
+                {t('framework.features.preview')}
               </p>
             </div>
             <div className="flex gap-3 items-center">
               <img src="/tick.svg" alt="tick" />
               <p className="text-xs text-zinc-300">
-                Get compatibility with all email clients
+                {t('framework.features.compatibility')}
               </p>
             </div>
             <div className="flex gap-3 items-center">
               <img src="/tick.svg" alt="tick" />
               <p className="text-xs text-zinc-300">
-                Optimize and host the images of your email templates
+                {t('framework.features.images')}
               </p>
             </div>
           </div>
@@ -179,7 +185,7 @@ export default function Pricing() {
           )}
           {!isLoadingPricing && (
             <div className="bg-zinc-900 h-fit md:h-[400px] px-6 py-9 rounded-3xl w-full gap-6 md:gap-9 flex flex-col justify-center">
-              <p className="text-base">Cloud</p>
+              <p className="text-base">{t('cloud.title')}</p>
 
               <div className="flex gap-2 items-end">
                 <span className="text-5xl md:text-6xl font-medium">
@@ -199,34 +205,34 @@ export default function Pricing() {
                 target="_blank"
                 aria-label="Go to JSX Mail Cloud"
               >
-                Go to cloud
+                {t('cloud.button')}
               </Button>
 
               <div className="flex flex-col gap-3">
                 <div className="flex gap-3 items-center">
                   <img src="/tick.svg" alt="tick" />
                   <p className="text-xs text-zinc-300">
-                    The first{' '}
-                    {data?.FREE_EMAILS_PER_MONTH.toLocaleString('en-US')} of
-                    each month are free
+                    {t('cloud.features.free-emails', {
+                      count: data?.FREE_EMAILS_PER_MONTH,
+                    })}
                   </p>
                 </div>
                 <div className="flex gap-3 items-center">
                   <img src="/tick.svg" alt="tick" />
                   <p className="text-xs text-zinc-300">
-                    Send emails with pay-as-you-go pricing
+                    {t('cloud.features.pay-as-you-go')}
                   </p>
                 </div>
                 <div className="flex gap-3 items-center">
                   <img src="/tick.svg" alt="tick" />
                   <p className="text-xs text-zinc-300">
-                    Host your email template images
+                    {t('cloud.features.host-images')}
                   </p>
                 </div>
                 <div className="flex gap-3 items-center">
                   <img src="/tick.svg" alt="tick" />
                   <p className="text-xs text-zinc-300">
-                    Stay on top of your email sending insights
+                    {t('cloud.features.insights')}
                   </p>
                 </div>
               </div>
@@ -235,7 +241,7 @@ export default function Pricing() {
 
           <div className="w-full flex flex-col">
             <div className="w-full flex justify-between items-center mx-1">
-              <p className="text-sm">Emails</p>
+              <p className="text-sm">{t('emails')}</p>
 
               <Input
                 type="text"
@@ -267,8 +273,10 @@ export default function Pricing() {
                     });
                   }
                 }}
-                endContent={<span className="text-xs text-zinc-300">/Mo</span>}
-                aria-label="Number of emails"
+                endContent={
+                  <span className="text-xs text-zinc-300">/{t('monthly')}</span>
+                }
+                aria-label={t('emails')}
               />
             </div>
 

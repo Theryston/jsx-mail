@@ -8,6 +8,7 @@ import { ThemeProviderProps } from 'next-themes/dist/types';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { UtmProvider } from '@/app/utm-context';
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -18,11 +19,15 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   const router = useRouter();
 
   return (
-    <HeroUIProvider navigate={router.push}>
-      <NextThemesProvider {...themeProps}>
-        <QueryClientProvider>{children}</QueryClientProvider>
-      </NextThemesProvider>
-    </HeroUIProvider>
+    <React.Suspense>
+      <HeroUIProvider navigate={router.push}>
+        <NextThemesProvider {...themeProps}>
+          <QueryClientProvider>
+            <UtmProvider>{children}</UtmProvider>
+          </QueryClientProvider>
+        </NextThemesProvider>
+      </HeroUIProvider>
+    </React.Suspense>
   );
 }
 

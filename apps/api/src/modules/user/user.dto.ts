@@ -12,9 +12,9 @@ import {
   Matches,
   Max,
   Min,
-  IsObject,
   ValidateNested,
   IsBoolean,
+  IsArray,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -37,9 +37,8 @@ export class CreateUserDto {
   turnstileToken: string;
 
   @IsOptional()
-  @IsObject()
-  @ValidateNested()
-  utm?: Record<string, string>;
+  @IsString()
+  utmGroupId?: string;
 }
 
 export class UseSecurityCodeDto {
@@ -361,4 +360,30 @@ export class UpdateUserSettingsDto {
   @IsOptional()
   @IsNumber()
   pricePerEmailCheck?: number;
+}
+
+export class CreateOneUtmDto {
+  @IsNotEmpty()
+  @IsString()
+  utmName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  utmValue: string;
+}
+
+export class CreateUtmDto {
+  @IsNotEmpty()
+  @IsString()
+  url: string;
+
+  @IsOptional()
+  @IsString()
+  userUtmGroupId?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateOneUtmDto)
+  utms?: CreateOneUtmDto[];
 }

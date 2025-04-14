@@ -5,10 +5,11 @@ import { useMessage } from '@/hooks/message';
 import { FullMessage } from '@/types/message';
 import { Button } from '@jsx-mail/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@jsx-mail/ui/tabs';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, File, Download } from 'lucide-react';
 import moment from 'moment';
 import { useRouter } from 'next/navigation';
 import { use } from 'react';
+import { toast } from 'sonner';
 
 export default function SendingHistoryPage({
   params,
@@ -53,6 +54,8 @@ export default function SendingHistoryPage({
         {message.statusHistory.length > 0 && (
           <EmailEventsTimeline message={message} />
         )}
+
+        <EmailAttachments message={message} />
 
         <EmailContent message={message} />
       </div>
@@ -193,6 +196,57 @@ function EmailHeader({ message }: { message: FullMessage }) {
             {message.to.join(', ')}
           </p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function EmailAttachments({ message }: { message: FullMessage }) {
+  if (!message.messageFiles.length && !message.attachments.length) {
+    return null;
+  }
+
+  return (
+    <div className="bg-zinc-900 rounded-lg p-4 sm:p-6">
+      <h2 className="text-sm font-medium text-zinc-400 uppercase mb-4">
+        ATTACHMENTS
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {message.messageFiles.map(({ file }) => (
+          <a
+            key={file.id}
+            href={file.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 p-3 bg-zinc-800 rounded-lg hover:bg-zinc-700 transition-colors"
+          >
+            <File className="w-5 h-5 text-zinc-400" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-white truncate">{file.originalName}</p>
+              <p className="text-xs text-zinc-400">{file.mimeType}</p>
+            </div>
+            <Download className="w-4 h-4 text-zinc-400" />
+          </a>
+        ))}
+        {message.attachments.map((attachment) => (
+          <button
+            key={attachment.id}
+            onClick={() => {
+              toast.info(
+                'This is a temporary attachment, so the file is not saved',
+              );
+            }}
+            className="w-full flex items-center gap-3 p-3 bg-zinc-800 rounded-lg hover:bg-zinc-700 transition-colors"
+          >
+            <File className="w-5 h-5 text-zinc-400" />
+            <div className="w-fit">
+              <p className="text-sm text-left text-white truncate">
+                {attachment.fileName}
+              </p>
+              <p className="text-xs text-zinc-400">Temporary attachment</p>
+            </div>
+          </button>
+        ))}
       </div>
     </div>
   );
