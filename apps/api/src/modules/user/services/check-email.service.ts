@@ -7,8 +7,10 @@ export class CheckEmailService {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(data: CheckEmailDto) {
+    const normalizedEmail = data.email.toLowerCase().trim();
+
     const user = await this.prisma.user.findUnique({
-      where: { email: data.email },
+      where: { email: normalizedEmail },
     });
 
     return {

@@ -146,6 +146,16 @@ export class CreateUserService {
             userId: user.id,
           },
         });
+
+        // Delete all leads with the same email except the current one
+        await this.prisma.lead.deleteMany({
+          where: {
+            email: lead.email,
+            id: {
+              not: leadId,
+            },
+          },
+        });
       } else {
         response.message = 'Lead not found but user was created';
       }
