@@ -18,6 +18,7 @@ import {
   BlockPermissionDto,
   CheckEmailDto,
   CreateCheckoutDto,
+  CreateLeadDto,
   CreateSecurityCodeDto,
   CreateUserDto,
   CreateUtmDto,
@@ -63,6 +64,7 @@ import { UpdateUserSettingsService } from './services/update-user-settings.servi
 import { DeleteUserSettingsService } from './services/delete-user-settings.service';
 import { CreateUtmOrViewService } from './services/create-utm-or-view.service';
 import { CheckEmailService } from './services/check-email.service';
+import { CreateLeadService } from './services/create-lead.service';
 
 @Controller('user')
 export class UserController {
@@ -93,11 +95,17 @@ export class UserController {
     private readonly deleteUserSettingsService: DeleteUserSettingsService,
     private readonly createUtmOrViewService: CreateUtmOrViewService,
     private readonly checkEmailService: CheckEmailService,
+    private readonly createLeadService: CreateLeadService,
   ) {}
 
   @Post('check-email')
   checkEmail(@Body() data: CheckEmailDto) {
     return this.checkEmailService.execute(data);
+  }
+
+  @Post('lead')
+  createLead(@Body() data: CreateLeadDto) {
+    return this.createLeadService.execute(data);
   }
 
   @Get('admin/users')

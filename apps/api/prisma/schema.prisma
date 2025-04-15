@@ -158,8 +158,22 @@ model User {
   settings                UserSettings[]
   bulkEmailChecks         BulkEmailCheck[]
   emailChecks             EmailCheck[]
+  leads                   Lead[]
 
   @@map("users")
+}
+
+model Lead {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  phone     String
+  userId    String?  @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("leads")
 }
 
 model DefaultSettings {

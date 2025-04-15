@@ -32,6 +32,7 @@ export function useSignUp() {
       turnstileToken: string;
       utmGroupId?: string;
       phone?: string;
+      leadId?: string;
     }) => await api.post('/user', data),
   });
 }
@@ -232,5 +233,12 @@ export function useCheckEmail() {
       api
         .post<{ exists: boolean }>('/user/check-email', data)
         .then((res) => res.data),
+  });
+}
+
+export function useCreateLead() {
+  return useMutation({
+    mutationFn: (data: { email: string; name: string; phone?: string }) =>
+      api.post('/user/lead', data).then((res) => res.data),
   });
 }

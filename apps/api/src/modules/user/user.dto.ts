@@ -40,6 +40,24 @@ export class CreateUserDto {
   @IsOptional()
   @IsPhoneNumber()
   phone?: string;
+
+  @IsOptional()
+  @IsString()
+  leadId?: string;
+}
+
+export class CreateLeadDto {
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @IsPhoneNumber()
+  phone: string;
 }
 
 export class CheckEmailDto {

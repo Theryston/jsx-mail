@@ -28,6 +28,7 @@ export class CreateUserService {
     turnstileToken,
     utmGroupId,
     phone,
+    leadId,
   }: CreateUserDto & { fingerprint: string; ipAddress: string }) {
     email = email.toLocaleLowerCase().trim();
     name = name.toLocaleLowerCase().trim();
@@ -121,6 +122,28 @@ export class CreateUserService {
       await this.prisma.userUtm.updateMany({
         where: {
           groupId: utmGroupId,
+        },
+        data: {
+          userId: user.id,
+        },
+      });
+    }
+
+    if (leadId) {
+      const lead = await this.prisma.lead.findUnique({
+        where: {
+          id: leadId,
+        },
+      });
+
+      if (!lead) {
+        response.message = 'Lead not found but user was created';
+        return response;
+      }
+
+      await this.prisma.lead.update({
+        where: {
+          id: leadId,
         },
         data: {
           userId: user.id,

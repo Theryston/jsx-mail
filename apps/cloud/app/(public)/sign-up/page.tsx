@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import handleRedirectUrl from '@/utils/handle-redirect-url';
-import { useCheckEmail, useSignUp } from '@/hooks/user';
+import { useCreateLead, useSignUp } from '@/hooks/user';
 import { toast } from '@jsx-mail/ui/sonner';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { sendGTMEvent } from '@next/third-parties/google';
@@ -75,8 +75,8 @@ export default function SignUp() {
   });
   const { mutateAsync: signUp } = useSignUp();
   const router = useRouter();
-  const { mutateAsync: checkEmail, isPending: isCheckingEmail } =
-    useCheckEmail();
+  const { mutateAsync: createLead, isPending: isCreatingLead } =
+    useCreateLead();
 
   useEffect(() => {
     setRedirect(handleRedirectUrl(searchParams));
@@ -106,6 +106,7 @@ export default function SignUp() {
           password,
           utmGroupId: utmGroupId || undefined,
           turnstileToken,
+          leadId: localStorage.getItem('leadId') || undefined,
         });
 
         sendGTMEvent({ event: 'sign_up' });
@@ -126,14 +127,13 @@ export default function SignUp() {
     if (currentStep === 1) {
       form.trigger(['name', 'email', 'phone']).then(async (isValid) => {
         if (isValid) {
-          const { exists } = await checkEmail({
+          const { id } = await createLead({
             email: form.getValues('email'),
+            name: form.getValues('name'),
+            phone: form.getValues('phone') || undefined,
           });
 
-          if (exists) {
-            toast.error('Email already in use');
-            return;
-          }
+          if (id) localStorage.setItem('leadId', id);
           setCurrentStep(2);
         }
       });
@@ -241,7 +241,7 @@ export default function SignUp() {
                 type="button"
                 className="w-full"
                 onClick={nextStep}
-                isLoading={isCheckingEmail}
+                isLoading={isCreatingLead}
               >
                 Next Step
               </Button>
