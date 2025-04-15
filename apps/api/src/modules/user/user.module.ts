@@ -35,6 +35,8 @@ import { UpdateDefaultSettingsService } from './services/update-default-settings
 import { UpdateUserSettingsService } from './services/update-user-settings.service';
 import { DeleteUserSettingsService } from './services/delete-user-settings.service';
 import { CreateUtmOrViewService } from './services/create-utm-or-view.service';
+import { CheckEmailService } from './services/check-email.service';
+import { CreateLeadService } from './services/create-lead.service';
 
 @Module({
   controllers: [UserController],
@@ -72,6 +74,8 @@ import { CreateUtmOrViewService } from './services/create-utm-or-view.service';
     UpdateUserSettingsService,
     DeleteUserSettingsService,
     CreateUtmOrViewService,
+    CheckEmailService,
+    CreateLeadService,
   ],
   imports: [EmailModule, SessionModule],
   exports: [

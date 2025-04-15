@@ -4,6 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'src/services/prisma.service';
 import axios, { AxiosInstance } from 'axios';
 import { VerifyTurnstileService } from './verify-turnstile.service';
+import { OnboardingStep } from '@prisma/client';
 @Injectable()
 export class CreateUserService {
   ipHubClient: AxiosInstance;
@@ -27,6 +28,8 @@ export class CreateUserService {
     ipAddress,
     turnstileToken,
     utmGroupId,
+    phone,
+    leadId,
   }: CreateUserDto & { fingerprint: string; ipAddress: string }) {
     email = email.toLocaleLowerCase().trim();
     name = name.toLocaleLowerCase().trim();
@@ -80,6 +83,8 @@ export class CreateUserService {
         password: hashPassword,
         fingerprint,
         ipAddress,
+        phone,
+        onboardingStep: OnboardingStep.completed,
       },
     });
 
@@ -98,32 +103,62 @@ export class CreateUserService {
         },
       });
 
-      if (!utmGroup) {
-        response.message = 'UTM group not found but user was created';
-        return response;
-      }
-
-      await this.prisma.userUtmGroup.update({
-        where: {
-          id: utmGroupId,
-        },
-        data: {
-          user: {
-            connect: {
-              id: user.id,
+      if (utmGroup) {
+        await this.prisma.userUtmGroup.update({
+          where: {
+            id: utmGroupId,
+          },
+          data: {
+            user: {
+              connect: {
+                id: user.id,
+              },
             },
           },
+        });
+
+        await this.prisma.userUtm.updateMany({
+          where: {
+            groupId: utmGroupId,
+          },
+          data: {
+            userId: user.id,
+          },
+        });
+      } else {
+        response.message = 'UTM group not found but user was created';
+      }
+    }
+
+    if (leadId) {
+      const lead = await this.prisma.lead.findUnique({
+        where: {
+          id: leadId,
         },
       });
 
-      await this.prisma.userUtm.updateMany({
-        where: {
-          groupId: utmGroupId,
-        },
-        data: {
-          userId: user.id,
-        },
-      });
+      if (lead) {
+        await this.prisma.lead.update({
+          where: {
+            id: leadId,
+          },
+          data: {
+            userId: user.id,
+          },
+        });
+
+        // Delete all leads with the same email except the current one
+        await this.prisma.lead.deleteMany({
+          where: {
+            email: lead.email,
+            id: {
+              not: leadId,
+            },
+          },
+        });
+      } else {
+        response.message = 'Lead not found but user was created';
+      }
     }
 
     return response;
