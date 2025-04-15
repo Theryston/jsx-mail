@@ -167,7 +167,7 @@ model Lead {
   id        String    @id @default(uuid())
   email     String    @unique
   name      String
-  phone     String
+  phone     String?
   userId    String?   @map("user_id")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")

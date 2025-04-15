@@ -55,9 +55,9 @@ export class CreateLeadDto {
   @IsEmail()
   email: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsPhoneNumber()
-  phone: string;
+  phone?: string;
 }
 
 export class CheckEmailDto {

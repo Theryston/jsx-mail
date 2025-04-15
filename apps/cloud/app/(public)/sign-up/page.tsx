@@ -42,7 +42,7 @@ const signUpScheme = z
       .nullable()
       .refine(
         (value) => {
-          if (!value) return true;
+          if (!value || value === '') return true;
           return isValidPhoneNumber(value);
         },
         {
@@ -140,12 +140,13 @@ export default function SignUp() {
         if (!isValid) return;
 
         const existsLeadId = localStorage.getItem('leadId');
+        const phone = form.getValues('phone');
 
         if (!existsLeadId) {
           const { id } = await createLead({
             email: form.getValues('email'),
             name: form.getValues('name'),
-            phone: form.getValues('phone') || undefined,
+            phone: phone || undefined,
           });
 
           if (id) localStorage.setItem('leadId', id);
