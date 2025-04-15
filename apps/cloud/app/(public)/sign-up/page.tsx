@@ -10,6 +10,7 @@ import {
   FormItem,
   FormControl,
   FormMessage,
+  FormLabel,
 } from '@jsx-mail/ui/form';
 import { Input } from '@jsx-mail/ui/input';
 import { Button } from '@jsx-mail/ui/button';
@@ -98,6 +99,7 @@ export default function SignUp() {
 
       try {
         const utmGroupId = localStorage.getItem('utmGroupId');
+        const leadId = localStorage.getItem('leadId');
 
         await signUp({
           name,
@@ -106,10 +108,19 @@ export default function SignUp() {
           password,
           utmGroupId: utmGroupId || undefined,
           turnstileToken,
-          leadId: localStorage.getItem('leadId') || undefined,
+          leadId: leadId || undefined,
         });
 
-        sendGTMEvent({ event: 'sign_up' });
+        if (leadId) localStorage.removeItem('leadId');
+        if (utmGroupId) localStorage.removeItem('utmGroupId');
+
+        const hasCalledSignUpEvent =
+          localStorage.getItem('hasCalledSignUpEvent') === 'true';
+
+        if (!hasCalledSignUpEvent) {
+          localStorage.setItem('hasCalledSignUpEvent', 'true');
+          sendGTMEvent({ event: 'sign_up' });
+        }
 
         toast.success('Account created successfully');
         router.push(
@@ -126,7 +137,11 @@ export default function SignUp() {
   const nextStep = () => {
     if (currentStep === 1) {
       form.trigger(['name', 'email', 'phone']).then(async (isValid) => {
-        if (isValid) {
+        if (!isValid) return;
+
+        const existsLeadId = localStorage.getItem('leadId');
+
+        if (!existsLeadId) {
           const { id } = await createLead({
             email: form.getValues('email'),
             name: form.getValues('name'),
@@ -134,8 +149,9 @@ export default function SignUp() {
           });
 
           if (id) localStorage.setItem('leadId', id);
-          setCurrentStep(2);
         }
+
+        setCurrentStep(2);
       });
     }
   };
@@ -199,8 +215,9 @@ export default function SignUp() {
                 name="name"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2 w-full text-left">
+                    <FormLabel>Name *</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your name" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -212,8 +229,9 @@ export default function SignUp() {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2 w-full text-left">
+                    <FormLabel>Email *</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your email" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -225,12 +243,9 @@ export default function SignUp() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2 w-full text-left">
+                    <FormLabel>Phone</FormLabel>
                     <FormControl>
-                      <PhoneInput
-                        {...field}
-                        placeholder="Enter your phone number"
-                        inputComponent={Input}
-                      />
+                      <PhoneInput {...field} inputComponent={Input} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

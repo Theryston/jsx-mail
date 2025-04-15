@@ -164,12 +164,14 @@ model User {
 }
 
 model Lead {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String    @id @default(uuid())
+  email     String    @unique
   name      String
   phone     String
-  userId    String?  @map("user_id")
-  createdAt DateTime @default(now()) @map("created_at")
+  userId    String?   @map("user_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 
