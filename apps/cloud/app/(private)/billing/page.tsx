@@ -165,7 +165,7 @@ function AddBalanceModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Add balance</DialogTitle>
           <DialogDescription>Add balance to your account</DialogDescription>
