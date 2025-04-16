@@ -9,7 +9,7 @@ import {
 } from '@/hooks/user';
 import { SmallCard } from '@jsx-mail/ui/small-card';
 import { PlusIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -35,6 +35,8 @@ import { toast } from '@jsx-mail/ui/sonner';
 import { columns } from './columns';
 import { DataTable } from './data-table';
 import { PaginationControls } from '@jsx-mail/ui/pagination-controls';
+import { useSearchParams } from 'next/navigation';
+import { sendGTMEvent } from '@next/third-parties/google';
 
 const formSchema = z.object({
   amount: z.coerce.number().min(1),
@@ -47,10 +49,22 @@ export default function Billing() {
   const [page, setPage] = useState(1);
   const { data: transactionPagination, isPending: isPendingTransactions } =
     useTransactions(page);
+  const searchParams = useSearchParams();
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
+
+  useEffect(() => {
+    const success = searchParams.get('success') === 'true';
+    const hasProcessed = sessionStorage.getItem('hasProcessed') === 'true';
+
+    if (success && !hasProcessed) {
+      toast.success('Balance added successfully');
+      sendGTMEvent({ event: 'purchase' });
+      sessionStorage.setItem('hasProcessed', 'true');
+    }
+  }, [searchParams]);
 
   return (
     <Container header>
