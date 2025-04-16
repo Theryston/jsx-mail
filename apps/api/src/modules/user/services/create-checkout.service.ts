@@ -18,7 +18,12 @@ export class CreateCheckoutService {
     private readonly getSettingsService: GetSettingsService,
   ) {}
 
-  async execute({ amount, country }: CreateCheckoutDto, userId: string) {
+  async execute(
+    { amount: originalAmount, country }: CreateCheckoutDto,
+    userId: string,
+  ) {
+    let amount = originalAmount;
+
     if (!amount || typeof amount !== 'number') {
       throw new HttpException('Amount is required', HttpStatus.BAD_REQUEST);
     }
@@ -83,7 +88,7 @@ export class CreateCheckoutService {
         },
       ],
       customer: user.gatewayId,
-      success_url: `${process.env.CLOUD_FRONTEND_URL}/billing?success=true&amount=${amount / 100}`,
+      success_url: `${process.env.CLOUD_FRONTEND_URL}/billing?success=true&amount=${originalAmount}`,
       cancel_url: `${process.env.CLOUD_FRONTEND_URL}/billing`,
     });
 
