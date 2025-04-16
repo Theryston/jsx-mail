@@ -83,7 +83,7 @@ export class CreateCheckoutService {
         },
       ],
       customer: user.gatewayId,
-      success_url: `${process.env.CLOUD_FRONTEND_URL}/billing`,
+      success_url: `${process.env.CLOUD_FRONTEND_URL}/billing?success=true&amount=${amount / 100}`,
       cancel_url: `${process.env.CLOUD_FRONTEND_URL}/billing`,
     });
 
