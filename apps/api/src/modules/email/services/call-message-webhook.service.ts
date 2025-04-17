@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from 'src/services/prisma.service';
 import { messageSelect } from 'src/utils/public-selects';
+import { MessageStatus } from '@prisma/client';
 
 @Injectable()
 export class CallMessageWebhookService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async execute(messageId: string) {
+  async execute(messageId: string, customStatus?: MessageStatus) {
     const message = await this.prisma.message.findUnique({
       where: { id: messageId },
       select: {
@@ -40,24 +41,23 @@ export class CallMessageWebhookService {
 
     const webhook = message.webhookUrl;
     const status = message.webhookStatus;
+    const messageStatus = customStatus || message.status;
+    const newMessageId = message.id;
+    delete message.id;
 
     if (!webhook) {
       console.log(
-        `[CALL_MESSAGE_WEBHOOK_SERVICE] message ${message.id} has no webhook`,
+        `[CALL_MESSAGE_WEBHOOK_SERVICE] message ${newMessageId} has no webhook`,
       );
       return;
     }
 
-    if (status.length !== 0 && !status.includes(message.status)) {
+    if (status.length !== 0 && !status.includes(messageStatus)) {
       console.log(
-        `[CALL_MESSAGE_WEBHOOK_SERVICE] message ${message.id} has status ${message.status} but webhook status is ${status}`,
+        `[CALL_MESSAGE_WEBHOOK_SERVICE] message ${newMessageId} has status ${messageStatus} but webhook status is ${status}`,
       );
       return;
     }
-
-    const newMessageId = message.id;
-
-    delete message.id;
 
     try {
       await axios.post(webhook, {
@@ -67,13 +67,13 @@ export class CallMessageWebhookService {
     } catch (error) {
       const errorMessage = error.response?.data || error.message;
       console.log(
-        `[CALL_MESSAGE_WEBHOOK_SERVICE] error calling webhook ${webhook} for message ${message.id} for status ${message.status}: `,
+        `[CALL_MESSAGE_WEBHOOK_SERVICE] error calling webhook ${webhook} for message ${newMessageId} for status ${messageStatus}: `,
         errorMessage,
       );
     }
 
     console.log(
-      `[CALL_MESSAGE_WEBHOOK_SERVICE] successfully called webhook ${webhook} for message ${message.id} for status ${message.status}`,
+      `[CALL_MESSAGE_WEBHOOK_SERVICE] successfully called webhook ${webhook} for message ${newMessageId} for status ${messageStatus}`,
     );
 
     return true;
