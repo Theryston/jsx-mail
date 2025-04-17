@@ -1,0 +1,21 @@
+{
+  "name": "smtp",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/mailparser": "^3.4.5",
+    "@types/smtp-server": "^3.5.10"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "mailparser": "^3.7.2",
+    "nodemailer": "^6.10.1",
+    "smtp-server": "^3.13.6"
+  },
+  "scripts": {
+    "dev": "bun run --watch index.ts"
+  }
+}
