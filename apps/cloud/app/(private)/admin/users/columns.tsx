@@ -64,6 +64,13 @@ export const columns: ColumnDef<UserAdmin>[] = [
     },
   },
   {
+    accessorKey: 'onboardingStep',
+    header: 'Onboarding Step',
+    cell: ({ row }) => {
+      return <span>{row.original.onboardingStep || 'N/A'}</span>;
+    },
+  },
+  {
     accessorKey: 'isEmailVerified',
     header: 'Email Verified',
     cell: ({ row }) => {
