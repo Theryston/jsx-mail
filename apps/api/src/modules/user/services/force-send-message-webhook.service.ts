@@ -11,7 +11,7 @@ export class ForceSendMessageWebhookService {
   ) {}
 
   async execute(id: string, data: ForceSendMessageWebhookDto, userId: string) {
-    const message = await this.prisma.message.findUnique({
+    const message = await this.prisma.message.findFirst({
       where: { id, userId },
     });
 
