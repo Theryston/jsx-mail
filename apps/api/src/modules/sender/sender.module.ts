@@ -6,15 +6,17 @@ import { DeleteSenderService } from './services/delete-sender.service';
 import { ListSendersService } from './services/list-senders.service';
 import { SenderSendEmailService } from './services/sender-send-email.service';
 import { GetBalanceService } from '../user/services/get-balance.service';
-import { SendEmailService } from '../email/services/send-email.service';
 import { BullModule } from '@nestjs/bullmq';
 import { UserModule } from '../user/user.module';
+import { EmailModule } from '../email/email.module';
+
 @Module({
   imports: [
     BullModule.registerQueue({
       name: 'email',
     }),
     UserModule,
+    EmailModule,
   ],
   controllers: [SenderController],
   providers: [
@@ -24,7 +26,6 @@ import { UserModule } from '../user/user.module';
     ListSendersService,
     SenderSendEmailService,
     GetBalanceService,
-    SendEmailService,
   ],
   exports: [SenderSendEmailService],
 })

@@ -292,4 +292,9 @@ export const PERMISSIONS: {
     value: 'self:mark-bulk-email-check-as-read',
     description: 'Can mark a bulk email check as read for itself',
   },
+  SELF_FORCE_SEND_MESSAGE_WEBHOOK: {
+    title: 'Self Force Send Message Webhook',
+    value: 'self:force-send-message-webhook',
+    description: 'Can force send a message webhook for itself',
+  },
 };

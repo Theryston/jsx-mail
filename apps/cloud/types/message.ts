@@ -4,6 +4,8 @@ export type Message = {
   subject: string;
   sentAt: Date;
   status: string;
+  webhookUrl: string;
+  webhookStatus: string[];
   sender: {
     email: string;
   };

@@ -66,6 +66,8 @@ export const messageSelect: Prisma.MessageSelect = {
       fileName: true,
     },
   },
+  webhookUrl: true,
+  webhookStatus: true,
 };
 
 export const sessionSelect: Prisma.SessionSelect = {

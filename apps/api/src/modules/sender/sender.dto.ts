@@ -12,6 +12,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { EmailPriority, AttachmentDto } from '../email/email.dto';
+import { MessageStatus } from '@prisma/client';
 
 export class CreateSenderDto {
   @IsNotEmpty()
@@ -23,6 +24,17 @@ export class CreateSenderDto {
 
   @IsNotEmpty()
   domainName: string;
+}
+
+export class WebhookDto {
+  @IsNotEmpty()
+  @IsString()
+  url: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(MessageStatus, { each: true })
+  status?: MessageStatus[];
 }
 
 export class SenderSendEmailDto {
@@ -72,4 +84,10 @@ export class SenderSendEmailDto {
   @IsOptional()
   @IsEnum(EmailPriority)
   priority?: EmailPriority;
+
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => WebhookDto)
+  webhook?: WebhookDto;
 }

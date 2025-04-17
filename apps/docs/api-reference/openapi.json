@@ -1094,6 +1094,37 @@
             "enum": ["normal", "high"],
             "default": "normal",
             "description": "Optional priority of the email. 'high' priority emails will be processed before 'normal' priority emails in the queue."
+          },
+          "webhook": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "The URL to send webhook notifications to. A POST request will be made to this URL with the message data as the body."
+              },
+              "status": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "queued",
+                    "processing",
+                    "sent",
+                    "bounce",
+                    "failed",
+                    "reject",
+                    "complaint",
+                    "delivered",
+                    "delivery_delay",
+                    "subscription",
+                    "opened",
+                    "clicked"
+                  ]
+                },
+                "description": "Optional array of message statuses to trigger webhook notifications for"
+              }
+            },
+            "description": "Optional webhook configuration for receiving notifications about message status changes"
           }
         }
       },

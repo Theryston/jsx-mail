@@ -1,14 +1,31 @@
 'use client';
 
 import { Container } from '@/components/container';
-import { useMessage } from '@/hooks/message';
+import { useMessage, useMessageStatuses } from '@/hooks/message';
+import { useForceSendMessageWebhook } from '@/hooks/user';
 import { FullMessage } from '@/types/message';
 import { Button } from '@jsx-mail/ui/button';
+
+import {
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@jsx-mail/ui/dialog';
+import { Dialog } from '@jsx-mail/ui/dialog';
+import { Input } from '@jsx-mail/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@jsx-mail/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@jsx-mail/ui/tabs';
-import { ArrowLeft, File, Download } from 'lucide-react';
+import { ArrowLeft, File, Download, Bell } from 'lucide-react';
 import moment from 'moment';
 import { useRouter } from 'next/navigation';
-import { use } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function SendingHistoryPage({
@@ -151,6 +168,8 @@ function EmailEventsTimeline({ message }: { message: FullMessage }) {
 }
 
 function EmailHeader({ message }: { message: FullMessage }) {
+  const [isOpenWebhookModal, setIsOpenWebhookModal] = useState(false);
+
   return (
     <div className="bg-zinc-900 rounded-lg p-4 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex items-center gap-3 sm:gap-4 overflow-hidden">
@@ -196,8 +215,111 @@ function EmailHeader({ message }: { message: FullMessage }) {
             {message.to.join(', ')}
           </p>
         </div>
+        {message.webhookUrl && (
+          <div className="w-full flex flex-col gap-1">
+            <h2 className="text-sm font-medium text-zinc-400 uppercase">
+              WEBHOOK
+            </h2>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-white truncate overflow-hidden text-ellipsis">
+                {message.webhookUrl}
+              </p>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setIsOpenWebhookModal(true)}
+              >
+                <Bell />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
+
+      <WebhookModal
+        isOpen={isOpenWebhookModal}
+        onClose={() => setIsOpenWebhookModal(false)}
+        message={message}
+      />
     </div>
+  );
+}
+
+function WebhookModal({
+  isOpen,
+  onClose,
+  message,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  message: FullMessage;
+}) {
+  const [customStatus, setCustomStatus] = useState<string>(message.status);
+  const [statuses, setStatuses] = useState<string[]>(message.webhookStatus);
+  const { data: messageStatuses } = useMessageStatuses();
+  const {
+    mutateAsync: forceSendMessageWebhook,
+    isPending: isForceSendMessageWebhookPending,
+  } = useForceSendMessageWebhook();
+
+  useEffect(() => {
+    if (message.webhookStatus.length > 0) {
+      setStatuses(message.webhookStatus);
+    } else {
+      setStatuses(messageStatuses?.map((status) => status.value) || []);
+    }
+  }, [message.webhookStatus, messageStatuses]);
+
+  const handleCallWebhook = useCallback(async () => {
+    await forceSendMessageWebhook({
+      id: message.id,
+      status: customStatus,
+    });
+    toast.success('Webhook called successfully');
+    onClose();
+  }, [forceSendMessageWebhook, message.id, customStatus, onClose]);
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Webhook</DialogTitle>
+          <DialogDescription>
+            Manual webhook call for message {message.id}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <div className="flex flex-col gap-2">
+            <p className="text-sm text-white">Webhook URL</p>
+            <Input value={message.webhookUrl} disabled className="w-full" />
+          </div>
+          <div className="flex flex-col gap-2">
+            <p className="text-sm text-white">Status to webhook</p>
+            <Select value={customStatus} onValueChange={setCustomStatus}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a status" />
+              </SelectTrigger>
+              <SelectContent>
+                {statuses.map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {status}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Button
+            onClick={handleCallWebhook}
+            disabled={isForceSendMessageWebhookPending}
+          >
+            {isForceSendMessageWebhookPending
+              ? 'Calling webhook...'
+              : 'Call webhook'}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

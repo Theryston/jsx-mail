@@ -22,6 +22,7 @@ import {
   CreateSecurityCodeDto,
   CreateUserDto,
   CreateUtmDto,
+  ForceSendMessageWebhookDto,
   GetUsersDto,
   ImpersonateUserDto,
   ListMessagesDto,
@@ -65,6 +66,7 @@ import { DeleteUserSettingsService } from './services/delete-user-settings.servi
 import { CreateUtmOrViewService } from './services/create-utm-or-view.service';
 import { CheckEmailService } from './services/check-email.service';
 import { CreateLeadService } from './services/create-lead.service';
+import { ForceSendMessageWebhookService } from './services/force-send-message-webhook.service';
 
 @Controller('user')
 export class UserController {
@@ -96,6 +98,7 @@ export class UserController {
     private readonly createUtmOrViewService: CreateUtmOrViewService,
     private readonly checkEmailService: CheckEmailService,
     private readonly createLeadService: CreateLeadService,
+    private readonly forceSendMessageWebhookService: ForceSendMessageWebhookService,
   ) {}
 
   @Post('check-email')
@@ -347,5 +350,15 @@ export class UserController {
   @Post('utm')
   createUtm(@Body() data: CreateUtmDto) {
     return this.createUtmOrViewService.execute(data);
+  }
+
+  @Post('messages/:id/webhook')
+  @Permissions([PERMISSIONS.SELF_FORCE_SEND_MESSAGE_WEBHOOK.value])
+  forceSendMessageWebhook(
+    @Param('id') id: string,
+    @Body() data: ForceSendMessageWebhookDto,
+    @Request() req,
+  ) {
+    return this.forceSendMessageWebhookService.execute(id, data, req.user.id);
   }
 }
