@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { PrismaService } from 'src/services/prisma.service';
+import { messageSelect } from 'src/utils/public-selects';
 
 @Injectable()
 export class CallMessageWebhookService {
@@ -9,6 +10,32 @@ export class CallMessageWebhookService {
   async execute(messageId: string) {
     const message = await this.prisma.message.findUnique({
       where: { id: messageId },
+      select: {
+        ...messageSelect,
+        sender: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+        statusHistory: {
+          select: {
+            id: true,
+            createdAt: true,
+            description: true,
+            status: true,
+            extras: {
+              select: {
+                key: true,
+                value: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
+      },
     });
 
     const webhook = message.webhookUrl;
@@ -28,10 +55,14 @@ export class CallMessageWebhookService {
       return;
     }
 
+    const newMessageId = message.id;
+
+    delete message.id;
+
     try {
       await axios.post(webhook, {
-        messageId: message.id,
-        status: message.status,
+        messageId: newMessageId,
+        ...message,
       });
     } catch (error) {
       const errorMessage = error.response?.data || error.message;
