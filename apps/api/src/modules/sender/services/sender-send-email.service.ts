@@ -8,6 +8,7 @@ import { Sender } from '@prisma/client';
 import { BetaPermissionCheckService } from 'src/modules/user/services/beta-permission-check.service';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { GetUserLimitsService } from 'src/modules/user/services/get-user-limits.service';
+import { CallMessageWebhookService } from 'src/modules/email/services/call-message-webhook.service';
 
 @Injectable()
 export class SenderSendEmailService {
@@ -16,6 +17,7 @@ export class SenderSendEmailService {
     private readonly sendEmailService: SendEmailService,
     private readonly betaPermissionCheckService: BetaPermissionCheckService,
     private readonly getUserLimitsService: GetUserLimitsService,
+    private readonly callMessageWebhookService: CallMessageWebhookService,
   ) {}
 
   async execute(
@@ -31,6 +33,7 @@ export class SenderSendEmailService {
       contactId,
       delay,
       priority,
+      webhook,
     }: SenderSendEmailDto,
     userId: string,
   ) {
@@ -89,6 +92,8 @@ export class SenderSendEmailService {
         senderId: sender.id,
         userId,
         contactId,
+        webhookUrl: webhook?.url,
+        webhookStatus: webhook?.status || [],
         createdDay: moment().format('YYYY-MM-DD'),
         messageFiles: attachmentIds
           ? {
@@ -133,6 +138,8 @@ export class SenderSendEmailService {
       delay,
       priority,
     });
+
+    await this.callMessageWebhookService.execute(message.id);
 
     return message;
   }

@@ -5,6 +5,7 @@ import { PrismaService } from 'src/services/prisma.service';
 import moment from 'moment';
 import { MarkBounceToService } from './mark-bounce-to.service';
 import { MessageExtra } from 'src/utils/types';
+import { CallMessageWebhookService } from './call-message-webhook.service';
 
 const STATUS_SHOULD_HAVE_SENT_AT: MessageStatus[] = [
   'bounce',
@@ -21,6 +22,7 @@ export class UpdateMessageStatusService {
   constructor(
     private prisma: PrismaService,
     private markBounceToService: MarkBounceToService,
+    private callMessageWebhookService: CallMessageWebhookService,
   ) {}
 
   async execute(
@@ -94,6 +96,8 @@ export class UpdateMessageStatusService {
       where: { id: message.id },
       data,
     });
+
+    await this.callMessageWebhookService.execute(message.id);
   }
 
   private addSentDate(data: Prisma.MessageUpdateInput) {

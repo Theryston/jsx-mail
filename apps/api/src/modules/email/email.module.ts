@@ -10,6 +10,7 @@ import { CheckUserEmailStatsService } from './services/check-user-email-stats.se
 import { UpdateMessageStatusService } from './services/update-message-status.service';
 import { ResetQueueRateLimitService } from './services/reset-queue-rate-limit.service';
 import { MarkBounceToService } from './services/mark-bounce-to.service';
+import { CallMessageWebhookService } from './services/call-message-webhook.service';
 
 @Module({
   imports: [
@@ -27,12 +28,14 @@ import { MarkBounceToService } from './services/mark-bounce-to.service';
     UpdateMessageStatusService,
     ResetQueueRateLimitService,
     MarkBounceToService,
+    CallMessageWebhookService,
   ],
   exports: [
     SendEmailService,
     UpdateMessageStatusService,
     ResetQueueRateLimitService,
     MarkBounceToService,
+    CallMessageWebhookService,
   ],
   controllers: [EmailController],
 })
