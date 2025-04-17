@@ -4,7 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'src/services/prisma.service';
 import axios, { AxiosInstance } from 'axios';
 import { VerifyTurnstileService } from './verify-turnstile.service';
-import { OnboardingStep } from '@prisma/client';
+
 @Injectable()
 export class CreateUserService {
   ipHubClient: AxiosInstance;
@@ -84,7 +84,6 @@ export class CreateUserService {
         fingerprint,
         ipAddress,
         phone,
-        onboardingStep: OnboardingStep.completed,
       },
     });
 
