@@ -1,4 +1,8 @@
-import { OnboardingStep, TransactionStyle } from '@prisma/client';
+import {
+  MessageStatus,
+  OnboardingStep,
+  TransactionStyle,
+} from '@prisma/client';
 import { Transform, Type } from 'class-transformer';
 import {
   IsDate,
@@ -15,6 +19,7 @@ import {
   ValidateNested,
   IsBoolean,
   IsArray,
+  IsEnum,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -411,4 +416,10 @@ export class CreateUtmDto {
   @ValidateNested({ each: true })
   @Type(() => CreateOneUtmDto)
   utms?: CreateOneUtmDto[];
+}
+
+export class ForceSendMessageWebhookDto {
+  @IsNotEmpty()
+  @IsEnum(MessageStatus)
+  status: MessageStatus;
 }

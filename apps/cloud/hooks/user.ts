@@ -242,3 +242,12 @@ export function useCreateLead() {
       api.post('/user/lead', data).then((res) => res.data),
   });
 }
+
+export function useForceSendMessageWebhook() {
+  return useMutation({
+    mutationFn: (data: { id: string; status: string }) =>
+      api
+        .post(`/user/messages/${data.id}/webhook`, data)
+        .then((res) => res.data),
+  });
+}

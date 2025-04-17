@@ -63,6 +63,7 @@ export class CallMessageWebhookService {
       await axios.post(webhook, {
         messageId: newMessageId,
         ...message,
+        status: messageStatus,
       });
     } catch (error) {
       const errorMessage = error.response?.data || error.message;

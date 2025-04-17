@@ -37,6 +37,7 @@ import { DeleteUserSettingsService } from './services/delete-user-settings.servi
 import { CreateUtmOrViewService } from './services/create-utm-or-view.service';
 import { CheckEmailService } from './services/check-email.service';
 import { CreateLeadService } from './services/create-lead.service';
+import { ForceSendMessageWebhookService } from './services/force-send-message-webhook.service';
 
 @Module({
   controllers: [UserController],
@@ -76,6 +77,7 @@ import { CreateLeadService } from './services/create-lead.service';
     CreateUtmOrViewService,
     CheckEmailService,
     CreateLeadService,
+    ForceSendMessageWebhookService,
   ],
   imports: [EmailModule, SessionModule],
   exports: [
