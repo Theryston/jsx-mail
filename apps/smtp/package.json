@@ -16,7 +16,6 @@
     "smtp-server": "^3.13.6"
   },
   "scripts": {
-    "dev": "bun run --watch index.ts",
-    "start": "bun run index.ts"
+    "dev": "bun run --watch index.ts"
   }
 }
