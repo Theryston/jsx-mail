@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { SMTP } from './smtp';
 import { useRouter } from 'next/navigation';
+import { Webhook } from './webhook';
 
 export default function AccountPage() {
   const searchParams = useSearchParams();
@@ -30,6 +31,11 @@ export default function AccountPage() {
       label: 'SMTP',
       value: 'smtp',
       component: <SMTP />,
+    },
+    {
+      label: 'Webhook',
+      value: 'webhook',
+      component: <Webhook />,
     },
   ];
 

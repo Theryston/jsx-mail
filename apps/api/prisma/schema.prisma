@@ -159,8 +159,23 @@ model User {
   bulkEmailChecks         BulkEmailCheck[]
   emailChecks             EmailCheck[]
   leads                   Lead[]
+  webhooks                UserWebhook[]
 
   @@map("users")
+}
+
+model UserWebhook {
+  id              String          @id @default(uuid())
+  userId          String          @map("user_id")
+  url             String
+  messageStatuses MessageStatus[] @map("message_statuses")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+  deletedAt       DateTime?       @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_webhooks")
 }
 
 model Lead {

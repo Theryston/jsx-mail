@@ -297,4 +297,19 @@ export const PERMISSIONS: {
     value: 'self:force-send-message-webhook',
     description: 'Can force send a message webhook for itself',
   },
+  SELF_CREATE_USER_WEBHOOK: {
+    title: 'Self Create User Webhook',
+    value: 'self:create-user-webhook',
+    description: 'Can create a user webhook for itself',
+  },
+  SELF_DELETE_USER_WEBHOOK: {
+    title: 'Self Delete User Webhook',
+    value: 'self:delete-user-webhook',
+    description: 'Can delete a user webhook for itself',
+  },
+  SELF_LIST_USER_WEBHOOK: {
+    title: 'Self List User Webhook',
+    value: 'self:list-user-webhook',
+    description: 'Can list user webhooks for itself',
+  },
 };

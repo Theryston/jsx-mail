@@ -6,6 +6,7 @@ import {
   User,
   Permission,
   AdminUsersPagination,
+  UserWebhook,
 } from '@/types/user';
 import api from '@/utils/api';
 import { PER_PAGE } from '@/utils/constants';
@@ -249,5 +250,36 @@ export function useForceSendMessageWebhook() {
       api
         .post(`/user/messages/${data.id}/webhook`, data)
         .then((res) => res.data),
+  });
+}
+
+export function useCreateUserWebhook() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { url: string; status: string[] }) =>
+      api.post('/user/webhook', data).then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-webhooks'] });
+    },
+  });
+}
+
+export function useDeleteUserWebhook() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) =>
+      api.delete(`/user/webhook/${id}`).then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-webhooks'] });
+    },
+  });
+}
+
+export function useListUserWebhooks() {
+  return useQuery<UserWebhook[]>({
+    queryKey: ['user-webhooks'],
+    queryFn: () => api.get('/user/webhooks').then((res) => res.data),
   });
 }

@@ -39,42 +39,85 @@ export class CallMessageWebhookService {
       },
     });
 
-    const webhook = message.webhookUrl;
-    const status = message.webhookStatus;
+    const webhooks: {
+      url: string;
+      status: MessageStatus[];
+    }[] = [];
+
+    if (message.webhookUrl) {
+      webhooks.push({
+        url: message.webhookUrl,
+        status: message.webhookStatus,
+      });
+    }
+
+    const userWebhooks = await this.prisma.userWebhook.findMany({
+      where: {
+        userId: message.userId,
+        messageStatuses: {
+          has: customStatus || message.status,
+        },
+      },
+      select: {
+        url: true,
+        messageStatuses: true,
+      },
+    });
+
+    for (const webhook of userWebhooks) {
+      webhooks.push({
+        url: webhook.url,
+        status: webhook.messageStatuses,
+      });
+    }
+
     const messageStatus = customStatus || message.status;
     const newMessageId = message.id;
     delete message.id;
 
-    if (!webhook) {
-      console.log(
-        `[CALL_MESSAGE_WEBHOOK_SERVICE] message ${newMessageId} has no webhook`,
-      );
-      return;
-    }
+    for (const currentWebhook of webhooks) {
+      const webhook = currentWebhook.url;
+      const status = currentWebhook.status;
 
-    if (status.length !== 0 && !status.includes(messageStatus)) {
-      console.log(
-        `[CALL_MESSAGE_WEBHOOK_SERVICE] message ${newMessageId} has status ${messageStatus} but webhook status is ${status}`,
-      );
-      return;
-    }
+      if (!webhook) {
+        console.log(
+          `[CALL_MESSAGE_WEBHOOK_SERVICE] message ${newMessageId} has no webhook`,
+        );
 
-    try {
-      await axios.post(webhook, {
-        messageId: newMessageId,
-        ...message,
-        status: messageStatus,
-      });
-    } catch (error) {
-      const errorMessage = error.response?.data || error.message;
+        continue;
+      }
+
+      if (status.length !== 0 && !status.includes(messageStatus)) {
+        console.log(
+          `[CALL_MESSAGE_WEBHOOK_SERVICE] message ${newMessageId} has status ${messageStatus} but webhook status is ${status}`,
+        );
+
+        continue;
+      }
+
+      try {
+        await axios.post(webhook, {
+          messageId: newMessageId,
+          ...message,
+          status: messageStatus,
+        });
+      } catch (error) {
+        const errorMessage = error.response?.data || error.message;
+        console.log(
+          `[CALL_MESSAGE_WEBHOOK_SERVICE] error calling webhook ${webhook} for message ${newMessageId} for status ${messageStatus}: `,
+          errorMessage,
+        );
+
+        continue;
+      }
+
       console.log(
-        `[CALL_MESSAGE_WEBHOOK_SERVICE] error calling webhook ${webhook} for message ${newMessageId} for status ${messageStatus}: `,
-        errorMessage,
+        `[CALL_MESSAGE_WEBHOOK_SERVICE] successfully called webhook ${webhook} for message ${newMessageId} for status ${messageStatus}`,
       );
     }
 
     console.log(
-      `[CALL_MESSAGE_WEBHOOK_SERVICE] successfully called webhook ${webhook} for message ${newMessageId} for status ${messageStatus}`,
+      `[CALL_MESSAGE_WEBHOOK_SERVICE] successfully called ${webhooks.length} webhooks for message ${newMessageId} for status ${messageStatus}`,
     );
 
     return true;

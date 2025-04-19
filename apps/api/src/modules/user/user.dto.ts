@@ -21,6 +21,9 @@ import {
   IsArray,
   IsEnum,
 } from 'class-validator';
+import { WebhookDto } from '../sender/sender.dto';
+
+export class CreateUserWebhookDto extends WebhookDto {}
 
 export class CreateUserDto {
   @IsNotEmpty()

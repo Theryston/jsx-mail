@@ -101,3 +101,11 @@ export type AdminUsersPagination = {
   total: number;
   hasNext: boolean;
 };
+
+export type UserWebhook = {
+  id: string;
+  url: string;
+  messageStatuses: string[];
+  createdAt: string;
+  updatedAt: string;
+};
