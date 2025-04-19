@@ -37,10 +37,10 @@ const server = new SMTPServer({
       });
 
       callback(null, { user: auth.password });
-    } catch (error) {
-      callback(
-        new Error('Invalid credentials. Set the password as your API key.'),
-      );
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message;
+      console.error(`Error authenticating user: ${errorMessage}`);
+      callback(new Error(errorMessage));
       return;
     }
   },
@@ -105,8 +105,11 @@ const server = new SMTPServer({
 
       callback(null);
     } catch (error: any) {
-      const errorData = error.response?.data?.message || error.message;
-      callback(new Error(errorData));
+      const errorMessage = error.response?.data?.message || error.message;
+      console.error(
+        `Error sending email from ${sender} to ${to}: ${errorMessage}`,
+      );
+      callback(new Error(errorMessage));
     }
   },
 });
