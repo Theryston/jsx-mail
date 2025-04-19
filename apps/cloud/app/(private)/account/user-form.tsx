@@ -82,91 +82,96 @@ export function UserForm() {
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone</FormLabel>
-                    <FormControl>
-                      <PhoneInput {...field} inputComponent={Input} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="birthdate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Birthdate</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="date"
-                        value={
-                          field.value
-                            ? new Date(field.value).toISOString().split('T')[0]
-                            : ''
-                        }
-                        onChange={(e) =>
-                          field.onChange(
-                            e.target.value ? new Date(e.target.value) : null,
-                          )
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input value={me?.email || ''} disabled />
+                  <Input placeholder="Your name" {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
+            )}
+          />
 
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Phone</FormLabel>
                 <FormControl>
-                  <Input type="password" value="********" disabled />
+                  <PhoneInput
+                    {...field}
+                    inputComponent={Input}
+                    placeholder="Your phone number"
+                  />
                 </FormControl>
-                <div className="text-xs text-muted-foreground mt-1">
-                  <Link href="/password-recovery" className="hover:underline">
-                    Change password
-                  </Link>
-                </div>
+                <FormMessage />
               </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="birthdate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Birthdate</FormLabel>
+                <FormControl>
+                  <Input
+                    type="date"
+                    placeholder="Your birthdate"
+                    value={
+                      field.value
+                        ? new Date(field.value).toISOString().split('T')[0]
+                        : ''
+                    }
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value ? new Date(e.target.value) : null,
+                      )
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormItem>
+            <FormLabel>Email</FormLabel>
+            <FormControl>
+              <Input
+                placeholder="Your email"
+                value={me?.email || ''}
+                disabled
+              />
+            </FormControl>
+          </FormItem>
+
+          <FormItem className="relative mb-4 md:mb-0">
+            <FormLabel>Password</FormLabel>
+            <FormControl>
+              <Input type="password" value="********" disabled />
+            </FormControl>
+            <div className="text-xs text-muted-foreground mt-1 absolute -bottom-5">
+              <Link href="/password-recovery" className="hover:underline">
+                Change password
+              </Link>
             </div>
+          </FormItem>
+        </div>
 
-            <Button type="submit" className="mt-4" isLoading={isSubmitting}>
-              Save Changes
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+        <Button type="submit" isLoading={isSubmitting}>
+          Save Changes
+        </Button>
+      </form>
+    </Form>
   );
 }

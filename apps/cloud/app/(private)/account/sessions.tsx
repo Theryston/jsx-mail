@@ -49,9 +49,8 @@ export function Sessions() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Sessions</CardTitle>
-          <Button size="sm" onClick={() => setIsCreateModalOpen(true)}>
-            <PlusIcon className="h-4 w-4 mr-2" />
-            Create Session
+          <Button size="icon" onClick={() => setIsCreateModalOpen(true)}>
+            <PlusIcon className="size-4" />
           </Button>
         </CardHeader>
         <CardContent>

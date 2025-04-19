@@ -21,6 +21,7 @@ import {
   CreateLeadDto,
   CreateSecurityCodeDto,
   CreateUserDto,
+  CreateUserWebhookDto,
   CreateUtmDto,
   ForceSendMessageWebhookDto,
   GetUsersDto,
@@ -67,6 +68,9 @@ import { CreateUtmOrViewService } from './services/create-utm-or-view.service';
 import { CheckEmailService } from './services/check-email.service';
 import { CreateLeadService } from './services/create-lead.service';
 import { ForceSendMessageWebhookService } from './services/force-send-message-webhook.service';
+import { CreateUserWebhookService } from './services/create-user-webhook.service';
+import { DeleteUserWebhookService } from './services/delete-user-webhook.service';
+import { ListUserWebhookService } from './services/list-user-webhook.service';
 
 @Controller('user')
 export class UserController {
@@ -99,6 +103,9 @@ export class UserController {
     private readonly checkEmailService: CheckEmailService,
     private readonly createLeadService: CreateLeadService,
     private readonly forceSendMessageWebhookService: ForceSendMessageWebhookService,
+    private readonly createUserWebhookService: CreateUserWebhookService,
+    private readonly deleteUserWebhookService: DeleteUserWebhookService,
+    private readonly listUserWebhookService: ListUserWebhookService,
   ) {}
 
   @Post('check-email')
@@ -360,5 +367,23 @@ export class UserController {
     @Request() req,
   ) {
     return this.forceSendMessageWebhookService.execute(id, data, req.user.id);
+  }
+
+  @Post('webhook')
+  @Permissions([PERMISSIONS.SELF_CREATE_USER_WEBHOOK.value])
+  createUserWebhook(@Body() data: CreateUserWebhookDto, @Request() req) {
+    return this.createUserWebhookService.execute(data, req.user.id);
+  }
+
+  @Delete('webhook/:id')
+  @Permissions([PERMISSIONS.SELF_DELETE_USER_WEBHOOK.value])
+  deleteUserWebhook(@Param('id') id: string, @Request() req) {
+    return this.deleteUserWebhookService.execute(id, req.user.id);
+  }
+
+  @Get('webhooks')
+  @Permissions([PERMISSIONS.SELF_LIST_USER_WEBHOOK.value])
+  listUserWebhooks(@Request() req) {
+    return this.listUserWebhookService.execute(req.user.id);
   }
 }

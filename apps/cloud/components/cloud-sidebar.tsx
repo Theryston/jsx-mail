@@ -76,7 +76,7 @@ export const ITEMS = [
   },
   {
     label: 'API Keys',
-    href: '/account/api-keys',
+    href: '/account?tab=api-keys',
     icon: Key,
   },
   {
