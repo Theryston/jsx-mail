@@ -77,7 +77,7 @@ export const MESSAGES_STATUS = [
       "The email was successfully delivered to the recipient's mail server, but the recipient marked it as spam.",
   },
   {
-    value: 'delivery_delayed',
+    value: 'delivery_delay',
     label: 'Delivery Delayed',
     description:
       "The email couldn't be delivered to the recipient's mail server because a temporary issue occurred. Delivery delays can occur, for example, when the recipient's inbox is full, or when the receiving email server experiences a transient issue.",
