@@ -11,6 +11,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "axios": "^1.8.4",
     "mailparser": "^3.7.2",
     "nodemailer": "^6.10.1",
     "smtp-server": "^3.13.6"
