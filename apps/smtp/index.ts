@@ -101,6 +101,8 @@ const server = new SMTPServer({
         },
       );
 
+      console.log(`Email sent from ${sender} to ${to}`);
+
       callback(null);
     } catch (error: any) {
       const errorData = error.response?.data?.message || error.message;
