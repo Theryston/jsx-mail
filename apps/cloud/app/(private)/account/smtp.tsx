@@ -18,7 +18,7 @@ export function SMTP() {
           </div>
           <div className="flex flex-col gap-2">
             <Label>SMTP Port</Label>
-            <Input disabled value="25" copyIcon />
+            <Input disabled value="587" copyIcon />
           </div>
           <div className="flex flex-col gap-2">
             <Label>SMTP Username</Label>
