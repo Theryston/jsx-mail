@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { CreateUserService } from './services/create-user.service';
 import { CreateSessionService } from '../session/services/create-session.service';
@@ -41,6 +41,11 @@ import { ForceSendMessageWebhookService } from './services/force-send-message-we
 import { CreateUserWebhookService } from './services/create-user-webhook.service';
 import { DeleteUserWebhookService } from './services/delete-user-webhook.service';
 import { ListUserWebhookService } from './services/list-user-webhook.service';
+import { ExportMessagesService } from './services/export-messages.service';
+import { UserProcessor } from './user.processor';
+import { BullModule } from '@nestjs/bullmq';
+import { GetExportService } from './services/get-export.service';
+import { FileModule } from '../file/file.module';
 
 @Module({
   controllers: [UserController],
@@ -84,8 +89,18 @@ import { ListUserWebhookService } from './services/list-user-webhook.service';
     CreateUserWebhookService,
     DeleteUserWebhookService,
     ListUserWebhookService,
+    ExportMessagesService,
+    UserProcessor,
+    GetExportService,
   ],
-  imports: [EmailModule, SessionModule],
+  imports: [
+    BullModule.registerQueue({
+      name: 'user',
+    }),
+    EmailModule,
+    SessionModule,
+    forwardRef(() => FileModule),
+  ],
   exports: [
     BetaPermissionCheckService,
     GetUserLimitsService,

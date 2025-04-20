@@ -42,7 +42,7 @@ export type FullMessage = Message & {
 
 export type MessagesPagination = {
   messages: Message[];
-  totalItems: number;
+  total: number;
   totalPages: number;
   currentPage: number;
 };

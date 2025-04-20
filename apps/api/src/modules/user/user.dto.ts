@@ -184,6 +184,17 @@ export class MessagesInsightsDto {
   bulkSending?: string;
 }
 
+export enum ExportFormat {
+  CSV = 'csv',
+  JSON = 'json',
+}
+
+export class ExportMessagesDto extends MessagesInsightsDto {
+  @IsNotEmpty()
+  @IsEnum(ExportFormat)
+  format: ExportFormat;
+}
+
 export class ListMessagesDto extends MessagesInsightsDto {
   @IsOptional()
   @Transform(({ value }) => value === 'true')

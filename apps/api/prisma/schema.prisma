@@ -119,6 +119,18 @@ enum BulkEmailCheckBatchStatus {
   failed
 }
 
+enum ExportStatus {
+  pending
+  processing
+  completed
+  failed
+}
+
+enum ExportFormat {
+  csv
+  json
+}
+
 model User {
   id              String         @id @default(uuid())
   name            String
@@ -160,6 +172,7 @@ model User {
   emailChecks             EmailCheck[]
   leads                   Lead[]
   webhooks                UserWebhook[]
+  exports                 Export[]
 
   @@map("users")
 }
@@ -468,6 +481,7 @@ model File {
 
   messageFiles   MessageFile[]
   contactImports ContactImport[]
+  exports        Export[]
 
   @@map("files")
 }
@@ -542,6 +556,27 @@ model Message {
   statusHistory MessageStatusHistory[]
 
   @@map("messages")
+}
+
+model Export {
+  id           String       @id @default(uuid())
+  userId       String       @map("user_id")
+  where        Json
+  startDate    DateTime?    @map("start_date")
+  endDate      DateTime?    @map("end_date")
+  statuses     String[]
+  exportStatus ExportStatus @default(pending) @map("export_status")
+  format       ExportFormat @default(csv) @map("format")
+  fileId       String?      @map("file_id")
+  errorMessage String?      @map("error_message")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+  deletedAt    DateTime?    @map("deleted_at")
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  file File? @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@map("exports")
 }
 
 model MessageAttachment {

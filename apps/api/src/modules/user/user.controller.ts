@@ -23,6 +23,7 @@ import {
   CreateUserDto,
   CreateUserWebhookDto,
   CreateUtmDto,
+  ExportMessagesDto,
   ForceSendMessageWebhookDto,
   GetUsersDto,
   ImpersonateUserDto,
@@ -71,6 +72,8 @@ import { ForceSendMessageWebhookService } from './services/force-send-message-we
 import { CreateUserWebhookService } from './services/create-user-webhook.service';
 import { DeleteUserWebhookService } from './services/delete-user-webhook.service';
 import { ListUserWebhookService } from './services/list-user-webhook.service';
+import { ExportMessagesService } from './services/export-messages.service';
+import { GetExportService } from './services/get-export.service';
 
 @Controller('user')
 export class UserController {
@@ -106,6 +109,8 @@ export class UserController {
     private readonly createUserWebhookService: CreateUserWebhookService,
     private readonly deleteUserWebhookService: DeleteUserWebhookService,
     private readonly listUserWebhookService: ListUserWebhookService,
+    private readonly exportMessagesService: ExportMessagesService,
+    private readonly getExportService: GetExportService,
   ) {}
 
   @Post('check-email')
@@ -232,6 +237,18 @@ export class UserController {
     @Query(new ValidationPipe({ transform: true })) data: ListMessagesDto,
   ) {
     return this.listMessagesService.execute(data, req.user.id);
+  }
+
+  @Post('messages/export')
+  @Permissions([PERMISSIONS.SELF_EXPORT_MESSAGES.value])
+  exportMessages(@Req() req, @Body() data: ExportMessagesDto) {
+    return this.exportMessagesService.execute(data, req.user.id);
+  }
+
+  @Get('messages/export/:id')
+  @Permissions([PERMISSIONS.SELF_GET_EXPORT_MESSAGES.value])
+  getExportMessages(@Param('id') id: string, @Request() req) {
+    return this.getExportService.execute(id, req.user.id);
   }
 
   @Get('messages/insights')

@@ -7,6 +7,7 @@ import {
   Permission,
   AdminUsersPagination,
   UserWebhook,
+  Export,
 } from '@/types/user';
 import api from '@/utils/api';
 import { PER_PAGE } from '@/utils/constants';
@@ -281,5 +282,27 @@ export function useListUserWebhooks() {
   return useQuery<UserWebhook[]>({
     queryKey: ['user-webhooks'],
     queryFn: () => api.get('/user/webhooks').then((res) => res.data),
+  });
+}
+
+export function useExportMessages() {
+  return useMutation({
+    mutationFn: (data: {
+      format: string;
+      startDate: string;
+      endDate: string;
+      statuses: string;
+    }) => api.post('/user/messages/export', data).then((res) => res.data),
+  });
+}
+
+export function useGetExportMessages(id: string | null, status: string | null) {
+  return useQuery<Export>({
+    queryKey: ['export-messages', id],
+    queryFn: () =>
+      api.get(`/user/messages/export/${id}`).then((res) => res.data),
+    enabled: !!id,
+    refetchInterval:
+      status === 'pending' || status === 'processing' ? 1000 : false,
   });
 }

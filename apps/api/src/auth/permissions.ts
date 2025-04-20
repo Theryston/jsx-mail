@@ -312,4 +312,14 @@ export const PERMISSIONS: {
     value: 'self:list-user-webhook',
     description: 'Can list user webhooks for itself',
   },
+  SELF_EXPORT_MESSAGES: {
+    title: 'Self Export Messages',
+    value: 'self:export-messages',
+    description: 'Can export messages for itself',
+  },
+  SELF_GET_EXPORT_MESSAGES: {
+    title: 'Self Get Export Messages',
+    value: 'self:get-export-messages',
+    description: 'Can get an export for itself',
+  },
 };
