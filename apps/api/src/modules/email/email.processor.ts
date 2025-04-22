@@ -118,7 +118,7 @@ class RateLimiter {
 }
 
 @Processor('email', {
-  concurrency: 50,
+  concurrency: 10,
   limiter: { max: 10000, duration: 100 },
 })
 export class EmailProcessor extends WorkerHost {
