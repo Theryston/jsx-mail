@@ -137,6 +137,8 @@ export class EmailProcessor extends WorkerHost {
   }
 
   async process(job: Job<SendEmailDto>): Promise<void> {
+    const startTime = Date.now();
+
     try {
       console.log(`[EMAIL_PROCESSOR] received job id: ${job.id}`);
 
@@ -152,6 +154,12 @@ export class EmailProcessor extends WorkerHost {
         error,
       );
       throw error;
+    } finally {
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      console.log(
+        `[EMAIL_PROCESSOR] job ${job.id} took ${duration}ms to complete`,
+      );
     }
   }
 
