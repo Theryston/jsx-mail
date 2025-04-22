@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
   SES: { aws, ses: sesClient },
 });
 
-@Processor('email', { concurrency: 10, limiter: { max: 10000, duration: 100 } })
+@Processor('email', { concurrency: 40, limiter: { max: 10000, duration: 100 } })
 export class EmailProcessor extends WorkerHost {
   constructor(
     private readonly prisma: PrismaService,

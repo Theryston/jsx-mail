@@ -110,7 +110,7 @@ export class GetSettingsService {
       pricePerMessage: defaultSettings?.pricePerMessage || 0.0002,
       maxStorage: defaultSettings?.maxStorage || 5,
       globalMaxMessagesPerSecond:
-        defaultSettings?.globalMaxMessagesPerSecond || 14,
+        defaultSettings?.globalMaxMessagesPerSecond || 50,
       globalMaxMessagesPerDay:
         defaultSettings?.globalMaxMessagesPerDay || 100000,
       bounceRateLimit: defaultSettings?.bounceRateLimit || 0.05,
