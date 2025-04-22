@@ -30,6 +30,7 @@ export class UpdateMessageStatusService {
     newStatus: MessageStatus,
     description?: string,
     extra?: MessageExtra,
+    messageData?: Prisma.MessageUpdateInput,
   ) {
     extra = extra || {};
 
@@ -64,6 +65,7 @@ export class UpdateMessageStatusService {
     }
 
     let data: Prisma.MessageUpdateInput = {
+      ...messageData,
       status: newStatus,
     };
 
