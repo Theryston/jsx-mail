@@ -9,7 +9,7 @@ import axios from 'axios';
 import handlebars from 'handlebars';
 import moment from 'moment';
 import { Worker } from 'bullmq';
-import { MarkedBounceTo, Message } from '@prisma/client';
+import { Message } from '@prisma/client';
 import { GetUserLimitsService } from '../user/services/get-user-limits.service';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { UpdateMessageStatusService } from './services/update-message-status.service';
@@ -20,8 +20,110 @@ const transporter = nodemailer.createTransport({
   SES: { aws, ses: sesClient },
 });
 
-@Processor('email', { concurrency: 40, limiter: { max: 10000, duration: 100 } })
+class RateLimiter {
+  private messageCountBySecond: Map<string, number> = new Map();
+  private messageCountByDay: Map<string, number> = new Map();
+  private settings: any = null;
+  private lastSettingsCheck: number = 0;
+  private settingsCheckInterval: number = 60000; // 1 minute
+
+  constructor(private getSettingsService: GetSettingsService) {}
+
+  async getSettings() {
+    const now = Date.now();
+    if (
+      !this.settings ||
+      now - this.lastSettingsCheck > this.settingsCheckInterval
+    ) {
+      this.settings = await this.getSettingsService.execute();
+      this.lastSettingsCheck = now;
+    }
+    return this.settings;
+  }
+
+  async incrementAndCheckSecond(
+    prisma: PrismaService,
+  ): Promise<{ allowed: boolean; waitTime: number }> {
+    const settings = await this.getSettings();
+    const currentSecondKey = moment().format('YYYY-MM-DD-HH-mm-ss');
+
+    if (!this.messageCountBySecond.has(currentSecondKey)) {
+      const currentSecond = moment().startOf('second');
+      const count = await prisma.message.count({
+        where: {
+          status: { not: 'queued' },
+          createdAt: { gte: currentSecond.toDate() },
+        },
+      });
+
+      for (const key of this.messageCountBySecond.keys()) {
+        if (key !== currentSecondKey) {
+          this.messageCountBySecond.delete(key);
+        }
+      }
+
+      this.messageCountBySecond.set(currentSecondKey, count);
+    }
+
+    const currentCount =
+      (this.messageCountBySecond.get(currentSecondKey) || 0) + 1;
+
+    this.messageCountBySecond.set(currentSecondKey, currentCount);
+
+    if (currentCount > settings.globalMaxMessagesPerSecond) {
+      const nextSecond = moment().add(1, 'second').startOf('second');
+      const waitTime = nextSecond.diff(moment(), 'milliseconds');
+      return { allowed: false, waitTime };
+    }
+
+    return { allowed: true, waitTime: 0 };
+  }
+
+  async incrementAndCheckDay(
+    prisma: PrismaService,
+  ): Promise<{ allowed: boolean; waitTime: number }> {
+    const settings = await this.getSettings();
+    const currentDayKey = moment().format('YYYY-MM-DD');
+
+    if (!this.messageCountByDay.has(currentDayKey)) {
+      const currentDay = moment().startOf('day');
+      const count = await prisma.message.count({
+        where: {
+          status: { not: 'queued' },
+          createdAt: { gte: currentDay.toDate() },
+        },
+      });
+
+      for (const key of this.messageCountByDay.keys()) {
+        if (key !== currentDayKey) {
+          this.messageCountByDay.delete(key);
+        }
+      }
+
+      this.messageCountByDay.set(currentDayKey, count);
+    }
+
+    const currentCount = (this.messageCountByDay.get(currentDayKey) || 0) + 1;
+
+    this.messageCountByDay.set(currentDayKey, currentCount);
+
+    if (currentCount > settings.globalMaxMessagesPerDay) {
+      const tomorrow = moment().add(1, 'day').startOf('day');
+      const waitTime = tomorrow.diff(moment(), 'milliseconds');
+      return { allowed: false, waitTime };
+    }
+
+    return { allowed: true, waitTime: 0 };
+  }
+}
+
+@Processor('email', {
+  concurrency: 50,
+  limiter: { max: 10000, duration: 100 },
+})
 export class EmailProcessor extends WorkerHost {
+  private rateLimiter: RateLimiter;
+
   constructor(
     private readonly prisma: PrismaService,
     @InjectQueue('email') private readonly queue: Queue,
@@ -31,6 +133,7 @@ export class EmailProcessor extends WorkerHost {
     private readonly markBounceToService: MarkBounceToService,
   ) {
     super();
+    this.rateLimiter = new RateLimiter(this.getSettingsService);
   }
 
   async process(job: Job<SendEmailDto>): Promise<void> {
@@ -63,59 +166,35 @@ export class EmailProcessor extends WorkerHost {
   async sendEmail(data: SendEmailDto) {
     let dataLog: any = { ...data };
     delete dataLog.html;
-
-    const settings = await this.getSettingsService.execute();
-
-    const currentSecond = moment().startOf('second');
-    const nextSecond = moment().add(1, 'second').startOf('second');
-    const timeToWait = nextSecond.diff(moment(), 'milliseconds');
-
-    const messagesSentThisSecond = await this.prisma.message.count({
-      where: {
-        status: {
-          not: 'queued',
-        },
-        createdAt: {
-          gte: currentSecond.toDate(),
-        },
-      },
-    });
-
-    if (messagesSentThisSecond >= settings.globalMaxMessagesPerSecond) {
-      console.log(
-        `[EMAIL_PROCESSOR] rate second limit exceeded, waiting ${timeToWait} milliseconds. Will reset at ${moment(Date.now() + timeToWait).format('DD/MM/YYYY HH:mm:ss')}`,
-      );
-      await this.queue.rateLimit(timeToWait);
-      throw Worker.RateLimitError();
-    }
-
-    const currentDay = moment().startOf('day');
-    const tomorrow = moment().add(1, 'day').startOf('day');
-    const timeToWaitDay = tomorrow.diff(moment(), 'milliseconds');
-
-    const messagesSentThisDay = await this.prisma.message.count({
-      where: {
-        status: {
-          not: 'queued',
-        },
-        createdAt: { gte: currentDay.toDate() },
-      },
-    });
-
-    if (messagesSentThisDay >= settings.globalMaxMessagesPerDay) {
-      console.log(
-        `[EMAIL_PROCESSOR] rate day limit exceeded, waiting ${timeToWaitDay} milliseconds. Will reset at ${moment(Date.now() + timeToWaitDay).format('DD/MM/YYYY HH:mm:ss')}`,
-      );
-      await this.queue.rateLimit(timeToWaitDay);
-      throw Worker.RateLimitError();
-    }
-
     dataLog = JSON.stringify(dataLog);
 
     console.log(`[EMAIL_PROCESSOR] sending email: ${dataLog}`);
 
-    const { from, attachmentIds } = data;
+    const secondRateCheck = await this.rateLimiter.incrementAndCheckSecond(
+      this.prisma,
+    );
 
+    if (!secondRateCheck.allowed) {
+      console.log(
+        `[EMAIL_PROCESSOR] rate second limit exceeded, waiting ${secondRateCheck.waitTime} milliseconds. Will reset at ${moment(Date.now() + secondRateCheck.waitTime).format('DD/MM/YYYY HH:mm:ss')}`,
+      );
+      await this.queue.rateLimit(secondRateCheck.waitTime);
+      throw Worker.RateLimitError();
+    }
+
+    const dayRateCheck = await this.rateLimiter.incrementAndCheckDay(
+      this.prisma,
+    );
+
+    if (!dayRateCheck.allowed) {
+      console.log(
+        `[EMAIL_PROCESSOR] rate day limit exceeded, waiting ${dayRateCheck.waitTime} milliseconds. Will reset at ${moment(Date.now() + dayRateCheck.waitTime).format('DD/MM/YYYY HH:mm:ss')}`,
+      );
+      await this.queue.rateLimit(dayRateCheck.waitTime);
+      throw Worker.RateLimitError();
+    }
+
+    const { from, attachmentIds } = data;
     let to: string[] = data.to;
 
     if (
@@ -156,11 +235,14 @@ export class EmailProcessor extends WorkerHost {
       userId = message.userId;
       contactId = message.contactId;
 
-      await this.updateMessageStatusService.execute(
-        messageId,
-        'processing',
-        'Processing email',
-      );
+      // Update message status to processing in background
+      this.updateMessageStatusService
+        .execute(messageId, 'processing', 'Processing email')
+        .catch((error) =>
+          console.error(
+            `[EMAIL_PROCESSOR] error updating message status: ${error}`,
+          ),
+        );
     } else {
       console.log(
         `[EMAIL_PROCESSOR] creating message for ${to} with default sender ${process.env.DEFAULT_SENDER_EMAIL} and domain ${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`,
@@ -212,13 +294,20 @@ export class EmailProcessor extends WorkerHost {
         },
       });
 
-      await this.prisma.messageStatusHistory.create({
-        data: {
-          messageId: message.id,
-          status: 'processing',
-          description: 'Created message and started processing the email',
-        },
-      });
+      // Create message status history in background
+      this.prisma.messageStatusHistory
+        .create({
+          data: {
+            messageId: message.id,
+            status: 'processing',
+            description: 'Created message and started processing the email',
+          },
+        })
+        .catch((error) =>
+          console.error(
+            `[EMAIL_PROCESSOR] error creating message status history: ${error}`,
+          ),
+        );
 
       messageId = message.id;
       userId = message.userId;
@@ -247,59 +336,79 @@ export class EmailProcessor extends WorkerHost {
       });
 
       if (contact?.bouncedAt) {
-        await this.updateMessageStatusService.execute(
-          messageId,
-          'failed',
-          `Ignored because contact ${contact?.email} is bounced by ${contact?.bouncedBy === 'email_check' ? 'email check' : 'previous bounced message'} at ${moment(contact?.bouncedAt).format('DD/MM/YYYY HH:mm:ss')}`,
-          {
-            skipBounceToCheck: 'true',
-          },
-        );
+        this.updateMessageStatusService
+          .execute(
+            messageId,
+            'failed',
+            `Ignored because contact ${contact?.email} is bounced by ${contact?.bouncedBy === 'email_check' ? 'email check' : 'previous bounced message'} at ${moment(contact?.bouncedAt).format('DD/MM/YYYY HH:mm:ss')}`,
+            {
+              skipBounceToCheck: 'true',
+            },
+          )
+          .catch((error) =>
+            console.error(
+              `[EMAIL_PROCESSOR] error updating message status: ${error}`,
+            ),
+          );
 
         return;
       }
     }
 
-    let detectedMarkedBounceTo: MarkedBounceTo | null = null;
+    const markedBounceToPromise = Promise.all(
+      data.to.map((to) => this.markBounceToService.get(to)),
+    ).then((results) => results.find((result) => result !== null));
 
-    for (const to of data.to) {
-      const markedBounceTo = await this.markBounceToService.get(to);
-
-      if (markedBounceTo) {
-        detectedMarkedBounceTo = markedBounceTo;
-        break;
-      }
-    }
-
-    if (detectedMarkedBounceTo) {
-      await this.updateMessageStatusService.execute(
-        messageId,
-        'bounce',
-        `Bounced because this email was marked as bounce by ${detectedMarkedBounceTo.bounceBy === 'email_check' ? 'email check' : 'previous bounced message'} at ${moment(detectedMarkedBounceTo.createdAt).format('DD/MM/YYYY HH:mm:ss')}`,
-        {
-          smartBounce: 'true',
-        },
-      );
-
-      return;
-    }
-
-    const isBlockedToSendEmail = await this.prisma.blockedPermission.findFirst({
+    const isBlockedPromise = this.prisma.blockedPermission.findFirst({
       where: {
         userId,
         permission: PERMISSIONS.SELF_SEND_EMAIL.value,
       },
     });
 
+    const userLimitsPromise = this.getUserLimitsService.execute(userId);
+
+    const [detectedMarkedBounceTo, isBlockedToSendEmail, userLimits] =
+      await Promise.all([
+        markedBounceToPromise,
+        isBlockedPromise,
+        userLimitsPromise,
+      ]);
+
+    if (detectedMarkedBounceTo) {
+      this.updateMessageStatusService
+        .execute(
+          messageId,
+          'bounce',
+          `Bounced because this email was marked as bounce by ${detectedMarkedBounceTo.bounceBy === 'email_check' ? 'email check' : 'previous bounced message'} at ${moment(detectedMarkedBounceTo.createdAt).format('DD/MM/YYYY HH:mm:ss')}`,
+          {
+            smartBounce: 'true',
+          },
+        )
+        .catch((error) =>
+          console.error(
+            `[EMAIL_PROCESSOR] error updating message status: ${error}`,
+          ),
+        );
+
+      return;
+    }
+
     if (isBlockedToSendEmail) {
-      await this.updateMessageStatusService.execute(
-        messageId,
-        'failed',
-        'Failed because user is blocked to send email',
-        {
-          is_blocked: 'true',
-        },
-      );
+      this.updateMessageStatusService
+        .execute(
+          messageId,
+          'failed',
+          'Failed because user is blocked to send email',
+          {
+            is_blocked: 'true',
+          },
+        )
+        .catch((error) =>
+          console.error(
+            `[EMAIL_PROCESSOR] error updating message status: ${error}`,
+          ),
+        );
 
       console.log(
         `[EMAIL_PROCESSOR] user ${userId} is blocked to send email, not sending email`,
@@ -308,19 +417,18 @@ export class EmailProcessor extends WorkerHost {
       return;
     }
 
-    const { availableMessages } =
-      await this.getUserLimitsService.execute(userId);
-
-    if (availableMessages <= 0) {
+    if (userLimits.availableMessages <= 0) {
       console.log(
         `[EMAIL_PROCESSOR] insufficient balance for user ${userId}, not sending email`,
       );
 
-      await this.updateMessageStatusService.execute(
-        messageId,
-        'failed',
-        'Failed because user has no balance',
-      );
+      this.updateMessageStatusService
+        .execute(messageId, 'failed', 'Failed because user has no balance')
+        .catch((error) =>
+          console.error(
+            `[EMAIL_PROCESSOR] error updating message status: ${error}`,
+          ),
+        );
 
       return;
     }
@@ -343,19 +451,28 @@ export class EmailProcessor extends WorkerHost {
         where: { id: { in: attachmentIds } },
       });
 
-      for (const file of files) {
-        const { data: bytes } = await axios.get(file.url, {
-          responseType: 'arraybuffer',
-        });
+      const attachmentPromises = files.map(async (file) => {
+        try {
+          const { data: bytes } = await axios.get(file.url, {
+            responseType: 'arraybuffer',
+          });
 
-        const base64 = Buffer.from(bytes).toString('base64');
+          const base64 = Buffer.from(bytes).toString('base64');
+          return {
+            filename: file.originalName,
+            content: base64,
+            encoding: 'base64',
+          };
+        } catch (error) {
+          console.error(
+            `[EMAIL_PROCESSOR] error downloading attachment: ${error}`,
+          );
+          return null;
+        }
+      });
 
-        attachments.push({
-          filename: file.originalName,
-          content: base64,
-          encoding: 'base64',
-        });
-      }
+      const downloadedAttachments = await Promise.all(attachmentPromises);
+      attachments = downloadedAttachments.filter(Boolean);
     }
 
     if (data.attachments) {
@@ -366,86 +483,111 @@ export class EmailProcessor extends WorkerHost {
           encoding: 'base64',
         });
 
-        await this.prisma.messageAttachment.create({
-          data: {
-            messageId: messageId,
-            fileName: attachment.fileName,
-          },
-        });
+        this.prisma.messageAttachment
+          .create({
+            data: {
+              messageId: messageId,
+              fileName: attachment.fileName,
+            },
+          })
+          .catch((error) =>
+            console.error(
+              `[EMAIL_PROCESSOR] error creating message attachment: ${error}`,
+            ),
+          );
       }
     }
 
-    const { response: externalMessageId } = await transporter.sendMail({
-      from: `"${from.name}" <${from.email}>`,
-      to,
-      subject,
-      html,
-      attachments,
-      ses: {
-        ConfigurationSetName: process.env.AWS_SES_CONFIGURATION_SET as string,
-      },
-    } as any);
+    try {
+      const { response: externalMessageId } = await transporter.sendMail({
+        from: `"${from.name}" <${from.email}>`,
+        to,
+        subject,
+        html,
+        attachments,
+        ses: {
+          ConfigurationSetName: process.env.AWS_SES_CONFIGURATION_SET as string,
+        },
+      } as any);
 
-    console.log(
-      `[EMAIL_PROCESSOR] email sent from ${from.email} to ${to} with subject ${subject}`,
-    );
-
-    await this.updateMessageStatusService.execute(
-      messageId,
-      'sent',
-      'Email sent successfully',
-      undefined,
-      {
-        externalId: externalMessageId,
-      },
-    );
-
-    console.log(
-      `[EMAIL_PROCESSOR] updated message: ${messageId} to add externalId: ${externalMessageId}`,
-    );
-
-    if (!message.bulkSendingId) {
       console.log(
-        `[EMAIL_PROCESSOR] message is not part of a bulk sending, ignoring`,
+        `[EMAIL_PROCESSOR] email sent from ${from.email} to ${to} with subject ${subject}`,
       );
-      return;
-    }
 
-    const queuedMessages = await this.prisma.message.count({
-      where: {
-        bulkSendingId: message.bulkSendingId,
-        status: 'queued',
-      },
-    });
+      this.updateMessageStatusService
+        .execute(messageId, 'sent', 'Email sent successfully', undefined, {
+          externalId: externalMessageId,
+        })
+        .catch((error) =>
+          console.error(
+            `[EMAIL_PROCESSOR] error updating message status: ${error}`,
+          ),
+        );
 
-    if (queuedMessages !== 0) {
       console.log(
-        `[EMAIL_PROCESSOR] there are ${queuedMessages} messages in the queue for bulk sending ${message.bulkSendingId}, not updating status`,
+        `[EMAIL_PROCESSOR] updated message: ${messageId} to add externalId: ${externalMessageId}`,
       );
-      return;
+
+      if (message.bulkSendingId) {
+        this.handleBulkSendingUpdate(message.bulkSendingId);
+      }
+    } catch (error) {
+      console.error(`[EMAIL_PROCESSOR] error sending email: ${error}`);
+
+      this.updateMessageStatusService
+        .execute(messageId, 'failed', `Failed to send email: ${error.message}`)
+        .catch((err) =>
+          console.error(
+            `[EMAIL_PROCESSOR] error updating message status: ${err}`,
+          ),
+        );
     }
+  }
 
-    const bulkSending = await this.prisma.bulkSending.findUnique({
-      where: { id: message.bulkSendingId },
-    });
+  private async handleBulkSendingUpdate(bulkSendingId: string) {
+    setTimeout(async () => {
+      try {
+        const queuedMessages = await this.prisma.message.count({
+          where: {
+            bulkSendingId: bulkSendingId,
+            status: 'queued',
+          },
+        });
 
-    if (!bulkSending) {
-      console.error(
-        `[EMAIL_PROCESSOR] bulk sending not found: ${message.bulkSendingId}`,
-      );
-      return;
-    }
+        if (queuedMessages !== 0) {
+          console.log(
+            `[EMAIL_PROCESSOR] there are ${queuedMessages} messages in the queue for bulk sending ${bulkSendingId}, not updating status`,
+          );
+          return;
+        }
 
-    if (bulkSending.status === 'failed') {
-      console.log(
-        `[EMAIL_PROCESSOR] bulk sending ${message.bulkSendingId} is failed, not updating status`,
-      );
-      return;
-    }
+        const bulkSending = await this.prisma.bulkSending.findUnique({
+          where: { id: bulkSendingId },
+        });
 
-    await this.prisma.bulkSending.update({
-      where: { id: message.bulkSendingId },
-      data: { status: 'completed' },
-    });
+        if (!bulkSending) {
+          console.error(
+            `[EMAIL_PROCESSOR] bulk sending not found: ${bulkSendingId}`,
+          );
+          return;
+        }
+
+        if (bulkSending.status === 'failed') {
+          console.log(
+            `[EMAIL_PROCESSOR] bulk sending ${bulkSendingId} is failed, not updating status`,
+          );
+          return;
+        }
+
+        await this.prisma.bulkSending.update({
+          where: { id: bulkSendingId },
+          data: { status: 'completed' },
+        });
+      } catch (error) {
+        console.error(
+          `[EMAIL_PROCESSOR] error updating bulk sending: ${error}`,
+        );
+      }
+    }, 0);
   }
 }
