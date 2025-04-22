@@ -382,14 +382,15 @@ export class EmailProcessor extends WorkerHost {
       `[EMAIL_PROCESSOR] email sent from ${from.email} to ${to} with subject ${subject}`,
     );
 
-    await this.prisma.message.update({
-      where: {
-        id: messageId,
-      },
-      data: {
+    await this.updateMessageStatusService.execute(
+      messageId,
+      'sent',
+      'Email sent successfully',
+      undefined,
+      {
         externalId: externalMessageId,
       },
-    });
+    );
 
     console.log(
       `[EMAIL_PROCESSOR] updated message: ${messageId} to add externalId: ${externalMessageId}`,
