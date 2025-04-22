@@ -156,6 +156,16 @@ export class UpdateUserDto {
   birthdate?: Date;
 }
 
+export class UpdateUserPriorityDto {
+  @IsNotEmpty()
+  @IsString()
+  userId: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  isUserPriority: boolean;
+}
+
 export class MessagesInsightsDto {
   @IsOptional()
   @Type(() => Date)
@@ -182,6 +192,17 @@ export class MessagesInsightsDto {
   @IsOptional()
   @IsString()
   bulkSending?: string;
+}
+
+export enum ExportFormat {
+  CSV = 'csv',
+  JSON = 'json',
+}
+
+export class ExportMessagesDto extends MessagesInsightsDto {
+  @IsNotEmpty()
+  @IsEnum(ExportFormat)
+  format: ExportFormat;
 }
 
 export class ListMessagesDto extends MessagesInsightsDto {

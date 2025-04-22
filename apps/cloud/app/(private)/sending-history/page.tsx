@@ -16,6 +16,7 @@ import { DateRange } from 'react-day-picker';
 import { ArrowLeftIcon } from 'lucide-react';
 import { Button } from '@jsx-mail/ui/button';
 import { Alert, AlertDescription } from '@jsx-mail/ui/alert';
+import { ExportModal } from './export-modal';
 
 export default function SendingHistoryPage() {
   const router = useRouter();
@@ -28,6 +29,7 @@ export default function SendingHistoryPage() {
   const [statuses, setStatuses] = useState<string[]>([]);
   const bulkSending = searchParams?.get('bulkSending') || '';
   const isDefaultProcessed = useRef(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   useEffect(() => {
     if (isDefaultProcessed.current) return;
@@ -201,6 +203,12 @@ export default function SendingHistoryPage() {
           </h1>
 
           <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsExportModalOpen(true)}
+            >
+              Export
+            </Button>
             <Filters
               fromEmail={fromEmail}
               toEmail={toEmail}
@@ -234,6 +242,17 @@ export default function SendingHistoryPage() {
             onPageChange={handlePageChange}
           />
         )}
+
+        <ExportModal
+          isOpen={isExportModalOpen}
+          totalMessages={messagesPagination?.total || 0}
+          onClose={() => setIsExportModalOpen(false)}
+          filters={{
+            startDate,
+            endDate,
+            statuses,
+          }}
+        />
       </div>
     </Container>
   );

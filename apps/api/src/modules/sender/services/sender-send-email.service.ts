@@ -130,6 +130,7 @@ export class SenderSendEmailService {
       html,
       subject,
       to,
+      userId,
       messageId: message.id,
       attachmentIds,
       attachments,

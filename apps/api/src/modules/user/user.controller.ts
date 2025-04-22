@@ -23,6 +23,7 @@ import {
   CreateUserDto,
   CreateUserWebhookDto,
   CreateUtmDto,
+  ExportMessagesDto,
   ForceSendMessageWebhookDto,
   GetUsersDto,
   ImpersonateUserDto,
@@ -31,6 +32,7 @@ import {
   ResetPasswordDto,
   UpdateDefaultSettingsDto,
   UpdateOnboardingDto,
+  UpdateUserPriorityDto,
   UpdateUserSettingsDto,
   UseSecurityCodeDto,
 } from './user.dto';
@@ -71,6 +73,9 @@ import { ForceSendMessageWebhookService } from './services/force-send-message-we
 import { CreateUserWebhookService } from './services/create-user-webhook.service';
 import { DeleteUserWebhookService } from './services/delete-user-webhook.service';
 import { ListUserWebhookService } from './services/list-user-webhook.service';
+import { ExportMessagesService } from './services/export-messages.service';
+import { GetExportService } from './services/get-export.service';
+import { UpdateIsUserPriorityService } from './services/update-is-user-priority.service';
 
 @Controller('user')
 export class UserController {
@@ -106,6 +111,9 @@ export class UserController {
     private readonly createUserWebhookService: CreateUserWebhookService,
     private readonly deleteUserWebhookService: DeleteUserWebhookService,
     private readonly listUserWebhookService: ListUserWebhookService,
+    private readonly exportMessagesService: ExportMessagesService,
+    private readonly getExportService: GetExportService,
+    private readonly updateUserPriorityService: UpdateIsUserPriorityService,
   ) {}
 
   @Post('check-email')
@@ -126,6 +134,12 @@ export class UserController {
       take: Number(data.take) || 10,
       page: Number(data.page) || 1,
     });
+  }
+
+  @Post('admin/users/priority')
+  @Permissions([PERMISSIONS.OTHER_UPDATE_USER_PRIORITY.value])
+  updateUserPriority(@Body() data: UpdateUserPriorityDto) {
+    return this.updateUserPriorityService.execute(data);
   }
 
   @Post('admin/users/impersonate')
@@ -232,6 +246,18 @@ export class UserController {
     @Query(new ValidationPipe({ transform: true })) data: ListMessagesDto,
   ) {
     return this.listMessagesService.execute(data, req.user.id);
+  }
+
+  @Post('messages/export')
+  @Permissions([PERMISSIONS.SELF_EXPORT_MESSAGES.value])
+  exportMessages(@Req() req, @Body() data: ExportMessagesDto) {
+    return this.exportMessagesService.execute(data, req.user.id);
+  }
+
+  @Get('messages/export/:id')
+  @Permissions([PERMISSIONS.SELF_GET_EXPORT_MESSAGES.value])
+  getExportMessages(@Param('id') id: string, @Request() req) {
+    return this.getExportService.execute(id, req.user.id);
   }
 
   @Get('messages/insights')

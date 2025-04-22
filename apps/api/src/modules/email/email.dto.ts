@@ -53,6 +53,10 @@ export class SendEmailDto {
   @IsArray()
   to: string[];
 
+  @IsNotEmpty()
+  @IsString()
+  userId: string;
+
   @IsOptional()
   @IsString()
   messageId?: string;

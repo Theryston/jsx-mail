@@ -81,6 +81,7 @@ export class ResendProcessingMessagesService {
         delay: 0,
         attachmentIds: message.messageFiles.map((file) => file.fileId),
         messageId: message.id,
+        userId: message.sender.userId,
       });
 
       await this.updateMessageStatusService.execute(

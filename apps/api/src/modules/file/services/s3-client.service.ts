@@ -1,5 +1,6 @@
 import {
   DeleteObjectCommand,
+  GetObjectCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -17,6 +18,17 @@ export class S3ClientService {
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       },
     });
+  }
+
+  async getObject(key: string) {
+    const command = new GetObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key,
+    });
+
+    const response = await this.client.send(command);
+
+    return response;
   }
 
   async putObject({

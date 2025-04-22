@@ -86,6 +86,12 @@ export type UserUtm = {
 
 export type UserAdmin = User & {
   userUtm: UserUtm[];
+  isUserPriority: {
+    id: string;
+    userId: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
   userUtmGroups?: {
     id: string;
     views?: {
@@ -106,6 +112,23 @@ export type UserWebhook = {
   id: string;
   url: string;
   messageStatuses: string[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type Export = {
+  id: string;
+  exportStatus: 'pending' | 'processing' | 'completed' | 'failed';
+  format: 'csv' | 'json';
+  startDate: string;
+  endDate: string;
+  statuses: string[];
+  errorMessage?: string;
+  file?: {
+    url: string;
+    size: number;
+    type: string;
+  };
   createdAt: string;
   updatedAt: string;
 };

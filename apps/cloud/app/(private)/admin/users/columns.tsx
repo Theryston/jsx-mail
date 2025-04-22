@@ -11,6 +11,7 @@ import {
   MoreHorizontal,
   BarChartIcon,
   SettingsIcon,
+  StarIcon,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -26,6 +27,7 @@ import { BlockPermissionsModal } from './block-permissions-modal';
 import { UtmsModal } from './utms-modal';
 import { Badge } from '@jsx-mail/ui/badge';
 import { UserSettingsModal } from './user-settings-modal';
+import { UserPriorityModal } from './user-priority-modal';
 
 export const columns: ColumnDef<UserAdmin>[] = [
   {
@@ -99,6 +101,7 @@ export const columns: ColumnDef<UserAdmin>[] = [
       const [blockModalOpen, setBlockModalOpen] = useState(false);
       const [utmsModalOpen, setUtmsModalOpen] = useState(false);
       const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+      const [priorityModalOpen, setPriorityModalOpen] = useState(false);
 
       const handleImpersonate = async () => {
         const id = toast.loading('Impersonating user...');
@@ -140,6 +143,10 @@ export const columns: ColumnDef<UserAdmin>[] = [
         setSettingsModalOpen(true);
       };
 
+      const handlePriority = () => {
+        setPriorityModalOpen(true);
+      };
+
       return (
         <div className="flex gap-2">
           <Button
@@ -170,6 +177,10 @@ export const columns: ColumnDef<UserAdmin>[] = [
                 <BarChartIcon className="size-4" />
                 View UTMs
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={handlePriority}>
+                <StarIcon className="size-4" />
+                Set Priority
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -193,6 +204,14 @@ export const columns: ColumnDef<UserAdmin>[] = [
             <UserSettingsModal
               isOpen={settingsModalOpen}
               onClose={() => setSettingsModalOpen(false)}
+              user={user}
+            />
+          )}
+
+          {priorityModalOpen && (
+            <UserPriorityModal
+              isOpen={priorityModalOpen}
+              onClose={() => setPriorityModalOpen(false)}
               user={user}
             />
           )}

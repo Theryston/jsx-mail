@@ -29,6 +29,7 @@ export class GetUsersService {
         createdAt: 'desc',
       },
       include: {
+        isUserPriority: true,
         blockedPermissions: {
           where: {
             deletedAt: null,

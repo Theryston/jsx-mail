@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { FileController } from './file.controller';
 import { UploadFileService } from './services/upload-file.service';
 import { PrismaService } from 'src/services/prisma.service';
@@ -24,7 +24,8 @@ import { UserModule } from '../user/user.module';
     MulterModule.register({
       storage: memoryStorage(),
     }),
-    UserModule,
+    forwardRef(() => UserModule),
   ],
+  exports: [S3ClientService],
 })
 export class FileModule {}
