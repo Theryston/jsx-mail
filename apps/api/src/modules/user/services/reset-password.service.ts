@@ -71,6 +71,7 @@ export class ResetPasswordService {
       to: [user.email],
       subject: 'Your password has been reset',
       html: htmlCode,
+      userId: user.id,
     });
 
     return session;

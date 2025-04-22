@@ -2,13 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { SendEmailDto, EmailPriority } from '../email.dto';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { PrismaService } from 'src/services/prisma.service';
 
 @Injectable()
 export class SendEmailService {
-  constructor(@InjectQueue('email') private readonly sendEmailQueue: Queue) {}
+  constructor(
+    @InjectQueue('email') private readonly sendEmailQueue: Queue,
+    private readonly prisma: PrismaService,
+  ) {}
 
   async execute(data: SendEmailDto) {
-    const priority = data.priority === EmailPriority.HIGH ? 1 : 10;
+    const priority = await this.getPriority(data.priority, data.userId);
 
     await this.sendEmailQueue.add('send-email', data, {
       attempts: 3,
@@ -21,5 +25,21 @@ export class SendEmailService {
     console.log(
       `[SEND_EMAIL_SERVICE] added job to queue: ${JSON.stringify(newData)}`,
     );
+  }
+
+  async getPriority(priority: EmailPriority, userId: string) {
+    const isUserPriority = await this.prisma.isUserPriority.findFirst({
+      where: {
+        userId,
+      },
+    });
+
+    const weight = isUserPriority ? 0 : 10;
+
+    if (priority === EmailPriority.HIGH) {
+      return weight + 1;
+    }
+
+    return weight + 10;
   }
 }

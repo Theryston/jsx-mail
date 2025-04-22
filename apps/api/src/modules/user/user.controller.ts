@@ -32,6 +32,7 @@ import {
   ResetPasswordDto,
   UpdateDefaultSettingsDto,
   UpdateOnboardingDto,
+  UpdateUserPriorityDto,
   UpdateUserSettingsDto,
   UseSecurityCodeDto,
 } from './user.dto';
@@ -74,6 +75,7 @@ import { DeleteUserWebhookService } from './services/delete-user-webhook.service
 import { ListUserWebhookService } from './services/list-user-webhook.service';
 import { ExportMessagesService } from './services/export-messages.service';
 import { GetExportService } from './services/get-export.service';
+import { UpdateIsUserPriorityService } from './services/update-is-user-priority.service';
 
 @Controller('user')
 export class UserController {
@@ -111,6 +113,7 @@ export class UserController {
     private readonly listUserWebhookService: ListUserWebhookService,
     private readonly exportMessagesService: ExportMessagesService,
     private readonly getExportService: GetExportService,
+    private readonly updateUserPriorityService: UpdateIsUserPriorityService,
   ) {}
 
   @Post('check-email')
@@ -131,6 +134,12 @@ export class UserController {
       take: Number(data.take) || 10,
       page: Number(data.page) || 1,
     });
+  }
+
+  @Post('admin/users/priority')
+  @Permissions([PERMISSIONS.OTHER_UPDATE_USER_PRIORITY.value])
+  updateUserPriority(@Body() data: UpdateUserPriorityDto) {
+    return this.updateUserPriorityService.execute(data);
   }
 
   @Post('admin/users/impersonate')

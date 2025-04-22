@@ -86,6 +86,12 @@ export type UserUtm = {
 
 export type UserAdmin = User & {
   userUtm: UserUtm[];
+  isUserPriority: {
+    id: string;
+    userId: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
   userUtmGroups?: {
     id: string;
     views?: {

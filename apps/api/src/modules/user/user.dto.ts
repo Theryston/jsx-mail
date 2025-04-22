@@ -156,6 +156,16 @@ export class UpdateUserDto {
   birthdate?: Date;
 }
 
+export class UpdateUserPriorityDto {
+  @IsNotEmpty()
+  @IsString()
+  userId: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  isUserPriority: boolean;
+}
+
 export class MessagesInsightsDto {
   @IsOptional()
   @Type(() => Date)

@@ -173,8 +173,21 @@ model User {
   leads                   Lead[]
   webhooks                UserWebhook[]
   exports                 Export[]
+  isUserPriority          IsUserPriority[]
 
   @@map("users")
+}
+
+model IsUserPriority {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("is_user_priority")
 }
 
 model UserWebhook {

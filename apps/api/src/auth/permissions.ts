@@ -322,4 +322,9 @@ export const PERMISSIONS: {
     value: 'self:get-export-messages',
     description: 'Can get an export for itself',
   },
+  OTHER_UPDATE_USER_PRIORITY: {
+    title: 'Other Update User Priority',
+    value: 'other:update-user-priority',
+    description: 'Can update a user priority',
+  },
 };

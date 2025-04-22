@@ -95,6 +95,7 @@ export class CreateSecurityCodeService {
       to: [user.email],
       subject: 'Your security code',
       html: htmlCode,
+      userId: user.id,
     });
 
     return {

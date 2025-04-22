@@ -46,6 +46,7 @@ import { UserProcessor } from './user.processor';
 import { BullModule } from '@nestjs/bullmq';
 import { GetExportService } from './services/get-export.service';
 import { FileModule } from '../file/file.module';
+import { UpdateIsUserPriorityService } from './services/update-is-user-priority.service';
 
 @Module({
   controllers: [UserController],
@@ -92,6 +93,7 @@ import { FileModule } from '../file/file.module';
     ExportMessagesService,
     UserProcessor,
     GetExportService,
+    UpdateIsUserPriorityService,
   ],
   imports: [
     BullModule.registerQueue({

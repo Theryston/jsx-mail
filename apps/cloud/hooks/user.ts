@@ -306,3 +306,15 @@ export function useGetExportMessages(id: string | null, status: string | null) {
       status === 'pending' || status === 'processing' ? 1000 : false,
   });
 }
+
+export function useUpdateUserPriority() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { userId: string; isUserPriority: boolean }) =>
+      api.post('/user/admin/users/priority', data).then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    },
+  });
+}
