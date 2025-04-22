@@ -506,18 +506,13 @@ export class EmailProcessor extends WorkerHost {
         `[EMAIL_PROCESSOR] email sent from ${from.email} to ${to} with subject ${subject}`,
       );
 
-      this.prisma.message
-        .update({
-          where: {
-            id: messageId,
-          },
-          data: {
-            externalId: externalMessageId,
-          },
+      this.updateMessageStatusService
+        .execute(messageId, 'sent', 'Email sent successfully', undefined, {
+          externalId: externalMessageId,
         })
         .catch((error) =>
           console.error(
-            `[EMAIL_PROCESSOR] error updating external ID: ${error}`,
+            `[EMAIL_PROCESSOR] error updating message status: ${error}`,
           ),
         );
 
