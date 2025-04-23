@@ -82,12 +82,7 @@ const server = new SMTPServer({
       return;
     }
 
-    const parsed = await simpleParser(stream, {
-      skipHtmlToText: true,
-      skipImageLinks: true,
-      skipTextToHtml: true,
-      skipTextLinks: true,
-    });
+    const parsed = await simpleParser(stream);
 
     const toTexts = Array.isArray(parsed.to)
       ? parsed.to.map((to) => to.text)
@@ -121,35 +116,37 @@ const server = new SMTPServer({
         content: attachment.content.toString('base64'),
       })) || [];
 
-    try {
-      await apiLimit(() =>
-        apiClient.post(
-          '/sender/send',
-          {
-            to,
-            sender,
-            subject,
-            html,
-            attachments,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${apiKey}`,
+    callback(null);
+
+    process.nextTick(async () => {
+      try {
+        await apiLimit(() =>
+          apiClient.post(
+            '/sender/send',
+            {
+              to,
+              sender,
+              subject,
+              html,
+              attachments,
             },
-          },
-        ),
-      );
+            {
+              headers: {
+                Authorization: `Bearer ${apiKey}`,
+              },
+            },
+          ),
+        );
 
-      console.log(`Email sent from ${sender} to ${to}`);
-
-      callback(null);
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message;
-      console.error(
-        `Error sending email from ${sender} to ${to}: ${errorMessage}`,
-      );
-      callback(new Error(errorMessage));
-    }
+        console.log(`Email sent from ${sender} to ${to}`);
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || error.message;
+        console.error(
+          `Error sending email from ${sender} to ${to}: ${errorMessage}`,
+        );
+        callback(new Error(errorMessage));
+      }
+    });
   },
 });
 
