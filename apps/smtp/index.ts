@@ -82,7 +82,12 @@ const server = new SMTPServer({
       return;
     }
 
-    const parsed = await simpleParser(stream);
+    const parsed = await simpleParser(stream, {
+      skipHtmlToText: true,
+      skipImageLinks: true,
+      skipTextToHtml: true,
+      skipTextLinks: true,
+    });
 
     const toTexts = Array.isArray(parsed.to)
       ? parsed.to.map((to) => to.text)
