@@ -1,9 +1,9 @@
-FROM oven/bun:1
+FROM node:20-alpine
 
 WORKDIR /app
-
 COPY . .
 
-RUN bun install
+RUN yarn install
+RUN yarn run build
 
-CMD ["bun", "run", "index.ts"]
+CMD ["node", "index.js"]

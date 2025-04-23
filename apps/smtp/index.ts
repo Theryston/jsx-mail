@@ -4,6 +4,9 @@ import { simpleParser } from 'mailparser';
 import { LRUCache } from 'lru-cache';
 import axios from 'axios';
 import pLimit from 'p-limit';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const apiLimit = pLimit(20);
 
