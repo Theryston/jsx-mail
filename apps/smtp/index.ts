@@ -114,7 +114,7 @@ const server = new SMTPServer({
       })) || [];
 
     try {
-      apiClient.post(
+      await apiClient.post(
         '/sender/send',
         {
           to,
