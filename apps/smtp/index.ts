@@ -1,7 +1,13 @@
 import { SMTPServer } from 'smtp-server';
 import type { SMTPServerAuthentication, SMTPServerSession } from 'smtp-server';
 import { simpleParser } from 'mailparser';
+import { LRUCache } from 'lru-cache';
 import axios from 'axios';
+
+const authCache = new LRUCache<string, boolean>({
+  max: 1000,
+  ttl: 1000 * 60 * 5, // 5 minutes
+});
 
 const apiClient = axios.create({
   baseURL: process.env.API_BASE_URL,
@@ -29,6 +35,14 @@ const server = new SMTPServer({
       callback(new Error('Invalid username'));
       return;
     }
+
+    const cacheKey = `auth:${auth.password}`;
+
+    if (authCache.get(cacheKey)) {
+      callback(null, { user: auth.password });
+      return;
+    }
+
     try {
       await apiClient.get('/user/me', {
         headers: {
@@ -36,6 +50,7 @@ const server = new SMTPServer({
         },
       });
 
+      authCache.set(cacheKey, true);
       callback(null, { user: auth.password });
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || error.message;
