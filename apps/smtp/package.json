@@ -14,7 +14,6 @@
     "lru-cache": "^11.1.0",
     "mailparser": "^3.7.2",
     "nodemailer": "^6.10.1",
-    "p-limit": "^6.2.0",
     "smtp-server": "^3.13.6"
   },
   "scripts": {

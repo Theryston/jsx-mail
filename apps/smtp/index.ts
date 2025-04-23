@@ -3,12 +3,9 @@ import type { SMTPServerAuthentication, SMTPServerSession } from 'smtp-server';
 import { simpleParser } from 'mailparser';
 import { LRUCache } from 'lru-cache';
 import axios from 'axios';
-import pLimit from 'p-limit';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
-const apiLimit = pLimit(100);
 
 const authCache = new LRUCache<string, boolean>({
   max: 1000,
@@ -117,22 +114,20 @@ const server = new SMTPServer({
       })) || [];
 
     try {
-      await apiLimit(() =>
-        apiClient.post(
-          '/sender/send',
-          {
-            to,
-            sender,
-            subject,
-            html,
-            attachments,
+      apiClient.post(
+        '/sender/send',
+        {
+          to,
+          sender,
+          subject,
+          html,
+          attachments,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${apiKey}`,
-            },
-          },
-        ),
+        },
       );
 
       console.log(`Email sent from ${sender} to ${to}`);
