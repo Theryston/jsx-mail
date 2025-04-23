@@ -90,7 +90,18 @@ const server = new SMTPServer({
       return toText.split(', ');
     });
 
+    if (to.length === 0) {
+      callback(new Error('Invalid recipient'));
+      return;
+    }
+
     const sender = parsed.from?.value[0]?.address;
+
+    if (!sender) {
+      callback(new Error('Invalid sender'));
+      return;
+    }
+
     const subject = parsed.subject;
     const html = parsed.html || parsed.text;
     const attachments =
