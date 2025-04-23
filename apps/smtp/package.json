@@ -5,9 +5,7 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/mailparser": "^3.4.5",
-    "@types/smtp-server": "^3.5.10"
-  },
-  "peerDependencies": {
+    "@types/smtp-server": "^3.5.10",
     "typescript": "^5.0.0"
   },
   "dependencies": {
