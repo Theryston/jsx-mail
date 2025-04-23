@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const apiLimit = pLimit(20);
+const apiLimit = pLimit(100);
 
 const authCache = new LRUCache<string, boolean>({
   max: 1000,
