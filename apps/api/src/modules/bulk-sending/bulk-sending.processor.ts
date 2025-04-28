@@ -192,24 +192,6 @@ export class BulkSendingProcessor extends WorkerHost {
 
               console.log(`[BULK_SENDING] ${message}`);
 
-              if (contact.bouncedBy === 'message') {
-                await this.prisma.bulkSendingFailure.create({
-                  data: {
-                    bulkSendingId,
-                    contactId: contact.id,
-                    message,
-                    line: currentLine,
-                  },
-                });
-              }
-
-              await this.prisma.bulkSending.update({
-                where: { id: bulkSendingId },
-                data: {
-                  processedContacts: currentLine,
-                },
-              });
-
               continue;
             }
 
@@ -244,13 +226,6 @@ export class BulkSendingProcessor extends WorkerHost {
                 contactId: contact.id,
                 message: error.message,
                 line: currentLine,
-              },
-            });
-
-            await this.prisma.bulkSending.update({
-              where: { id: bulkSendingId },
-              data: {
-                processedContacts: currentLine,
               },
             });
           }

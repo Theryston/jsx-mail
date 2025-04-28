@@ -79,7 +79,6 @@ export type BulkSending = {
   content: string;
   senderId: string;
   totalContacts: number;
-  processedContacts: number;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   contactGroupId: string;
   _count: {
