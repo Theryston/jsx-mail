@@ -527,10 +527,6 @@ export class EmailProcessor extends WorkerHost {
       console.log(
         `[EMAIL_PROCESSOR] updated message: ${messageId} to add externalId: ${externalMessageId}`,
       );
-
-      if (message.bulkSendingId) {
-        this.handleBulkSendingUpdate(message.bulkSendingId);
-      }
     } catch (error) {
       console.error(`[EMAIL_PROCESSOR] error sending email: ${error}`);
 
@@ -542,52 +538,5 @@ export class EmailProcessor extends WorkerHost {
           ),
         );
     }
-  }
-
-  private async handleBulkSendingUpdate(bulkSendingId: string) {
-    setTimeout(async () => {
-      try {
-        const queuedMessages = await this.prisma.message.count({
-          where: {
-            bulkSendingId: bulkSendingId,
-            status: 'queued',
-          },
-        });
-
-        if (queuedMessages !== 0) {
-          console.log(
-            `[EMAIL_PROCESSOR] there are ${queuedMessages} messages in the queue for bulk sending ${bulkSendingId}, not updating status`,
-          );
-          return;
-        }
-
-        const bulkSending = await this.prisma.bulkSending.findUnique({
-          where: { id: bulkSendingId },
-        });
-
-        if (!bulkSending) {
-          console.error(
-            `[EMAIL_PROCESSOR] bulk sending not found: ${bulkSendingId}`,
-          );
-          return;
-        }
-
-        if (bulkSending.status === 'failed') {
-          console.log(
-            `[EMAIL_PROCESSOR] bulk sending ${bulkSendingId} is failed, not updating status`,
-          );
-          return;
-        }
-
-        await this.prisma.bulkSending.update({
-          where: { id: bulkSendingId },
-          data: { status: 'completed' },
-        });
-      } catch (error) {
-        console.error(
-          `[EMAIL_PROCESSOR] error updating bulk sending: ${error}`,
-        );
-      }
-    }, 0);
   }
 }

@@ -73,7 +73,16 @@ export class BulkSendingProcessor extends WorkerHost {
     try {
       while (!insufficientBalance) {
         const contacts = await this.prisma.contact.findMany({
-          where: { contactGroupId },
+          where: {
+            contactGroupId,
+            NOT: {
+              messages: {
+                some: {
+                  bulkSendingId,
+                },
+              },
+            },
+          },
           skip: (page - 1) * PER_PAGE,
           take: PER_PAGE,
           orderBy: {
@@ -100,20 +109,6 @@ export class BulkSendingProcessor extends WorkerHost {
           }
 
           try {
-            const isSent = await this.prisma.message.findFirst({
-              where: {
-                bulkSendingId,
-                contactId: contact.id,
-              },
-            });
-
-            if (isSent) {
-              console.log(
-                `[BULK_SENDING] skipping ${contact.email} because it was already sent`,
-              );
-              continue;
-            }
-
             console.log(
               `[BULK_SENDING] sending email to ${contact.email} for bulk sending ${bulkSendingId}`,
             );
@@ -140,6 +135,7 @@ export class BulkSendingProcessor extends WorkerHost {
               }
             }
 
+            // TODO: cache this
             const { availableMessages, balance } =
               await this.getUserLimitsService.execute(bulkSending.userId);
 
@@ -194,23 +190,30 @@ export class BulkSendingProcessor extends WorkerHost {
               continue;
             }
 
-            const message = await this.senderSendEmailService.execute(
-              {
-                sender: bulkSending.sender.email,
-                subject,
-                html: content,
-                to: [contact.email],
-                bulkSendingId,
-                customPayload,
-                contactId: contact.id,
-                delay: 1000,
-              },
-              bulkSending.userId,
-            );
-
-            console.log(
-              `[BULK_SENDING] sent email to ${contact.email} with messageId ${message.id}`,
-            );
+            this.senderSendEmailService
+              .execute(
+                {
+                  sender: bulkSending.sender.email,
+                  subject,
+                  html: content,
+                  to: [contact.email],
+                  bulkSendingId,
+                  customPayload,
+                  contactId: contact.id,
+                },
+                bulkSending.userId,
+              )
+              .then((message) => {
+                console.log(
+                  `[BULK_SENDING|BACKGROUND] sent email to ${contact.email} with messageId ${message.id}`,
+                );
+              })
+              .catch((error) => {
+                console.error(
+                  `[BULK_SENDING|BACKGROUND] error sending email to ${contact.email} for bulk sending ${bulkSendingId}`,
+                  error,
+                );
+              });
           } catch (error) {
             console.error(
               `[BULK_SENDING] error sending email to ${contact.email} for bulk sending ${bulkSendingId}`,
@@ -244,6 +247,11 @@ export class BulkSendingProcessor extends WorkerHost {
 
         page++;
       }
+
+      await this.prisma.bulkSending.update({
+        where: { id: bulkSendingId },
+        data: { status: 'completed' },
+      });
     } catch (error) {
       console.error(
         `[BULK_SENDING] error sending bulk email for bulk sending ${bulkSendingId}`,
