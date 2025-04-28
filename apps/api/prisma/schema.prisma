@@ -174,6 +174,7 @@ model User {
   webhooks                UserWebhook[]
   exports                 Export[]
   isUserPriority          IsUserPriority[]
+  messageStatusMappings   MessageStatusMapping[]
 
   @@map("users")
 }
@@ -564,11 +565,42 @@ model Message {
   bulkSending BulkSending? @relation(fields: [bulkSendingId], references: [id], onDelete: Cascade)
   contact     Contact?     @relation(fields: [contactId], references: [id], onDelete: Cascade)
 
-  messageFiles  MessageFile[]
-  attachments   MessageAttachment[]
-  statusHistory MessageStatusHistory[]
+  messageFiles   MessageFile[]
+  attachments    MessageAttachment[]
+  statusHistory  MessageStatusHistory[]
+  statusReplaced MessageStatusReplaced[]
 
   @@map("messages")
+}
+
+model MessageStatusReplaced {
+  id                String        @id @default(uuid())
+  messageId         String        @map("message_id")
+  oldStatus         MessageStatus @map("old_status")
+  originalNewStatus MessageStatus @map("original_new_status")
+  replacedNewStatus MessageStatus @map("replaced_new_status")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+  deletedAt         DateTime?     @map("deleted_at")
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@map("message_status_replaced")
+}
+
+model MessageStatusMapping {
+  id                 String        @id @default(uuid())
+  userId             String        @map("user_id")
+  whenMessageStatus  MessageStatus @map("when_message_status")
+  whenNewStatus      MessageStatus @map("when_new_status")
+  replaceNewStatusTo MessageStatus @map("replace_new_status_to")
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+  deletedAt          DateTime?     @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("message_status_mappings")
 }
 
 model Export {

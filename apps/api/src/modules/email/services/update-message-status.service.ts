@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MessageStatus } from '@prisma/client';
+import { Message, MessageStatus } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
 import moment from 'moment';
@@ -41,6 +41,8 @@ export class UpdateMessageStatusService {
     if (!message) {
       throw new NotFoundException('Message not found');
     }
+
+    newStatus = await this.processStatusMapping(message, newStatus);
 
     const entries = Object.entries(extra);
     const extras = entries.map(([key, value]) => ({
@@ -109,6 +111,37 @@ export class UpdateMessageStatusService {
       chargeMonth: moment().format('YYYY-MM'),
       sentDay: moment().format('YYYY-MM-DD'),
     };
+  }
+
+  private async processStatusMapping(
+    message: Message,
+    newStatus: MessageStatus,
+  ): Promise<MessageStatus> {
+    const statusMapping = await this.prisma.messageStatusMapping.findFirst({
+      where: {
+        whenMessageStatus: message.status,
+        whenNewStatus: newStatus,
+        userId: message.userId,
+        deletedAt: null,
+      },
+    });
+
+    if (!statusMapping) return newStatus;
+
+    console.log(
+      `[UPDATE_MESSAGE_STATUS_SERVICE] status mapping found for ${message.status} to ${newStatus}. It will be replaced to ${statusMapping.replaceNewStatusTo}`,
+    );
+
+    await this.prisma.messageStatusReplaced.create({
+      data: {
+        messageId: message.id,
+        oldStatus: message.status,
+        originalNewStatus: newStatus,
+        replacedNewStatus: statusMapping.replaceNewStatusTo,
+      },
+    });
+
+    return statusMapping.replaceNewStatusTo;
   }
 
   private shouldNotUpdateStatus(

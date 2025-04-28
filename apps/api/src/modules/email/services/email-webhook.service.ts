@@ -19,6 +19,8 @@ export class EmailWebhookService {
       if (!externalId) return 'ignored because the externalId is missing';
       console.log(`[EMAIL_WEBHOOK_SERVICE] received data from: ${externalId}`);
 
+      if (!data?.eventType) return 'ignored because the eventType is missing';
+
       let newStatus: MessageStatus | undefined = {
         Send: 'sent',
         RenderingFailure: 'failed',
