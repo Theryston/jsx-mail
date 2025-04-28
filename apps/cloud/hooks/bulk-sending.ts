@@ -316,3 +316,17 @@ export function useMarkBulkEmailCheckAsRead(
     },
   });
 }
+
+export function useRestartBulkSending() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (bulkSendingId: string) =>
+      api
+        .post(`/bulk-sending/${bulkSendingId}/restart`)
+        .then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bulkSending'] });
+    },
+  });
+}

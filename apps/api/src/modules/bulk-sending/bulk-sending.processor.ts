@@ -6,6 +6,7 @@ import { SenderSendEmailService } from '../sender/services/sender-send-email.ser
 import moment from 'moment';
 import { CreateContactService } from './services/create-contact.service';
 import { GetUserLimitsService } from '../user/services/get-user-limits.service';
+import { Prisma } from '@prisma/client';
 
 @Processor('bulk-sending', { concurrency: 10 })
 export class BulkSendingProcessor extends WorkerHost {
@@ -69,26 +70,40 @@ export class BulkSendingProcessor extends WorkerHost {
     let page = 1;
     let insufficientBalance = false;
     let currentLine = 0;
+    let gotContacts = 0;
 
     try {
       while (!insufficientBalance) {
+        console.log(
+          `[BULK_SENDING] got ${gotContacts} contacts for bulk sending ${bulkSendingId} at page ${page}`,
+        );
+
         const contacts = await this.prisma.contact.findMany({
           where: {
             contactGroupId,
-            NOT: {
-              messages: {
-                some: {
-                  bulkSendingId,
-                },
-              },
-            },
           },
-          skip: (page - 1) * PER_PAGE,
+          skip: gotContacts,
           take: PER_PAGE,
           orderBy: {
             createdAt: 'desc',
           },
+          include: {
+            _count: {
+              select: {
+                messages: {
+                  where: {
+                    bulkSendingId,
+                    sentAt: {
+                      not: null,
+                    },
+                  },
+                },
+              },
+            },
+          },
         });
+
+        gotContacts += contacts.length;
 
         if (contacts.length === 0) {
           console.log(
@@ -99,6 +114,14 @@ export class BulkSendingProcessor extends WorkerHost {
 
         for (let i = 0; i < contacts.length; i++) {
           const contact = contacts[i];
+
+          if (contact._count.messages > 0) {
+            console.log(
+              `[BULK_SENDING] contact ${contact.email} already has a message sent. Skipping...`,
+            );
+            continue;
+          }
+
           currentLine++;
 
           if (insufficientBalance) {
@@ -203,11 +226,6 @@ export class BulkSendingProcessor extends WorkerHost {
                 },
                 bulkSending.userId,
               )
-              .then((message) => {
-                console.log(
-                  `[BULK_SENDING|BACKGROUND] sent email to ${contact.email} with messageId ${message.id}`,
-                );
-              })
               .catch((error) => {
                 console.error(
                   `[BULK_SENDING|BACKGROUND] error sending email to ${contact.email} for bulk sending ${bulkSendingId}`,
@@ -247,6 +265,8 @@ export class BulkSendingProcessor extends WorkerHost {
 
         page++;
       }
+
+      console.log(`[BULK_SENDING] bulk sending ${bulkSendingId} completed`);
 
       await this.prisma.bulkSending.update({
         where: { id: bulkSendingId },

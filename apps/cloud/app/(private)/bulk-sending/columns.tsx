@@ -10,6 +10,7 @@ import {
   MailIcon,
   MoreHorizontalIcon,
   UsersIcon,
+  RefreshCwIcon,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Badge } from '@jsx-mail/ui/badge';
@@ -18,9 +19,14 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
+  DialogFooter,
 } from '@jsx-mail/ui/dialog';
 import { PaginationControls } from '@jsx-mail/ui/pagination-controls';
-import { useBulkSendingFailures } from '@/hooks/bulk-sending';
+import {
+  useBulkSendingFailures,
+  useRestartBulkSending,
+} from '@/hooks/bulk-sending';
 import {
   DropdownMenuItem,
   DropdownMenuContent,
@@ -29,6 +35,7 @@ import {
 import { DropdownMenu } from '@jsx-mail/ui/dropdown-menu';
 import Link from 'next/link';
 import { useQueryClient } from '@tanstack/react-query';
+import { toast } from '@jsx-mail/ui/sonner';
 
 export const columns: ColumnDef<BulkSending>[] = [
   {
@@ -115,6 +122,7 @@ export const columns: ColumnDef<BulkSending>[] = [
       const bulkSending = row.original;
       const router = useRouter();
       const [isErrorsDialogOpen, setIsErrorsDialogOpen] = useState(false);
+      const [isRestartDialogOpen, setIsRestartDialogOpen] = useState(false);
 
       const handleViewMessages = () => {
         const url = `/sending-history?page=1&startDate=${moment(bulkSending.createdAt).add(1, 'day').subtract(30, 'days').format('YYYY-MM-DD')}&endDate=${moment(bulkSending.createdAt).add(1, 'day').format('YYYY-MM-DD')}&bulkSending=${bulkSending.id}`;
@@ -152,6 +160,12 @@ export const columns: ColumnDef<BulkSending>[] = [
                   View Errors
                 </DropdownMenuItem>
               )}
+              {bulkSending.status === 'completed' && (
+                <DropdownMenuItem onClick={() => setIsRestartDialogOpen(true)}>
+                  <RefreshCwIcon className="size-4" />
+                  Restart
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -160,11 +174,76 @@ export const columns: ColumnDef<BulkSending>[] = [
             onOpenChange={setIsErrorsDialogOpen}
             bulkSendingId={bulkSending.id}
           />
+
+          <RestartDialog
+            isOpen={isRestartDialogOpen}
+            onOpenChange={setIsRestartDialogOpen}
+            bulkSending={bulkSending}
+          />
         </>
       );
     },
   },
 ];
+
+function RestartDialog({
+  isOpen,
+  onOpenChange,
+  bulkSending,
+}: {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  bulkSending: BulkSending;
+}) {
+  const { mutateAsync: restartBulkSending } = useRestartBulkSending();
+
+  const handleRestart = async () => {
+    try {
+      await restartBulkSending(bulkSending.id);
+      toast.success('Bulk sending restarted successfully');
+      onOpenChange(false);
+    } catch (error) {
+      toast.error('Failed to restart bulk sending');
+    }
+  };
+
+  let remainingContacts =
+    bulkSending.totalContacts - bulkSending._count.messages;
+
+  if (remainingContacts < 0) remainingContacts = 0;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Restart Bulk Sending</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to restart this bulk sending? This will
+            attempt to send the email to all contacts that haven't received it
+            yet.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="text-sm">
+            <p className="font-medium">Details:</p>
+            <ul className="list-disc list-inside mt-2 space-y-1">
+              <li>Total contacts: {bulkSending.totalContacts}</li>
+              <li>Sent messages: {bulkSending._count.messages}</li>
+              <li>Failed messages: {bulkSending._count.failures}</li>
+              <li>Remaining contacts: {remainingContacts}</li>
+            </ul>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleRestart}>Restart</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function ErrorsDialog({
   isOpen,

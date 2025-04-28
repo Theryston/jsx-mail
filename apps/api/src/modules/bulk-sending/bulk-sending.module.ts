@@ -31,6 +31,7 @@ import { EmailModule } from '../email/email.module';
 import { CreateEmailCheckService } from './services/create-email-check.service';
 import { BulkEmailCheckWebhookService } from './services/bulk-email-check-webhook.service';
 import { GetBulkCheckResultProcessor } from './get-bulk-check-result.processor';
+import { RestartBulkSendingService } from './services/restart-bulk-sending.service';
 
 @Module({
   imports: [
@@ -76,6 +77,7 @@ import { GetBulkCheckResultProcessor } from './get-bulk-check-result.processor';
     CreateEmailCheckService,
     BulkEmailCheckWebhookService,
     GetBulkCheckResultProcessor,
+    RestartBulkSendingService,
   ],
 })
 export class BulkSendingModule {}
