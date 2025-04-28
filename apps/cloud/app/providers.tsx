@@ -37,7 +37,8 @@ function CrispProvider({ children }: { children: React.ReactNode }) {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    Crisp.configure(process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID || '');
+    if (!process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID) return;
+    Crisp.configure(process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID);
   }, []);
 
   useEffect(() => {
