@@ -1,12 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ListContactImportsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(groupId: string, userId: string) {
-    return this.prisma.contactImport.findMany({
+    return this.prisma.client.contactImport.findMany({
       where: { contactGroupId: groupId, userId },
       orderBy: { createdAt: 'desc' },
       include: {

@@ -1,15 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { PERMISSIONS } from 'src/auth/permissions';
-import { PrismaService } from 'src/services/prisma.service';
 import { CreateSessionService } from '../../session/services/create-session.service';
 import { AddBalanceService } from './add-balance.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ValidateEmailService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly createSessionService: CreateSessionService,
-    private readonly addBalanceService: AddBalanceService,
   ) {}
 
   async execute(userId: string, permissions: string[]) {
@@ -17,7 +18,7 @@ export class ValidateEmailService {
       throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
 
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.client.user.findFirst({
       where: {
         id: userId,
         deletedAt: null,
@@ -32,7 +33,7 @@ export class ValidateEmailService {
       throw new HttpException('Email already verified', HttpStatus.BAD_REQUEST);
     }
 
-    await this.prisma.user.update({
+    await this.prisma.client.user.update({
       where: {
         id: userId,
       },

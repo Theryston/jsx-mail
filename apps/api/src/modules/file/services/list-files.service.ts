@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
 import { fileSelect } from 'src/utils/public-selects';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 type ListFilesData = {
   take: number;
@@ -9,12 +10,15 @@ type ListFilesData = {
 
 @Injectable()
 export class ListFilesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute({ take, page }: ListFilesData, userId: string) {
     const skip = take * (page - 1);
 
-    const files = await this.prisma.file.findMany({
+    const files = await this.prisma.client.file.findMany({
       where: {
         userId,
         deletedAt: null,
@@ -27,7 +31,7 @@ export class ListFilesService {
       },
     });
 
-    const count = await this.prisma.file.count({
+    const count = await this.prisma.client.file.count({
       where: {
         userId,
         deletedAt: null,

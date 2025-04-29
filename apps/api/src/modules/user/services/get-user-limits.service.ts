@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import moment from 'moment';
-import { PrismaService } from 'src/services/prisma.service';
 import { GetBalanceService } from './get-balance.service';
 import { GetSettingsService } from './get-settings.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class GetUserLimitsService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly getBalanceService: GetBalanceService,
     private readonly getSettingsService: GetSettingsService,
   ) {}
@@ -17,7 +19,7 @@ export class GetUserLimitsService {
 
     const settings = await this.getSettingsService.execute(userId);
 
-    const messagesCount = await this.prisma.message.count({
+    const messagesCount = await this.prisma.client.message.count({
       where: {
         userId,
         deletedAt: null,
@@ -30,7 +32,7 @@ export class GetUserLimitsService {
       },
     });
 
-    const notChargedMessages = await this.prisma.message.count({
+    const notChargedMessages = await this.prisma.client.message.count({
       where: {
         userId,
         deletedAt: null,

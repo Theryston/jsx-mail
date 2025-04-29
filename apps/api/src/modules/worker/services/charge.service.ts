@@ -1,16 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { TransactionStyle } from '@prisma/client';
-import { PrismaService } from 'src/services/prisma.service';
 import { formatSize } from 'src/utils/format';
 import { storageToMoney } from 'src/utils/format-money';
 import moment from 'moment';
 import { GetUserLimitsService } from 'src/modules/user/services/get-user-limits.service';
 import { GetSettingsService } from 'src/modules/user/services/get-settings.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ChargeService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly getUserLimitsService: GetUserLimitsService,
     private readonly getSettingsService: GetSettingsService,
   ) {}
@@ -30,7 +32,7 @@ export class ChargeService {
   async chargeMessage() {
     const currentChargeMonth = moment().format('YYYY-MM');
 
-    const currentMonthMessages = await this.prisma.message.groupBy({
+    const currentMonthMessages = await this.prisma.client.message.groupBy({
       where: {
         hasCharged: false,
         chargeMonth: currentChargeMonth,
@@ -51,13 +53,14 @@ export class ChargeService {
       const settings = await this.getSettingsService.execute(userId);
 
       try {
-        const currentMonthMessagesAmount = await this.prisma.message.count({
-          where: {
-            userId,
-            chargeMonth: currentChargeMonth,
-            deletedAt: null,
-          },
-        });
+        const currentMonthMessagesAmount =
+          await this.prisma.client.message.count({
+            where: {
+              userId,
+              chargeMonth: currentChargeMonth,
+              deletedAt: null,
+            },
+          });
 
         const { isEligibleForFree } =
           await this.getUserLimitsService.execute(userId);
@@ -101,7 +104,7 @@ export class ChargeService {
           description,
         });
 
-        await this.prisma.message.updateMany({
+        await this.prisma.client.message.updateMany({
           where: {
             userId,
             hasCharged: false,
@@ -144,7 +147,7 @@ export class ChargeService {
       milliseconds: 0,
     });
 
-    const storageSize = await this.prisma.storageSize.groupBy({
+    const storageSize = await this.prisma.client.storageSize.groupBy({
       where: {
         deletedAt: null,
         chargedAt: null,
@@ -183,7 +186,7 @@ export class ChargeService {
         description: `Charge for an average of ${formatSize(averageSize)} stored`,
       });
 
-      await this.prisma.storageSize.updateMany({
+      await this.prisma.client.storageSize.updateMany({
         where: {
           userId,
           deletedAt: null,
@@ -226,7 +229,7 @@ export class ChargeService {
     description: string;
   }) {
     const negativeAmount = Math.round(amount) * -1;
-    await this.prisma.transaction.create({
+    await this.prisma.client.transaction.create({
       data: {
         amount: negativeAmount,
         style,

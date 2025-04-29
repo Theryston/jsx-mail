@@ -1,13 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateOnboardingDto } from '../user.dto';
-import { PrismaService } from 'src/services/prisma.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class UpdateOnboardingStepService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(data: UpdateOnboardingDto, userId: string) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.client.user.findUnique({
       where: {
         id: userId,
       },
@@ -17,7 +21,7 @@ export class UpdateOnboardingStepService {
       throw new NotFoundException('User not found');
     }
 
-    await this.prisma.user.update({
+    await this.prisma.client.user.update({
       where: { id: userId },
       data: {
         onboardingStep: data.onboardingStep,

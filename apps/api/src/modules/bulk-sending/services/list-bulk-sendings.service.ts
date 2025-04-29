@@ -1,15 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ListBulkSendingsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(userId: string, query: any) {
     const page = Number(query.page) || 1;
     const take = Number(query.take) || 10;
 
-    const bulkSendings = await this.prisma.bulkSending.findMany({
+    const bulkSendings = await this.prisma.client.bulkSending.findMany({
       where: { userId },
       skip: (page - 1) * take,
       take,
@@ -30,7 +34,7 @@ export class ListBulkSendingsService {
       },
     });
 
-    const totalItems = await this.prisma.bulkSending.count({
+    const totalItems = await this.prisma.client.bulkSending.count({
       where: { userId },
     });
 

@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { SendEmailDto, EmailPriority } from '../email.dto';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-import { PrismaService } from 'src/services/prisma.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class SendEmailService {
   constructor(
     @InjectQueue('email') private readonly sendEmailQueue: Queue,
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
   ) {}
 
   async execute(data: SendEmailDto) {
@@ -28,7 +30,7 @@ export class SendEmailService {
   }
 
   async getPriority(priority: EmailPriority, userId: string) {
-    const isUserPriority = await this.prisma.isUserPriority.findFirst({
+    const isUserPriority = await this.prisma.client.isUserPriority.findFirst({
       where: {
         userId,
       },

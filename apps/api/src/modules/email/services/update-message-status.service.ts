@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Message, MessageStatus } from '@prisma/client';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Message, MessageStatus, PrismaClient } from '@prisma/client';
 import { Prisma } from '@prisma/client';
-import { PrismaService } from 'src/services/prisma.service';
 import moment from 'moment';
 import { MarkBounceToService } from './mark-bounce-to.service';
 import { MessageExtra } from 'src/utils/types';
 import { CallMessageWebhookService } from './call-message-webhook.service';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 const STATUS_SHOULD_HAVE_SENT_AT: MessageStatus[] = [
   'bounce',
@@ -20,7 +20,8 @@ const STATUS_SHOULD_HAVE_SENT_AT: MessageStatus[] = [
 @Injectable()
 export class UpdateMessageStatusService {
   constructor(
-    private prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private markBounceToService: MarkBounceToService,
     private callMessageWebhookService: CallMessageWebhookService,
   ) {}
@@ -34,7 +35,7 @@ export class UpdateMessageStatusService {
   ) {
     extra = extra || {};
 
-    const message = await this.prisma.message.findUnique({
+    const message = await this.prisma.client.message.findUnique({
       where: { id: messageId },
     });
 
@@ -50,7 +51,7 @@ export class UpdateMessageStatusService {
       value,
     }));
 
-    await this.prisma.messageStatusHistory.create({
+    await this.prisma.client.messageStatusHistory.create({
       data: {
         messageId,
         status: newStatus,
@@ -81,7 +82,7 @@ export class UpdateMessageStatusService {
     }
 
     if (newStatus === 'bounce' && message.contactId) {
-      await this.prisma.contact.update({
+      await this.prisma.client.contact.update({
         where: { id: message.contactId },
         data: {
           bouncedAt: new Date(),
@@ -96,7 +97,7 @@ export class UpdateMessageStatusService {
       }
     }
 
-    await this.prisma.message.update({
+    await this.prisma.client.message.update({
       where: { id: message.id },
       data,
     });
@@ -117,14 +118,15 @@ export class UpdateMessageStatusService {
     message: Message,
     newStatus: MessageStatus,
   ): Promise<MessageStatus> {
-    const statusMapping = await this.prisma.messageStatusMapping.findFirst({
-      where: {
-        whenMessageStatus: message.status,
-        whenNewStatus: newStatus,
-        userId: message.userId,
-        deletedAt: null,
-      },
-    });
+    const statusMapping =
+      await this.prisma.client.messageStatusMapping.findFirst({
+        where: {
+          whenMessageStatus: message.status,
+          whenNewStatus: newStatus,
+          userId: message.userId,
+          deletedAt: null,
+        },
+      });
 
     if (!statusMapping) return newStatus;
 
@@ -132,7 +134,7 @@ export class UpdateMessageStatusService {
       `[UPDATE_MESSAGE_STATUS_SERVICE] status mapping found for ${message.status} to ${newStatus}. It will be replaced to ${statusMapping.replaceNewStatusTo}`,
     );
 
-    await this.prisma.messageStatusReplaced.create({
+    await this.prisma.client.messageStatusReplaced.create({
       data: {
         messageId: message.id,
         oldStatus: message.status,

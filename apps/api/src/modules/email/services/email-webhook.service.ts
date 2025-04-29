@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { MessageStatus } from '@prisma/client';
-import { PrismaService } from 'src/services/prisma.service';
 import { CheckUserEmailStatsService } from './check-user-email-stats.service';
 import { UpdateMessageStatusService } from './update-message-status.service';
 import { MessageExtra } from 'src/utils/types';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class EmailWebhookService {
   constructor(
-    private prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private checkUserEmailStatsService: CheckUserEmailStatsService,
     private updateMessageStatusService: UpdateMessageStatusService,
   ) {}
@@ -36,7 +38,7 @@ export class EmailWebhookService {
 
       if (!newStatus) return 'ignored because the status was not found';
 
-      const message = await this.prisma.message.findFirst({
+      const message = await this.prisma.client.message.findFirst({
         where: {
           externalId,
           deletedAt: null,

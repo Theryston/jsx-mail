@@ -1,10 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
 import { CreateUtmDto } from '../user.dto';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class CreateUtmOrViewService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute({ userUtmGroupId, url, utms }: CreateUtmDto) {
     if (!userUtmGroupId && !utms.length) {
@@ -14,7 +19,7 @@ export class CreateUtmOrViewService {
     }
 
     if (!userUtmGroupId) {
-      const group = await this.prisma.userUtmGroup.create({
+      const group = await this.prisma.client.userUtmGroup.create({
         data: {
           utms: {
             createMany: {
@@ -30,7 +35,7 @@ export class CreateUtmOrViewService {
       userUtmGroupId = group.id;
     }
 
-    const group = await this.prisma.userUtmGroup.findUnique({
+    const group = await this.prisma.client.userUtmGroup.findUnique({
       where: {
         id: userUtmGroupId,
       },
@@ -40,7 +45,7 @@ export class CreateUtmOrViewService {
       throw new BadRequestException('UserUtmGroup not found');
     }
 
-    await this.prisma.userUtmGroupView.create({
+    await this.prisma.client.userUtmGroupView.create({
       data: {
         groupId: group.id,
         url,

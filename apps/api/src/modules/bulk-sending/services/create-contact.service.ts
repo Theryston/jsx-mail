@@ -1,20 +1,22 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
 import { CreateContactDto } from '../bulk-sending.dto';
 import crypto from 'crypto';
 import { MarkBounceToService } from 'src/modules/email/services/mark-bounce-to.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 @Injectable()
 export class CreateContactService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly markBounceToService: MarkBounceToService,
   ) {}
 
@@ -30,7 +32,7 @@ export class CreateContactService {
     }
 
     if (!email.includes('@simulator.amazonses.com')) {
-      const existingContact = await this.prisma.contact.findFirst({
+      const existingContact = await this.prisma.client.contact.findFirst({
         where: { email, contactGroupId },
       });
 
@@ -41,7 +43,7 @@ export class CreateContactService {
       }
     }
 
-    const contactGroup = await this.prisma.contactGroup.findUnique({
+    const contactGroup = await this.prisma.client.contactGroup.findUnique({
       where: {
         id: contactGroupId,
         userId,
@@ -52,15 +54,14 @@ export class CreateContactService {
       throw new NotFoundException('Contact group not found');
     }
 
-    const processingBulkEmailCheck = await this.prisma.bulkEmailCheck.findFirst(
-      {
+    const processingBulkEmailCheck =
+      await this.prisma.client.bulkEmailCheck.findFirst({
         where: {
           userId,
           contactGroupId: contactGroup.id,
           status: { in: ['processing', 'pending'] },
         },
-      },
-    );
+      });
 
     if (processingBulkEmailCheck) {
       throw new BadRequestException(
@@ -98,7 +99,7 @@ export class CreateContactService {
       data.bouncedBy = markedBounceTo.bounceBy;
     }
 
-    const contact = await this.prisma.contact.create({
+    const contact = await this.prisma.client.contact.create({
       data,
     });
 

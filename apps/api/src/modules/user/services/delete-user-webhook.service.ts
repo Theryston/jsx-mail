@@ -1,19 +1,22 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+
 @Injectable()
 export class DeleteUserWebhookService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(id: string, userId: string) {
-    const userWebhook = await this.prisma.userWebhook.findFirst({
+    const userWebhook = await this.prisma.client.userWebhook.findFirst({
       where: { id, userId },
     });
 
-    if (!userWebhook) {
-      throw new NotFoundException('User webhook not found');
-    }
+    if (!userWebhook) throw new NotFoundException('User webhook not found');
 
-    await this.prisma.userWebhook.delete({
+    await this.prisma.client.userWebhook.delete({
       where: { id, userId },
     });
 

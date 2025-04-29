@@ -1,21 +1,24 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
 import { CreateSecurityCodeDto } from '../user.dto';
 import { render as jsxMailRender } from 'jsx-mail';
 import moment from 'moment';
 import { GetSettingsService } from './get-settings.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class CreateSecurityCodeService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly sendEmailService: SendEmailService,
     private readonly getSettingsService: GetSettingsService,
   ) {}
 
   async execute(data: CreateSecurityCodeDto) {
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.client.user.findFirst({
       where: {
         email: data.email,
         deletedAt: null,
@@ -36,15 +39,16 @@ export class CreateSecurityCodeService {
     const oneMinuteAgo = moment().startOf('minute').toDate();
     const nextMinute = moment().add(1, 'minute').startOf('minute').toDate();
 
-    const securityCodesInLastMinute = await this.prisma.securityCode.count({
-      where: {
-        userId: user.id,
-        createdAt: {
-          gte: oneMinuteAgo,
-          lte: nextMinute,
+    const securityCodesInLastMinute =
+      await this.prisma.client.securityCode.count({
+        where: {
+          userId: user.id,
+          createdAt: {
+            gte: oneMinuteAgo,
+            lte: nextMinute,
+          },
         },
-      },
-    });
+      });
 
     if (securityCodesInLastMinute >= settings.maxSecurityCodesPerMinute) {
       throw new BadRequestException(
@@ -55,7 +59,7 @@ export class CreateSecurityCodeService {
     const startOfHour = moment().startOf('hour').toDate();
     const nextHour = moment().add(1, 'hour').startOf('hour').toDate();
 
-    const securityCodesThisHour = await this.prisma.securityCode.count({
+    const securityCodesThisHour = await this.prisma.client.securityCode.count({
       where: {
         userId: user.id,
         createdAt: {
@@ -74,7 +78,7 @@ export class CreateSecurityCodeService {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date(new Date().getTime() + 1000 * 60 * 5); // 5 minutes
 
-    await this.prisma.securityCode.create({
+    await this.prisma.client.securityCode.create({
       data: {
         userId: user.id,
         code,

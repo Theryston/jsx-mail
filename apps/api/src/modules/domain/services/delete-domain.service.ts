@@ -1,14 +1,18 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { DeleteEmailIdentityCommand } from '@aws-sdk/client-sesv2';
 import { sesv2Client } from '../ses';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class DeleteDomainService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(domainId: string, userId: string) {
-    const domain = await this.prisma.domain.findFirst({
+    const domain = await this.prisma.client.domain.findFirst({
       where: {
         id: domainId,
         userId,
@@ -26,7 +30,7 @@ export class DeleteDomainService {
 
     await sesv2Client.send(deleteCommand);
 
-    await this.prisma.domain.update({
+    await this.prisma.client.domain.update({
       where: {
         id: domain.id,
       },
@@ -35,7 +39,7 @@ export class DeleteDomainService {
       },
     });
 
-    await this.prisma.domain.delete({
+    await this.prisma.client.domain.delete({
       where: {
         id: domainId,
       },

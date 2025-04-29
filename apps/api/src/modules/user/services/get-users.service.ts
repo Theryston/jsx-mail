@@ -1,11 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { GetUsersDto } from '../user.dto';
 import { Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class GetUsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(data: GetUsersDto) {
     const { search, take = 10, page = 1 } = data;
@@ -21,7 +25,7 @@ export class GetUsersService {
       ];
     }
 
-    const users = await this.prisma.user.findMany({
+    const users = await this.prisma.client.user.findMany({
       where,
       skip,
       take,
@@ -54,7 +58,7 @@ export class GetUsersService {
       },
     });
 
-    const count = await this.prisma.user.count({
+    const count = await this.prisma.client.user.count({
       where,
     });
 

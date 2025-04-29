@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
 import { sessionSelect } from 'src/utils/public-selects';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class ListSessionsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(userId: string) {
-    const sessions = await this.prisma.session.findMany({
+    const sessions = await this.prisma.client.session.findMany({
       where: {
         AND: [
           {

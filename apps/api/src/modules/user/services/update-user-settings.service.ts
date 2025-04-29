@@ -1,22 +1,24 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { UpdateUserSettingsDto } from '../user.dto';
 import { GetSettingsService } from './get-settings.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class UpdateUserSettingsService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly getSettingsService: GetSettingsService,
   ) {}
 
   async execute(userId: string, settings: UpdateUserSettingsDto) {
-    let userSettings = await this.prisma.userSettings.findFirst({
+    let userSettings = await this.prisma.client.userSettings.findFirst({
       where: { userId },
     });
 
     if (!userSettings) {
-      userSettings = await this.prisma.userSettings.create({
+      userSettings = await this.prisma.client.userSettings.create({
         data: {
           userId,
         },
@@ -35,7 +37,7 @@ export class UpdateUserSettingsService {
       }
     }
 
-    await this.prisma.userSettings.update({
+    await this.prisma.client.userSettings.update({
       where: { id: userSettings.id },
       data: {
         ...changedContent,

@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 import Stripe from 'stripe';
 import { AddBalanceService } from './add-balance.service';
 import { ExchangeMoneyService } from './exchange-money.service';
@@ -9,9 +10,9 @@ const SUPPORTED_EVENT_TYPES = ['checkout.session.completed'];
 @Injectable()
 export class HandleWebhookService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly addBalanceService: AddBalanceService,
-    private readonly exchangeMoneyService: ExchangeMoneyService,
   ) {}
 
   async execute(event: Stripe.Event) {
@@ -35,7 +36,7 @@ export class HandleWebhookService {
       };
     }
 
-    const checkout = await this.prisma.checkout.findFirst({
+    const checkout = await this.prisma.client.checkout.findFirst({
       where: {
         gatewayId: object.id,
       },
@@ -47,7 +48,7 @@ export class HandleWebhookService {
       };
     }
 
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.client.user.findFirst({
       where: {
         id: checkout.userId,
         deletedAt: null,
@@ -69,7 +70,7 @@ export class HandleWebhookService {
       userId: user.id,
     });
 
-    await this.prisma.checkout.update({
+    await this.prisma.client.checkout.update({
       where: {
         id: checkout.id,
       },

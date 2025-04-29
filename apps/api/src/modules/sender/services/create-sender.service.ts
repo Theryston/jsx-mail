@@ -1,11 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateSenderDto } from '../sender.dto';
-import { PrismaService } from 'src/services/prisma.service';
 import { senderSelect } from 'src/utils/public-selects';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class CreateSenderService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(
     { domainName, username, name }: CreateSenderDto,
@@ -23,7 +27,7 @@ export class CreateSenderService {
       delete domainWhere.userId;
     }
 
-    const domain = await this.prisma.domain.findFirst({
+    const domain = await this.prisma.client.domain.findFirst({
       where: domainWhere,
     });
 
@@ -33,7 +37,7 @@ export class CreateSenderService {
 
     const email = `${username}@${domain.name}`;
 
-    const senderExists = await this.prisma.sender.findFirst({
+    const senderExists = await this.prisma.client.sender.findFirst({
       where: {
         email,
         deletedAt: null,
@@ -47,7 +51,7 @@ export class CreateSenderService {
       );
     }
 
-    const sender = await this.prisma.sender.create({
+    const sender = await this.prisma.client.sender.create({
       data: {
         username,
         email,

@@ -2,19 +2,20 @@ import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job, Queue } from 'bullmq';
 import { SendEmailDto } from './email.dto';
 import * as aws from '@aws-sdk/client-ses';
-import { PrismaService } from 'src/services/prisma.service';
 import { sesClient } from '../domain/ses';
 import nodemailer from 'nodemailer';
 import axios from 'axios';
 import handlebars from 'handlebars';
 import moment from 'moment';
 import { Worker } from 'bullmq';
-import { Message } from '@prisma/client';
+import { Message, PrismaClient } from '@prisma/client';
 import { GetUserLimitsService } from '../user/services/get-user-limits.service';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { UpdateMessageStatusService } from './services/update-message-status.service';
 import { GetSettingsService } from '../user/services/get-settings.service';
 import { MarkBounceToService } from './services/mark-bounce-to.service';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 const transporter = nodemailer.createTransport({
   SES: { aws, ses: sesClient },
@@ -42,14 +43,14 @@ class RateLimiter {
   }
 
   async incrementAndCheckSecond(
-    prisma: PrismaService,
+    prisma: CustomPrismaService<PrismaClient>,
   ): Promise<{ allowed: boolean; waitTime: number }> {
     const settings = await this.getSettings();
     const currentSecondKey = moment().format('YYYY-MM-DD-HH-mm-ss');
 
     if (!this.messageCountBySecond.has(currentSecondKey)) {
       const currentSecond = moment().startOf('second');
-      const count = await prisma.message.count({
+      const count = await prisma.client.message.count({
         where: {
           status: { not: 'queued' },
           createdAt: { gte: currentSecond.toDate() },
@@ -80,14 +81,14 @@ class RateLimiter {
   }
 
   async incrementAndCheckDay(
-    prisma: PrismaService,
+    prisma: CustomPrismaService<PrismaClient>,
   ): Promise<{ allowed: boolean; waitTime: number }> {
     const settings = await this.getSettings();
     const currentDayKey = moment().format('YYYY-MM-DD');
 
     if (!this.messageCountByDay.has(currentDayKey)) {
       const currentDay = moment().startOf('day');
-      const count = await prisma.message.count({
+      const count = await prisma.client.message.count({
         where: {
           status: { not: 'queued' },
           createdAt: { gte: currentDay.toDate() },
@@ -125,7 +126,8 @@ export class EmailProcessor extends WorkerHost {
   private rateLimiter: RateLimiter;
 
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     @InjectQueue('email') private readonly queue: Queue,
     private readonly getUserLimitsService: GetUserLimitsService,
     private readonly updateMessageStatusService: UpdateMessageStatusService,
@@ -223,7 +225,7 @@ export class EmailProcessor extends WorkerHost {
     let contactId: string | null = null;
 
     if (messageId) {
-      message = await this.prisma.message.findUnique({
+      message = await this.prisma.client.message.findUnique({
         where: { id: messageId },
       });
 
@@ -248,7 +250,7 @@ export class EmailProcessor extends WorkerHost {
         `[EMAIL_PROCESSOR] creating message for ${to} with default sender ${process.env.DEFAULT_SENDER_EMAIL} and domain ${process.env.DEFAULT_EMAIL_DOMAIN_NAME}`,
       );
 
-      message = await this.prisma.message.create({
+      message = await this.prisma.client.message.create({
         data: {
           body: data.html,
           subject: data.subject,
@@ -295,7 +297,7 @@ export class EmailProcessor extends WorkerHost {
       });
 
       // Create message status history in background
-      this.prisma.messageStatusHistory
+      this.prisma.client.messageStatusHistory
         .create({
           data: {
             messageId: message.id,
@@ -326,7 +328,7 @@ export class EmailProcessor extends WorkerHost {
     }
 
     if (contactId) {
-      const contact = await this.prisma.contact.findUnique({
+      const contact = await this.prisma.client.contact.findUnique({
         where: { id: contactId },
         select: {
           bouncedAt: true,
@@ -359,7 +361,7 @@ export class EmailProcessor extends WorkerHost {
       data.to.map((to) => this.markBounceToService.get(to)),
     ).then((results) => results.find((result) => result !== null));
 
-    const isBlockedPromise = this.prisma.blockedPermission.findFirst({
+    const isBlockedPromise = this.prisma.client.blockedPermission.findFirst({
       where: {
         userId,
         permission: PERMISSIONS.SELF_SEND_EMAIL.value,
@@ -447,7 +449,7 @@ export class EmailProcessor extends WorkerHost {
     let attachments: any[] = [];
 
     if (attachmentIds) {
-      const files = await this.prisma.file.findMany({
+      const files = await this.prisma.client.file.findMany({
         where: { id: { in: attachmentIds } },
       });
 
@@ -483,7 +485,7 @@ export class EmailProcessor extends WorkerHost {
           encoding: 'base64',
         });
 
-        this.prisma.messageAttachment
+        this.prisma.client.messageAttachment
           .create({
             data: {
               messageId: messageId,

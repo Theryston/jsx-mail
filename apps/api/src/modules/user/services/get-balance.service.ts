@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
 import { friendlyMoney } from 'src/utils/format-money';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class GetBalanceService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(userId: string) {
-    const result = await this.prisma.transaction.aggregate({
+    const result = await this.prisma.client.transaction.aggregate({
       where: {
         userId,
         deletedAt: null,

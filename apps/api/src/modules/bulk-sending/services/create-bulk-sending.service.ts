@@ -1,14 +1,16 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
 import { CreateBulkSendingDto } from '../bulk-sending.dto';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
 import { BulkSendingVariableFrom } from '@prisma/client';
 import { GetUserLimitsService } from 'src/modules/user/services/get-user-limits.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 const AVAILABLE_KEYS = {
   contact: ['name', 'email', 'unsubscribeUrl', 'createdAt'],
@@ -18,13 +20,14 @@ const AVAILABLE_KEYS = {
 @Injectable()
 export class CreateBulkSendingService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     @InjectQueue('bulk-sending') private readonly queue: Queue,
     private readonly getUserLimitsService: GetUserLimitsService,
   ) {}
 
   async execute(body: CreateBulkSendingDto, userId: string) {
-    const sender = await this.prisma.sender.findFirst({
+    const sender = await this.prisma.client.sender.findFirst({
       where: {
         userId,
         email: body.sender,
@@ -35,7 +38,7 @@ export class CreateBulkSendingService {
       throw new NotFoundException('Sender not found');
     }
 
-    const contactGroup = await this.prisma.contactGroup.findUnique({
+    const contactGroup = await this.prisma.client.contactGroup.findUnique({
       where: {
         id: body.contactGroupId,
         userId,
@@ -65,15 +68,16 @@ export class CreateBulkSendingService {
       );
     }
 
-    const processingContactImport = await this.prisma.contactImport.findFirst({
-      where: {
-        userId,
-        contactGroupId: contactGroup.id,
-        status: {
-          in: ['processing', 'pending'],
+    const processingContactImport =
+      await this.prisma.client.contactImport.findFirst({
+        where: {
+          userId,
+          contactGroupId: contactGroup.id,
+          status: {
+            in: ['processing', 'pending'],
+          },
         },
-      },
-    });
+      });
 
     if (processingContactImport) {
       throw new BadRequestException(
@@ -81,15 +85,16 @@ export class CreateBulkSendingService {
       );
     }
 
-    const processingEmailCheck = await this.prisma.bulkEmailCheck.findFirst({
-      where: {
-        userId,
-        contactGroupId: contactGroup.id,
-        status: {
-          in: ['processing', 'pending'],
+    const processingEmailCheck =
+      await this.prisma.client.bulkEmailCheck.findFirst({
+        where: {
+          userId,
+          contactGroupId: contactGroup.id,
+          status: {
+            in: ['processing', 'pending'],
+          },
         },
-      },
-    });
+      });
 
     if (processingEmailCheck) {
       throw new BadRequestException(
@@ -127,7 +132,7 @@ export class CreateBulkSendingService {
       );
     }
 
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.client.user.findUnique({
       where: {
         id: userId,
       },
@@ -142,7 +147,7 @@ export class CreateBulkSendingService {
       );
     }
 
-    const bulkSending = await this.prisma.bulkSending.create({
+    const bulkSending = await this.prisma.client.bulkSending.create({
       data: {
         title: body.title,
         sender: {

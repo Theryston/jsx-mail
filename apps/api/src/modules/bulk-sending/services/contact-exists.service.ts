@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ContactExistsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(key: string) {
     if (key === 'sample-key') return { exists: true };
 
-    const contact = await this.prisma.contact.findFirst({
+    const contact = await this.prisma.client.contact.findFirst({
       where: { unsubscribeKey: key },
     });
 

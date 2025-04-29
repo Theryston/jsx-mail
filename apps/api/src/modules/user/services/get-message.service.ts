@@ -1,13 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { messageSelect } from 'src/utils/public-selects';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class GetMessageService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(id: string, userId: string) {
-    const message = await this.prisma.message.findUnique({
+    const message = await this.prisma.client.message.findUnique({
       where: { id, userId },
       select: {
         ...messageSelect,

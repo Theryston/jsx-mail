@@ -1,13 +1,15 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { CreateSessionService } from '../../session/services/create-session.service';
 import { UseSecurityCodeDto } from '../user.dto';
 import { PERMISSIONS } from 'src/auth/permissions';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class UseSecurityCodeService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly createSessionService: CreateSessionService,
   ) {}
 
@@ -16,7 +18,7 @@ export class UseSecurityCodeService {
       throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
 
-    const code = await this.prisma.securityCode.findFirst({
+    const code = await this.prisma.client.securityCode.findFirst({
       where: {
         code: securityCode,
         deletedAt: null,
@@ -31,7 +33,7 @@ export class UseSecurityCodeService {
       throw new HttpException('Code expired', HttpStatus.BAD_REQUEST);
     }
 
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.client.user.findFirst({
       where: {
         id: code.userId,
         deletedAt: null,
@@ -52,7 +54,7 @@ export class UseSecurityCodeService {
       [PERMISSIONS.SELF_ADMIN.value],
     );
 
-    await this.prisma.securityCode.update({
+    await this.prisma.client.securityCode.update({
       where: {
         id: code.id,
       },

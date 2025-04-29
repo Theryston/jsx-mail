@@ -2,7 +2,6 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { UserModule } from './modules/user/user.module';
 import { AuthGuard } from './auth/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
-import { PrismaService } from './services/prisma.service';
 import { EmailModule } from './modules/email/email.module';
 import { SessionModule } from './modules/session/session.module';
 import { DomainModule } from './modules/domain/domain.module';
@@ -16,9 +15,33 @@ import { BetaPermissionCheckService } from './modules/user/services/beta-permiss
 import { BulkSendingModule } from './modules/bulk-sending/bulk-sending.module';
 import { NestjsFingerprintModule } from 'nestjs-fingerprint';
 import { CloudflareIpMiddleware } from './middleware/cloudflare-ip.middleware';
+import { CustomPrismaModule } from 'nestjs-prisma';
+import { createSoftDeleteMiddleware } from 'prisma-soft-delete-middleware';
+import models from './models';
+import { PrismaClient } from '@prisma/client';
+
+const prismaMiddleware = createSoftDeleteMiddleware({
+  models,
+  defaultConfig: {
+    field: 'deletedAt',
+    createValue(deleted) {
+      if (deleted) return new Date();
+      return null;
+    },
+  },
+});
+
+const prisma = new PrismaClient();
+
+prisma.$use(prismaMiddleware);
 
 @Module({
   imports: [
+    CustomPrismaModule.forRoot({
+      isGlobal: true,
+      name: 'prisma',
+      client: prisma,
+    }),
     NestjsFingerprintModule.forRoot({
       params: ['userAgent', 'ipAddress'],
     }),
@@ -46,7 +69,6 @@ import { CloudflareIpMiddleware } from './middleware/cloudflare-ip.middleware';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-    PrismaService,
     GetBalanceService,
     StripeService,
     BetaPermissionCheckService,

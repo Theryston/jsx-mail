@@ -1,15 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ExportMessagesDto } from '../user.dto';
-import { PrismaService } from 'src/services/prisma.service';
 import { getFilterWhereMessages } from '../utils';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { ExportStatus } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class ExportMessagesService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     @InjectQueue('user') private readonly queue: Queue,
   ) {}
 
@@ -19,7 +22,7 @@ export class ExportMessagesService {
       userId,
     );
 
-    const count = await this.prisma.message.count({
+    const count = await this.prisma.client.message.count({
       where,
     });
 
@@ -27,7 +30,7 @@ export class ExportMessagesService {
       throw new NotFoundException('No messages found');
     }
 
-    const exportItem = await this.prisma.export.create({
+    const exportItem = await this.prisma.client.export.create({
       data: {
         userId,
         where: JSON.stringify(where),

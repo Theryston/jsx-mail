@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import moment from 'moment';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class StorageSizeService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute() {
     console.log(`[STORAGE_SIZE] started at: ${new Date()}`);
-    const filesUsers = await this.prisma.file.groupBy({
+    const filesUsers = await this.prisma.client.file.groupBy({
       where: { deletedAt: null },
       by: ['userId'],
       _sum: {
@@ -29,7 +33,7 @@ export class StorageSizeService {
         milliseconds: 0,
       });
 
-      const hasStorage = await this.prisma.storageSize.findFirst({
+      const hasStorage = await this.prisma.client.storageSize.findFirst({
         where: {
           userId,
           createdAt: {
@@ -50,7 +54,7 @@ export class StorageSizeService {
         milliseconds: 0,
       });
 
-      await this.prisma.storageSize.create({
+      await this.prisma.client.storageSize.create({
         data: {
           userId,
           size,

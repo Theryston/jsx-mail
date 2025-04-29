@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import moment from 'moment';
 import { BlockPermissionService } from 'src/modules/user/services/block-permission.service';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { GetSettingsService } from 'src/modules/user/services/get-settings.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 const EMAIL_SENDING_PERMISSIONS = [
   PERMISSIONS.SELF_SEND_EMAIL.value,
@@ -13,7 +14,8 @@ const EMAIL_SENDING_PERMISSIONS = [
 @Injectable()
 export class CheckUserEmailStatsService {
   constructor(
-    private prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private blockPermissionService: BlockPermissionService,
     private getSettingsService: GetSettingsService,
   ) {}
@@ -23,7 +25,7 @@ export class CheckUserEmailStatsService {
       const settings = await this.getSettingsService.execute(userId);
 
       const lastSendingBlockedPermissionEvent =
-        await this.prisma.blockedPermissionEvent.findFirst({
+        await this.prisma.client.blockedPermissionEvent.findFirst({
           where: {
             userId,
             style: 'block',
@@ -57,7 +59,7 @@ export class CheckUserEmailStatsService {
         `[CHECK_USER_EMAIL_STATS] Checking user ${userId} in the last ${moment(gapToCheckSecurityInsights).format('DD/MM/YYYY')} days`,
       );
 
-      const totalSentMessages = await this.prisma.message.count({
+      const totalSentMessages = await this.prisma.client.message.count({
         where: {
           userId,
           deletedAt: null,
@@ -79,7 +81,7 @@ export class CheckUserEmailStatsService {
 
       if (totalSentMessages < settings.minEmailsForRateCalculation) return;
 
-      const bounceCount = await this.prisma.message.count({
+      const bounceCount = await this.prisma.client.message.count({
         where: {
           userId,
           deletedAt: null,
@@ -90,7 +92,7 @@ export class CheckUserEmailStatsService {
         },
       });
 
-      const complaintCount = await this.prisma.message.count({
+      const complaintCount = await this.prisma.client.message.count({
         where: {
           userId,
           deletedAt: null,
@@ -120,20 +122,21 @@ export class CheckUserEmailStatsService {
           });
         }
 
-        const processingBulkSending = await this.prisma.bulkSending.findMany({
-          where: {
-            userId,
-            status: 'processing',
-          },
-        });
+        const processingBulkSending =
+          await this.prisma.client.bulkSending.findMany({
+            where: {
+              userId,
+              status: 'processing',
+            },
+          });
 
         for (const bulkSending of processingBulkSending) {
-          await this.prisma.bulkSending.update({
+          await this.prisma.client.bulkSending.update({
             where: { id: bulkSending.id },
             data: { status: 'failed' },
           });
 
-          await this.prisma.bulkSendingFailure.create({
+          await this.prisma.client.bulkSendingFailure.create({
             data: {
               bulkSendingId: bulkSending.id,
               message: `Account automatically blocked due to bounce rate (${(bounceRate * 100).toFixed(2)}%) or complaint rate (${(complaintRate * 100).toFixed(2)}%)`,

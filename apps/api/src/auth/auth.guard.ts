@@ -3,20 +3,23 @@ import {
   ExecutionContext,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Permissions } from './permissions.decorator';
-import { PrismaService } from 'src/services/prisma.service';
 import { PERMISSIONS } from './permissions';
 import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
 import { BetaPermissionCheckService } from 'src/modules/user/services/beta-permission-check.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly reflector: Reflector,
-    private readonly prisma: PrismaService,
     private readonly getBalanceService: GetBalanceService,
     private readonly betaPermissionCheckService: BetaPermissionCheckService,
   ) {}
@@ -35,7 +38,7 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    const session = await this.prisma.session.findFirst({
+    const session = await this.prisma.client.session.findFirst({
       where: {
         AND: [
           {
@@ -69,7 +72,7 @@ export class AuthGuard implements CanActivate {
     request.permissions = session.permissions;
     request.session = session;
 
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.client.user.findFirst({
       where: {
         id: session.userId,
         deletedAt: null,
@@ -104,12 +107,13 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    const blockedPermissions = await this.prisma.blockedPermission.findMany({
-      where: {
-        userId: user.id,
-        deletedAt: null,
-      },
-    });
+    const blockedPermissions =
+      await this.prisma.client.blockedPermission.findMany({
+        where: {
+          userId: user.id,
+          deletedAt: null,
+        },
+      });
 
     request.blockedPermissions = blockedPermissions;
 

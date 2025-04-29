@@ -1,6 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
-import { PrismaService } from 'src/services/prisma.service';
 import { SenderSendEmailDto } from '../sender.dto';
 import { messageSelect } from 'src/utils/public-selects';
 import moment from 'moment';
@@ -10,6 +9,9 @@ import { PERMISSIONS } from 'src/auth/permissions';
 import { GetUserLimitsService } from 'src/modules/user/services/get-user-limits.service';
 import { CallMessageWebhookService } from 'src/modules/email/services/call-message-webhook.service';
 import { LRUCache } from 'lru-cache';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class SenderSendEmailService {
@@ -21,7 +23,8 @@ export class SenderSendEmailService {
   >;
 
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly sendEmailService: SendEmailService,
     private readonly betaPermissionCheckService: BetaPermissionCheckService,
     private readonly getUserLimitsService: GetUserLimitsService,
@@ -84,7 +87,7 @@ export class SenderSendEmailService {
       throw new HttpException('Insufficient balance', HttpStatus.BAD_REQUEST);
     }
 
-    let message = await this.prisma.message.create({
+    let message = await this.prisma.client.message.create({
       data: {
         status: 'queued',
         body: html,
@@ -116,7 +119,7 @@ export class SenderSendEmailService {
       select: messageSelect,
     });
 
-    this.prisma.messageStatusHistory
+    this.prisma.client.messageStatusHistory
       .create({
         data: {
           messageId: message.id,
@@ -183,7 +186,7 @@ export class SenderSendEmailService {
     let sender: Sender | null = null;
 
     if (email) {
-      sender = await this.prisma.sender.findFirst({
+      sender = await this.prisma.client.sender.findFirst({
         where: {
           email,
           userId,
@@ -193,7 +196,7 @@ export class SenderSendEmailService {
 
       this.senderCache.set(cacheKey, sender);
     } else {
-      sender = await this.prisma.sender.findFirst({
+      sender = await this.prisma.client.sender.findFirst({
         where: {
           userId,
           deletedAt: null,

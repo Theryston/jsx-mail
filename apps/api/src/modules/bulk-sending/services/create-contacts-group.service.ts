@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateContactGroupDto } from '../bulk-sending.dto';
-import { PrismaService } from 'src/services/prisma.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class CreateContactsGroupService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(body: CreateContactGroupDto, userId: string) {
-    const contactGroup = await this.prisma.contactGroup.create({
+    const contactGroup = await this.prisma.client.contactGroup.create({
       data: {
         name: body.name,
         userId,

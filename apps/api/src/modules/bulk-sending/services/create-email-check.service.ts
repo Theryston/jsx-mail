@@ -1,14 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   EmailCheckLevel,
   EmailCheckStatus,
   EmailCheckResult,
+  PrismaClient,
 } from '@prisma/client';
-
+import { CustomPrismaService } from 'nestjs-prisma';
 @Injectable()
 export class CreateEmailCheckService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(
     {
@@ -30,7 +33,7 @@ export class CreateEmailCheckService {
   ) {
     if (!level) level = 'valid';
 
-    return await this.prisma.emailCheck.create({
+    return await this.prisma.client.emailCheck.create({
       data: {
         email,
         status,

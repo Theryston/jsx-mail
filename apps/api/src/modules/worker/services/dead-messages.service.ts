@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import moment from 'moment';
-import { PrismaService } from 'src/services/prisma.service';
 import { UpdateMessageStatusService } from 'src/modules/email/services/update-message-status.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+
 @Injectable()
 export class DeadMessagesService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly updateMessageStatusService: UpdateMessageStatusService,
   ) {}
 
@@ -14,7 +17,7 @@ export class DeadMessagesService {
 
     const thirtyDaysAgo = moment().subtract(30, 'days').toDate();
 
-    const messages = await this.prisma.message.findMany({
+    const messages = await this.prisma.client.message.findMany({
       where: {
         status: {
           in: ['queued', 'processing'],

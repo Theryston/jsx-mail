@@ -1,22 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import moment from 'moment';
-import { PrismaService } from 'src/services/prisma.service';
 import { formatNumber } from 'src/utils/format';
 import { GetUserLimitsService } from './get-user-limits.service';
 import { friendlyMoney } from 'src/utils/format-money';
 import { InsightsItemDto } from '../user.dto';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class GetInsightsService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly getUserLimitsService: GetUserLimitsService,
   ) {}
 
   async execute(userId: string) {
     const last30Days = moment().subtract(30, 'days');
 
-    const messagesCount = await this.prisma.message.groupBy({
+    const messagesCount = await this.prisma.client.message.groupBy({
       by: ['status'],
       where: {
         deletedAt: null,
@@ -42,7 +45,7 @@ export class GetInsightsService {
       (messagesCount.find((m) => m.status === 'clicked')?._count.id || 0) /
       totalMessages;
 
-    const messagesSentByDay = await this.prisma.message.groupBy({
+    const messagesSentByDay = await this.prisma.client.message.groupBy({
       by: ['sentDay'],
       where: {
         deletedAt: null,

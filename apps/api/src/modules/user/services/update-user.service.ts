@@ -1,11 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { UpdateUserDto } from '../user.dto';
-import { PrismaService } from 'src/services/prisma.service';
 import moment from 'moment';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class UpdateUserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute({
     name,
@@ -25,7 +29,7 @@ export class UpdateUserService {
         HttpStatus.BAD_REQUEST,
       );
 
-    const user = await this.prisma.user.update({
+    const user = await this.prisma.client.user.update({
       where: {
         id: userId,
       },

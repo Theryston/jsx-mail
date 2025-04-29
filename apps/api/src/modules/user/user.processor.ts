@@ -1,15 +1,17 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
-import { PrismaService } from 'src/services/prisma.service';
 import { S3ClientService } from '../file/services/s3-client.service';
 import { ExportStatus } from '@prisma/client';
-import { Readable } from 'stream';
 import { messageSelect } from 'src/utils/public-selects';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Processor('user', { concurrency: 5 })
 export class UserProcessor extends WorkerHost {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly s3ClientService: S3ClientService,
   ) {
     super();
@@ -41,7 +43,7 @@ export class UserProcessor extends WorkerHost {
       return;
     }
 
-    const exportItem = await this.prisma.export.findUnique({
+    const exportItem = await this.prisma.client.export.findUnique({
       where: { id: exportId },
     });
 
@@ -53,7 +55,7 @@ export class UserProcessor extends WorkerHost {
     }
 
     if (!exportItem.where) {
-      await this.prisma.export.update({
+      await this.prisma.client.export.update({
         where: { id: exportId },
         data: {
           exportStatus: ExportStatus.failed,
@@ -76,7 +78,7 @@ export class UserProcessor extends WorkerHost {
     const where = JSON.parse(whereStr);
     const format = exportItem.format || 'csv';
 
-    await this.prisma.export.update({
+    await this.prisma.client.export.update({
       where: { id: exportId },
       data: {
         exportStatus: ExportStatus.processing,
@@ -92,7 +94,7 @@ export class UserProcessor extends WorkerHost {
 
     try {
       while (true) {
-        const messages = await this.prisma.message.findMany({
+        const messages = await this.prisma.client.message.findMany({
           where,
           skip: (page - 1) * PER_PAGE,
           take: PER_PAGE,
@@ -170,7 +172,7 @@ export class UserProcessor extends WorkerHost {
             mimetype: format === 'csv' ? 'text/csv' : 'application/json',
           });
 
-          const createdFile = await this.prisma.file.create({
+          const createdFile = await this.prisma.client.file.create({
             data: {
               key: s3Key,
               encoding: 'utf-8',
@@ -189,7 +191,7 @@ export class UserProcessor extends WorkerHost {
 
           fileId = createdFile.id;
 
-          await this.prisma.export.update({
+          await this.prisma.client.export.update({
             where: { id: exportId },
             data: {
               file: {
@@ -212,7 +214,7 @@ export class UserProcessor extends WorkerHost {
           });
 
           if (fileId) {
-            await this.prisma.file.update({
+            await this.prisma.client.file.update({
               where: { id: fileId },
               data: {
                 size: totalSize,
@@ -238,7 +240,7 @@ export class UserProcessor extends WorkerHost {
         });
       }
 
-      await this.prisma.export.update({
+      await this.prisma.client.export.update({
         where: { id: exportId },
         data: {
           exportStatus: ExportStatus.completed,
@@ -249,7 +251,7 @@ export class UserProcessor extends WorkerHost {
       console.log(`[USER_PROCESSOR] export-messages job completed`);
     } catch (error) {
       const errorMessage = error.message || 'Unknown error';
-      await this.prisma.export.update({
+      await this.prisma.client.export.update({
         where: { id: exportId },
         data: {
           exportStatus: ExportStatus.failed,

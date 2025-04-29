@@ -1,7 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { FileController } from './file.controller';
 import { UploadFileService } from './services/upload-file.service';
-import { PrismaService } from 'src/services/prisma.service';
 import { DeleteFileService } from './services/delete-file.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -14,7 +13,6 @@ import { UserModule } from '../user/user.module';
   controllers: [FileController],
   providers: [
     UploadFileService,
-    PrismaService,
     DeleteFileService,
     ListFilesService,
     GetBalanceService,

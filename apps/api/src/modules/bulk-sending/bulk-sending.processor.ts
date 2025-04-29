@@ -1,17 +1,19 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
-import { PrismaService } from 'src/services/prisma.service';
 import axios from 'axios';
 import { SenderSendEmailService } from '../sender/services/sender-send-email.service';
 import moment from 'moment';
 import { CreateContactService } from './services/create-contact.service';
 import { GetUserLimitsService } from '../user/services/get-user-limits.service';
-import { Prisma } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { PrismaClient } from '@prisma/client';
+import { Inject } from '@nestjs/common';
 
 @Processor('bulk-sending', { concurrency: 10 })
 export class BulkSendingProcessor extends WorkerHost {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly senderSendEmailService: SenderSendEmailService,
     private readonly createContactService: CreateContactService,
     private readonly getUserLimitsService: GetUserLimitsService,
@@ -43,7 +45,7 @@ export class BulkSendingProcessor extends WorkerHost {
 
     console.log(`[BULK_SENDING] got new job ${bulkSendingId}`);
 
-    const bulkSending = await this.prisma.bulkSending.findUnique({
+    const bulkSending = await this.prisma.client.bulkSending.findUnique({
       where: { id: bulkSendingId },
       include: {
         sender: true,
@@ -55,7 +57,7 @@ export class BulkSendingProcessor extends WorkerHost {
       throw new Error('Bulk sending not found');
     }
 
-    await this.prisma.bulkSending.update({
+    await this.prisma.client.bulkSending.update({
       where: { id: bulkSendingId },
       data: { status: 'processing' },
     });
@@ -78,7 +80,7 @@ export class BulkSendingProcessor extends WorkerHost {
           `[BULK_SENDING] got ${gotContacts} contacts for bulk sending ${bulkSendingId} at page ${page}`,
         );
 
-        const contacts = await this.prisma.contact.findMany({
+        const contacts = await this.prisma.client.contact.findMany({
           where: {
             contactGroupId,
           },
@@ -167,12 +169,12 @@ export class BulkSendingProcessor extends WorkerHost {
                 `[BULK_SENDING] insufficient balance for bulk sending ${bulkSendingId}`,
               );
 
-              await this.prisma.bulkSending.update({
+              await this.prisma.client.bulkSending.update({
                 where: { id: bulkSendingId },
                 data: { status: 'failed' },
               });
 
-              await this.prisma.bulkSendingFailure.create({
+              await this.prisma.client.bulkSendingFailure.create({
                 data: {
                   bulkSendingId,
                   contactId: contact.id,
@@ -220,7 +222,7 @@ export class BulkSendingProcessor extends WorkerHost {
               error,
             );
 
-            await this.prisma.bulkSendingFailure.create({
+            await this.prisma.client.bulkSendingFailure.create({
               data: {
                 bulkSendingId,
                 contactId: contact.id,
@@ -243,7 +245,7 @@ export class BulkSendingProcessor extends WorkerHost {
 
       console.log(`[BULK_SENDING] bulk sending ${bulkSendingId} completed`);
 
-      await this.prisma.bulkSending.update({
+      await this.prisma.client.bulkSending.update({
         where: { id: bulkSendingId },
         data: { status: 'completed' },
       });
@@ -253,7 +255,7 @@ export class BulkSendingProcessor extends WorkerHost {
         error,
       );
 
-      await this.prisma.bulkSending.update({
+      await this.prisma.client.bulkSending.update({
         where: { id: bulkSendingId },
         data: { status: 'failed' },
       });
@@ -271,7 +273,7 @@ export class BulkSendingProcessor extends WorkerHost {
       throw new Error('No contactImportId provided');
     }
 
-    const contactImport = await this.prisma.contactImport.findUnique({
+    const contactImport = await this.prisma.client.contactImport.findUnique({
       where: { id: contactImportId },
       include: {
         file: true,
@@ -287,7 +289,7 @@ export class BulkSendingProcessor extends WorkerHost {
     );
 
     try {
-      await this.prisma.contactImport.update({
+      await this.prisma.client.contactImport.update({
         where: { id: contactImportId },
         data: { status: 'processing' },
       });
@@ -304,7 +306,7 @@ export class BulkSendingProcessor extends WorkerHost {
         .slice(1)
         .map((line) => line.split(',').map((cell) => cell.trim()));
 
-      await this.prisma.contactImport.update({
+      await this.prisma.client.contactImport.update({
         where: { id: contactImportId },
         data: {
           totalLines: rows.length,
@@ -345,7 +347,7 @@ export class BulkSendingProcessor extends WorkerHost {
         name = name?.trim();
 
         if (!email) {
-          await this.prisma.contactImportFailure.create({
+          await this.prisma.client.contactImportFailure.create({
             data: {
               contactImportId,
               message: 'There is no email in the row',
@@ -353,7 +355,7 @@ export class BulkSendingProcessor extends WorkerHost {
             },
           });
 
-          await this.prisma.contactImport.update({
+          await this.prisma.client.contactImport.update({
             where: { id: contactImportId },
             data: {
               processedLines: i + 1,
@@ -366,7 +368,7 @@ export class BulkSendingProcessor extends WorkerHost {
         const isValidEmail = this.validateEmail(email);
 
         if (!isValidEmail) {
-          await this.prisma.contactImportFailure.create({
+          await this.prisma.client.contactImportFailure.create({
             data: {
               contactImportId,
               message: `The content ${email} is not a valid email`,
@@ -374,7 +376,7 @@ export class BulkSendingProcessor extends WorkerHost {
             },
           });
 
-          await this.prisma.contactImport.update({
+          await this.prisma.client.contactImport.update({
             where: { id: contactImportId },
             data: {
               processedLines: i + 1,
@@ -389,12 +391,12 @@ export class BulkSendingProcessor extends WorkerHost {
         }
 
         if (!email.includes('@simulator.amazonses.com')) {
-          const existingContact = await this.prisma.contact.findFirst({
+          const existingContact = await this.prisma.client.contact.findFirst({
             where: { email, contactGroupId: contactImport.contactGroupId },
           });
 
           if (existingContact) {
-            await this.prisma.contactImportFailure.create({
+            await this.prisma.client.contactImportFailure.create({
               data: {
                 contactImportId,
                 message: `The contact ${email} already exists in the contact group`,
@@ -402,7 +404,7 @@ export class BulkSendingProcessor extends WorkerHost {
               },
             });
 
-            await this.prisma.contactImport.update({
+            await this.prisma.client.contactImport.update({
               where: { id: contactImportId },
               data: {
                 processedLines: i + 1,
@@ -423,7 +425,7 @@ export class BulkSendingProcessor extends WorkerHost {
           contactImport.contactGroupId,
         );
 
-        await this.prisma.contactImport.update({
+        await this.prisma.client.contactImport.update({
           where: { id: contactImportId },
           data: {
             processedLines: i + 1,
@@ -431,7 +433,7 @@ export class BulkSendingProcessor extends WorkerHost {
         });
       }
 
-      await this.prisma.contactImport.update({
+      await this.prisma.client.contactImport.update({
         where: { id: contactImportId },
         data: {
           status: 'completed',
@@ -443,12 +445,12 @@ export class BulkSendingProcessor extends WorkerHost {
         error,
       );
 
-      await this.prisma.contactImport.update({
+      await this.prisma.client.contactImport.update({
         where: { id: contactImportId },
         data: { status: 'failed' },
       });
 
-      await this.prisma.contactImportFailure.create({
+      await this.prisma.client.contactImportFailure.create({
         data: {
           contactImportId,
           message: error.message,

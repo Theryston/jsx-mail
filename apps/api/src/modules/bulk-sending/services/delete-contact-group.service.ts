@@ -2,21 +2,28 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  Inject,
 } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class DeleteContactGroupService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(id: string, userId: string) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.prisma.client.user.findUnique({
+      where: { id: userId },
+    });
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const contactGroup = await this.prisma.contactGroup.findUnique({
+    const contactGroup = await this.prisma.client.contactGroup.findUnique({
       where: { id, userId },
     });
 
@@ -30,12 +37,12 @@ export class DeleteContactGroupService {
       );
     }
 
-    await this.prisma.contact.updateMany({
+    await this.prisma.client.contact.updateMany({
       where: { contactGroupId: id },
       data: { deletedBy: 'contactGroupOwner' },
     });
 
-    await this.prisma.contactGroup.delete({ where: { id } });
+    await this.prisma.client.contactGroup.delete({ where: { id } });
 
     return {
       message: 'Contact group deleted successfully',

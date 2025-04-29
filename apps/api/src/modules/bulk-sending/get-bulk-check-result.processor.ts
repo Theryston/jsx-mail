@@ -1,6 +1,5 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
-import { PrismaService } from 'src/services/prisma.service';
 import axios, { AxiosInstance } from 'axios';
 import { CreateEmailCheckService } from './services/create-email-check.service';
 import {
@@ -12,13 +11,17 @@ import { MarkBounceToService } from '../email/services/mark-bounce-to.service';
 import { EmailCheckResult } from '@prisma/client';
 import { EmailCheck } from '@prisma/client';
 import { QueueChargeBulkEmailCheckService } from '../worker/services/queue-charge-bulk-email-check.service';
+import { Inject } from '@nestjs/common';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { PrismaClient } from '@prisma/client';
 
 @Processor('get-bulk-check-result', { concurrency: 10 })
 export class GetBulkCheckResultProcessor extends WorkerHost {
   truelistClient: AxiosInstance;
 
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly createEmailCheckService: CreateEmailCheckService,
     private readonly markBounceToService: MarkBounceToService,
     private readonly queueChargeBulkEmailCheckService: QueueChargeBulkEmailCheckService,
@@ -43,7 +46,7 @@ export class GetBulkCheckResultProcessor extends WorkerHost {
       return;
     }
 
-    const bulkEmailCheck = await this.prisma.bulkEmailCheck.findUnique({
+    const bulkEmailCheck = await this.prisma.client.bulkEmailCheck.findUnique({
       where: { id: bulkEmailCheckId },
     });
 
@@ -60,7 +63,7 @@ export class GetBulkCheckResultProcessor extends WorkerHost {
     }
 
     const bulkEmailCheckBatches =
-      await this.prisma.bulkEmailCheckBatch.findMany({
+      await this.prisma.client.bulkEmailCheckBatch.findMany({
         where: { bulkEmailCheckId, status: { in: ['waiting_to_import'] } },
       });
 
@@ -120,7 +123,7 @@ export class GetBulkCheckResultProcessor extends WorkerHost {
               continue;
             }
 
-            const contact = await this.prisma.contact.findFirst({
+            const contact = await this.prisma.client.contact.findFirst({
               where: {
                 email: emailAddress.address,
                 contactGroupId: bulkEmailCheck.contactGroupId,
@@ -152,7 +155,7 @@ export class GetBulkCheckResultProcessor extends WorkerHost {
         `/v1/batches/${bulkEmailCheckBatch.externalId}`,
       );
 
-      await this.prisma.bulkEmailCheckBatch.update({
+      await this.prisma.client.bulkEmailCheckBatch.update({
         where: { id: bulkEmailCheckBatch.id },
         data: { status: 'completed' },
       });
@@ -162,7 +165,7 @@ export class GetBulkCheckResultProcessor extends WorkerHost {
       );
     }
 
-    await this.prisma.bulkEmailCheck.update({
+    await this.prisma.client.bulkEmailCheck.update({
       where: { id: bulkEmailCheck.id },
       data: { status: 'completed' },
     });
@@ -184,7 +187,7 @@ export class GetBulkCheckResultProcessor extends WorkerHost {
       emailCheck.level === 'safely' &&
       !SAFELY_VALID_EMAIL_CHECK_RESULT.includes(result)
     ) {
-      await this.prisma.contact.update({
+      await this.prisma.client.contact.update({
         where: { id: emailCheck.contactId },
         data: { bouncedAt: new Date(), bouncedBy: 'email_check' },
       });
@@ -194,7 +197,7 @@ export class GetBulkCheckResultProcessor extends WorkerHost {
       emailCheck.level === 'valid' &&
       !VALID_EMAIL_CHECK_RESULT.includes(result)
     ) {
-      await this.prisma.contact.update({
+      await this.prisma.client.contact.update({
         where: { id: emailCheck.contactId },
         data: { bouncedAt: new Date(), bouncedBy: 'email_check' },
       });

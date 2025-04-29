@@ -1,27 +1,33 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class BetaPermissionCheckService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(userId: string, permissions: string[]) {
     if (!permissions || permissions.length === 0) {
       return;
     }
 
-    const betaPermissions = await this.prisma.permissionRequiresBeta.findMany({
-      where: {
-        deletedAt: null,
-        permission: {
-          in: permissions,
+    const betaPermissions =
+      await this.prisma.client.permissionRequiresBeta.findMany({
+        where: {
+          deletedAt: null,
+          permission: {
+            in: permissions,
+          },
         },
-      },
-    });
+      });
 
     if (betaPermissions.length > 0) {
-      const userBetaPermissions = await this.prisma.userBetaPermission.findMany(
-        {
+      const userBetaPermissions =
+        await this.prisma.client.userBetaPermission.findMany({
           where: {
             userId,
             deletedAt: null,
@@ -29,8 +35,7 @@ export class BetaPermissionCheckService {
               in: betaPermissions.map((permission) => permission.permission),
             },
           },
-        },
-      );
+        });
 
       if (!userBetaPermissions.length) {
         throw new UnauthorizedException(

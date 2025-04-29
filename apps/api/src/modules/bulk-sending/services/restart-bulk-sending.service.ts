@@ -2,20 +2,23 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class RestartBulkSendingService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     @InjectQueue('bulk-sending') private readonly queue: Queue,
   ) {}
 
   async execute(bulkSendingId: string, userId: string) {
-    const bulkSending = await this.prisma.bulkSending.findUnique({
+    const bulkSending = await this.prisma.client.bulkSending.findUnique({
       where: {
         id: bulkSendingId,
         userId,
@@ -32,7 +35,7 @@ export class RestartBulkSendingService {
       );
     }
 
-    await this.prisma.bulkSending.update({
+    await this.prisma.client.bulkSending.update({
       where: { id: bulkSendingId },
       data: { status: 'pending' },
     });

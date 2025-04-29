@@ -1,23 +1,27 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateDomainDto } from '../domain.dto';
-import { PrismaService } from 'src/services/prisma.service';
 import { domainSelect } from 'src/utils/public-selects';
 import { generateKeyPairSync } from 'crypto';
 import { CreateEmailIdentityCommand } from '@aws-sdk/client-sesv2';
 import { sesv2Client } from '../ses';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 const domainRegex = /^(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
 
 @Injectable()
 export class CreateDomainService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute({ name }: CreateDomainDto, userId: string) {
     if (!domainRegex.test(name)) {
       throw new HttpException('Invalid domain', HttpStatus.BAD_REQUEST);
     }
 
-    const domainExists = await this.prisma.domain.findFirst({
+    const domainExists = await this.prisma.client.domain.findFirst({
       where: {
         name,
         deletedAt: null,
@@ -72,7 +76,7 @@ export class CreateDomainService {
 
     await sesv2Client.send(command);
 
-    const domain = await this.prisma.domain.create({
+    const domain = await this.prisma.client.domain.create({
       data: {
         name,
         userId,

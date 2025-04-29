@@ -1,12 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class MarkContactImportsAsReadService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(contactImportId: string, userId: string) {
-    return this.prisma.contactImport.update({
+    return this.prisma.client.contactImport.update({
       where: { id: contactImportId, userId },
       data: { readFinalStatusAt: new Date() },
     });

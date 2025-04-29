@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { GetSettingsService } from 'src/modules/user/services/get-settings.service';
 import { ChargeService } from './charge.service';
 import { TransactionStyle } from '@prisma/client';
 import { Prisma } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class ChargeBulkEmailCheckService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly getSettingsService: GetSettingsService,
     private readonly chargeService: ChargeService,
   ) {}
@@ -32,7 +34,7 @@ export class ChargeBulkEmailCheckService {
       userId,
     };
 
-    const totalCount = await this.prisma.emailCheck.count({
+    const totalCount = await this.prisma.client.emailCheck.count({
       where,
     });
 
@@ -57,7 +59,7 @@ export class ChargeBulkEmailCheckService {
       description: `Charge for ${totalCount} email checks`,
     });
 
-    await this.prisma.emailCheck.updateMany({
+    await this.prisma.client.emailCheck.updateMany({
       where,
       data: {
         chargedAt: new Date(),

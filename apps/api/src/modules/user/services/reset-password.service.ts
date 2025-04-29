@@ -1,12 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
 import { ResetPasswordDto } from '../user.dto';
 import { PERMISSIONS } from 'src/auth/permissions';
 import * as bcrypt from 'bcryptjs';
 import { CreateSessionService } from '../../session/services/create-session.service';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
-import { titleCase } from 'src/utils/title-case';
 import { render as jsxMailRender } from 'jsx-mail';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 type ResetPassword = {
   userId: string;
@@ -16,7 +17,8 @@ type ResetPassword = {
 @Injectable()
 export class ResetPasswordService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly createSessionService: CreateSessionService,
     private readonly sendEmailService: SendEmailService,
   ) {}
@@ -26,7 +28,7 @@ export class ResetPasswordService {
       throw new HttpException('Invalid permission', HttpStatus.BAD_REQUEST);
     }
 
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.client.user.findFirst({
       where: {
         id: userId,
         deletedAt: null,
@@ -40,7 +42,7 @@ export class ResetPasswordService {
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(newPassword, salt);
 
-    await this.prisma.user.update({
+    await this.prisma.client.user.update({
       where: {
         id: userId,
       },

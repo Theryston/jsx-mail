@@ -1,19 +1,22 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AuthUserDto } from '../user.dto';
-import { PrismaService } from 'src/services/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { CreateSessionService } from '../../session/services/create-session.service';
 import { PERMISSIONS } from 'src/auth/permissions';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class AuthUserService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly createSessionService: CreateSessionService,
   ) {}
 
   async execute({ email, password }: AuthUserDto) {
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.client.user.findFirst({
       where: {
         email: email,
         deletedAt: null,

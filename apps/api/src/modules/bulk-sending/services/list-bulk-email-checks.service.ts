@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 import {
   SAFELY_VALID_EMAIL_CHECK_RESULT,
   VALID_EMAIL_CHECK_RESULT,
@@ -7,7 +8,10 @@ import {
 
 @Injectable()
 export class ListBulkEmailChecksService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(
     {
@@ -19,13 +23,13 @@ export class ListBulkEmailChecksService {
   ) {
     const bulks = [];
 
-    const bulkEmailChecks = await this.prisma.bulkEmailCheck.findMany({
+    const bulkEmailChecks = await this.prisma.client.bulkEmailCheck.findMany({
       where: { userId, contactGroupId, lastStatusReadAt: null },
       orderBy: { createdAt: 'desc' },
     });
 
     for (const bulkEmailCheck of bulkEmailChecks) {
-      const bouncedEmails = await this.prisma.emailCheck.count({
+      const bouncedEmails = await this.prisma.client.emailCheck.count({
         where: {
           userId,
           bulkEmailCheckId: bulkEmailCheck.id,
@@ -42,7 +46,7 @@ export class ListBulkEmailChecksService {
         },
       });
 
-      const processedEmails = await this.prisma.emailCheck.count({
+      const processedEmails = await this.prisma.client.emailCheck.count({
         where: {
           userId,
           bulkEmailCheckId: bulkEmailCheck.id,
@@ -53,7 +57,7 @@ export class ListBulkEmailChecksService {
         },
       });
 
-      const validEmails = await this.prisma.emailCheck.count({
+      const validEmails = await this.prisma.client.emailCheck.count({
         where: {
           userId,
           bulkEmailCheckId: bulkEmailCheck.id,

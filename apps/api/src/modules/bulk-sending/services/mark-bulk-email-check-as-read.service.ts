@@ -1,12 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class MarkBulkEmailCheckAsReadService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(bulkEmailCheckId: string, userId: string) {
-    const bulkEmailCheck = await this.prisma.bulkEmailCheck.findUnique({
+    const bulkEmailCheck = await this.prisma.client.bulkEmailCheck.findUnique({
       where: { id: bulkEmailCheckId, userId },
     });
 
@@ -16,7 +20,7 @@ export class MarkBulkEmailCheckAsReadService {
       );
     }
 
-    await this.prisma.bulkEmailCheck.update({
+    await this.prisma.client.bulkEmailCheck.update({
       where: { id: bulkEmailCheckId },
       data: { lastStatusReadAt: new Date() },
     });

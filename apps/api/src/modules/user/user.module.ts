@@ -2,7 +2,6 @@ import { Module, forwardRef } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { CreateUserService } from './services/create-user.service';
 import { CreateSessionService } from '../session/services/create-session.service';
-import { PrismaService } from 'src/services/prisma.service';
 import { CreateSecurityCodeService } from './services/create-security-code.service';
 import { EmailModule } from '../email/email.module';
 import { UseSecurityCodeService } from './services/use-security-code.service';
@@ -53,7 +52,6 @@ import { UpdateIsUserPriorityService } from './services/update-is-user-priority.
   providers: [
     StripeService,
     CreateUserService,
-    PrismaService,
     CreateSessionService,
     CreateSecurityCodeService,
     UseSecurityCodeService,

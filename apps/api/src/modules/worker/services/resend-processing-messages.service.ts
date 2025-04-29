@@ -1,12 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { SendEmailService } from 'src/modules/email/services/send-email.service';
-import { PrismaService } from 'src/services/prisma.service';
 import { UpdateMessageStatusService } from 'src/modules/email/services/update-message-status.service';
 import moment from 'moment';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+
 @Injectable()
 export class ResendProcessingMessagesService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly sendEmailService: SendEmailService,
     private readonly updateMessageStatusService: UpdateMessageStatusService,
   ) {}
@@ -16,7 +19,7 @@ export class ResendProcessingMessagesService {
 
     const messagesIds: Set<string> = new Set();
 
-    const processingMessages = await this.prisma.message.findMany({
+    const processingMessages = await this.prisma.client.message.findMany({
       where: {
         status: 'processing',
       },
@@ -35,17 +38,18 @@ export class ResendProcessingMessagesService {
 
     const last24Hours = moment().subtract(24, 'hours').toDate();
 
-    const messagesQueuedMoreThan24Hours = await this.prisma.message.findMany({
-      where: {
-        status: 'queued',
-        createdAt: {
-          lte: last24Hours,
+    const messagesQueuedMoreThan24Hours =
+      await this.prisma.client.message.findMany({
+        where: {
+          status: 'queued',
+          createdAt: {
+            lte: last24Hours,
+          },
         },
-      },
-      select: {
-        id: true,
-      },
-    });
+        select: {
+          id: true,
+        },
+      });
 
     for (const message of messagesQueuedMoreThan24Hours) {
       messagesIds.add(message.id);
@@ -55,7 +59,7 @@ export class ResendProcessingMessagesService {
       `[RESEND_PROCESSING_MESSAGES] found ${messagesIds.size} messages to resend`,
     );
 
-    const messages = await this.prisma.message.findMany({
+    const messages = await this.prisma.client.message.findMany({
       where: {
         id: { in: Array.from(messagesIds) },
       },

@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { messageSelect } from 'src/utils/public-selects';
 import { ListMessagesDto } from '../user.dto';
 import { getFilterWhereMessages } from '../utils';
 import { Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ListMessagesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(params: ListMessagesDto, userId: string) {
     const {
@@ -52,7 +56,7 @@ export class ListMessagesService {
       };
     }
 
-    let messages = await this.prisma.message.findMany({
+    let messages = await this.prisma.client.message.findMany({
       where,
       select,
       skip,
@@ -62,7 +66,7 @@ export class ListMessagesService {
       },
     });
 
-    const count = await this.prisma.message.count({ where });
+    const count = await this.prisma.client.message.count({ where });
 
     return {
       messages,

@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { GetBalanceService } from './get-balance.service';
 import moment from 'moment';
 import { friendlyMoney } from 'src/utils/format-money';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class GetFullBalanceService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly getBalanceService: GetBalanceService,
   ) {}
 
@@ -23,7 +25,7 @@ export class GetFullBalanceService {
 
     const {
       _sum: { amount: currentMonthAddedBalance },
-    } = await this.prisma.transaction.aggregate({
+    } = await this.prisma.client.transaction.aggregate({
       where: {
         userId,
         deletedAt: null,
@@ -41,7 +43,7 @@ export class GetFullBalanceService {
 
     const {
       _sum: { amount: currentMonthChargedBalance },
-    } = await this.prisma.transaction.aggregate({
+    } = await this.prisma.client.transaction.aggregate({
       where: {
         userId,
         deletedAt: null,

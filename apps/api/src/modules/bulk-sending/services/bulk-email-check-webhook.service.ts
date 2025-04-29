@@ -1,19 +1,21 @@
 import { InjectQueue } from '@nestjs/bullmq';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Queue } from 'bullmq';
-import { PrismaService } from 'src/services/prisma.service';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class BulkEmailCheckWebhookService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     @InjectQueue('get-bulk-check-result')
     private readonly getBulkCheckResultQueue: Queue,
   ) {}
 
   async execute(bulkEmailCheckBatchId: string) {
     const bulkEmailCheckBatch =
-      await this.prisma.bulkEmailCheckBatch.findUnique({
+      await this.prisma.client.bulkEmailCheckBatch.findUnique({
         where: { id: bulkEmailCheckBatchId },
       });
 
@@ -21,17 +23,18 @@ export class BulkEmailCheckWebhookService {
       throw new NotFoundException('Bulk email check batch not found');
     }
 
-    await this.prisma.bulkEmailCheckBatch.update({
+    await this.prisma.client.bulkEmailCheckBatch.update({
       where: { id: bulkEmailCheckBatchId },
       data: { status: 'waiting_to_import' },
     });
 
-    const pendingBatches = await this.prisma.bulkEmailCheckBatch.findMany({
-      where: {
-        bulkEmailCheckId: bulkEmailCheckBatch.bulkEmailCheckId,
-        status: { in: ['pending'] },
-      },
-    });
+    const pendingBatches =
+      await this.prisma.client.bulkEmailCheckBatch.findMany({
+        where: {
+          bulkEmailCheckId: bulkEmailCheckBatch.bulkEmailCheckId,
+          status: { in: ['pending'] },
+        },
+      });
 
     console.log(`[BULK_EMAIL_CHECK] pending batches: ${pendingBatches.length}`);
 

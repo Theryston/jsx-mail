@@ -1,16 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../user.dto';
 import * as bcrypt from 'bcryptjs';
-import { PrismaService } from 'src/services/prisma.service';
 import axios, { AxiosInstance } from 'axios';
 import { VerifyTurnstileService } from './verify-turnstile.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class CreateUserService {
   ipHubClient: AxiosInstance;
 
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly verifyTurnstileService: VerifyTurnstileService,
   ) {
     this.ipHubClient = axios.create({
@@ -37,11 +40,12 @@ export class CreateUserService {
     await this.verifyTurnstileService.execute(turnstileToken);
 
     if (ipAddress) {
-      const blockedIpAddress = await this.prisma.blockedIpAddress.findFirst({
-        where: {
-          ipAddress,
-        },
-      });
+      const blockedIpAddress =
+        await this.prisma.client.blockedIpAddress.findFirst({
+          where: {
+            ipAddress,
+          },
+        });
 
       if (blockedIpAddress) {
         throw new HttpException(
@@ -62,7 +66,7 @@ export class CreateUserService {
       }
     }
 
-    const userExists = await this.prisma.user.findFirst({
+    const userExists = await this.prisma.client.user.findFirst({
       where: {
         email: email,
         deletedAt: null,
@@ -76,7 +80,7 @@ export class CreateUserService {
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
 
-    const user = await this.prisma.user.create({
+    const user = await this.prisma.client.user.create({
       data: {
         email,
         name,
@@ -96,14 +100,14 @@ export class CreateUserService {
     };
 
     if (utmGroupId) {
-      const utmGroup = await this.prisma.userUtmGroup.findUnique({
+      const utmGroup = await this.prisma.client.userUtmGroup.findUnique({
         where: {
           id: utmGroupId,
         },
       });
 
       if (utmGroup) {
-        await this.prisma.userUtmGroup.update({
+        await this.prisma.client.userUtmGroup.update({
           where: {
             id: utmGroupId,
           },
@@ -116,7 +120,7 @@ export class CreateUserService {
           },
         });
 
-        await this.prisma.userUtm.updateMany({
+        await this.prisma.client.userUtm.updateMany({
           where: {
             groupId: utmGroupId,
           },
@@ -130,14 +134,14 @@ export class CreateUserService {
     }
 
     if (leadId) {
-      const lead = await this.prisma.lead.findUnique({
+      const lead = await this.prisma.client.lead.findUnique({
         where: {
           id: leadId,
         },
       });
 
       if (lead) {
-        await this.prisma.lead.update({
+        await this.prisma.client.lead.update({
           where: {
             id: leadId,
           },
@@ -147,7 +151,7 @@ export class CreateUserService {
         });
 
         // Delete all leads with the same email except the current one
-        await this.prisma.lead.deleteMany({
+        await this.prisma.client.lead.deleteMany({
           where: {
             email: lead.email,
             id: {

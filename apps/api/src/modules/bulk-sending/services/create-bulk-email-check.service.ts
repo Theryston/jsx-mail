@@ -1,20 +1,22 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
 import { CreateBulkEmailCheckDto } from '../bulk-sending.dto';
 import { EstimatedBulkEmailCheckService } from './estimated-bulk-email-check.service';
 import { GetBalanceService } from 'src/modules/user/services/get-balance.service';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
-import moment from 'moment';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class CreateBulkEmailCheckService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly estimatedBulkEmailCheckService: EstimatedBulkEmailCheckService,
     private readonly getBalanceService: GetBalanceService,
     @InjectQueue('bulk-email-check')
@@ -25,7 +27,7 @@ export class CreateBulkEmailCheckService {
     { contactGroupId, level }: CreateBulkEmailCheckDto,
     userId: string,
   ) {
-    const contactGroup = await this.prisma.contactGroup.findUnique({
+    const contactGroup = await this.prisma.client.contactGroup.findUnique({
       where: { id: contactGroupId },
     });
 
@@ -33,16 +35,15 @@ export class CreateBulkEmailCheckService {
       throw new NotFoundException('Contact group not found');
     }
 
-    const processingBulkEmailCheck = await this.prisma.bulkEmailCheck.findFirst(
-      {
+    const processingBulkEmailCheck =
+      await this.prisma.client.bulkEmailCheck.findFirst({
         where: {
           contactGroupId,
           status: {
             in: ['processing', 'pending'],
           },
         },
-      },
-    );
+      });
 
     if (processingBulkEmailCheck) {
       throw new BadRequestException(
@@ -70,7 +71,7 @@ export class CreateBulkEmailCheckService {
       );
     }
 
-    const bulkEmailCheck = await this.prisma.bulkEmailCheck.create({
+    const bulkEmailCheck = await this.prisma.client.bulkEmailCheck.create({
       data: {
         contactGroupId,
         userId,

@@ -1,17 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import moment from 'moment';
-import { PrismaService } from 'src/services/prisma.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class UpdateChargeMonthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute() {
     console.log(`[UPDATE_CHARGE_MONTH] started at: ${new Date()}`);
 
     const currentChargeMonth = moment().format('YYYY-MM');
 
-    const pendingMessages = await this.prisma.message.findMany({
+    const pendingMessages = await this.prisma.client.message.findMany({
       where: {
         deletedAt: null,
         hasCharged: false,
@@ -22,7 +26,7 @@ export class UpdateChargeMonthService {
     });
 
     for (const message of pendingMessages) {
-      await this.prisma.message.update({
+      await this.prisma.client.message.update({
         where: {
           id: message.id,
         },

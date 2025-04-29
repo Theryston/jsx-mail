@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma, PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 enum ContactFilter {
   ALL = 'all',
@@ -11,7 +11,10 @@ enum ContactFilter {
 
 @Injectable()
 export class ListContactsFromContactGroupService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(id: string, userId: string, query: any) {
     const page = Number(query.page) || 1;
@@ -19,7 +22,7 @@ export class ListContactsFromContactGroupService {
     const search = query.search || '';
     const filter = query.filter || ContactFilter.ALL;
 
-    const contactGroup = await this.prisma.contactGroup.findUnique({
+    const contactGroup = await this.prisma.client.contactGroup.findUnique({
       where: { id, userId },
     });
 
@@ -53,7 +56,7 @@ export class ListContactsFromContactGroupService {
       where.bouncedBy = null;
     }
 
-    const contacts = await this.prisma.contact.findMany({
+    const contacts = await this.prisma.client.contact.findMany({
       where,
       skip: (page - 1) * limit,
       take: limit,
@@ -62,7 +65,7 @@ export class ListContactsFromContactGroupService {
       },
     });
 
-    const totalItems = await this.prisma.contact.count({
+    const totalItems = await this.prisma.client.contact.count({
       where,
     });
 

@@ -1,19 +1,22 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { domainSelect } from 'src/utils/public-selects';
 import { sesv2Client } from '../ses';
 import {
   GetEmailIdentityCommand,
   VerificationStatus,
 } from '@aws-sdk/client-sesv2';
-import { DomainStatus } from '@prisma/client';
+import { DomainStatus, PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class VerifyDomainService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(id: string, userId: string) {
-    const domain = await this.prisma.domain.findUnique({
+    const domain = await this.prisma.client.domain.findUnique({
       where: { id, userId },
       select: {
         ...domainSelect,
@@ -46,7 +49,7 @@ export class VerifyDomainService {
 
     const newStatus = statusMap[status];
 
-    const updatedDomain = await this.prisma.domain.update({
+    const updatedDomain = await this.prisma.client.domain.update({
       where: { id },
       data: { status: newStatus },
       select: {

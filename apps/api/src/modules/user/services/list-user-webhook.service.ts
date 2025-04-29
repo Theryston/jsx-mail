@@ -1,12 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ListUserWebhookService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(userId: string) {
-    const userWebhooks = await this.prisma.userWebhook.findMany({
+    const userWebhooks = await this.prisma.client.userWebhook.findMany({
       where: { userId },
     });
 

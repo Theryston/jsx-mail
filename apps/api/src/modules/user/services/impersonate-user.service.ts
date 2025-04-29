@@ -3,15 +3,18 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
 import { ImpersonateUserDto } from '../user.dto';
 import { PERMISSIONS } from 'src/auth/permissions';
 import { CreateSessionService } from 'src/modules/session/services/create-session.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class ImpersonateUserService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly createSessionService: CreateSessionService,
   ) {}
 
@@ -20,7 +23,7 @@ export class ImpersonateUserService {
       throw new UnauthorizedException('Unauthorized');
     }
 
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.client.user.findUnique({
       where: { id: data.userId },
     });
 
@@ -28,7 +31,7 @@ export class ImpersonateUserService {
       throw new NotFoundException('User not found');
     }
 
-    const currentUser = await this.prisma.user.findUnique({
+    const currentUser = await this.prisma.client.user.findUnique({
       where: { id: currentUserId },
     });
 

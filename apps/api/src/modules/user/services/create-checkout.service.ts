@@ -1,5 +1,4 @@
 import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
 import { StripeService } from 'src/services/stripe.service';
 import { GATEWAY_SCALE, MONEY_SCALE, CURRENCY } from 'src/utils/constants';
 import { friendlyMoney } from 'src/utils/format-money';
@@ -8,11 +7,15 @@ import { CreateCheckoutDto } from '../user.dto';
 import countryToCurrency from 'country-to-currency';
 import { ExchangeMoneyService } from './exchange-money.service';
 import { GetSettingsService } from './get-settings.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class CreateCheckoutService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly stripeService: StripeService,
     private readonly exchangeMoneyService: ExchangeMoneyService,
     private readonly getSettingsService: GetSettingsService,
@@ -56,7 +59,7 @@ export class CreateCheckoutService {
       );
     }
 
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.client.user.findFirst({
       where: {
         id: userId,
         deletedAt: null,
@@ -92,7 +95,7 @@ export class CreateCheckoutService {
       cancel_url: `${process.env.CLOUD_FRONTEND_URL}/billing`,
     });
 
-    await this.prisma.checkout.create({
+    await this.prisma.client.checkout.create({
       data: {
         gatewayId: session.id,
         gatewayUrl: session.url,
@@ -114,7 +117,7 @@ export class CreateCheckoutService {
       name: user.name,
     });
 
-    await this.prisma.user.update({
+    await this.prisma.client.user.update({
       where: {
         id: user.id,
       },

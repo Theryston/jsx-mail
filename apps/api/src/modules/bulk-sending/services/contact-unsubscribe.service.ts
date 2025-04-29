@@ -2,12 +2,17 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ContactUnsubscribeService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(key: string) {
     if (!key) throw new BadRequestException('Key is required');
@@ -16,7 +21,7 @@ export class ContactUnsubscribeService {
       return { message: 'Contact unsubscribed successfully' };
     }
 
-    const contact = await this.prisma.contact.findFirst({
+    const contact = await this.prisma.client.contact.findFirst({
       where: { unsubscribeKey: key },
     });
 
@@ -24,12 +29,12 @@ export class ContactUnsubscribeService {
       throw new NotFoundException('Contact not found');
     }
 
-    await this.prisma.contact.update({
+    await this.prisma.client.contact.update({
       where: { id: contact.id },
       data: { deletedBy: 'self' },
     });
 
-    await this.prisma.contact.delete({
+    await this.prisma.client.contact.delete({
       where: { id: contact.id },
     });
 

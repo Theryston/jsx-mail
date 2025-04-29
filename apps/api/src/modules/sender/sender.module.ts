@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { SenderController } from './sender.controller';
 import { CreateSenderService } from './services/create-sender.service';
-import { PrismaService } from 'src/services/prisma.service';
 import { DeleteSenderService } from './services/delete-sender.service';
 import { ListSendersService } from './services/list-senders.service';
 import { SenderSendEmailService } from './services/sender-send-email.service';
@@ -21,7 +20,6 @@ import { EmailModule } from '../email/email.module';
   controllers: [SenderController],
   providers: [
     CreateSenderService,
-    PrismaService,
     DeleteSenderService,
     ListSendersService,
     SenderSendEmailService,

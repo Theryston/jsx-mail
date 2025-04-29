@@ -1,15 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ListContactGroupsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(userId: string, query: any) {
     const page = Number(query.page) || 1;
     const take = Number(query.take) || 10;
 
-    const contactGroups = await this.prisma.contactGroup.findMany({
+    const contactGroups = await this.prisma.client.contactGroup.findMany({
       where: { userId },
       skip: (page - 1) * take,
       take,
@@ -29,13 +33,13 @@ export class ListContactGroupsService {
       },
     });
 
-    const totalItems = await this.prisma.contactGroup.count({
+    const totalItems = await this.prisma.client.contactGroup.count({
       where: { userId },
     });
     const totalPages = Math.ceil(totalItems / take);
 
     const promises = contactGroups.map(async (contactGroup) => {
-      const validContactsCount = await this.prisma.contact.count({
+      const validContactsCount = await this.prisma.client.contact.count({
         where: {
           contactGroupId: contactGroup.id,
           deletedAt: null,

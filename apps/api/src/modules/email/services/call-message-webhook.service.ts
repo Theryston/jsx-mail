@@ -1,15 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { PrismaService } from 'src/services/prisma.service';
 import { messageSelect } from 'src/utils/public-selects';
-import { MessageStatus } from '@prisma/client';
+import { MessageStatus, PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class CallMessageWebhookService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(messageId: string, customStatus?: MessageStatus) {
-    const message = await this.prisma.message.findUnique({
+    const message = await this.prisma.client.message.findUnique({
       where: { id: messageId },
       select: {
         ...messageSelect,
@@ -51,7 +54,7 @@ export class CallMessageWebhookService {
       });
     }
 
-    const userWebhooks = await this.prisma.userWebhook.findMany({
+    const userWebhooks = await this.prisma.client.userWebhook.findMany({
       where: {
         userId: message.userId,
         messageStatuses: {

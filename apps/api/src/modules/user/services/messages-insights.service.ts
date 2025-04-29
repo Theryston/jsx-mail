@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { MessagesInsightsDto } from '../user.dto';
 import { getFilterWhereMessages } from '../utils';
-import { PrismaService } from 'src/services/prisma.service';
 import moment from 'moment';
 import { MESSAGES_STATUS } from '../../../utils/constants';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class MessagesInsightsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(params: MessagesInsightsDto, userId: string) {
     const { where, startDate, endDate, statuses } = getFilterWhereMessages(
@@ -15,7 +19,7 @@ export class MessagesInsightsService {
       userId,
     );
 
-    const messages = await this.prisma.message.groupBy({
+    const messages = await this.prisma.client.message.groupBy({
       by: ['createdDay', 'status'],
       where,
       _count: {
@@ -42,7 +46,7 @@ export class MessagesInsightsService {
       };
     });
 
-    const processingMessages = await this.prisma.message.count({
+    const processingMessages = await this.prisma.client.message.count({
       where: {
         status: {
           in: ['queued', 'processing'],

@@ -1,9 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
 import crypto from 'crypto';
 import { PERMISSIONS } from '../../../auth/permissions';
 import { CreateSessionDto } from '../session.dto';
 import moment from 'moment';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 type CreateSessionData = {
   userId: string;
@@ -11,7 +13,10 @@ type CreateSessionData = {
 
 @Injectable()
 export class CreateSessionService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(
     {
@@ -65,7 +70,7 @@ export class CreateSessionService {
       );
     }
 
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.client.user.findFirst({
       where: {
         id: userId,
         deletedAt: null,
@@ -88,7 +93,7 @@ export class CreateSessionService {
 
     const token = crypto.randomBytes(32).toString('hex');
 
-    const session = await this.prisma.session.create({
+    const session = await this.prisma.client.session.create({
       data: {
         userId,
         token,

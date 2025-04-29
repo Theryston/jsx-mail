@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { MONEY_SCALE } from 'src/utils/constants';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 type GetSettingsOptions = {
   defaultOnly?: boolean;
@@ -30,7 +31,10 @@ export type Settings = {
 
 @Injectable()
 export class GetSettingsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(
     userId?: string,
@@ -90,7 +94,7 @@ export class GetSettingsService {
   }
 
   async getUserSettings(userId: string) {
-    const userSettings = await this.prisma.userSettings.findFirst({
+    const userSettings = await this.prisma.client.userSettings.findFirst({
       where: { userId },
     });
 
@@ -98,7 +102,8 @@ export class GetSettingsService {
   }
 
   async getDefaultSettings() {
-    const defaultSettings = await this.prisma.defaultSettings.findFirst();
+    const defaultSettings =
+      await this.prisma.client.defaultSettings.findFirst();
 
     return {
       maxFileSize: defaultSettings?.maxFileSize || 10,

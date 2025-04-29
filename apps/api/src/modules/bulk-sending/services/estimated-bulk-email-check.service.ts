@@ -1,14 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { EstimatedBulkEmailCheckDto } from '../bulk-sending.dto';
 import { GetSettingsService } from 'src/modules/user/services/get-settings.service';
 import { friendlyMoney, friendlyTime } from 'src/utils/format-money';
 import moment from 'moment';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class EstimatedBulkEmailCheckService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly getSettingsService: GetSettingsService,
   ) {}
 
@@ -20,7 +22,7 @@ export class EstimatedBulkEmailCheckService {
     const settings = await this.getSettingsService.execute(userId);
 
     const currentProcessingBulkEmailChecks =
-      await this.prisma.bulkEmailCheck.findFirst({
+      await this.prisma.client.bulkEmailCheck.findFirst({
         where: {
           status: {
             in: ['pending', 'processing'],
@@ -32,7 +34,7 @@ export class EstimatedBulkEmailCheckService {
       });
 
     if (!customEmailsTotal) {
-      const contactGroup = await this.prisma.contactGroup.findUnique({
+      const contactGroup = await this.prisma.client.contactGroup.findUnique({
         where: { id: contactGroupId, userId },
       });
 
@@ -40,7 +42,7 @@ export class EstimatedBulkEmailCheckService {
         throw new NotFoundException('Contact group not found');
       }
 
-      const contactsCount = await this.prisma.contact.count({
+      const contactsCount = await this.prisma.client.contact.count({
         where: { contactGroupId, bouncedAt: null },
       });
 

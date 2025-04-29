@@ -1,17 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ForceSendMessageWebhookDto } from '../user.dto';
-import { PrismaService } from 'src/services/prisma.service';
 import { CallMessageWebhookService } from 'src/modules/email/services/call-message-webhook.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class ForceSendMessageWebhookService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly callMessageWebhookService: CallMessageWebhookService,
   ) {}
 
   async execute(id: string, data: ForceSendMessageWebhookDto, userId: string) {
-    const message = await this.prisma.message.findFirst({
+    const message = await this.prisma.client.message.findFirst({
       where: { id, userId },
     });
 

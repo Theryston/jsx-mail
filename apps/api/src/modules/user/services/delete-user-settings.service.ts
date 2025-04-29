@@ -1,12 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class DeleteUserSettingsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(userId: string) {
-    const userSettings = await this.prisma.userSettings.findFirst({
+    const userSettings = await this.prisma.client.userSettings.findFirst({
       where: { userId },
     });
 
@@ -16,7 +20,9 @@ export class DeleteUserSettingsService {
       };
     }
 
-    await this.prisma.userSettings.delete({ where: { id: userSettings.id } });
+    await this.prisma.client.userSettings.delete({
+      where: { id: userSettings.id },
+    });
 
     return {
       message: 'User settings deleted successfully',

@@ -1,15 +1,17 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import calculateHash from 'src/utils/calculate-hash';
 import { fileSelect } from 'src/utils/public-selects';
 import { S3ClientService } from './s3-client.service';
 import { formatSize } from 'src/utils/format';
 import { GetSettingsService } from 'src/modules/user/services/get-settings.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class UploadFileService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly s3ClientService: S3ClientService,
     private readonly getSettingsService: GetSettingsService,
   ) {}
@@ -33,7 +35,7 @@ export class UploadFileService {
       );
     }
 
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.client.user.findFirst({
       where: {
         id: userId,
         deletedAt: null,
@@ -52,7 +54,7 @@ export class UploadFileService {
 
     const {
       _sum: { size: storage },
-    } = await this.prisma.file.aggregate({
+    } = await this.prisma.client.file.aggregate({
       where: {
         deletedAt: null,
         userId,
@@ -71,7 +73,7 @@ export class UploadFileService {
 
     const hash = calculateHash(file.buffer);
 
-    const fileAlreadyExists = await this.prisma.file.findFirst({
+    const fileAlreadyExists = await this.prisma.client.file.findFirst({
       where: {
         hash,
         userId: user.id,
@@ -97,7 +99,7 @@ export class UploadFileService {
       mimetype: file.mimetype,
     });
 
-    const createdFile = await this.prisma.file.create({
+    const createdFile = await this.prisma.client.file.create({
       data: {
         encoding: file.encoding,
         key,

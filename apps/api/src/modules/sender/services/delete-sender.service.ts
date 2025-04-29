@@ -1,12 +1,16 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { PrismaService } from 'src/services/prisma.service';
+import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class DeleteSenderService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
+  ) {}
 
   async execute(id: string, userId: string) {
-    const sender = await this.prisma.sender.findFirst({
+    const sender = await this.prisma.client.sender.findFirst({
       where: {
         id,
         userId,
@@ -18,7 +22,7 @@ export class DeleteSenderService {
       throw new HttpException('Sender not found', HttpStatus.NOT_FOUND);
     }
 
-    await this.prisma.sender.update({
+    await this.prisma.client.sender.update({
       where: {
         id: sender.id,
       },
@@ -27,7 +31,7 @@ export class DeleteSenderService {
       },
     });
 
-    await this.prisma.sender.delete({
+    await this.prisma.client.sender.delete({
       where: {
         id: sender.id,
       },

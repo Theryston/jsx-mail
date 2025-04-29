@@ -1,12 +1,15 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateLeadDto } from '../user.dto';
-import { PrismaService } from 'src/services/prisma.service';
 import { CheckEmailService } from './check-email.service';
+import { PrismaClient } from '@prisma/client';
+import { CustomPrismaService } from 'nestjs-prisma';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class CreateLeadService {
   constructor(
-    private readonly prisma: PrismaService,
+    @Inject('prisma')
+    private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly checkEmailService: CheckEmailService,
   ) {}
 
@@ -17,7 +20,7 @@ export class CreateLeadService {
       throw new BadRequestException('Email already in use');
     }
 
-    const lead = await this.prisma.lead.create({
+    const lead = await this.prisma.client.lead.create({
       data: {
         email,
         name,
