@@ -212,12 +212,6 @@ export class BulkSendingProcessor extends WorkerHost {
       console.log(
         `[BULK_SENDING] bulk sending ${bulkSendingId} queued completely`,
       );
-
-      this.updateBulkSendingStatus(bulkSendingId, 'completed').catch(
-        (error) => {
-          console.error(`[BULK_SENDING] error updating status: ${error}`);
-        },
-      );
     } catch (error) {
       console.error(
         `[BULK_SENDING] error sending bulk email for bulk sending ${bulkSendingId}`,
