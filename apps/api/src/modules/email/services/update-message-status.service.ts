@@ -6,6 +6,7 @@ import { MarkBounceToService } from './mark-bounce-to.service';
 import { MessageExtra } from 'src/utils/types';
 import { CallMessageWebhookService } from './call-message-webhook.service';
 import { CustomPrismaService } from 'nestjs-prisma';
+import { MarkComplaintToService } from './mark-complaint-to.service';
 
 const STATUS_SHOULD_HAVE_SENT_AT: MessageStatus[] = [
   'bounce',
@@ -24,6 +25,7 @@ export class UpdateMessageStatusService {
     private readonly prisma: CustomPrismaService<PrismaClient>,
     private markBounceToService: MarkBounceToService,
     private callMessageWebhookService: CallMessageWebhookService,
+    private markComplaintToService: MarkComplaintToService,
   ) {}
 
   async execute(
@@ -94,6 +96,12 @@ export class UpdateMessageStatusService {
     if (newStatus === 'bounce') {
       for (const to of message.to) {
         await this.markBounceToService.create(to, 'message');
+      }
+    }
+
+    if (newStatus === 'complaint') {
+      for (const to of message.to) {
+        await this.markComplaintToService.create(to, message.userId);
       }
     }
 

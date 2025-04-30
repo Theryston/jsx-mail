@@ -14,6 +14,7 @@ import { PERMISSIONS } from 'src/auth/permissions';
 import { UpdateMessageStatusService } from './services/update-message-status.service';
 import { GetSettingsService } from '../user/services/get-settings.service';
 import { MarkBounceToService } from './services/mark-bounce-to.service';
+import { MarkComplaintToService } from './services/mark-complaint-to.service';
 import { CustomPrismaService } from 'nestjs-prisma';
 import { Inject } from '@nestjs/common';
 
@@ -133,6 +134,7 @@ export class EmailProcessor extends WorkerHost {
     private readonly updateMessageStatusService: UpdateMessageStatusService,
     private readonly getSettingsService: GetSettingsService,
     private readonly markBounceToService: MarkBounceToService,
+    private readonly markComplaintToService: MarkComplaintToService,
   ) {
     super();
     this.rateLimiter = new RateLimiter(this.getSettingsService);
@@ -361,6 +363,10 @@ export class EmailProcessor extends WorkerHost {
       data.to.map((to) => this.markBounceToService.get(to)),
     ).then((results) => results.find((result) => result !== null));
 
+    const markedComplaintToPromise = Promise.all(
+      data.to.map((to) => this.markComplaintToService.get(to, userId)),
+    ).then((results) => results.find((result) => result !== null));
+
     const isBlockedPromise = this.prisma.client.blockedPermission.findFirst({
       where: {
         userId,
@@ -370,12 +376,17 @@ export class EmailProcessor extends WorkerHost {
 
     const userLimitsPromise = this.getUserLimitsService.execute(userId);
 
-    const [detectedMarkedBounceTo, isBlockedToSendEmail, userLimits] =
-      await Promise.all([
-        markedBounceToPromise,
-        isBlockedPromise,
-        userLimitsPromise,
-      ]);
+    const [
+      detectedMarkedBounceTo,
+      detectedMarkedComplaintTo,
+      isBlockedToSendEmail,
+      userLimits,
+    ] = await Promise.all([
+      markedBounceToPromise,
+      markedComplaintToPromise,
+      isBlockedPromise,
+      userLimitsPromise,
+    ]);
 
     if (detectedMarkedBounceTo) {
       this.updateMessageStatusService
@@ -385,6 +396,25 @@ export class EmailProcessor extends WorkerHost {
           `Bounced because this email was marked as bounce by ${detectedMarkedBounceTo.bounceBy === 'email_check' ? 'email check' : 'previous bounced message'} at ${moment(detectedMarkedBounceTo.createdAt).format('DD/MM/YYYY HH:mm:ss')}`,
           {
             smartBounce: 'true',
+          },
+        )
+        .catch((error) =>
+          console.error(
+            `[EMAIL_PROCESSOR] error updating message status: ${error}`,
+          ),
+        );
+
+      return;
+    }
+
+    if (detectedMarkedComplaintTo) {
+      this.updateMessageStatusService
+        .execute(
+          messageId,
+          'complaint',
+          `Complaint because this email was marked as complaint at ${moment(detectedMarkedComplaintTo.createdAt).format('DD/MM/YYYY HH:mm:ss')}`,
+          {
+            smartComplaint: 'true',
           },
         )
         .catch((error) =>

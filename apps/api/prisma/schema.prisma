@@ -175,6 +175,7 @@ model User {
   exports                 Export[]
   isUserPriority          IsUserPriority[]
   messageStatusMappings   MessageStatusMapping[]
+  markedComplaintTo       MarkedComplaintTo[]
 
   @@map("users")
 }
@@ -929,4 +930,18 @@ model MarkedBounceTo {
   deletedAt DateTime? @map("deleted_at")
 
   @@map("marked_bounce_to")
+}
+
+model MarkedComplaintTo {
+  id        String    @id @default(uuid())
+  email     String
+  userId    String    @map("user_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  expiresAt DateTime? @map("expires_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("marked_complaint_to")
 }

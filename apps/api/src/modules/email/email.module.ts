@@ -10,6 +10,7 @@ import { UpdateMessageStatusService } from './services/update-message-status.ser
 import { ResetQueueRateLimitService } from './services/reset-queue-rate-limit.service';
 import { MarkBounceToService } from './services/mark-bounce-to.service';
 import { CallMessageWebhookService } from './services/call-message-webhook.service';
+import { MarkComplaintToService } from './services/mark-complaint-to.service';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CallMessageWebhookService } from './services/call-message-webhook.servi
     ResetQueueRateLimitService,
     MarkBounceToService,
     CallMessageWebhookService,
+    MarkComplaintToService,
   ],
   exports: [
     SendEmailService,
@@ -34,6 +36,7 @@ import { CallMessageWebhookService } from './services/call-message-webhook.servi
     ResetQueueRateLimitService,
     MarkBounceToService,
     CallMessageWebhookService,
+    MarkComplaintToService,
   ],
   controllers: [EmailController],
 })
