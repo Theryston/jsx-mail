@@ -586,6 +586,13 @@ export class EmailProcessor extends WorkerHost {
         .execute(messageId, 'sent', 'Email sent successfully', undefined, {
           externalId: externalMessageId,
         })
+        .then(() => {
+          this.checkBulkSendingStatus(message.bulkSendingId).catch((error) =>
+            console.error(
+              `[EMAIL_PROCESSOR] error checking bulk sending status: ${error}`,
+            ),
+          );
+        })
         .catch((error) =>
           console.error(
             `[EMAIL_PROCESSOR] error updating message status: ${error}`,
@@ -594,12 +601,6 @@ export class EmailProcessor extends WorkerHost {
 
       console.log(
         `[EMAIL_PROCESSOR] updated message: ${messageId} to add externalId: ${externalMessageId}`,
-      );
-
-      this.checkBulkSendingStatus(message.bulkSendingId).catch((error) =>
-        console.error(
-          `[EMAIL_PROCESSOR] error checking bulk sending status: ${error}`,
-        ),
       );
     } catch (error) {
       console.error(`[EMAIL_PROCESSOR] error sending email: ${error}`);
