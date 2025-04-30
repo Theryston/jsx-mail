@@ -6,19 +6,78 @@ import moment from 'moment';
 import { CreateContactService } from './services/create-contact.service';
 import { GetUserLimitsService } from '../user/services/get-user-limits.service';
 import { CustomPrismaService } from 'nestjs-prisma';
-import { PrismaClient } from '@prisma/client';
+import {
+  BulkSending,
+  BulkSendingStatus,
+  BulkSendingVariable,
+  Contact,
+  PrismaClient,
+  Sender,
+} from '@prisma/client';
 import { Inject } from '@nestjs/common';
+import pLimit from 'p-limit';
+import {
+  Settings,
+  GetSettingsService,
+} from '../user/services/get-settings.service';
+
+const batchQueue = pLimit(30);
+
+class UserLimitsCache {
+  private limitsCache: Map<
+    string,
+    { availableMessages: number; balance: number; timestamp: number }
+  > = new Map();
+  private cacheValidityMs = 30000; // 30 seconds
+
+  constructor() {}
+
+  async getUserLimits(
+    userId: string,
+    getUserLimitsService: GetUserLimitsService,
+  ): Promise<{ availableMessages: number; balance: number }> {
+    const now = Date.now();
+    const cached = this.limitsCache.get(userId);
+
+    if (cached && now - cached.timestamp < this.cacheValidityMs) {
+      return {
+        availableMessages: cached.availableMessages,
+        balance: cached.balance,
+      };
+    }
+
+    const limits = await getUserLimitsService.execute(userId);
+    this.limitsCache.set(userId, { ...limits, timestamp: now });
+    return limits;
+  }
+
+  updateLimits(
+    userId: string,
+    limits: { availableMessages: number; balance: number },
+  ) {
+    const now = Date.now();
+    this.limitsCache.set(userId, { ...limits, timestamp: now });
+  }
+
+  invalidateCache(userId: string) {
+    this.limitsCache.delete(userId);
+  }
+}
 
 @Processor('bulk-sending', { concurrency: 10 })
 export class BulkSendingProcessor extends WorkerHost {
+  private userLimitsCache: UserLimitsCache;
+
   constructor(
     @Inject('prisma')
     private readonly prisma: CustomPrismaService<PrismaClient>,
     private readonly senderSendEmailService: SenderSendEmailService,
     private readonly createContactService: CreateContactService,
     private readonly getUserLimitsService: GetUserLimitsService,
+    private readonly getSettingsService: GetSettingsService,
   ) {
     super();
+    this.userLimitsCache = new UserLimitsCache();
   }
 
   async process(job: Job) {
@@ -57,10 +116,11 @@ export class BulkSendingProcessor extends WorkerHost {
       throw new Error('Bulk sending not found');
     }
 
-    await this.prisma.client.bulkSending.update({
-      where: { id: bulkSendingId },
-      data: { status: 'processing' },
+    this.updateBulkSendingStatus(bulkSendingId, 'processing').catch((error) => {
+      console.error(`[BULK_SENDING] error updating status: ${error}`);
     });
+
+    const settings = await this.getSettingsService.execute(bulkSending.userId);
 
     const { subject, content, contactGroupId } = bulkSending;
 
@@ -114,124 +174,30 @@ export class BulkSendingProcessor extends WorkerHost {
           break;
         }
 
-        for (let i = 0; i < contacts.length; i++) {
-          const contact = contacts[i];
+        const promises = [];
 
-          if (contact._count.messages > 0) {
-            console.log(
-              `[BULK_SENDING] contact ${contact.email} already has a message sent. Skipping...`,
-            );
-            continue;
-          }
-
+        for (const contact of contacts) {
           currentLine++;
 
-          if (insufficientBalance) {
-            console.log(
-              `[BULK_SENDING] stopped sending emails because of insufficient balance ${bulkSendingId}`,
-            );
-            break;
-          }
+          promises.push(
+            batchQueue(async () => {
+              console.log(`[BULK_SENDING] processing ${currentLine}`);
 
-          try {
-            console.log(
-              `[BULK_SENDING] sending email to ${contact.email} for bulk sending ${bulkSendingId}`,
-            );
-
-            let customPayload = {};
-
-            for (const variable of bulkSending.variables) {
-              if (variable.from === 'custom') {
-                customPayload[variable.key] = variable.customValue;
-              }
-
-              if (variable.from === 'contact' && variable.fromKey) {
-                customPayload[variable.key] = contact[variable.fromKey];
-              }
-
-              if (variable.from === 'bulk_sending' && variable.fromKey) {
-                customPayload[variable.key] = bulkSending[variable.fromKey];
-              }
-
-              if (variable.fromKey === 'createdAt') {
-                customPayload[variable.key] = moment(
-                  customPayload[variable.key],
-                ).format('DD/MM/YYYY');
-              }
-            }
-
-            // TODO: cache this
-            const { availableMessages, balance } =
-              await this.getUserLimitsService.execute(bulkSending.userId);
-
-            if (availableMessages <= 0) {
-              console.log(
-                `[BULK_SENDING] insufficient balance for bulk sending ${bulkSendingId}`,
-              );
-
-              await this.prisma.client.bulkSending.update({
-                where: { id: bulkSendingId },
-                data: { status: 'failed' },
-              });
-
-              await this.prisma.client.bulkSendingFailure.create({
-                data: {
-                  bulkSendingId,
-                  contactId: contact.id,
-                  message: `Insufficient balance for sending email: ${balance}`,
-                },
-              });
-
-              insufficientBalance = true;
-              break;
-            }
-
-            if (contact.bouncedAt) {
-              const message =
-                contact.bouncedBy === 'message'
-                  ? `Some previous message was sent to this contact (${contact.email}) and received a bounce. Skipping...`
-                  : `This contact (${contact.email}) was marked as bounce at ${moment(contact.bouncedAt).format('DD/MM/YYYY HH:mm:ss')} by our check email service. Skipping...`;
-
-              console.log(`[BULK_SENDING] ${message}`);
-
-              continue;
-            }
-
-            this.senderSendEmailService
-              .execute(
-                {
-                  sender: bulkSending.sender.email,
-                  subject,
-                  html: content,
-                  to: [contact.email],
-                  bulkSendingId,
-                  customPayload,
-                  contactId: contact.id,
-                },
-                bulkSending.userId,
-              )
-              .catch((error) => {
-                console.error(
-                  `[BULK_SENDING|BACKGROUND] error sending email to ${contact.email} for bulk sending ${bulkSendingId}`,
-                  error,
-                );
-              });
-          } catch (error) {
-            console.error(
-              `[BULK_SENDING] error sending email to ${contact.email} for bulk sending ${bulkSendingId}`,
-              error,
-            );
-
-            await this.prisma.client.bulkSendingFailure.create({
-              data: {
+              return await this.processContact(
+                contact,
+                bulkSending,
+                insufficientBalance,
                 bulkSendingId,
-                contactId: contact.id,
-                message: error.message,
-                line: currentLine,
-              },
-            });
-          }
+                subject,
+                content,
+                currentLine,
+                settings,
+              );
+            }),
+          );
         }
+
+        await Promise.all(promises);
 
         if (insufficientBalance) {
           console.log(
@@ -243,25 +209,196 @@ export class BulkSendingProcessor extends WorkerHost {
         page++;
       }
 
-      console.log(`[BULK_SENDING] bulk sending ${bulkSendingId} completed`);
+      console.log(
+        `[BULK_SENDING] bulk sending ${bulkSendingId} queued completely`,
+      );
 
-      await this.prisma.client.bulkSending.update({
-        where: { id: bulkSendingId },
-        data: { status: 'completed' },
-      });
+      this.updateBulkSendingStatus(bulkSendingId, 'completed').catch(
+        (error) => {
+          console.error(`[BULK_SENDING] error updating status: ${error}`);
+        },
+      );
     } catch (error) {
       console.error(
         `[BULK_SENDING] error sending bulk email for bulk sending ${bulkSendingId}`,
         error,
       );
 
-      await this.prisma.client.bulkSending.update({
-        where: { id: bulkSendingId },
-        data: { status: 'failed' },
+      this.updateBulkSendingStatus(bulkSendingId, 'failed').catch((err) => {
+        console.error(`[BULK_SENDING] error updating status: ${err}`);
       });
 
       throw error;
     }
+  }
+
+  private async processContact(
+    contact: Contact & { _count: { messages: number } },
+    bulkSending: BulkSending & {
+      sender: Sender;
+      variables: BulkSendingVariable[];
+    },
+    insufficientBalance: boolean,
+    bulkSendingId: string,
+    subject: string,
+    content: string,
+    currentLine: number,
+    settings: Settings,
+  ) {
+    if (contact._count.messages > 0) {
+      console.log(
+        `[BULK_SENDING] contact ${contact.email} already has a message sent. Skipping...`,
+      );
+      return;
+    }
+
+    if (insufficientBalance) {
+      console.log(
+        `[BULK_SENDING] stopped sending emails because of insufficient balance ${bulkSendingId}`,
+      );
+      return;
+    }
+
+    try {
+      console.log(
+        `[BULK_SENDING] sending email to ${contact.email} for bulk sending ${bulkSendingId}`,
+      );
+
+      let customPayload = {};
+
+      for (const variable of bulkSending.variables) {
+        if (variable.from === 'custom') {
+          customPayload[variable.key] = variable.customValue;
+        }
+
+        if (variable.from === 'contact' && variable.fromKey) {
+          customPayload[variable.key] = contact[variable.fromKey];
+        }
+
+        if (variable.from === 'bulk_sending' && variable.fromKey) {
+          customPayload[variable.key] = bulkSending[variable.fromKey];
+        }
+
+        if (variable.fromKey === 'createdAt') {
+          customPayload[variable.key] = moment(
+            customPayload[variable.key],
+          ).format('DD/MM/YYYY');
+        }
+      }
+
+      const { availableMessages, balance } =
+        await this.userLimitsCache.getUserLimits(
+          bulkSending.userId,
+          this.getUserLimitsService,
+        );
+
+      if (availableMessages <= 0) {
+        console.log(
+          `[BULK_SENDING] insufficient balance for bulk sending ${bulkSendingId}`,
+        );
+
+        this.updateBulkSendingStatus(bulkSendingId, 'failed').catch((error) => {
+          console.error(`[BULK_SENDING] error updating status: ${error}`);
+        });
+
+        this.recordBulkSendingFailure(
+          bulkSendingId,
+          contact.id,
+          `Insufficient balance for sending email: ${balance}`,
+        ).catch((error) => {
+          console.error(`[BULK_SENDING] error recording failure: ${error}`);
+        });
+
+        insufficientBalance = true;
+        return;
+      }
+
+      if (contact.bouncedAt) {
+        const message =
+          contact.bouncedBy === 'message'
+            ? `Some previous message was sent to this contact (${contact.email}) and received a bounce. Skipping...`
+            : `This contact (${contact.email}) was marked as bounce at ${moment(contact.bouncedAt).format('DD/MM/YYYY HH:mm:ss')} by our check email service. Skipping...`;
+
+        console.log(`[BULK_SENDING] ${message}`);
+        return;
+      }
+
+      const sendPromise = this.senderSendEmailService
+        .execute(
+          {
+            sender: bulkSending.sender.email,
+            subject,
+            html: content,
+            to: [contact.email],
+            bulkSendingId,
+            customPayload,
+            contactId: contact.id,
+          },
+          bulkSending.userId,
+        )
+        .catch((error) => {
+          console.error(
+            `[BULK_SENDING|BACKGROUND] error sending email to ${contact.email} for bulk sending ${bulkSendingId}`,
+            error,
+          );
+
+          this.recordBulkSendingFailure(
+            bulkSendingId,
+            contact.id,
+            error.message,
+            currentLine,
+          ).catch((err) =>
+            console.error(`[BULK_SENDING] error recording failure: ${err}`),
+          );
+        });
+
+      this.userLimitsCache.updateLimits(bulkSending.userId, {
+        availableMessages: availableMessages - 1,
+        balance: balance - settings.pricePerMessage,
+      });
+
+      return sendPromise;
+    } catch (error) {
+      console.error(
+        `[BULK_SENDING] error sending email to ${contact.email} for bulk sending ${bulkSendingId}`,
+        error,
+      );
+
+      this.recordBulkSendingFailure(
+        bulkSendingId,
+        contact.id,
+        error.message,
+        currentLine,
+      ).catch((err) =>
+        console.error(`[BULK_SENDING] error recording failure: ${err}`),
+      );
+    }
+  }
+
+  private async updateBulkSendingStatus(
+    bulkSendingId: string,
+    status: BulkSendingStatus,
+  ): Promise<void> {
+    await this.prisma.client.bulkSending.update({
+      where: { id: bulkSendingId },
+      data: { status },
+    });
+  }
+
+  private async recordBulkSendingFailure(
+    bulkSendingId: string,
+    contactId: string,
+    message: string,
+    line?: number,
+  ): Promise<void> {
+    await this.prisma.client.bulkSendingFailure.create({
+      data: {
+        bulkSendingId,
+        contactId,
+        message,
+        line,
+      },
+    });
   }
 
   async createBulkContacts(data: { contactImportId: string }) {
