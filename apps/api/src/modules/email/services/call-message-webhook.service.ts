@@ -98,11 +98,20 @@ export class CallMessageWebhookService {
         continue;
       }
 
+      const toEmailOnly = message.to.map((to) => {
+        const match = to.match(/<([^>]+)>/);
+        if (match) {
+          return match[1];
+        }
+        return to;
+      });
+
       try {
         await axios.post(webhook, {
           messageId: newMessageId,
           ...message,
           status: messageStatus,
+          toEmailOnly,
         });
       } catch (error) {
         const errorMessage = error.response?.data || error.message;
