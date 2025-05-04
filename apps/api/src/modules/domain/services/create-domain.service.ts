@@ -1,11 +1,9 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateDomainDto } from '../domain.dto';
 import { domainSelect } from 'src/utils/public-selects';
-import { generateKeyPairSync } from 'crypto';
-import { CreateEmailIdentityCommand } from '@aws-sdk/client-sesv2';
-import { sesv2Client } from '../ses';
 import { PrismaClient } from '@prisma/client';
 import { CustomPrismaService } from 'nestjs-prisma';
+import { MailServerService } from 'src/modules/email/services/mail-server.service';
 
 const domainRegex = /^(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
 
@@ -14,6 +12,7 @@ export class CreateDomainService {
   constructor(
     @Inject('prisma')
     private readonly prisma: CustomPrismaService<PrismaClient>,
+    private readonly mailServerService: MailServerService,
   ) {}
 
   async execute({ name }: CreateDomainDto, userId: string) {
@@ -39,60 +38,56 @@ export class CreateDomainService {
       );
     }
 
-    const { publicKey, privateKey } = generateKeyPairSync('rsa', {
-      modulusLength: 1024,
-      publicExponent: 0x10001,
-      privateKeyEncoding: {
-        type: 'pkcs1',
-        format: 'pem',
-      },
-      publicKeyEncoding: {
-        type: 'spki',
-        format: 'pem',
-      },
-    });
+    const {
+      spfRecord,
+      dkimRecord,
+      domainId: externalId,
+    } = await this.mailServerService.createDomain(name);
 
-    const selector = 'jsxmail';
+    console.log('spfRecord', spfRecord);
+    console.log('dkimRecord', dkimRecord);
+    console.log('externalId', externalId);
 
-    const privateKeyCleaned = privateKey
-      .replace(/-----BEGIN RSA PRIVATE KEY-----/, '')
-      .replace(/-----END RSA PRIVATE KEY-----/, '')
-      .replace(/\n/g, '')
-      .trim();
+    if (!spfRecord || !dkimRecord) {
+      throw new HttpException(
+        'Failed to create domain',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-    const publicKeyCleaned = publicKey
-      .replace(/-----BEGIN PUBLIC KEY-----/, '')
-      .replace(/-----END PUBLIC KEY-----/, '')
-      .replace(/\n/g, '')
-      .trim();
-
-    const command = new CreateEmailIdentityCommand({
-      EmailIdentity: name,
-      DkimSigningAttributes: {
-        DomainSigningSelector: selector,
-        DomainSigningPrivateKey: privateKeyCleaned,
-      },
-    });
-
-    await sesv2Client.send(command);
+    if (
+      !spfRecord.name ||
+      !dkimRecord.name ||
+      !spfRecord.record ||
+      !dkimRecord.record
+    ) {
+      throw new HttpException(
+        'Failed to create domain',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     const domain = await this.prisma.client.domain.create({
       data: {
         name,
         userId,
-        dkim: {
-          create: {
-            publicKey: publicKeyCleaned,
-            privateKey: privateKeyCleaned,
-            selector,
-          },
-        },
+        externalId,
         dnsRecords: {
-          create: {
-            name: `${selector}._domainkey.${name}`,
-            value: `p=${publicKeyCleaned}`,
-            type: 'TXT',
-            ttl: 1800,
+          createMany: {
+            data: [
+              {
+                name: spfRecord.name,
+                value: spfRecord.record,
+                type: 'TXT',
+                ttl: 1800,
+              },
+              {
+                name: dkimRecord.name,
+                value: dkimRecord.record,
+                type: 'TXT',
+                ttl: 1800,
+              },
+            ],
           },
         },
       },

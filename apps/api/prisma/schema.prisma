@@ -428,13 +428,14 @@ model SecurityCode {
 }
 
 model Domain {
-  id        String       @id @default(uuid())
-  name      String       @unique
-  status    DomainStatus @default(pending) @map("status")
-  userId    String       @map("user_id")
-  createdAt DateTime     @default(now()) @map("created_at")
-  updatedAt DateTime     @updatedAt @map("updated_at")
-  deletedAt DateTime?    @map("deleted_at")
+  id         String       @id @default(uuid())
+  name       String       @unique
+  status     DomainStatus @default(pending) @map("status")
+  externalId String?      @map("external_id")
+  userId     String       @map("user_id")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+  deletedAt  DateTime?    @map("deleted_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

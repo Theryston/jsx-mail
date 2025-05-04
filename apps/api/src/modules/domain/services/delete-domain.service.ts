@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { DeleteEmailIdentityCommand } from '@aws-sdk/client-sesv2';
-import { sesv2Client } from '../ses';
 import { PrismaClient } from '@prisma/client';
 import { CustomPrismaService } from 'nestjs-prisma';
+import { MailServerService } from 'src/modules/email/services/mail-server.service';
 
 @Injectable()
 export class DeleteDomainService {
   constructor(
     @Inject('prisma')
     private readonly prisma: CustomPrismaService<PrismaClient>,
+    private readonly mailServerService: MailServerService,
   ) {}
 
   async execute(domainId: string, userId: string) {
@@ -24,11 +24,7 @@ export class DeleteDomainService {
       throw new HttpException('Domain not found', HttpStatus.NOT_FOUND);
     }
 
-    const deleteCommand = new DeleteEmailIdentityCommand({
-      EmailIdentity: domain.name,
-    });
-
-    await sesv2Client.send(deleteCommand);
+    await this.mailServerService.deleteDomain(domain.externalId);
 
     await this.prisma.client.domain.update({
       where: {

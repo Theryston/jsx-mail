@@ -1,18 +1,14 @@
 import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { domainSelect } from 'src/utils/public-selects';
-import { sesv2Client } from '../ses';
-import {
-  GetEmailIdentityCommand,
-  VerificationStatus,
-} from '@aws-sdk/client-sesv2';
-import { DomainStatus, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { CustomPrismaService } from 'nestjs-prisma';
-
+import { MailServerService } from 'src/modules/email/services/mail-server.service';
 @Injectable()
 export class VerifyDomainService {
   constructor(
     @Inject('prisma')
     private readonly prisma: CustomPrismaService<PrismaClient>,
+    private readonly mailServerService: MailServerService,
   ) {}
 
   async execute(id: string, userId: string) {
@@ -32,37 +28,33 @@ export class VerifyDomainService {
       return domain;
     }
 
-    const command = new GetEmailIdentityCommand({
-      EmailIdentity: domain.name,
-    });
+    if (!domain.externalId) {
+      throw new HttpException('Domain not found', HttpStatus.NOT_FOUND);
+    }
 
-    const { VerificationStatus: status, VerificationInfo } =
-      await sesv2Client.send(command);
+    const domainDetails = await this.mailServerService.verifyDomain(
+      domain.externalId,
+    );
 
-    const statusMap: Record<VerificationStatus, DomainStatus> = {
-      FAILED: 'failed',
-      NOT_STARTED: 'pending',
-      PENDING: 'pending',
-      SUCCESS: 'verified',
-      TEMPORARY_FAILURE: 'pending',
-    };
+    if (
+      domainDetails.spf.status === 'good' &&
+      domainDetails.dkim.status === 'good'
+    ) {
+      const updatedDomain = await this.prisma.client.domain.update({
+        where: { id },
+        data: { status: 'verified' },
+        select: domainSelect,
+      });
 
-    const newStatus = statusMap[status];
-
-    const updatedDomain = await this.prisma.client.domain.update({
-      where: { id },
-      data: { status: newStatus },
-      select: {
-        ...domainSelect,
-        dkim: true,
-      },
-    });
-
-    delete updatedDomain.dkim;
-
-    return {
-      ...updatedDomain,
-      lastVerificationAt: VerificationInfo?.LastCheckedTimestamp,
-    };
+      return {
+        ...updatedDomain,
+        lastVerificationAt: new Date(),
+      };
+    } else {
+      return {
+        ...domain,
+        lastVerificationAt: new Date(),
+      };
+    }
   }
 }
