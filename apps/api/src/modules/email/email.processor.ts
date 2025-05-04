@@ -167,6 +167,42 @@ export class EmailProcessor extends WorkerHost {
     }
   }
 
+  async checkBulkSendingStatus(bulkSendingId?: string) {
+    if (!bulkSendingId) {
+      return;
+    }
+
+    const bulkSending = await this.prisma.client.bulkSending.findUnique({
+      where: { id: bulkSendingId },
+    });
+
+    if (!bulkSending || ['completed', 'failed'].includes(bulkSending.status)) {
+      return;
+    }
+
+    const pendingMessages = await this.prisma.client.message.count({
+      where: {
+        bulkSendingId,
+        status: {
+          in: ['processing', 'queued'],
+        },
+      },
+    });
+
+    if (pendingMessages > 0) {
+      return;
+    }
+
+    await this.prisma.client.bulkSending.update({
+      where: { id: bulkSendingId },
+      data: {
+        status: 'completed',
+      },
+    });
+
+    console.log(`[EMAIL_PROCESSOR] bulk sending ${bulkSendingId} completed`);
+  }
+
   async sendEmail(data: SendEmailDto) {
     let dataLog: any = { ...data };
     delete dataLog.html;
@@ -549,6 +585,13 @@ export class EmailProcessor extends WorkerHost {
       this.updateMessageStatusService
         .execute(messageId, 'sent', 'Email sent successfully', undefined, {
           externalId: externalMessageId,
+        })
+        .then(() => {
+          this.checkBulkSendingStatus(message.bulkSendingId).catch((error) =>
+            console.error(
+              `[EMAIL_PROCESSOR] error checking bulk sending status: ${error}`,
+            ),
+          );
         })
         .catch((error) =>
           console.error(
