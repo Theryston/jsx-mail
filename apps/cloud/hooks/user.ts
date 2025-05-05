@@ -8,6 +8,7 @@ import {
   AdminUsersPagination,
   UserWebhook,
   Export,
+  Price,
 } from '@/types/user';
 import api from '@/utils/api';
 import { PER_PAGE } from '@/utils/constants';
@@ -92,6 +93,13 @@ export function useFullBalance() {
   return useQuery<FullBalance>({
     queryKey: ['full-balance'],
     queryFn: async () => await api.get('/user/balance').then((res) => res.data),
+  });
+}
+
+export function usePrice() {
+  return useQuery<Price>({
+    queryKey: ['price'],
+    queryFn: async () => await api.get('/user/price').then((res) => res.data),
   });
 }
 

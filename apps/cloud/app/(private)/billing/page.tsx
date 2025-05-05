@@ -5,6 +5,7 @@ import { Skeleton } from '@jsx-mail/ui/skeleton';
 import {
   useCreateCheckoutSession,
   useFullBalance,
+  usePrice,
   useTransactions,
 } from '@/hooks/user';
 import { SmallCard } from '@jsx-mail/ui/small-card';
@@ -44,12 +45,15 @@ const formSchema = z.object({
 });
 
 export default function Billing() {
+  const { data: price } = usePrice();
   const { data: fullBalance, isPending } = useFullBalance();
   const [isOpenAddBalance, setIsOpenAddBalance] = useState(false);
   const [page, setPage] = useState(1);
   const { data: transactionPagination, isPending: isPendingTransactions } =
     useTransactions(page);
   const searchParams = useSearchParams();
+
+  console.log('price', price);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);

@@ -4,6 +4,23 @@ export type Balance = {
   friendlyAmount: string;
 };
 
+export interface Price {
+  MONEY_SCALE: number;
+  FREE_EMAILS_PER_MONTH: number;
+  EMAIL_PRICING: EmailPricing;
+}
+
+export interface EmailPricing {
+  unit: number;
+  unitName: string;
+  step: number;
+  minValue: number;
+  maxValue: number;
+  defaultValue: number;
+  price: number;
+  friendlyAmount: string;
+}
+
 export type User = {
   id: string;
   name: string;
