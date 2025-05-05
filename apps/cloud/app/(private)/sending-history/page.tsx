@@ -202,19 +202,19 @@ export default function SendingHistoryPage() {
             <span className="font-bold">Your</span> sending history
           </h1>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <Button
               variant="outline"
               onClick={() => setIsExportModalOpen(true)}
             >
               Export
-            </Button>
+            </Button>      
             <Filters
               fromEmail={fromEmail}
               toEmail={toEmail}
               statuses={statuses}
               onFiltersChange={handleFiltersChange}
-            />
+            /> 
             <DateFilter
               dateRange={dateRange}
               onDateRangeChange={handleDateRangeChange}
