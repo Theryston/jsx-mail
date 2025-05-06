@@ -45,15 +45,12 @@ const formSchema = z.object({
 });
 
 export default function Billing() {
-  const { data: price } = usePrice();
   const { data: fullBalance, isPending } = useFullBalance();
   const [isOpenAddBalance, setIsOpenAddBalance] = useState(false);
   const [page, setPage] = useState(1);
   const { data: transactionPagination, isPending: isPendingTransactions } =
     useTransactions(page);
   const searchParams = useSearchParams();
-
-  console.log('price', price);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -147,6 +144,10 @@ function AddBalanceModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const { data: price } = usePrice();
+
+  const [countEmails, setCountEmails] = useState(0);
+
   const { mutateAsync: createCheckoutSession } = useCreateCheckoutSession();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -156,6 +157,8 @@ function AddBalanceModal({
       country: 'United States',
     },
   });
+  
+  const amount = Number(form.watch('amount') || '0');
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const amount = data.amount;
@@ -180,6 +183,12 @@ function AddBalanceModal({
 
     window.location.href = session.url;
   };
+
+  useEffect(() =>{  
+    if (!price) return;
+
+    setCountEmails((amount/(price?.EMAIL_PRICING.price/price?.MONEY_SCALE)) * price?.EMAIL_PRICING.unit)
+  }, [amount])
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -229,6 +238,10 @@ function AddBalanceModal({
                 )}
               />
 
+              <p className="text-xs text-muted-foreground">
+                With ${amount.toLocaleString('en-US')} you will send approximately {countEmails.toLocaleString('en-US')} emails
+              </p>
+            
               <Button
                 type="submit"
                 className="w-full"
