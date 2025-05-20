@@ -38,7 +38,7 @@
     "jsx-mail": "^2.3.2",
     "lru-cache": "^11.1.0",
     "moment": "^2.30.1",
-    "multer": "1.4.5-lts.1",
+    "multer": "2.0.0",
     "nestjs-fingerprint": "^1.0.4",
     "nestjs-prisma": "^0.25.0",
     "nestjs-real-ip": "^3.0.1",
